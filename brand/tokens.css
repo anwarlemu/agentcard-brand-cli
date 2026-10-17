@@ -62,6 +62,8 @@
 	--ds-color-border-subtle: rgb(23 24 24 / 0.08);
 	--ds-color-border-strong: rgb(23 24 24 / 0.35);
 	--ds-color-border-hairline: rgb(23 24 24 / 0.16);
+	/* A white key's edge: the hairline, kept when a blue ground re-points the hairline to white. */
+	--ds-color-border-key: rgb(23 24 24 / 0.16);
 	--ds-color-border-brand: #0000FF;
 	--ds-color-border-brand-edge: #0607BE;
 	--ds-color-border-on-brand: rgb(255 255 255 / 0.22);
@@ -97,6 +99,8 @@
 	--ds-font-mono: "Neue Haas Grotesk Display Pro", "Neue Haas Grotesk Display", "Helvetica Neue", Helvetica, Arial, sans-serif;
 	--ds-font-weight-regular: 400;
 	--ds-font-weight-medium: 500;
+	/* Headings, labels and keys in the display face are set at 500. */
+	--ds-font-weight-heading: 500;
 	--ds-text-display: 7rem;
 	--ds-text-hero: 4.5rem;
 	--ds-text-h1: 3.25rem;

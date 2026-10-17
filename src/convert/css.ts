@@ -1,4 +1,4 @@
-import { nearest, scales } from '../lib/brand.js';
+import { isToken, nearest, scales } from '../lib/brand.js';
 import { COLOR_IN_VALUE, hsl, parseColor } from './color.js';
 import { type Palette, familyOf, themed } from './palette.js';
 import { cssColor, mapColor, onColor } from './roles.js';
@@ -58,6 +58,9 @@ const isWide = (value: string) => {
 	return !!m && toPx(m[1], m[2]) >= 900;
 };
 
+/** A selector for a heading: a heading tag or a class named for a title, headline or hero. */
+const HEADING = /(^|[\s,>+~])h[1-6]\b|title|heading|headline|display|hero-h|hero__h/i;
+
 export function convertCss(css: string, palette: Palette, stats: Stats) {
 	palette.series ??= new Map();
 	return walkCss(css, (decls, ctx) => (ctx.fontFace ? decls : convertDecls(decls, themed(palette, ctx.mode), stats, ctx.selector)));
@@ -102,12 +105,15 @@ function convertDecls(css: string, palette: Palette, stats: Stats, selector: str
 		const fontStack = /^font-family$/.test(p) || (isVar && /(font|family|typeface)/.test(p) && /["',]|serif|sans|mono/.test(next));
 		if (fontStack && !/var\(--ds-font/.test(next)) {
 			stats.fonts++;
-			next = /mono|code|courier|consolas|menlo/i.test(next) ? 'var(--ds-font-mono)' : 'var(--ds-font-sans)';
+			// A brand with a display face sets headings in it: heading selectors and variables named for headings.
+			const heading = isToken('--ds-font-display') && (isVar ? /(heading|display|title|serif)/i.test(p) : HEADING.test(selector));
+			next = /mono|code|courier|consolas|menlo/i.test(next) ? 'var(--ds-font-mono)' : heading ? 'var(--ds-font-display)' : 'var(--ds-font-sans)';
 		} else if (p === 'font-weight' && /^(\d{3}|bold|bolder|semibold|normal|lighter)$/.test(next.trim())) {
 			stats.type++;
-			// Headings are never bold in the brand: size carries them. Elsewhere a heavier weight becomes medium.
-			const heading = /(^|[\s,>+~])h[1-6]\b|title|heading|headline|display|hero/i.test(selector);
-			next = !heading && (/^(bold|bolder|semibold)$/.test(next) || Number(next) >= 500) ? 'var(--ds-font-weight-medium)' : 'var(--ds-font-weight-regular)';
+			// Headings take the brand's heading weight (regular when it has none: size carries them). Elsewhere a heavier
+			// weight becomes medium.
+			const heading = HEADING.test(selector);
+			next = heading ? (isToken('--ds-font-weight-heading') ? 'var(--ds-font-weight-heading)' : 'var(--ds-font-weight-regular)') : /^(bold|bolder|semibold)$/.test(next) || Number(next) >= 500 ? 'var(--ds-font-weight-medium)' : 'var(--ds-font-weight-regular)';
 		} else if (p === 'letter-spacing' && !/^(0|normal|0em|0px|inherit)$/.test(next.trim())) {
 			stats.type++;
 			// Large headings keep the brand's tight tracking; everything else is set normally.

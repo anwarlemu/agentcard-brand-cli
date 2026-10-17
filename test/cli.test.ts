@@ -26,6 +26,7 @@ import { profile } from '../src/project/surface.js';
 import { pickEngine, scorecardJsonSchema } from '../src/review/critique.js';
 import { elementLayer } from '../src/install/layer.js';
 import { accentSplit, addTouches } from '../src/install/touches.js';
+import { groundAliases } from '../src/install/styles.js';
 import { patchUtils } from '../src/library/swap.js';
 
 const ROOT = join(import.meta.dirname, '..');
@@ -96,7 +97,9 @@ describe('convert', () => {
 		const out = convertCss(css, sitePalette(''), stats());
 		expect(out).toContain("@font-face { font-family: 'X'; font-weight: 700; }");
 		expect(out).toMatch(/font-size: clamp\(var\(--ds-text-[\w-]+\), 6vw, var\(--ds-text-[\w-]+\)\)/);
-		expect(out).toContain('font-weight: var(--ds-font-weight-regular)');
+		expect(out).toContain('font-weight: var(--ds-font-weight-heading)');
+		expect(out).toContain('h1 { font-size: clamp(');
+		expect(convertCss('h2 { font-family: Georgia, serif } p { font-family: Lato }', sitePalette(''), stats())).toBe('h2 { font-family: var(--ds-font-display) } p { font-family: var(--ds-font-sans) }');
 		expect(out).toContain('letter-spacing: var(--ds-tracking-tight)');
 		expect(out).toContain('animation: scroll 48s linear infinite');
 		expect(out).toMatch(/transition: color, background-color, border-color, box-shadow, opacity, transform var\(--ds-duration-slow\) var\(--ds-easing-out\)/);
@@ -239,6 +242,15 @@ describe('touches', () => {
 		expect(out.replace(/<[^>]+>/g, '')).toBe(html.replace(/<[^>]+>/g, ''));
 		expect(addTouches(out, false)).toBe(out);
 		expect(accentSplit('All your tasks, sales and clients \u2014 in one workspace')?.[1]).toBe('in one workspace');
+	});
+});
+
+describe('blue ground', () => {
+	it('declares a project\'s own color aliases again on the blue ground, so they take its colors', () => {
+		const css = groundAliases(':root { --fg: var(--ds-color-text-default); --gap: 4px; --ds-x: var(--ds-color-brand) }\n.card { --tint: var(--ds-color-bg-tint) }');
+		expect(css).toContain(':where([data-ds-hero], [data-ds-ground="blue"], .ds-on-blue) {\n\t--fg: var(--ds-color-text-default);\n}');
+		expect(css).not.toContain('--gap');
+		expect(groundAliases('body { color: red }')).toBe('');
 	});
 });
 

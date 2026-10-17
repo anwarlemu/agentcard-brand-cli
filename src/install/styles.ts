@@ -30,6 +30,7 @@ export function installStyles(w: Writer, project: Project, surface: Surface, sty
 		const dark = Object.entries(tokens().dark).map(([k, v]) => `\t\t${k}: ${v};`).join('\n');
 		css += `\n@media (prefers-color-scheme: dark) {\n\t:root {\n${dark}\n\t}\n}\n`;
 	}
+	css += groundAliases(styleText);
 	// Next self-hosts the fonts through next/font; everything else loads them at the top of the brand stylesheet.
 	if (!next) css = `${readFileSync(pkgPath('build', 'fonts.css'), 'utf8').split('\n').filter((l) => l.startsWith('@import')).join('\n')}\n${css}`;
 	w.write(`${dir}/brand.css`, css);
@@ -67,6 +68,23 @@ export function installStyles(w: Writer, project: Project, surface: Surface, sty
 	const fonts = next ? wireNextFonts(w, project) : project.native ? 'app fonts' : 'brand.css';
 	if (project.native) notes.push(`${brand().fonts.native}.`);
 	return { stylesDir, brandCss: `${dir}/brand.css`, imported, linked, fonts, notes };
+}
+
+/**
+ * A blue ground (the hero, a ds-on-blue band) re-points the brand's color tokens. A project's own variables that
+ * alias them at the root (`--fg: var(--ds-color-text-default)`) were resolved there, so they are declared again on
+ * the ground and resolve against it: the project's text turns white inside the hero like the brand's own does.
+ */
+export function groundAliases(styleText: string) {
+	const hero = brand().touches.hero;
+	if (!hero) return '';
+	const aliases = new Map<string, string>();
+	for (const block of styleText.matchAll(/(^|[}\s])((?::root|html|body)[^{}]*)\{([^{}]*)\}/g)) {
+		for (const d of block[3].matchAll(/(--(?!ds-)[\w-]+)\s*:\s*([^;]*var\(--ds-color-[^;]*);/g)) aliases.set(d[1], d[2].trim());
+	}
+	if (!aliases.size) return '';
+	const decls = [...aliases].map(([k, v]) => `\t${k}: ${v};`).join('\n');
+	return `\n/* The project's own color variables, declared again on the blue ground so they take its colors. */\n:where([${hero.attribute}], [data-ds-ground="blue"], .ds-on-blue) {\n${decls}\n}\n`;
 }
 
 /** Next: a next/font loader for the brand's Google typefaces (brand.json), added to the root layout's <html> className. */

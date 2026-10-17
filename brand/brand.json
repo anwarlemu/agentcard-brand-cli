@@ -25,7 +25,7 @@
 	"touches": {
 		"hero": {
 			"attribute": "data-ds-hero",
-			"does": "the blue ground, white type and the stepped bands into the page below"
+			"does": "the blue ground, white type and the stepped bands into the page below; a header that sits over the hero takes data-ds-ground=\"blue\" so its marks turn white"
 		}
 	},
 	"type": {

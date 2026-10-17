@@ -45,7 +45,7 @@ npm run ci           # build, limits, registry, tests; must pass before you push
 - Element styles use only brand tokens and follow the animation rules (no ease-in, no `transition: all`, 150 to 300ms);
   the tests check every value.
 - Restyle only: nothing the CLI writes may change a project's copy, elements or structure. The only markup it asks for
-  is `data-ds-hero` on the home hero.
+  is `data-ds-hero` on the home hero and `data-ds-ground="blue"` on a header over it.
 - Library items use only brand token classes (the value check runs over `registry/` in CI), follow the animation
   rules, take data through props (no Next imports, auth or analytics), and have a docs entry and an example.
 - Apps install the `release` branch: a compiled tree (no source, intake or dev dependencies) so installs take

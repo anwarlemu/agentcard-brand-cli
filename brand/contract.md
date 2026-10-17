@@ -3,7 +3,7 @@
 - To apply it or continue applying it: run `{{cli}}` and do the task it prints; run it again after each task until it says the project is done.
 - Restyle only: keep every word, link, image and element, their order and each screen's purpose. Never add sections, components or copy.
 - Keep each element's size, place and effects relative to the rest. An arrangement wider than the column is scaled as a whole, never by enlarging one part or moving pieces over others.
-- The only markup you may add: `data-ds-hero` on the home hero (its blue ground and the stepped bands under it).
+- The only markup you may add: `data-ds-hero` on the home hero (its blue ground and the stepped bands under it), and `data-ds-ground="blue"` on a header that sits over it.
 - Style each element the way `{{cli}} look <file>` shows (exact CSS and Tailwind, with states).
 - Style values are brand tokens, `var(--ds-*)`; `{{cli}} tokens <term>` finds one. No raw colors, sizes, fonts or timings.
 - Writes that add off-brand values are blocked, and you cannot finish while `{{cli}} check` has errors.

@@ -71,37 +71,51 @@
 
 /* Touches. */
 
-/* The blue ground: the hero (marked by the CLI with data-ds-hero), and any band that sets ds-on-blue. Text is white,
-   labels sky, and the white key is the main action there. */
+/* The blue ground: the hero (marked by the CLI with data-ds-hero), and any band that sets ds-on-blue. The ground
+   re-points the role tokens, as the brand's .on-blue does: the site's own rules already read them (the converter
+   wrote them), so inside the hero its text turns white, its labels sky, its lines translucent white, and its main
+   action becomes the white key with blue text, without a rule per element. A header that sits over the hero takes
+   data-ds-ground="blue": the same colors, on its own background. */
+:where([data-ds-hero], [data-ds-ground="blue"], .ds-on-blue) {
+	--ds-color-bg-default: var(--ds-color-bg-brand);
+	--ds-color-bg-subtle: var(--ds-color-bg-raised-on-brand);
+	--ds-color-bg-frame: var(--ds-color-bg-raised-on-brand);
+	--ds-color-text-default: var(--ds-color-white);
+	--ds-color-text-secondary: var(--ds-color-text-on-brand-muted);
+	--ds-color-text-muted: var(--ds-color-text-on-brand-muted);
+	--ds-color-text-subtle: var(--ds-color-text-on-brand-muted);
+	--ds-color-text-faint: var(--ds-color-text-on-brand-muted);
+	--ds-color-text-nav: var(--ds-color-white);
+	--ds-color-text-brand: var(--ds-color-sky);
+	--ds-color-text-label: var(--ds-color-sky);
+	--ds-color-border-default: var(--ds-color-border-on-brand);
+	--ds-color-border-subtle: var(--ds-color-border-on-brand);
+	--ds-color-border-strong: var(--ds-color-border-on-brand-strong);
+	--ds-color-border-hairline: var(--ds-color-border-on-brand);
+	--ds-color-wash-hover: var(--ds-color-wash-on-brand);
+	--ds-color-action-primary: var(--ds-color-white);
+	--ds-color-action-primary-hover: var(--ds-color-sky-wash);
+	--ds-color-action-primary-fg: var(--ds-color-brand);
+	--ds-color-border-brand-edge: var(--ds-color-border-key);
+	--ds-shadow-key-brand: var(--ds-shadow-key);
+	color: var(--ds-color-white);
+}
+
 :where([data-ds-hero], .ds-on-blue) {
 	position: relative;
 	background-color: var(--ds-color-bg-brand);
-	color: var(--ds-color-text-on-brand);
-}
-
-:where([data-ds-hero], .ds-on-blue) :where(h1, h2, h3, h4, p, li) {
-	color: inherit;
 }
 
 /* The band divider: where the blue hero meets the white page below, four 9px steps walk from one ground to the
-   other, a staircase rather than a gradient, as at every seam on the brand's pages. */
+   other, a staircase rather than a gradient, as at every seam on the brand's pages. Drawn as the hero's own stacked
+   shadows (an element's shadow is not clipped by its own overflow), in the margin it keeps below itself. */
 [data-ds-hero] {
 	margin-bottom: calc(var(--ds-band-step) * 4);
-}
-
-[data-ds-hero]::after {
-	content: "";
-	position: absolute;
-	inset-inline: 0;
-	top: 100%;
-	height: calc(var(--ds-band-step) * 4);
-	background: linear-gradient(
-		color-mix(in srgb, var(--ds-color-bg-default) var(--ds-band-mix-1), var(--ds-color-bg-brand)) 0 25%,
-		color-mix(in srgb, var(--ds-color-bg-default) var(--ds-band-mix-2), var(--ds-color-bg-brand)) 25% 50%,
-		color-mix(in srgb, var(--ds-color-bg-default) var(--ds-band-mix-3), var(--ds-color-bg-brand)) 50% 75%,
-		color-mix(in srgb, var(--ds-color-bg-default) var(--ds-band-mix-4), var(--ds-color-bg-brand)) 75% 100%
-	);
-	pointer-events: none;
+	box-shadow:
+		0 var(--ds-band-step) 0 color-mix(in srgb, var(--ds-color-white) var(--ds-band-mix-1), var(--ds-color-bg-brand)),
+		0 calc(var(--ds-band-step) * 2) 0 color-mix(in srgb, var(--ds-color-white) var(--ds-band-mix-2), var(--ds-color-bg-brand)),
+		0 calc(var(--ds-band-step) * 3) 0 color-mix(in srgb, var(--ds-color-white) var(--ds-band-mix-3), var(--ds-color-bg-brand)),
+		0 calc(var(--ds-band-step) * 4) 0 color-mix(in srgb, var(--ds-color-white) var(--ds-band-mix-4), var(--ds-color-bg-brand));
 }
 
 /* The same seam drawn on its own, between any two grounds: <div class="ds-band"> or the library's band divider. */
