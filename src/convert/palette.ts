@@ -130,7 +130,10 @@ export function nativePalette(sources: string[], readNative: (line: string) => R
 			if (!isBg && !isFg) continue;
 			const color = readNative(line) ?? [...line.matchAll(/#[0-9a-fA-F]{6}\b/g)].map((m) => parseColor(m[0])).find(Boolean);
 			if (!color) continue;
-			if (isBg && !bg) bg = color;
+			// A page is a neutral: a strong color on a background line is a button or a badge, not the page.
+			if (isBg && !bg) {
+				if (hsl(color).s < 0.25) bg = color;
+			}
 			else if (isFg && !isBg && !fg) fg = color;
 		}
 	}

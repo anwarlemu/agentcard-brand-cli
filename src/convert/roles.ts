@@ -50,7 +50,7 @@ export function colorToken(rgba: RGBA, family: Family, palette: Palette, series?
 	const pick = (name: string) => ({ name, alpha: 1 });
 	if (family === 'text') return pick(t > 0.82 ? 'text-default' : t > 0.55 ? 'text-muted' : t > 0.25 ? 'text-subtle' : 'text-inverse');
 	if (family === 'border') return pick(t < 0.12 ? 'border-subtle' : t < 0.32 ? 'border-default' : t < 0.6 ? 'border-strong' : 'text-default');
-	return pick(t < 0.015 ? 'bg-default' : t < 0.09 ? 'bg-subtle' : t < 0.2 ? 'bg-frame' : t < 0.45 ? 'border-strong' : t < 0.82 ? 'text-subtle' : 'action-primary');
+	return pick(t < 0.015 ? 'bg-default' : t < 0.09 ? 'bg-subtle' : t < 0.2 ? 'bg-frame' : t < 0.45 ? 'border-strong' : t < 0.82 ? 'text-subtle' : 'bg-inverse');
 }
 
 /** Text on a strong color (a blue button, a green badge) is the brand's text on color; on an opposite panel, inverse. */

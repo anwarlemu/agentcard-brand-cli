@@ -8,7 +8,7 @@ import { convertCss, newStats } from '../src/convert/css.js';
 import { convertMarkup } from '../src/convert/markup.js';
 import { convertNative } from '../src/convert/native.js';
 import { sitePalette } from '../src/convert/palette.js';
-import { convertClasses, convertScript } from '../src/convert/script.js';
+import { convertClasses, convertScript, lineFamily } from '../src/convert/script.js';
 import { convertSvgMark } from '../src/convert/svg.js';
 import { cursorPreToolUse, preToolUse, stop } from '../src/hooks/handlers.js';
 import { patchWrites } from '../src/hooks/payload.js';
@@ -115,6 +115,10 @@ describe('convert', () => {
 		expect(convertClasses('bg-white text-gray-500 hover:bg-blue-600 border-zinc-200', pal, stats(), true)).toBe('bg-surface text-fg-muted hover:bg-brand border-line-subtle');
 		expect(convertScript("const s = { color: '#ff0000', marginTop: 16 }; const series = ['#22c55e', '#f59e0b', '#8b5cf6'];", pal, stats(), {})).toMatch(/marginTop: 'var\(--ds-space-4\)'.*#0000FF.*#4B50F4/s);
 		expect(convertNative('val bg = Color(0xFF0B0B0C)\nText(color = Color(0xFFF5F5F5))', sitePalette('body{background:#0b0b0c;color:#f5f5f5}'), stats(), 'site')).toContain('Color(0xFFFFFFFF)');
+	});
+	it('reads a text color by its property, not by the words in the line', () => {
+		expect(lineFamily('Text("Your cards").foregroundColor(Color(hex: "#A1A1AA"))')).toBe('text');
+		expect(lineFamily('RoundedRectangle(cornerRadius: 12).fill(Color(hex: "#18181B"))')).toBe('surface');
 	});
 	it('puts wide containers on the ruled column, on a site only', () => {
 		const css = ':root { --max-w: 1200px; --measure: 640px } .wrap { max-width: 1280px } .form { max-width: 480px }';

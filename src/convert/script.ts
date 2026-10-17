@@ -138,7 +138,15 @@ const LITERAL = /(["'`])(#[0-9a-fA-F]{6}(?:[0-9a-fA-F]{2})?|#[0-9a-fA-F]{3,4}|(?
 const COLORISH_LINE = /(colou?r|bg|background|fill|stroke|border|fg|foreground|tint|accent|palette|theme|series|stops?)/i;
 
 /** The family a code line suggests: a background, a border, else text. */
-export const lineFamily = (line: string): Family => (/(bg|background|surface|fill|canvas|card|panel)/i.test(line) ? 'surface' : /(border|stroke|line|divider|outline|ring)/i.test(line) ? 'border' : 'text');
+export const lineFamily = (line: string): Family =>
+	// A property that names text decides first: words in the line's own copy ("Your cards") must not make it a surface.
+	/\b(foregroundColor|foregroundStyle|textColor|setTextColor|titleColor|tintColor|contentColor)\b/.test(line) && !/\b(background|backgroundColor|fill)\s*[(:=]/.test(line)
+		? 'text'
+		: /(bg|background|surface|fill|canvas|card|panel)/i.test(line)
+			? 'surface'
+			: /(border|stroke|line|divider|outline|ring)/i.test(line)
+				? 'border'
+				: 'text';
 
 /** Color strings in any language become the brand's literal for the same role. A run of strong colors is a chart. */
 export function convertLiterals(text: string, palette: Palette, stats: Stats, hex: (t: ColorToken | 'transparent') => string) {
