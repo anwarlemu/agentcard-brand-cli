@@ -11,7 +11,7 @@ import { FramePreview } from "@www/components/frame-preview";
 import { Preview } from "@www/components/preview";
 import { InlineCode, Prose } from "@www/components/prose";
 import { examples } from "@www/lib/examples.generated";
-import { APPLY_COMMAND, GROUPS, type Item, exampleSource, findItem, items, sourceOf } from "@www/lib/registry";
+import { APPLY_COMMAND, GROUPS, type Item, exampleSource, findItem, items, needsPreviewFrame, sourceOf } from "@www/lib/registry";
 
 export function generateStaticParams() {
   return items.map((i) => ({ name: i.name }));
@@ -47,10 +47,8 @@ export default async function ComponentPage({ params }: { params: Promise<{ name
   // The main example first (a page, then the preview), then its states (Open, Few...) in their own order.
   const MAIN = ["Block", "Site"];
   const demos = Object.entries(examples[item.name] ?? {}).sort(([a], [b]) => (MAIN.includes(a) ? MAIN.indexOf(a) : 9) - (MAIN.includes(b) ? MAIN.indexOf(b) : 9));
-  // Sections and pages draw at a real window width; a command palette draws in a frame too, since it scrolls its
-  // selected row into view on mount, which would move the docs page.
-  const framed = item.type === "site" || item.type === "block" || item.name === "command";
-  const requires = item.dependencies.filter((d) => d !== "utils");
+  // Isolate demos that focus, lock scrolling, or open overlays from the surrounding docs.
+  const framed = needsPreviewFrame(item);
   const sections = [
     ...(demos.length ? [{ id: "preview", label: "Preview" }] : []),
     { id: "usage", label: "Usage" },
@@ -82,47 +80,7 @@ export default async function ComponentPage({ params }: { params: Promise<{ name
           </div>
         )}
 
-        <Section id="usage" title="Usage">
-          <div className="grid gap-4">
-            <Window name="use-it-for.md" className="bg-note shadow-guide" bodyClassName="px-4.5 pt-3.5 pb-4">
-              <p className="text-body-sm leading-relaxed text-fg">
-                <Prose text={item.use_for} />
-              </p>
-            </Window>
-            {item.never.length > 0 && (
-              <Window name="never.md" className="shadow-guide" bodyClassName="px-4.5 pt-3.5 pb-4">
-                <ul className="grid gap-1.5 text-body-sm leading-relaxed text-fg">
-                  {item.never.map((n) => (
-                    <li key={n} className="flex gap-2.5">
-                      <span aria-hidden className="mt-2.5 h-px w-2.5 shrink-0 bg-danger" />
-                      <Prose text={n} />
-                    </li>
-                  ))}
-                </ul>
-              </Window>
-            )}
-          </div>
-          {(requires.length > 0 || item.npm.length > 0) && (
-            <p className="mt-5 text-body-sm text-fg-muted">
-              Brings{" "}
-              {requires.map((d, i) => (
-                <span key={d}>
-                  <Link href={`/components/${d}`} className="rounded-sm text-fg underline decoration-line-brand underline-offset-[0.2em] outline-none transition-colors duration-150 ease-out hover:text-fg-brand focus-visible:outline-2 focus-visible:outline-focus-ring">
-                    {d}
-                  </Link>
-                  {i < requires.length - 1 || item.npm.length ? ", " : ""}
-                </span>
-              ))}
-              {item.npm.map((p, i) => (
-                <span key={p}>
-                  <InlineCode>{p}</InlineCode>
-                  {i < item.npm.length - 1 ? ", " : ""}
-                </span>
-              ))}{" "}
-              with it.
-            </p>
-          )}
-        </Section>
+        <Usage item={item} />
 
         {item.examples.length > 0 && (
           <Section id="example" title="Example">
@@ -146,5 +104,54 @@ export default async function ComponentPage({ params }: { params: Promise<{ name
         <CtaCard command={APPLY_COMMAND} />
       </div>
     </div>
+  );
+}
+
+function Usage({ item }: { item: Item }) {
+  const requires = item.dependencies.filter((d) => d !== "utils");
+  return (
+    <Section id="usage" title="Usage">
+      <div className="grid gap-4">
+        <Window name="use-it-for.md" className="bg-note shadow-guide" bodyClassName="px-4.5 pt-3.5 pb-4">
+          <p className="text-body-sm leading-relaxed text-fg">
+            <Prose text={item.use_for} />
+          </p>
+        </Window>
+        {item.never.length > 0 && (
+          <Window name="never.md" className="shadow-guide" bodyClassName="px-4.5 pt-3.5 pb-4">
+            <ul className="grid gap-1.5 text-body-sm leading-relaxed text-fg">
+              {item.never.map((n) => (
+                <li key={n} className="flex gap-2.5">
+                  <span aria-hidden className="mt-2.5 h-px w-2.5 shrink-0 bg-danger" />
+                  <Prose text={n} />
+                </li>
+              ))}
+            </ul>
+          </Window>
+        )}
+      </div>
+      {(requires.length > 0 || item.npm.length > 0) && (
+        <p className="mt-5 text-body-sm text-fg-muted">
+          Brings{" "}
+          {requires.map((d, i) => (
+            <span key={d}>
+              {findItem(d) ? (
+                <Link href={`/components/${d}`} className="rounded-sm text-fg underline decoration-line-brand underline-offset-[0.2em] outline-none transition-colors duration-150 ease-out hover:text-fg-brand focus-visible:outline-2 focus-visible:outline-focus-ring">
+                  {d}
+                </Link>
+              ) : <InlineCode>{d}</InlineCode>}
+              {i < requires.length - 1 || item.npm.length ? ", " : ""}
+            </span>
+          ))}
+          {item.npm.map((p, i) => (
+            <span key={p}>
+              <InlineCode>{p}</InlineCode>
+              {i < item.npm.length - 1 ? ", " : ""}
+            </span>
+          ))}{" "}
+          with it.
+        </p>
+      )}
+    </Section>
   );
 }

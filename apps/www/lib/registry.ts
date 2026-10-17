@@ -40,3 +40,7 @@ export const findItem = (name: string) => items.find((i) => i.name === name);
 const root = path.join(process.cwd(), "../../registry");
 export const sourceOf = (rel: string) => readFileSync(path.join(root, rel), "utf8");
 export const exampleSource = (name: string) => sourceOf(`examples/${name}.tsx`);
+
+// These demos open overlays or focus/scroll their content on mount. Keep those effects inside a frame.
+const FRAMED_COMPONENTS = new Set(["command", "dialog", "dropdown-menu", "popover", "select", "sheet", "tooltip"]);
+export const needsPreviewFrame = (item: Pick<Item, "type" | "name">) => item.type === "site" || item.type === "block" || FRAMED_COMPONENTS.has(item.name);

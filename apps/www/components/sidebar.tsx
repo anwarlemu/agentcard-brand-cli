@@ -20,7 +20,7 @@ function useCurrent() {
   return pathname.startsWith("/components/") ? pathname.slice("/components/".length) : undefined;
 }
 
-function Groups({ groups, current, query }: { groups: Group[]; current?: string; query: string }) {
+function Groups({ groups, current, query, onNavigate }: { groups: Group[]; current?: string; query: string; onNavigate: () => void }) {
   const q = query.trim().toLowerCase();
   const shown = groups.map((g) => ({ ...g, items: q ? g.items.filter((i) => i.title.toLowerCase().includes(q) || i.name.includes(q)) : g.items })).filter((g) => g.items.length);
   if (!shown.length) return <p className="px-2.5 text-body-sm text-fg-muted">Nothing matches.</p>;
@@ -32,7 +32,7 @@ function Groups({ groups, current, query }: { groups: Group[]; current?: string;
           <ul className="grid gap-0.5">
             {g.items.map((i) => (
               <li key={i.name}>
-                <Link href={`/components/${i.name}`} aria-current={i.name === current ? "page" : undefined} data-item={i.name} className={LINK}>
+                <Link href={`/components/${i.name}`} scroll={false} onNavigate={onNavigate} aria-current={i.name === current ? "page" : undefined} data-item={i.name} className={LINK}>
                   {i.title}
                 </Link>
               </li>
@@ -53,20 +53,7 @@ export function LibraryNav({ groups }: { groups: Group[] }) {
   const current = useCurrent();
   const [query, setQuery] = React.useState("");
   const [open, setOpen] = React.useState(false);
-  const listRef = React.useRef<HTMLDivElement>(null);
-  React.useEffect(() => setOpen(false), [current]);
-
-  // Bring the current item into view only when it is out of sight in the list (a page opened from a link or the
-  // search), measured on screen, so picking an item from the list never moves the list under the pointer.
-  React.useEffect(() => {
-    const list = listRef.current;
-    const link = current ? list?.querySelector<HTMLElement>(`[data-item="${current}"]`) : null;
-    if (!list || !link || list.scrollHeight <= list.clientHeight) return;
-    const box = list.getBoundingClientRect();
-    const row = link.getBoundingClientRect();
-    if (row.top >= box.top && row.bottom <= box.bottom) return;
-    list.scrollTop += row.top - box.top - box.height / 3;
-  }, [current]);
+  // The shared layout owns this list: route changes must preserve its scroll and filter.
 
   return (
     <nav aria-label="Library" data-open={open || undefined} className="group/nav overflow-hidden rounded-card border border-hairline bg-surface shadow-guide lg:sticky lg:top-6">
@@ -78,9 +65,9 @@ export function LibraryNav({ groups }: { groups: Group[] }) {
             </>
           } />
       </button>
-      <div ref={listRef} className={cn("grid gap-4.5 px-2.5 pt-3.5 pb-4 lg:max-h-[calc(100svh-var(--spacing)*20)] lg:overflow-y-auto lg:[scrollbar-width:none]", !open && "max-lg:hidden")}>
+      <div className={cn("grid gap-4.5 px-2.5 pt-3.5 pb-4 lg:max-h-[calc(100svh-var(--spacing)*20)] lg:overflow-y-auto lg:overscroll-contain lg:[scrollbar-width:none]", !open && "max-lg:hidden")}>
         <Input variant="search" value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Filter the library" aria-label="Filter the library" />
-        <Groups groups={groups} current={current} query={query} />
+        <Groups groups={groups} current={current} query={query} onNavigate={() => setOpen(false)} />
       </div>
     </nav>
   );

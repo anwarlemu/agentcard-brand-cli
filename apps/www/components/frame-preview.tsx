@@ -9,6 +9,37 @@ import { cn } from "@/lib/utils";
 
 const WIDTHS = { desktop: 1440, phone: 390 } as const;
 const MAX_HEIGHT = 2400;
+// Next's development runtime needs cookies and same-origin HMR. Published previews stay isolated.
+const PREVIEW_SANDBOX = process.env.NODE_ENV === "development" ? "allow-scripts allow-same-origin" : "allow-scripts";
+
+// Each mounted frame owns its height listener, including device changes and navigation.
+function MeasuredFrame({ src, label, width, height, scale, onHeightChange }: { src: string; label: string; width: number; height: number; scale: number; onHeightChange: (height: number) => void }) {
+  const frame = React.useRef<HTMLIFrameElement>(null);
+  const updateHeight = React.useEffectEvent(onHeightChange);
+  React.useEffect(() => {
+    // Sandboxed previews have an opaque origin, so authenticate the sending window.
+    const receiveHeight = (event: MessageEvent) => {
+      if (event.source !== frame.current?.contentWindow || event.data?.type !== "agentcard:preview-height") return;
+      const height = event.data.height;
+      if (typeof height === "number" && Number.isFinite(height)) {
+        updateHeight(Math.max(120, Math.min(MAX_HEIGHT, Math.ceil(height))));
+      }
+    };
+    window.addEventListener("message", receiveHeight);
+    return () => window.removeEventListener("message", receiveHeight);
+  }, [src]);
+  return (
+    <iframe
+      ref={frame}
+      src={src}
+      title={label}
+      loading="lazy"
+      sandbox={PREVIEW_SANDBOX}
+      className="block origin-top-left border-0"
+      style={{ width, height, transform: `scale(${scale})` }}
+    />
+  );
+}
 
 /**
  * A full-page example in an iframe at a real window width, scaled down to the frame: desktop (1440px) or phone
@@ -16,7 +47,6 @@ const MAX_HEIGHT = 2400;
  */
 export function FramePreview({ src, name, label }: { src: string; name: string; label: string; surface?: "site" }) {
   const box = React.useRef<HTMLDivElement>(null);
-  const frame = React.useRef<HTMLIFrameElement>(null);
   const [device, setDevice] = React.useState<keyof typeof WIDTHS>("desktop");
   const [boxWidth, setBoxWidth] = React.useState(0);
   const [pageHeight, setPageHeight] = React.useState(900);
@@ -31,16 +61,6 @@ export function FramePreview({ src, name, label }: { src: string; name: string; 
     return () => observer.disconnect();
   }, []);
 
-  // The page's height once it has laid out at this width, and again whenever it changes (images, stories).
-  const measure = React.useCallback(() => {
-    const doc = frame.current?.contentDocument;
-    const root = doc?.querySelector<HTMLElement>("[data-preview-root]");
-    if (!root) return;
-    // The example's own height, not the document's (which is never shorter than the frame).
-    const observer = new ResizeObserver(() => setPageHeight(Math.max(120, Math.min(MAX_HEIGHT, Math.ceil(root.getBoundingClientRect().height)))));
-    observer.observe(root);
-  }, []);
-
   return (
     <figure className="min-w-0">
       <div className="mb-3 flex items-center justify-between gap-3">
@@ -53,15 +73,7 @@ export function FramePreview({ src, name, label }: { src: string; name: string; 
         <div ref={box} className={cn("relative overflow-hidden", device === "phone" ? "bg-subtle" : "bg-surface")} style={{ height: scale ? pageHeight * scale : 400 }}>
           <div className={cn("absolute top-0", device === "phone" ? "left-1/2 -translate-x-1/2 bg-surface" : "left-0")} style={{ width: width * scale || "100%" }}>
             {scale > 0 && (
-              <iframe
-                ref={frame}
-                key={device}
-                src={src}
-                title={label}
-                onLoad={measure}
-                className="block origin-top-left border-0"
-                style={{ width, height: pageHeight, transform: `scale(${scale})` }}
-              />
+              <MeasuredFrame key={device} src={src} label={label} width={width} height={pageHeight} scale={scale} onHeightChange={setPageHeight} />
             )}
           </div>
         </div>

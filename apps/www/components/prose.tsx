@@ -6,5 +6,5 @@ export function InlineCode({ children }: { children: React.ReactNode }) {
 
 // Docs text from the registry's frontmatter: `backticked` names become inline code.
 export function Prose({ text }: { text: string }) {
-  return <>{text.split(/(`[^`]+`)/g).map((part, i) => (part.startsWith("`") && part.endsWith("`") ? <InlineCode key={i}>{part.slice(1, -1)}</InlineCode> : part))}</>;
+  return <>{Array.from(text.matchAll(/`([^`]+)`|([^`]+|`)/g), (match) => (match[1] !== undefined ? <InlineCode key={match.index}>{match[1]}</InlineCode> : match[0]))}</>;
 }

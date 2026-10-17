@@ -10,7 +10,7 @@ export function Thumb({ example: Example, scale = 0.6, align = "center", classNa
   if (src)
     return (
       <div className={cn("relative h-52 overflow-hidden bg-surface", className)}>
-        <iframe inert aria-hidden tabIndex={-1} src={src} title="" className="pointer-events-none absolute top-0 left-0 border-0" style={{ width: `${100 / scale}%`, height: `${100 / scale}%`, transform: `scale(${scale})`, transformOrigin: "0 0" }} />
+        <iframe loading="lazy" sandbox="allow-same-origin" inert aria-hidden tabIndex={-1} src={src} title="" className="pointer-events-none absolute top-0 left-0 border-0" style={{ width: `${100 / scale}%`, height: `${100 / scale}%`, transform: `scale(${scale})`, transformOrigin: "0 0" }} />
       </div>
     );
   return (
