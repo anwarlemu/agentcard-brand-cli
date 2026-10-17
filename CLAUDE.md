@@ -49,7 +49,9 @@ npm run ci           # build, limits, registry, tests; must pass before you push
 - Library items use only brand token classes (the value check runs over `registry/` in CI), follow the animation
   rules, take data through props (no Next imports, auth or analytics), and have a docs entry and an example.
 - Apps install the `release` branch: a compiled tree (no source, intake or dev dependencies) so installs take
-  seconds. `npm run release` runs the checks, builds it and pushes it; nothing reaches apps until then.
+  seconds. `npm run release` runs the checks, builds it and pushes it; nothing reaches apps until then. CI and the
+  release workflow are in `scripts/ci.workflow.yml` and `scripts/release.workflow.yml`: copy them to
+  `.github/workflows/` with a token that has the workflow scope (`gh auth refresh -s workflow`).
 - Test changes on real projects (copies in a scratch folder, never the originals): a site, a plain HTML site, a dark
   site, a Tailwind app and a native sample.
 
