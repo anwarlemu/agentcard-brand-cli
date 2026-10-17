@@ -56,12 +56,16 @@ export function LibraryNav({ groups }: { groups: Group[] }) {
   const listRef = React.useRef<HTMLDivElement>(null);
   React.useEffect(() => setOpen(false), [current]);
 
+  // Bring the current item into view only when it is out of sight in the list (a page opened from a link or the
+  // search), measured on screen, so picking an item from the list never moves the list under the pointer.
   React.useEffect(() => {
     const list = listRef.current;
     const link = current ? list?.querySelector<HTMLElement>(`[data-item="${current}"]`) : null;
-    if (!list || !link) return;
-    const top = link.offsetTop - list.offsetTop;
-    if (top < list.scrollTop || top + link.offsetHeight > list.scrollTop + list.clientHeight) list.scrollTop = top - list.clientHeight / 3;
+    if (!list || !link || list.scrollHeight <= list.clientHeight) return;
+    const box = list.getBoundingClientRect();
+    const row = link.getBoundingClientRect();
+    if (row.top >= box.top && row.bottom <= box.bottom) return;
+    list.scrollTop += row.top - box.top - box.height / 3;
   }, [current]);
 
   return (
