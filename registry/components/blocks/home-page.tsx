@@ -13,6 +13,36 @@ import { Testimonials } from "@/components/site/testimonials";
 import { Button } from "@/components/ui/button";
 import { Window } from "@/components/ui/window";
 
+// The footer as agentcard.sh carries it on every page: five columns, the line, the running merchant names.
+const FOOTER = {
+  description: (
+    <>
+      We want agents to buy anything online
+      <br />
+      that you can buy as a human.
+    </>
+  ),
+  groups: [
+    { title: "Product", links: [{ label: "Vault", href: "/vault" }, { label: "Issuing", href: "/issuing" }, { label: "Voice", href: "/voice" }, { label: "Purchase Agent", href: "/purchase-agent" }, { label: "Pricing", href: "/pricing" }, { label: "FAQ", href: "/#faq" }] },
+    { title: "Developers", links: [{ label: "Documentation", href: "https://docs.agentcard.sh" }, { label: "API reference", href: "https://docs.agentcard.sh/api-reference" }] },
+    { title: "Company", links: [{ label: "About", href: "/about" }, { label: "Changelog", href: "/updates" }, { label: "Trust Center", href: "/trust" }] },
+    { title: "Legal", links: [{ label: "Privacy Policy", href: "/privacy" }, { label: "Terms of Service", href: "/terms" }, { label: "Card Terms", href: "/card-terms" }, { label: "Card Terms (International)", href: "/card-terms-international" }] },
+    { title: "Social", links: [{ label: "X / Twitter", href: "https://x.com/agentcardhq" }, { label: "Instagram", href: "https://www.instagram.com/agentcardhq/" }] },
+  ],
+  merchants: ["Amazon", "Walmart", "Target", "Best Buy", "Home Depot", "Lowe’s", "Macy’s", "Wayfair", "Staples", "DoorDash", "Good Eggs", "Flights"],
+};
+
+// The dock as agentcard.sh carries it: Home, the Products menu, About, Pricing, and Get started.
+const PRODUCTS = {
+  label: "Products",
+  items: [
+    { title: "Vault", description: "Store customers’ cards and buy with an agent.", href: "/vault" },
+    { title: "Issuing", description: "One-time and multi-use cards for your agent.", href: "/issuing" },
+    { title: "Voice", description: "Approve an agent’s purchase by speaking.", href: "/voice" },
+    { title: "Purchase Agent", description: "Buy from Amazon, DoorDash and more.", href: "/purchase-agent" },
+  ],
+};
+
 // The home page as agentcard.sh draws it: the blue hero, the customer cases, the products, the integrations, the
 // customers and the FAQ, the blue footer, and the glass dock. Sample content in its shape; replace it with your own,
 // and the stand-in pictures with your imagery.
@@ -120,6 +150,7 @@ export function HomePage() {
             { layout: "lead", title: "Vault", description: "Store customers’ cards and make purchases with agents safely.", action: { label: "Explore Vault", href: "/vault" }, media: <CardStack /> },
             { layout: "half", title: "Purchase Agent", description: "Integrate our agent into yours and buy from many online stores.", action: { label: "Read the docs", href: "#", icon: <ArrowUpRight /> }, media: <Screen name="purchase.agent" rows={["Amazon", "DoorDash", "Walmart"]} /> },
             { layout: "half", title: "Issuing", description: "Create one-time and multi-use cards for your agent.", action: { label: "Explore Issuing", href: "/issuing" }, media: <Screen name="issuing.product" rows={["Agentcard ···· 4832", "Agentcard ···· 7719"]} /> },
+            { layout: "lead", title: "Voice", description: "Let customers approve their agent’s purchases by speaking, with no screen to look at.", action: { label: "Explore Voice", href: "/voice" }, media: <Screen name="voice.product" rows={["Your usual from Rose Indian, $34.20", "Approved"]} /> },
           ]}
         />
       </SiteSection>
@@ -138,6 +169,22 @@ export function HomePage() {
                     <IntegrationCode name={`${tool.toLowerCase().replaceAll(" ", "-")}.ts`}>{CODE}</IntegrationCode>
                     <IntegrationScreen name={tool.toUpperCase()} address="vault · user-12345">
                       <p className="text-micro">The card is swapped in at checkout</p>
+                    </IntegrationScreen>
+                  </>
+                ),
+              })),
+            },
+            {
+              title: "Messaging integrations",
+              description: "iMessage agents built on Linq and Blooio can use Agentcard to complete payments.",
+              options: ["Linq", "Blooio"].map((tool) => ({
+                label: tool,
+                panel: (
+                  <>
+                    <IntegrationCode name={`${tool.toLowerCase()} payments`}>{`POST api.${tool.toLowerCase()}.com/v3/payments\n\n{ "amount": 2306, "merchant": "amazon.com" }`}</IntegrationCode>
+                    <IntegrationScreen>
+                      <p className="w-fit rounded-card bg-surface px-3 py-1.5 text-fg">Found it. Ready to check out?</p>
+                      <p className="ml-auto w-fit rounded-card bg-brand px-3 py-1.5">Approved</p>
                     </IntegrationScreen>
                   </>
                 ),
@@ -162,7 +209,12 @@ export function HomePage() {
               label: "General",
               items: [
                 { question: "What does Agentcard do?", answer: "It lets AI agents buy anything online: it stores your customers’ cards or issues new ones, and pays where a human would." },
+                { question: "Vault or Issuing: which should we start with?", answer: "Vault if your customers already have cards they want their agent to use; Issuing if the agent should spend from a card you fund." },
+                { question: "Is Agentcard B2B or for consumers?", answer: "Both. Consumer apps store their users’ cards; companies give cards to their own agents." },
                 { question: "Does the merchant need to integrate anything?", answer: "No. The agent pays at checkout with a card, as a person would." },
+                { question: "How is this different from Stripe Link?", answer: "Link fills in a saved card for a person. Agentcard lets an agent pay on its own, within the limits the owner sets." },
+                { question: "How does the Purchase Agent work?", answer: "It drives a real browser through checkout and hands the result back to your agent." },
+                { question: "Do you support x402, AP2 or other agent payment protocols?", answer: "Yes, where the merchant supports them; a card works everywhere else." },
               ],
             },
             { label: "Vault", items: [{ question: "Where are the cards stored?", answer: "Cards are encrypted on the user’s device before they are stored." }] },
@@ -171,24 +223,9 @@ export function HomePage() {
         />
       </SiteSection>
 
-      <SiteFooter
-        backing="Backed by Y Combinator"
-        description={
-          <>
-            We want agents to buy anything online
-            <br />
-            that you can buy as a human.
-          </>
-        }
-        groups={[
-          { title: "Product", links: [{ label: "Vault", href: "/vault" }, { label: "Issuing", href: "/issuing" }, { label: "Pricing", href: "/pricing" }] },
-          { title: "Company", links: [{ label: "About", href: "/about" }, { label: "Changelog", href: "/updates" }] },
-          { title: "Legal", links: [{ label: "Terms of Service", href: "/terms" }, { label: "Card Terms", href: "/card-terms" }] },
-        ]}
-        merchants={["Amazon", "Walmart", "Target", "Best Buy", "Home Depot", "DoorDash"]}
-      />
+      <SiteFooter backing="Backed by Y Combinator" description={FOOTER.description} groups={FOOTER.groups} merchants={FOOTER.merchants} />
 
-      <NavDock links={NAV.links} menu={NAV.menu} action={NAV.action} />
+      <NavDock links={NAV.links} menu={PRODUCTS} action={NAV.action} />
     </main>
   );
 }

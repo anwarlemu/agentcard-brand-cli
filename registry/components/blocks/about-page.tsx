@@ -5,6 +5,36 @@ import { SiteFooter } from "@/components/site/site-footer";
 import { SiteHeader } from "@/components/site/site-header";
 import { TeamDirectory } from "@/components/site/team-directory";
 
+// The footer as agentcard.sh carries it on every page: five columns, the line, the running merchant names.
+const FOOTER = {
+  description: (
+    <>
+      We want agents to buy anything online
+      <br />
+      that you can buy as a human.
+    </>
+  ),
+  groups: [
+    { title: "Product", links: [{ label: "Vault", href: "/vault" }, { label: "Issuing", href: "/issuing" }, { label: "Voice", href: "/voice" }, { label: "Purchase Agent", href: "/purchase-agent" }, { label: "Pricing", href: "/pricing" }, { label: "FAQ", href: "/#faq" }] },
+    { title: "Developers", links: [{ label: "Documentation", href: "https://docs.agentcard.sh" }, { label: "API reference", href: "https://docs.agentcard.sh/api-reference" }] },
+    { title: "Company", links: [{ label: "About", href: "/about" }, { label: "Changelog", href: "/updates" }, { label: "Trust Center", href: "/trust" }] },
+    { title: "Legal", links: [{ label: "Privacy Policy", href: "/privacy" }, { label: "Terms of Service", href: "/terms" }, { label: "Card Terms", href: "/card-terms" }, { label: "Card Terms (International)", href: "/card-terms-international" }] },
+    { title: "Social", links: [{ label: "X / Twitter", href: "https://x.com/agentcardhq" }, { label: "Instagram", href: "https://www.instagram.com/agentcardhq/" }] },
+  ],
+  merchants: ["Amazon", "Walmart", "Target", "Best Buy", "Home Depot", "Lowe’s", "Macy’s", "Wayfair", "Staples", "DoorDash", "Good Eggs", "Flights"],
+};
+
+// The dock as agentcard.sh carries it: Home, the Products menu, About, Pricing, and Get started.
+const PRODUCTS = {
+  label: "Products",
+  items: [
+    { title: "Vault", description: "Store customers’ cards and buy with an agent.", href: "/vault" },
+    { title: "Issuing", description: "One-time and multi-use cards for your agent.", href: "/issuing" },
+    { title: "Voice", description: "Approve an agent’s purchase by speaking.", href: "/voice" },
+    { title: "Purchase Agent", description: "Buy from Amazon, DoorDash and more.", href: "/purchase-agent" },
+  ],
+};
+
 // The about page as agentcard.sh draws it: the bare header, the page's opening on the reading column, the team and the
 // investors in directory windows, the blue footer and the glass dock. Sample people; replace them with your own.
 
@@ -35,26 +65,28 @@ export function AboutPage() {
       <div className="mx-auto grid w-(--ds-frame-column) max-w-(--ds-layout-text) gap-16 pt-16 pb-28">
         <section aria-label="Team">
           <Eyebrow className="mb-3.5">Team</Eyebrow>
-          <TeamDirectory name="team.dir" tone="blue" columns={2} people={[person("Ada Okafor", "CEO & Co-Founder"), person("Luis Romero", "CTO & Co-Founder")]} />
+          <TeamDirectory name="team.dir" tone="blue" columns={2} people={[person("Ada Okafor", "CEO & Co-Founder"), person("Luis Romero", "CTO & Co-Founder"), person("Mara Lindqvist", "Member of Technical Staff"), person("Noor Haddad", "Member of Marketing Staff")]} />
+          <p className="mt-3.5 text-body-sm text-fg-muted">
+            We are not hiring, but you can always send us an{" "}
+            <a href="mailto:hello@example.com" className="text-fg underline decoration-line-brand underline-offset-[0.2em] transition-colors duration-150 ease-out hover:text-fg-brand">
+              email
+            </a>
+            .
+          </p>
         </section>
         <section aria-label="Investors">
           <Eyebrow className="mb-3.5">Investors</Eyebrow>
           <TeamDirectory
             name="investors.dir"
             columns={3}
-            people={[person("Priya Raman", "Co-founder, a fund"), person("Tom Becker", "CEO, a commerce platform"), person("Elena Ruiz", "CTO, a CRM")]}
-            footer={[{ label: "Backed by Y Combinator", href: "https://www.ycombinator.com" }]}
+            people={[person("Priya Raman", "Co-founder, a fund"), person("Tom Becker", "CEO, a commerce platform"), person("Elena Ruiz", "CTO, a CRM"), person("Sam Wu", "CEO, an auth company"), person("Jonas Berg", "CEO, a cloud"), person("Ines Duarte", "Board, an AI lab")]}
+            footer={[{ label: "Backed by Y Combinator", href: "https://www.ycombinator.com" }, { label: "Pioneer", href: "https://pioneer.app" }]}
           />
         </section>
       </div>
-      <SiteFooter
-        backing="Backed by Y Combinator"
-        groups={[
-          { title: "Product", links: [{ label: "Vault", href: "/vault" }, { label: "Pricing", href: "/pricing" }] },
-          { title: "Company", links: [{ label: "About", href: "/about" }] },
-        ]}
-      />
+      <SiteFooter backing="Backed by Y Combinator" description={FOOTER.description} groups={FOOTER.groups} merchants={FOOTER.merchants} />
       <NavDock
+        menu={PRODUCTS}
         links={[
           { label: "Home", href: "/" },
           { label: "About", href: "/about", current: true },
