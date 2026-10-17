@@ -834,7 +834,7 @@
 				"align-items": "center",
 				"padding": "var(--ds-space-0-5) var(--ds-space-2)",
 				"border": "1px solid var(--ds-color-border-brand)",
-				"border-radius": "var(--ds-radius-chip)",
+				"border-radius": "0",
 				"color": "var(--ds-color-text-brand)",
 				"font-family": "var(--ds-font-display)",
 				"font-size": "var(--ds-text-micro)",
@@ -842,9 +842,9 @@
 				"text-transform": "uppercase",
 				"line-height": "1.75"
 			},
-			"tailwind": "inline-flex items-center px-2 py-0.5 border border-line-brand rounded-chip text-fg-brand font-display text-micro tracking-caps uppercase leading-[1.75]",
+			"tailwind": "inline-flex items-center px-2 py-0.5 border border-line-brand rounded-none text-fg-brand font-display text-micro tracking-caps uppercase leading-[1.75]",
 			"rules": [
-				"A small tag: 10px display caps tracked wide, blue on white with a blue border and 2px corners (Added, Fixed, New).",
+				"A small tag: 10px display caps tracked wide, blue on white with a blue border and square corners (Added, Fixed, New).",
 				"Tags are the one place type is set in caps."
 			],
 			"source": "src/app/globals.css (.v7-upd-tag)"
@@ -992,7 +992,7 @@
 			"tailwind": "border-b border-line font-display text-body-sm font-medium tracking-[-0.01em]",
 			"rules": [
 				"Questions in a 680px list: 14px display at 500, a 14 percent rule between, a drawn + that turns to an x when open.",
-				"The answer is 16px Inter at 68 percent ink, sliding open in 200ms.",
+				"The answer is 14px Inter at 68 percent ink, sliding open in 200ms.",
 				"On the brand's page the list sits in a window with topic tabs above it."
 			],
 			"source": "src/app/globals.css:1015 (.faq-list)"
