@@ -12,7 +12,7 @@ const MAX_HEIGHT = 2400;
  * A full-page example in an iframe at a real window width, scaled down to the frame: desktop (1440px) or phone
  * (390px). The frame takes the page's own height (up to a cap) so nothing scrolls inside it.
  */
-export function FramePreview({ src, label, surface }: { src: string; label: string; surface: "site" | "product" }) {
+export function FramePreview({ src, label, surface }: { src: string; label: string; surface: "site" }) {
   const box = React.useRef<HTMLDivElement>(null);
   const frame = React.useRef<HTMLIFrameElement>(null);
   const [device, setDevice] = React.useState<keyof typeof WIDTHS>("desktop");
@@ -40,9 +40,9 @@ export function FramePreview({ src, label, surface }: { src: string; label: stri
   }, []);
 
   return (
-    <figure className="min-w-0 rounded-card bg-ring-tint p-2">
+    <figure className="min-w-0 rounded-card bg-paper p-2">
       <figcaption className="flex items-center gap-2 px-2 pt-0.5 pb-2 text-caption text-fg-muted">
-        <span aria-hidden className={cn("size-1.5 rounded-pill", surface === "product" ? "bg-neutral-50" : "bg-brand")} />
+        <span aria-hidden className={cn("size-1.5 rounded-pill", "bg-brand")} />
         {label}
         <span className="ml-auto flex items-center gap-1">
           {(Object.keys(WIDTHS) as (keyof typeof WIDTHS)[]).map((d) => (

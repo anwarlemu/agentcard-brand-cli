@@ -14,7 +14,7 @@ export function Header({ repo }: { name: string; repo: string; counts?: Record<s
   ].map((l) => ({ ...l, current: pathname.startsWith(l.href) }));
   return (
     <div className="relative z-40 h-20">
-      <SiteHeader ground="white" overlay logoLabel="Agentcard UI, home" links={links} action={{ label: "GitHub", href: repo }} />
+      <SiteHeader ground={pathname === "/" ? "blue" : "white"} overlay logoLabel="Agentcard UI, home" links={links} action={{ label: "GitHub", href: repo }} />
     </div>
   );
 }

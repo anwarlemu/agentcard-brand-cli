@@ -19,20 +19,15 @@ export async function generateMetadata({ params }: { params: Promise<{ name: str
   return item ? { title: item.title, description: item.description } : {};
 }
 
-const SURFACE_LABEL = { site: "Site", product: "Product", both: "Site and product" } as const;
-const TYPE_LABEL: Record<Item["type"], string> = { ui: "Component", product: "Product", site: "Site", block: "Block", visual: "Visual", hook: "Hook", lib: "Library" };
+const TYPE_LABEL: Record<Item["type"], string> = { ui: "Component", product: "Product", site: "Section", block: "Page", visual: "Visual", hook: "Hook", lib: "Library" };
 
-// Which surface an example renders on, and its label: `Site` and `Product` name theirs; any other example follows the
-// item (an item on both surfaces shows the rest in the product).
-function exampleSurface(item: Item, name: string): "site" | "product" {
-  if (name === "Site") return "site";
-  if (name === "Product") return "product";
-  return item.surface === "site" ? "site" : "product";
+// Every example renders on the site (Agentcard has a site only).
+function exampleSurface(_item: Item, _name: string): "site" {
+  return "site";
 }
 function exampleLabel(name: string) {
   if (name === "Block") return "Full page";
-  if (name === "Site") return "On the site";
-  if (name === "Product") return "In the product";
+  if (name === "Site") return "Preview";
   const words = name.replace(/([a-z])([A-Z])/g, "$1 $2").toLowerCase();
   return words.charAt(0).toUpperCase() + words.slice(1);
 }
@@ -57,7 +52,7 @@ function OnThisPage({ sections }: { sections: { id: string; label: string }[] })
 
 function H2({ id, children }: { id: string; children: React.ReactNode }) {
   return (
-    <h2 id={id} className="mt-16 mb-5 text-h4 leading-snug tracking-tight">
+    <h2 id={id} className="mt-16 mb-5 font-display text-h3 leading-display font-medium tracking-tight">
       {children}
     </h2>
   );
@@ -67,7 +62,7 @@ export default async function ComponentPage({ params }: { params: Promise<{ name
   const item = findItem((await params).name);
   if (!item) notFound();
   // The main examples first (Block, then Site and Product), then its states (Loading, Empty...) in their own order.
-  const MAIN = ["Block", "Site", "Product"];
+  const MAIN = ["Block", "Site"];
   const demos = Object.fromEntries(Object.entries(examples[item.name] ?? {}).sort(([a], [b]) => (MAIN.includes(a) ? MAIN.indexOf(a) : 9) - (MAIN.includes(b) ? MAIN.indexOf(b) : 9)));
   const requires = item.dependencies.filter((d) => d !== "utils");
   const sections = [
@@ -81,9 +76,8 @@ export default async function ComponentPage({ params }: { params: Promise<{ name
         <main className="min-w-0 flex-1 pt-10 pb-24">
           <div className="mb-4 flex flex-wrap items-center gap-2">
             <Badge variant="tag">{TYPE_LABEL[item.type]}</Badge>
-            {SURFACE_LABEL[item.surface] !== TYPE_LABEL[item.type] && <Badge variant="tag">{SURFACE_LABEL[item.surface]}</Badge>}
           </div>
-          <h1 className="text-h2 leading-display tracking-tight">{item.title}</h1>
+          <h1 className="font-display text-h1 leading-heading font-medium tracking-tight">{item.title}</h1>
           <p className="mt-4 max-w-(--ds-layout-text) text-body-lg text-fg-muted"><Prose text={item.description} /></p>
           <InstallCommand command={`npx agentcard-ds add ${item.name}`} className="mt-8" />
 
@@ -99,14 +93,14 @@ export default async function ComponentPage({ params }: { params: Promise<{ name
 
           <H2 id="usage">Usage</H2>
           <div className="grid gap-4 md:grid-cols-2">
-            <div className="rounded-card p-5 shadow-[0_0_0_1px_var(--ds-color-border-hairline)]">
+            <div className="rounded-card border border-hairline bg-surface p-5 shadow-card">
               <p className="mb-2 text-body-sm font-medium text-fg">Use it for</p>
               <p className="text-body-sm text-fg-muted">
                 <Prose text={item.use_for} />
               </p>
             </div>
             {item.never.length > 0 && (
-              <div className="rounded-card p-5 shadow-[0_0_0_1px_var(--ds-color-border-hairline)]">
+              <div className="rounded-card border border-hairline bg-surface p-5 shadow-card">
                 <p className="mb-2 text-body-sm font-medium text-fg">Never</p>
                 <ul className="grid list-disc gap-1 pl-4 text-body-sm text-fg-muted marker:text-fg-subtle">
                   {item.never.map((n) => (

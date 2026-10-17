@@ -19,9 +19,8 @@ export default async function ExamplePage({ params }: { params: Promise<{ name: 
   const item = findItem(name);
   const Example = examples[name]?.[example];
   if (!item || !Example) notFound();
-  const surface = example === "Site" || (item.surface === "site" && example !== "Product") ? "site" : "product";
   return (
-    <Surface data-preview-root="" className={surface === "product" ? "bg-canvas" : "bg-surface"}>
+    <Surface data-preview-root="" className="bg-surface">
       <Example />
     </Surface>
   );
