@@ -7,17 +7,19 @@ import { add, list } from './commands/add.js';
 import { approve, check, done, look, skip, tokensCommand } from './commands/small.js';
 import { type HookResult, cursorPreToolUse, cursorStop, preToolUse, sessionStart, stop, userPromptSubmit } from './hooks/handlers.js';
 import { readHookInput } from './hooks/payload.js';
-import { brand, cli } from './lib/brand.js';
+import { brand, cli, hasProduct } from './lib/brand.js';
 import { findProjectRoot } from './lib/paths.js';
 
 const program = new Command();
 const b = brand();
 
+program.name(b.bin).description(`Make any website or app look like ${b.name}, and keep coding agents on it. Run it with no command and do what it says.`);
+// A brand with a site only styles every project as a site: no surface or theme to choose.
+if (hasProduct())
+	program
+		.option('--surface <surface>', 'site (pages people read) or product (an app people work in); default: read from the project')
+		.option('--theme <theme>', 'product only: light (default) or dark');
 program
-	.name(b.bin)
-	.description(`Make any website or app look like ${b.name}, and keep coding agents on it. Run it with no command and do what it says.`)
-	.option('--surface <surface>', 'site (pages people read) or product (an app people work in); default: read from the project')
-	.option('--theme <theme>', 'product only: light (default) or dark')
 	.option('--redo', 'convert the project again (after an update, or after reverting)')
 	.option('--dry-run', 'show what would change, write nothing')
 	.option('--no-install', 'do not add the package to the project when run through npx')
@@ -25,7 +27,7 @@ program
 	.action((opts) => run(opts));
 
 program.command('add <items...>').description('Copy library components into a React + Tailwind project, with what they need').option('--overwrite', 'replace files that already exist').option('--dry-run', 'show what would be written').action((items, opts) => add(items, opts));
-program.command('list').description('Every component, block and visual in the library').option('--json', 'JSON output').action((opts) => list(opts));
+program.command('list').description(`Every component, ${hasProduct() ? 'block' : 'section'} and visual in the library`).option('--json', 'JSON output').action((opts) => list(opts));
 program.command('review [url]').description('Screenshot a page at desktop and phone width and score it against the brand; a task is done when it passes').option('--threshold <n>', 'minimum score').option('--submit <dir>', 'record the scorecard an agent wrote itself (when no separate reviewer is available)').option('--all', 'review every task screen that is not done yet, at once (pass the app\'s address)').option('--any', 'review a page that is not a task').option('--json', 'JSON output').action((url, opts) => review(url, opts));
 program.command('look [target]').description('The brand styling (CSS, Tailwind, states) for every element in a file, or for one element kind').option('--surface <surface>', 'site or product').option('--json', 'JSON output').action((target, opts) => look(target, opts));
 program.command('check [files...]').description('Check that every style value is a brand token (used by hooks, pre-commit and CI)').option('--fix', 'replace exact matches with their token').option('--changed', 'only files changed in git').option('--json', 'JSON output').action((files, opts) => check(files ?? [], opts));

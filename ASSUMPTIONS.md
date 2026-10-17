@@ -2,19 +2,23 @@
 
 Each is in force today; each names where it lives, so a change is one edit.
 
-1. Sources. Site values were measured from brand-dev-webapp `agencidev/redesign-dashboard-and-website` at bc043ae59
-   (2026-10-14), product values from context-dashboard at c0ddf7a (2026-10-13). `brand/tokens.css`, `brand/elements.json`.
-2. Restyled sites render the rem scale at 90% from 43.2rem, as the brand's site does. `brand/site.css`.
-3. Dots on a restyled site: only thin streams at the edges of the home hero. Nothing else gets dots, since illustrations
-   are content. `brand/dots.js`, `src/plan/tasks.ts`.
-4. Blue in headings: the closing words of the hero headline and of section headings, wrapped by the agent in
-   `ds-accent`. Words never change. `brand/contract.md`.
-5. Section headings are left aligned with their description below, as on the brand's home. `brand/elements.json`.
-6. Headings converted from a site's bold weights become weight 400; other bold text becomes 500. `src/convert/css.ts`.
-7. A card without a wrapper element gets its soft blue ring as a spread shadow (its outer corner is slightly rounder
-   than the site's wrapper ring). `brand/elements.json` (card).
-8. A product keeps one blue main action per screen; a site keeps one black primary pill. `brand/elements.json`.
-9. A dark product may stay dark (`--theme dark`); a dark site always becomes the brand's light one.
-10. Raster logos drawn for a dark page are listed for the agent, not recolored. `src/convert/project.ts`.
+1. Source. Values were measured from the rendered https://www.agentcard.sh on 2026-10-17 (computed styles), with the
+   agentcard-website source (main at 5b5c801) for names and structure. The live site is ahead of that branch (its
+   blue is #0000FF; the branch has #1520B8 and #2E3AE8). `brand/tokens.css`, `brand/elements.json`.
+2. Agentcard has a site only: every project, including an app or dashboard, gets the site's look. `brand/brand.json`
+   (`surfaces`).
+3. The display face is Neue Haas Grotesk Display, named in the stack and not shipped (it needs a webfont licence), so
+   it renders as Helvetica Neue on Apple devices and Helvetica or Arial elsewhere, as on agentcard.sh. Only Inter is
+   loaded. `brand/tokens.css` (`--ds-font-display`), `brand/brand.json` (`fonts`).
+4. The one markup touch on a restyled site is `data-ds-hero` on the home hero: the blue ground, white type and the four
+   stepped bands into the page below. Nothing else gets the blue ground automatically. `brand/site.css`,
+   `brand/brand.json` (`touches`).
+5. Section headings are centered with their description below, as on agentcard.sh's home. `brand/elements.json`.
+6. Muted text tokens are solid colors composited on white (ink at 80, 68, 60 and 45 percent), so they read the same on
+   any white and pass AA; on the blue ground, text uses white at 72 percent. `brand/tokens.css`.
+7. Small tags are the one place type is set in caps, so the value check allows uppercase. `brand/brand.json` (`type`).
+8. Fields are square (no corners), as on agentcard.sh's forms. `brand/elements.json` (input).
+9. Code is set in the display face, as on agentcard.sh's code windows. `brand/tokens.css` (`--ds-font-mono`).
+10. The logo is the new lockup supplied on 2026-10-17 (`brand/logo/lockup.svg`, `brand/logo/mark.svg`).
 11. Review passes at 7 on every score. `brand/brand.json`.
-12. The repo is public, so `intake/` (the brand owner's inputs) is public too. Make the repo private or move intake out.
+12. The repo is public, so installs need no token. Make it private if the brand's files should not be public.
