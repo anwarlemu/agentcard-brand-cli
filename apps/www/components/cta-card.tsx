@@ -15,16 +15,16 @@ export function CtaCard({ command }: { command: string }) {
       <Scan sides className="-z-10" />
       <Lockup tone="white" label={null} className="mt-3.5 mb-3 ml-2.5 w-20" />
       <div className="grid grid-cols-[minmax(0,1fr)] gap-2 rounded-card border border-line-rule bg-surface px-3 pt-3.5 pb-3 text-fg shadow-tile">
-        <p className="font-display text-body leading-snug font-medium tracking-tight">Apply it to any site</p>
+        <p className="font-display text-body leading-snug font-medium tracking-tight">Add this component</p>
         <p className="mb-1 text-caption leading-normal text-fg-muted">
-          Give your coding agent one command; it restyles the site and keeps it on the brand. <b className="font-medium text-fg">Words never change.</b>
+          Run this in the project to copy the component, its dependencies and the theme.
         </p>
         <div className="flex items-center gap-2 rounded-sm bg-code py-1 pr-1 pl-2.5">
           <code className="min-w-0 flex-1 truncate font-code text-micro text-fg-on-brand-muted">{command}</code>
           <CopyButton value={command} label="Copy command" className="size-6" />
         </div>
         <Button asChild variant="secondary" size="sm" className="w-full">
-          <Link href="/cli">How it works</Link>
+          <Link href="/cli">CLI reference</Link>
         </Button>
       </div>
     </aside>

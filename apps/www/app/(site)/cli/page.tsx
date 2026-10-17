@@ -1,62 +1,72 @@
 import { Window } from "@/components/ui/window";
 import { Block, Command, Page, PageIntro } from "@www/components/chrome";
 import { Code } from "@www/components/code";
-import { APPLY_COMMAND, registryName } from "@www/lib/registry";
+import { CLI_COMMAND } from "@www/lib/registry";
 
 export const metadata = { title: "CLI" };
 
 const COMMANDS = [
-  ["add <items...>", "Copies library items into a React and Tailwind project, with the theme and what each needs."],
-  ["list", "Every library item, by group."],
-  ["look <file>", "The brand styling for each element in a file, and the library component that covers it."],
-  ["check [files]", "Every style value must be a brand token. Hooks and the pre-commit run it for you."],
-  ["review <url>", "Screenshots a screen at desktop and phone width and scores it against the brand's own pages."],
-  ["tokens [term]", "The brand tokens, by role."],
+  ["add <items...>", "Copy components, their dependencies and the theme into the project. Requires React and Tailwind 4."],
+  ["list", "List the available components, sections, page templates and visuals."],
+  ["look <file>", "Show the component and token guidance for the elements in a file."],
+  ["tokens [term]", "Find a design token by name or role."],
+  ["check [files...]", "Check style values against the design tokens. Use --changed for files changed in Git."],
+  ["review <url> --any", "Capture and review a page at desktop and phone widths."],
 ];
 
 const FLOW = [
-  { name: "swap.step", title: "Swap", body: "Components the app has that match the library (same name, same props) are swapped for the library's. The app is type-checked before and after; any swap that breaks it goes back." },
-  { name: "restyle.step", title: "Restyle", body: "Every other value, in CSS, templates, scripts, Tailwind or native code, is converted by its role: a text color to a text token, a card radius to the card radius." },
-  { name: "finish.step", title: "Finish", body: "A short task list for the coding agent covers what conversion cannot: the main screens and the shared shell, then a review against the brand." },
-  { name: "stay.step", title: "Stay", body: "Hooks for Claude Code, Codex and Cursor, and a pre-commit check, keep every later change on the brand." },
+  { name: "components", title: "Add components", body: "Read the component’s usage notes and add it by name. The CLI copies the source and installs its dependencies." },
+  { name: "implementation", title: "Build the page", body: "Compose the components, use the design tokens for the layout, and connect the controls to real state and actions." },
+  { name: "checks", title: "Verify the result", body: "Run the project’s checks, test the interactions, and review the page at desktop and phone widths." },
 ];
 
 export default function CliPage() {
-  return (
-    <Page>
-      <PageIntro eyebrow="CLI" title="One command applies the brand" lead={`Run it in any project: it swaps in library components where the app's own match, restyles everything else, and keeps coding agents on ${registryName}.`}>
-        <Command command={APPLY_COMMAND} />
-      </PageIntro>
+  return <Page>
+    <PageIntro title="CLI" lead="Use the CLI to build Agentcard pages and interfaces with the components and design tokens in this library.">
+      <Command command={`${CLI_COMMAND} add button card field input`} />
+    </PageIntro>
 
-      <Block title="What it does">
-        <ol className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          {FLOW.map((s) => (
-            <li key={s.name}>
-              <Window name={s.name} className="h-full" bodyClassName="grid content-start gap-2 p-6">
-                <h3 className="font-display text-h3 leading-display font-medium tracking-tight">{s.title}</h3>
-                <p className="text-body-sm text-fg-muted">{s.body}</p>
-              </Window>
-            </li>
-          ))}
-        </ol>
-      </Block>
+    <Block title="Build a page">
+      <ol className="grid gap-4 md:grid-cols-3">
+        {FLOW.map((step) => <li key={step.name}><Window name={step.name} className="h-full" bodyClassName="grid content-start gap-2 p-6">
+          <h3 className="font-display text-h3 leading-display font-medium tracking-tight">{step.title}</h3>
+          <p className="text-body-sm text-fg-muted">{step.body}</p>
+        </Window></li>)}
+      </ol>
+    </Block>
 
-      <Block title="Commands" description="Once installed, the CLI is agentcard-ds in the project.">
-        <Window name="agentcard-ds --help" className="mx-auto max-w-(--ds-layout-heading)">
-          <dl className="divide-y divide-line-subtle px-5">
-            {COMMANDS.map(([cmd, what]) => (
-              <div key={cmd} className="grid gap-1 py-4 sm:grid-cols-[13rem_1fr] sm:gap-6">
-                <dt className="font-mono text-body-sm text-fg-brand">{cmd}</dt>
-                <dd className="text-body-sm text-fg-muted">{what}</dd>
-              </div>
-            ))}
-          </dl>
-        </Window>
-      </Block>
+    <Block title="Instructions for coding agents" description="Include this with the page requirements.">
+      <Code title="agent instructions" lang="text" code={`Build this page using the Agentcard design system at https://agentcard-ds.vercel.app.
+Read the relevant component examples and usage notes before writing code.
+Add existing components with the CLI. Use design tokens for custom layout and styling.
+Connect every control to its intended behavior. Include validation, loading, empty and error states where needed.
+Run the project checks and the CLI token check. Test keyboard interaction and desktop and phone layouts.`} />
+    </Block>
 
-      <Block title="Add components" description="In a React project on Tailwind 4, add items by name. Files land in components/ui, site, blocks or visuals, honoring a src folder and the @ alias.">
-        <Code title="terminal" code={`npx agentcard-ds add button window tabs tooltip\nnpx agentcard-ds add hero pricing faq site-footer`} className="mx-auto max-w-(--ds-layout-heading)" />
-      </Block>
-    </Page>
-  );
+    <Block title="Add components" description="Run these commands from the project root. Components follow the project’s src folder and @ alias. The theme is added to its main stylesheet.">
+      <Code title="terminal" code={`${CLI_COMMAND} add button card field input
+${CLI_COMMAND} add hero section site-header site-footer`} />
+    </Block>
+
+    <Block title="Check the implementation" description="Run the token check after edits. Start the local development server before reviewing a page. Visual review does not replace testing the controls.">
+      <Code title="terminal" code={`${CLI_COMMAND} check --changed
+${CLI_COMMAND} review http://localhost:3000 --any`} />
+    </Block>
+
+    <Block title="Commands" description="Append these commands to the CLI invocation shown above.">
+      <Window name="agentcard-ds --help" className="mx-auto max-w-(--ds-layout-heading)">
+        <dl className="divide-y divide-line-subtle px-5">
+          {COMMANDS.map(([command, description]) => <div key={command} className="grid gap-1 py-4 sm:grid-cols-[13rem_1fr] sm:gap-6">
+            <dt className="font-mono text-body-sm text-fg-brand">{command}</dt>
+            <dd className="text-body-sm text-fg-muted">{description}</dd>
+          </div>)}
+        </dl>
+      </Window>
+    </Block>
+
+    <Block title="Update an existing interface" description="Running the CLI without a subcommand applies the design system to existing code. It can replace matching components, convert style values and install agent rules and checks. Review the diff before continuing.">
+      <Code title="terminal" code={`${CLI_COMMAND} --dry-run
+${CLI_COMMAND}`} />
+    </Block>
+  </Page>;
 }

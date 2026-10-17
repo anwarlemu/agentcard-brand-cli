@@ -13,7 +13,7 @@ import { findProjectRoot } from './lib/paths.js';
 const program = new Command();
 const b = brand();
 
-program.name(b.bin).description(`Make any website or app look like ${b.name}, and keep coding agents on it. Run it with no command and do what it says.`);
+program.name(b.bin).description(`Build ${b.name} pages and interfaces with the component library and design tokens. Use add, look, check and review during implementation.`);
 // A brand with a site only styles every project as a site: no surface or theme to choose.
 if (hasProduct())
 	program

@@ -9,8 +9,8 @@ const inter = Inter({ subsets: ["latin"], variable: "--font-inter", display: "sw
 
 export const metadata: Metadata = {
   metadataBase: new URL(registryUrl),
-  title: { default: `${registryName} UI`, template: `%s | ${registryName} UI` },
-  description: `The ${registryName} design system: components, sections and visuals for React and Tailwind, and a CLI that applies them to any site.`,
+  title: { default: `${registryName} design system`, template: `%s | ${registryName} design system` },
+  description: `Components, design tokens and CLI guidance for building ${registryName} pages and interfaces.`,
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

@@ -24,14 +24,14 @@ export const registryName = index.name;
 export const registryUrl = index.url;
 export const REPO = "https://github.com/anwarlemu/agentcard-brand-cli";
 export const BRAND_SITE = "https://www.agentcard.sh";
-export const APPLY_COMMAND = "npx -y github:anwarlemu/agentcard-brand-cli#release";
+export const CLI_COMMAND = "npx -y github:anwarlemu/agentcard-brand-cli#release";
 export const items = (index.items as Item[]).filter((i) => i.type !== "lib" && i.type !== "hook");
 
 export const GROUPS: { type: Item["type"]; id: string; label: string; blurb: string }[] = [
-  { type: "ui", id: "components", label: "Components", blurb: "The primitives: keys, windows, tabs, fields and overlays." },
-  { type: "site", id: "site", label: "Sections", blurb: "The site's header, hero, sections and footer." },
-  { type: "block", id: "blocks", label: "Pages", blurb: "Whole pages, composed from the pieces above, to start from." },
-  { type: "visual", id: "visuals", label: "Visuals", blurb: "The bands, the striped wordmark and the scan lines that carry the brand." },
+  { type: "ui", id: "components", label: "Components", blurb: "Buttons, form controls, navigation and overlays." },
+  { type: "site", id: "site", label: "Sections", blurb: "Headers, content sections and footers for Agentcard pages." },
+  { type: "block", id: "blocks", label: "Pages", blurb: "Page templates built from the library components." },
+  { type: "visual", id: "visuals", label: "Visuals", blurb: "Dividers, logos and background effects." },
 ];
 
 export const counts = Object.fromEntries(GROUPS.map((g) => [g.type, items.filter((i) => i.type === g.type).length]));

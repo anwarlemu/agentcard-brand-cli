@@ -3,9 +3,9 @@ name: nav-dock
 title: Nav dock
 type: site
 surface: site
-description: "The floating glass dock at the foot of the screen: a bar of links (the current one is the white key with blue text), a menu that opens a glass card above it popping from its trigger, and the blue Get started key with its arrow beside it. Fades and rises in; on phones it becomes a glass bar across the top with a sheet of links."
+description: "Floating navigation that becomes a top bar and menu on phones."
 kinds: [nav-dock, nav-link]
-use_for: "The site's navigation on every page, with the bare site header. Mark the page, not the section: the current entry is the page you are on (a menu is current on the pages it leads to). Give the footer an id and pass it as `hideAt` so the dock steps aside there."
+use_for: "Use with SiteHeader. Mark the current page and provide working destinations. Set hideAt to the footer’s id to hide the dock while the footer is visible."
 never: [Two docks, More than six entries, Icons instead of labels, Animating the dock on every scroll]
 source: agentcard-website src/components/v7/section-dock.tsx; src/app/globals.css:4048 (.v7-dock-nav, .v7-dock-card, .v7-dock-go, .v7-mbar); agentcard.sh / (computed)
 ---

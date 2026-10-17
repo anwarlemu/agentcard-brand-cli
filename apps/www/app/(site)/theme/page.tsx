@@ -4,6 +4,7 @@ import path from "node:path";
 import { Window } from "@/components/ui/window";
 import { Block, Command, Page, PageIntro } from "@www/components/chrome";
 import { Code } from "@www/components/code";
+import { CLI_COMMAND } from "@www/lib/registry";
 
 export const metadata = { title: "Theme" };
 
@@ -42,11 +43,11 @@ function Swatch({ name, value }: { name: string; value: string }) {
 export default function ThemePage() {
   return (
     <Page>
-      <PageIntro eyebrow="Theme" title="One set of tokens, every value" lead="Colors, type, space, radii, shadows and motion come from one file, measured from agentcard.sh as it renders.">
-        <Command command="npx agentcard-ds add theme" />
+      <PageIntro title="Design tokens" lead="Use these tokens for colors, typography, spacing, corners, shadows and motion. Components already use them; use the same tokens for custom layouts.">
+        <Command command={`${CLI_COMMAND} add theme`} />
       </PageIntro>
 
-      <Block title="Color" description="One electric blue as a ground and for actions, one ink, one paper, one sky, and white; then the roles every component reads.">
+      <Block title="Color" description="Choose tokens by their role: surface, text, border, action or status.">
         <div className="grid gap-6">
           {GROUPS.map((g) => {
             const list = colors.filter(([k]) => g.test.test(k) && !GROUPS.slice(0, GROUPS.indexOf(g)).some((p) => p.test.test(k)));
@@ -64,7 +65,7 @@ export default function ThemePage() {
         </div>
       </Block>
 
-      <Block title="Type" description="Headings, labels, keys and code in Neue Haas Grotesk Display (Helvetica Neue where it is not installed) at 500, tracked tight; text in Inter.">
+      <Block title="Type" description="Use Neue Haas Grotesk Display for headings and control labels, with Helvetica Neue as the fallback. Use Inter for body text.">
         <Window name="type.css" bodyClassName="divide-y divide-line-subtle px-5">
           {SCALE.map(([name, value]) => (
             <div key={name} className="grid items-baseline gap-2 py-5 sm:grid-cols-[11rem_1fr]">
@@ -72,14 +73,14 @@ export default function ThemePage() {
                 {name.replace("--ds-text-", "text-")} <span className="text-fg-faint">{value}</span>
               </p>
               <p className={DISPLAY.test(name) ? "min-w-0 font-display leading-tight font-medium tracking-tight text-balance text-fg" : "min-w-0 text-fg"} style={{ fontSize: `var(${name})` }}>
-                {BIG.test(name) ? "Agentcard" : "Let agents buy anything online"}
+                {BIG.test(name) ? "Agentcard" : "Card details and spending limits"}
               </p>
             </div>
           ))}
         </Window>
       </Block>
 
-      <Block title="Shape" description="A 2px tag, a 6px nav key, the 8px key, 12px windows and panels, 20px product cards; the bevel, wells, drops and the hard offsets.">
+      <Block title="Corners and shadows" description="Use the token assigned to the component. Keep the same corner radius and shadow for the same kind of element.">
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-6">
           {RADII.map(([name, value]) => (
             <div key={name} className="flex flex-col gap-3">
@@ -100,12 +101,12 @@ export default function ThemePage() {
         </div>
       </Block>
 
-      <Block title="Use it" description="The theme item writes the tokens and the Tailwind names that read them. Import both after Tailwind.">
+      <Block title="Import the theme" description="The CLI creates _agentcard-ds/brand.css and _agentcard-ds/theme.css beside the main stylesheet and adds the imports below. The brand stylesheet includes the tokens and base styles.">
         <Code
           title="app/globals.css"
           code={`@import "tailwindcss";
-@import "./styles/tokens.css";
-@import "./styles/theme.css";`}
+@import "./_agentcard-ds/brand.css";
+@import "./_agentcard-ds/theme.css";`}
         />
       </Block>
     </Page>

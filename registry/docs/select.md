@@ -3,9 +3,9 @@ name: select
 title: Select
 type: ui
 surface: site
-description: "A single choice: the brand's square select (35 percent ink border, 18px Inter, a small ink triangle) opening a white panel with a hairline and 8px corners that grows from it."
+description: "Single-choice select with field, compact, ghost and chip treatments."
 kinds: [input]
-use_for: "Picking one of a few known options in a form (`field`, the default, inside a Field), a dense row (`compact`), a toolbar (`ghost`, the white key) or a quiet filter (`chip`)."
+use_for: "Use the field appearance inside Field for forms. Use compact in dense rows and ghost or chip for filters. Set required on the Select root when using native form validation."
 never: [Rounded field triggers, A select for two options (use a segmented control), Long lists without a search (use a command)]
 source: "live https://www.agentcard.sh/get-started (.v7-gate-field select); src/app/globals.css (.v7-guide-search-results)"
 ---

@@ -8,12 +8,12 @@ import { Block, Command, Page } from "@www/components/chrome";
 import { Prose } from "@www/components/prose";
 import { Thumb } from "@www/components/thumb";
 import { examples } from "@www/lib/examples.generated";
-import { APPLY_COMMAND, findItem, registryName } from "@www/lib/registry";
+import { CLI_COMMAND, findItem, registryName } from "@www/lib/registry";
 
 const STEPS = [
-  { name: "apply.run", title: "Give it to your agent", body: "Claude Code, Codex, Cursor or any other: it installs the brand, converts every style value by role and marks the hero." },
-  { name: "tasks.run", title: "The agent finishes it", body: "One screen at a time, each restyled the way the brand draws that element, then reviewed against agentcard.sh." },
-  { name: "hooks.run", title: "It stays on the brand", body: "Hooks and a pre-commit check block any write that adds a value the brand does not have." },
+  { name: "components", title: "Choose components", body: "Check the library for an existing component or page template. Read its usage notes and examples." },
+  { name: "implementation", title: "Build the interface", body: "Use the component variants and design tokens. Connect forms, menus and actions to the page’s state and data." },
+  { name: "checks", title: "Check the page", body: "Run the token check. Test the interactions and review the layout at desktop and phone widths." },
 ];
 
 // A few pieces that carry the look, each drawn live.
@@ -41,8 +41,8 @@ export default function Home() {
         }
       />
       <Page className="pt-24 md:pt-28">
-        <Block title="Apply it to any site" description="Give your coding agent this command and let it work until it says it is done. It changes how the site looks, never what it says.">
-          <Command command={APPLY_COMMAND} className="mx-auto" />
+        <Block title="Build a page" description="Add the components you need to the Agentcard project, then use their examples to build the interface.">
+          <Command command={`${CLI_COMMAND} add button card field input`} className="mx-auto" />
           <ol className="mt-12 grid gap-4 md:grid-cols-3">
             {STEPS.map((s) => (
               <li key={s.name}>
@@ -55,7 +55,7 @@ export default function Home() {
           </ol>
         </Block>
 
-        <Block title="The library" description="Every component and section of the site for React and Tailwind, copied into your project as source you own.">
+        <Block title="Components and page sections" description="Preview the components, read the usage notes and copy the source into the project.">
           <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {SHOWCASE.map((s) => {
               const item = findItem(s.item);
@@ -84,7 +84,7 @@ export default function Home() {
           <div className="mt-10 flex justify-center">
             <Button asChild variant="secondary">
               <Link href="/components">
-                Every item <ArrowUpRight />
+                View all components <ArrowUpRight />
               </Link>
             </Button>
           </div>

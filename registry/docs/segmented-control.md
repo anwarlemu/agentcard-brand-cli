@@ -3,9 +3,9 @@ name: segmented-control
 title: Segmented control
 type: ui
 surface: site
-description: "The brand's tab track as a value picker: a sunken track with the blue key gliding to the chosen option, each option sized to its label. `plain` drops the track."
+description: "Single-value selector with radio semantics and arrow-key navigation."
 kinds: [tabs]
-use_for: "Picking one of two to four values in place, such as a billing period or a card type, where the choice changes what is shown next to it. `size=\"sm\"` in a tight card, `plain` in a dense toolbar."
+use_for: "Use for a small set of options such as billing period or card type. Connect value and onValueChange. Use size=\"sm\" in compact layouts and variant=\"plain\" in toolbars."
 never: [Switching between pages or panels (use tabs), More than four options, Pill-shaped tracks]
 source: "live https://www.agentcard.sh/pricing (.plan-tabs, .plan-tabs-thumb); src/app/globals.css (.v7-guide-tablist for size sm)"
 ---

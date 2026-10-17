@@ -1,7 +1,7 @@
 {
   "name": "agentcard-ds",
   "version": "2.0.0",
-  "description": "Make any website look like Agentcard, and keep coding agents on it.",
+  "description": "Components, design tokens and checks for building Agentcard pages and interfaces.",
   "type": "module",
   "bin": {
     "agentcard-ds": "./bin.js"

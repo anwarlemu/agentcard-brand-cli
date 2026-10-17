@@ -3,9 +3,9 @@ name: hold-button
 title: Hold button
 type: ui
 surface: site
-description: "Hold to confirm, as a white key with red text that fills red from the left over two seconds while held and snaps back on release."
+description: "Button that confirms an action after a continuous hold."
 kinds: [button-secondary]
-use_for: "An action that cannot be undone (close a card, delete a key), where a confirm dialog would be too heavy."
+use_for: "Use for destructive actions such as closing a card. Connect onConfirm to the action. Releasing early, leaving the control or losing focus cancels the hold."
 never: [Hold for actions that can be undone, Hiding how long to hold, A blue fill for a destructive action]
 source: "agentcard-website src/app/globals.css (--bevel-white); principles (keys sink on press)"
 ---

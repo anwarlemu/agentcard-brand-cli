@@ -3,9 +3,9 @@ name: tooltip
 title: Tooltip
 type: ui
 surface: site
-description: "A short floating label: white, a hairline, 8px corners and the tooltip shadow, in the 12px display face, growing from its trigger after a beat."
+description: "Short contextual label shown on hover or keyboard focus."
 kinds: []
-use_for: "Naming an icon key or adding a few words to a control. Next ones in a row appear at once."
+use_for: "Use to explain an icon control or add brief context. Keep a separate accessible name on the control; do not put essential instructions only in the tooltip."
 never: [Tooltips for anything needed to finish a task, Long text (use a popover), Dark tooltips]
 source: "agentcard-website src/app/globals.css (.v7-dock-card)"
 ---

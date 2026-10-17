@@ -19,7 +19,7 @@ export function DocsTop({ entries, repo }: { entries: SearchEntry[]; repo: strin
     <header className="relative isolate bg-brand text-on-brand max-md:pt-20">
       <Scan sides className="-z-10" />
       <div className="grid h-16 grid-cols-[minmax(0,1fr)_auto] items-center gap-2 px-4.5 md:grid-cols-[minmax(0,1fr)_minmax(0,24rem)_minmax(0,1fr)] md:gap-6 md:px-7.5">
-        <Link href="/" aria-label="Agentcard UI, home" className="justify-self-start rounded-sm outline-none focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white max-md:hidden">
+        <Link href="/" aria-label="Agentcard design system, home" className="justify-self-start rounded-sm outline-none focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white max-md:hidden">
           <Lockup tone="white" label={null} className="w-25" />
         </Link>
         <DocsSearch entries={entries} tone="glass" />
@@ -28,7 +28,7 @@ export function DocsTop({ entries, repo }: { entries: SearchEntry[]; repo: strin
             GitHub
           </a>
           <Link href="/cli" className={cn(KEY, "border-line-key bg-white text-fg-brand shadow-key hover:bg-sky-wash focus-visible:outline-white max-md:px-2.5")}>
-            Install <ArrowUpRight aria-hidden className="size-3 max-md:hidden" />
+            CLI <ArrowUpRight aria-hidden className="size-3 max-md:hidden" />
           </Link>
         </div>
       </div>
@@ -44,7 +44,7 @@ export function DocsTop({ entries, repo }: { entries: SearchEntry[]; repo: strin
 export function DocsHeader({ repo }: { repo: string }) {
   return (
     <header className="flex h-20 items-center justify-between gap-4 px-4.5 md:px-7.5 max-md:hidden">
-      <Link href="/" aria-label="Agentcard UI, home" className="rounded-sm outline-none focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-focus-ring">
+      <Link href="/" aria-label="Agentcard design system, home" className="rounded-sm outline-none focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-focus-ring">
         <Lockup tone="ink" label={null} className="w-25" />
       </Link>
       <div className="flex items-center gap-2">
@@ -52,7 +52,7 @@ export function DocsHeader({ repo }: { repo: string }) {
           GitHub
         </a>
         <Link href="/cli" className={cn(KEY, "border-line-brand-edge bg-primary text-on-primary shadow-key-brand hover:bg-primary-hover focus-visible:outline-focus-ring")}>
-          Install <ArrowUpRight aria-hidden className="size-3" />
+          CLI <ArrowUpRight aria-hidden className="size-3" />
         </Link>
       </div>
     </header>

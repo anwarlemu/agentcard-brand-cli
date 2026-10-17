@@ -3,9 +3,9 @@ name: empty-state
 title: Empty state
 type: ui
 surface: site
-description: "An empty list or a search with no results as a quiet window: the sky title bar, a pale body with an optional mark, a title, one line and an optional key."
+description: "Message and optional action for an empty list or search result."
 kinds: [window, window-bar]
-use_for: "Where a list, a table or search results would be when there is nothing yet. `name` labels the bar (cards.list, search.results; null drops the bar); `action` is the one next step."
+use_for: "Explain what is missing and provide the next action. Set name for the title bar or null to hide it. Connect actions such as creating an item or clearing a search."
 never: [Illustrations that shout, More than one action, Empty states that blame the reader]
 source: "agentcard-website src/app/globals.css (.v7-windowbar)"
 ---

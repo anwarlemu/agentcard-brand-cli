@@ -3,9 +3,9 @@ name: scroll-area
 title: Scroll area
 type: ui
 surface: site
-description: "A scroll area that says when there is more: the edges fade where content runs past, and a small white key at the bottom scrolls the rest into view."
+description: "Scrollable container with overflow indicators and a scroll control."
 kinds: []
-use_for: "A list or a log inside a window or a panel of fixed height."
+use_for: "Use for a list or log inside a fixed-height window or panel."
 never: [Scroll areas inside scroll areas, Hiding the main content in one, Scrolling the whole page in one]
 source: "agentcard-website src/app/globals.css (--bevel-white)"
 ---

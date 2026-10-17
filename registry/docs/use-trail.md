@@ -3,9 +3,9 @@ name: use-trail
 title: useTrail
 type: hook
 surface: site
-description: The brand's trail line, a spline through the centres of hung cards that snakes from row to row, redrawn as the layout changes. TRAIL_REST holds each card's drop and tilt.
+description: "Draws a responsive connecting line through a set of cards."
 kinds: []
-use_for: Cards hung along a line (Testimonials, LogoStrip). Mark each card with data-trail-card and give it its TRAIL_REST drop and tilt.
+use_for: "Use with Testimonials or LogoStrip layouts. Mark cards with data-trail-card and apply the matching TRAIL_REST position."
 never: [A trail through a single card, Animating the cards on scroll]
 source: agentcard-website src/components/v7/product-trail.tsx
 ---

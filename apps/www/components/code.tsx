@@ -8,7 +8,7 @@ import { cn } from "@/lib/utils";
  * the soft ink ground, code in the system monospace at 14px, comments faint and strings sky. Long files scroll inside a
  * fixed height.
  */
-export function Code({ code, title, tall = false, className }: { code: string; title?: string; tall?: boolean; className?: string }) {
+export function Code({ code, title, lang = "tsx", tall = false, className }: { code: string; title?: string; lang?: string; tall?: boolean; className?: string }) {
   const text = code.trim();
   return (
     <figure className={cn("m-0 min-w-0 overflow-hidden rounded-card border border-hairline bg-code-soft shadow-guide", className)}>
@@ -19,7 +19,7 @@ export function Code({ code, title, tall = false, className }: { code: string; t
       />
       <pre tabIndex={0} className={cn("m-0 overflow-auto px-4 pt-3.5 pb-4 font-code text-body-sm leading-relaxed whitespace-pre text-white/92 outline-none [scrollbar-width:thin] [tab-size:2] focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-sky", tall ? "max-h-140" : "max-h-96")}>
         <code>
-          {tokenize(text, "tsx").map((t, i) => (
+          {tokenize(text, lang).map((t, i) => (
             <span key={i} className={t.kind === "comment" ? "text-white/45" : t.kind === "string" ? "text-sky" : undefined}>
               {t.text}
             </span>

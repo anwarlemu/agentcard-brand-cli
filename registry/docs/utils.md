@@ -3,9 +3,9 @@ name: utils
 title: cn
 type: lib
 surface: both
-description: Merges class names, aware of the brand's scales (text-body-sm, rounded-card, shadow-floating).
+description: "Class-name utilities that understand the design token scales."
 kinds: []
-use_for: Every component's className.
+use_for: "Use cn to combine component classes and caller overrides."
 never: []
 source: src/lib/utils.ts
 ---

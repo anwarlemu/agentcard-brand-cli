@@ -3,9 +3,9 @@ name: feature-rows
 title: Feature rows
 type: site
 surface: site
-description: "A product page's features: FeatureRows, one per row in a white 20px card with the hard offset shadow, the copy beside a blue panel holding the feature's screen (a phone rising from the foot, or a window), alternating sides; FeatureGrid, the lighter list, tiles in a dotted outline two to a row at alternating widths over pale panels."
+description: "Product feature layouts with text and media."
 kinds: [card-raised, card, chip, media-frame, card-title, body-text]
-use_for: "Explaining a product's features one at a time (rows) and its secondary points (grid), each with its own screen. Rows for the main list, the grid under it for safety or extras."
+use_for: "Use FeatureRows for the main feature list and FeatureGrid for supporting details. Supply a screen or illustration for each feature."
 never: [More than one blue key per row, Feature icons instead of screens, Stock photos in the panel, Rows without media]
 source: "agentcard-website src/components/v7/feature-rows.tsx; agentcard.sh/vault and /issuing (computed: .v7-feat, .v7-feat-stage, .v7-feat-pill, .v7-feats.is-4)"
 ---

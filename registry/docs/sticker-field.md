@@ -3,9 +3,9 @@ name: sticker-field
 title: Sticker field
 type: visual
 surface: site
-description: "Floating 3D stickers in a section's margins, as beside the products and around the FAQ: cut-out objects tilted a little with a soft drop shadow, under the content, each drifting very slowly on its own long, gentle loop. They still with reduced motion and only show from a width where the margins can hold them."
+description: "Decorative floating objects positioned around section content."
 kinds: [section]
-use_for: "A playful section on a site page (the FAQ, a features list) with the brand's 3D objects in its margins. Two or three stickers a side, 130 to 250px."
+use_for: "Use with Agentcard illustrations in section margins. Keep content and controls unobstructed. Motion stops for reduced-motion preferences."
 never: [Stickers over text or controls, Fast or bouncy motion, Stickers on phones over the column, More than eight in one section]
 source: "agentcard-website src/components/v7/sticker-rails.tsx, src/components/faq-stickers.tsx; src/app/globals.css:899 (.faq-sticker), 1605 (.v7-sticker-rails); agentcard.sh / and /pricing (computed)"
 ---

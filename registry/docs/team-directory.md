@@ -3,9 +3,9 @@ name: team-directory
 title: Team directory
 type: site
 surface: site
-description: "The About page's team and investors: a window holding a ruled grid of people (a gray photo, the name in the display face, the role in small muted type) with a blue arrow on each linked cell, two to a row for the team in the blue-bar window and three for investors in the sky one, the backers as the last row."
+description: "Responsive directory of people with photos, roles and optional links."
 kinds: [window, window-bar, card, link]
-use_for: "A team, advisors, investors or partners on an About or company page. The team's window gets `tone=\"blue\"` (one per page); the rest stay sky."
+use_for: "Use for teams, advisors, investors or partners. Use tone=\"blue\" for the primary directory and the default tone for others. Provide current names and links."
 never: [Color photos, Round avatars, Bold names, More than one blue-bar window per page, Cards with gaps between people instead of the ruled grid]
 source: "agentcard-website src/components/v7/company-page.tsx; src/app/globals.css:1808 (.v7-about); agentcard.sh/about (computed: .v7-about-sec, .v7-about-cell)"
 ---

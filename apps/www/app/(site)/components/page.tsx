@@ -6,7 +6,7 @@ import { DocsSearch } from "@www/components/docs-search";
 import { InlineCode, Prose } from "@www/components/prose";
 import { Thumb } from "@www/components/thumb";
 import { examples } from "@www/lib/examples.generated";
-import { GROUPS, items, registryName } from "@www/lib/registry";
+import { CLI_COMMAND, GROUPS, items } from "@www/lib/registry";
 
 export const metadata = { title: "Library" };
 
@@ -25,14 +25,13 @@ export default function Library() {
   return (
     <Page>
       <PageIntro
-        eyebrow="Library"
-        title="The library, piece by piece"
-        lead={`Everything the ${registryName} site draws, as React components on Tailwind. Add any item and it brings the theme and what it needs.`}
+        title="Component library"
+        lead="React components and page templates for Agentcard. Each item includes a preview, usage notes, source and an install command."
       >
         <div className="mx-auto grid w-full max-w-140 gap-4">
           <DocsSearch entries={items.map((i) => ({ name: i.name, title: i.title, group: GROUPS.find((g) => g.type === i.type)?.label ?? "Library", href: `/components/${i.name}` }))} />
           <p className="text-body-sm text-fg-muted">
-            Add any item with <InlineCode>npx agentcard-ds add &lt;item&gt;</InlineCode>
+            Requires React and Tailwind 4. Use <InlineCode>{`${CLI_COMMAND} add <item>`}</InlineCode> to add an item.
           </p>
         </div>
       </PageIntro>

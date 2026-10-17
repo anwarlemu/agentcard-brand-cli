@@ -3,9 +3,9 @@ name: updates-feed
 title: Updates feed
 type: site
 surface: site
-description: "The changelog: one ruled row per day, the date in small caps display type at left, the changes at right grouped under square caps tags (Added in blue, Improved in ink, Fixed in red), each group a short bulleted list in 14px text, with an optional title, body and framed video or image."
+description: "Dated release notes grouped by change type."
 kinds: [table, chip, body-text, caption, media-frame]
-use_for: "A changelog, release notes or a dated activity log. Put it in a `Prose` column (`wide`) or any 680 to 820px column."
+use_for: "Use for changelogs or activity updates. Provide dates, change groups and optional media. Place in a Prose column or another readable content width."
 never: [Rounded or filled tags, Colors other than blue ink and red for tags, Cards around each day, Long paragraphs instead of bullets]
 source: "agentcard.sh/updates (computed: .v7-upd-feed, .v7-upd-day, .v7-upd-tag, .v7-upd-group, .v7-upd-video); not in the agentcard-website source yet"
 ---

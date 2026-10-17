@@ -3,9 +3,9 @@ name: spinner
 title: Spinner
 type: ui
 surface: site
-description: "A thin ring turning once a second, in the color of the text around it."
+description: "Loading indicator that inherits the surrounding text color."
 kinds: []
-use_for: "A wait of a second or more inside a key or beside a label (white inside the blue key, blue on white)."
+use_for: "Use during a pending operation. Pair it with a label, prevent duplicate submissions when needed and restore the control when the operation finishes."
 never: [Spinners for whole pages (use skeletons), Colored spinners that ignore their text]
 source: "live https://www.agentcard.sh/get-started"
 ---

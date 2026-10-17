@@ -11,7 +11,7 @@ import { FramePreview } from "@www/components/frame-preview";
 import { Preview } from "@www/components/preview";
 import { InlineCode, Prose } from "@www/components/prose";
 import { examples } from "@www/lib/examples.generated";
-import { APPLY_COMMAND, GROUPS, type Item, exampleSource, findItem, items, needsPreviewFrame, sourceOf } from "@www/lib/registry";
+import { CLI_COMMAND, GROUPS, type Item, exampleSource, findItem, items, needsPreviewFrame, sourceOf } from "@www/lib/registry";
 
 export function generateStaticParams() {
   return items.map((i) => ({ name: i.name }));
@@ -69,7 +69,7 @@ export default async function ComponentPage({ params }: { params: Promise<{ name
           <p className="mt-3.5 text-body-lg leading-normal text-fg-muted">
             <Prose text={item.description} />
           </p>
-          <Command command={`npx agentcard-ds add ${item.name}`} className="mt-7 max-w-none" />
+          <Command command={`${CLI_COMMAND} add ${item.name}`} className="mt-7 max-w-none" />
         </header>
 
         {demos.length > 0 && (
@@ -94,14 +94,14 @@ export default async function ComponentPage({ params }: { params: Promise<{ name
               <Code key={p} title={p} code={sourceOf(p)} tall />
             ))}
           </div>
-          {item.source && <p className="mt-5 text-caption text-fg-muted">Ported from {item.source}.</p>}
+          {item.source && <p className="mt-5 text-caption text-fg-muted">Reference: {item.source}.</p>}
         </Section>
 
         <Pager prev={prev && { name: prev.name, title: prev.title }} next={next && { name: next.name, title: next.title }} />
       </article>
       <div className="sticky top-6 hidden flex-col gap-6 xl:flex">
         <Contents sections={sections} />
-        <CtaCard command={APPLY_COMMAND} />
+        <CtaCard command={`${CLI_COMMAND} add ${item.name}`} />
       </div>
     </div>
   );
@@ -132,7 +132,7 @@ function Usage({ item }: { item: Item }) {
       </div>
       {(requires.length > 0 || item.npm.length > 0) && (
         <p className="mt-5 text-body-sm text-fg-muted">
-          Brings{" "}
+          Dependencies: {" "}
           {requires.map((d, i) => (
             <span key={d}>
               {findItem(d) ? (
@@ -148,8 +148,7 @@ function Usage({ item }: { item: Item }) {
               <InlineCode>{p}</InlineCode>
               {i < item.npm.length - 1 ? ", " : ""}
             </span>
-          ))}{" "}
-          with it.
+          ))}.
         </p>
       )}
     </Section>

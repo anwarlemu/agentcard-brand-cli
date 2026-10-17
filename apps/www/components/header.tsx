@@ -16,7 +16,7 @@ export function Header({ repo, library, entries }: { repo: string; library: { ti
   return (
     <>
       {pathname === "/" ? (
-        <SiteHeader ground="blue" logoLabel="Agentcard UI, home" action={{ label: "GitHub", href: repo }} className="z-40 max-md:hidden" />
+        <SiteHeader ground="blue" logoLabel="Agentcard design system, home" action={{ label: "GitHub", href: repo }} className="z-40 max-md:hidden" />
       ) : item ? (
         <DocsTop entries={entries} repo={repo} />
       ) : (

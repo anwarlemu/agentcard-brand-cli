@@ -3,9 +3,9 @@ name: logo
 title: Logo
 type: ui
 surface: site
-description: "The brand's lockup (the agentcard wordmark with the hand drawn in lines) and the mark alone, inlined from its SVG and drawn in currentColor: blue or ink on white, white on the blue."
+description: "Agentcard wordmark and standalone mark."
 kinds: []
-use_for: "The header and footer (`Lockup`, 160px wide), the phone bar and tight spots (`LogoMark`). Pass `label={null}` when a link around it already names it (\"Agentcard, home\")."
+use_for: "Use Lockup in headers and footers, and LogoMark in smaller spaces. Set label={null} when the containing link already has an accessible name."
 never: [The logo in a color other than blue, ink or white, The mark stretched or outlined, A drop shadow or glow behind the logo, The wordmark retyped in a font]
 source: agentcard-brand-cli brand/logo (lockup.svg, mark.svg); agentcard.sh / (header a, 160x28)
 ---
