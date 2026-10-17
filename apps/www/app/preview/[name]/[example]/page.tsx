@@ -6,10 +6,10 @@ import { findItem, items } from "@www/lib/registry";
 
 // One example alone on a page, at the window's real width: full-page items (site sections, page blocks) switch layout
 // on it, so the docs show them in a frame at desktop or phone width instead of squeezed into the column.
-export const framed = (type: string) => type === "site" || type === "block";
+export const framed = (type: string, name = "") => type === "site" || type === "block" || name === "command";
 
 export function generateStaticParams() {
-  return items.filter((i) => framed(i.type)).flatMap((i) => Object.keys(examples[i.name] ?? {}).map((example) => ({ name: i.name, example })));
+  return items.filter((i) => framed(i.type, i.name)).flatMap((i) => Object.keys(examples[i.name] ?? {}).map((example) => ({ name: i.name, example })));
 }
 
 export const metadata = { robots: { index: false } };

@@ -1,8 +1,9 @@
 import Link from "next/link";
 
 import { Window } from "@/components/ui/window";
-import { Block, Command, Page, PageIntro } from "@www/components/chrome";
-import { Prose } from "@www/components/prose";
+import { Block, Page, PageIntro } from "@www/components/chrome";
+import { DocsSearch } from "@www/components/docs-search";
+import { InlineCode, Prose } from "@www/components/prose";
 import { Thumb } from "@www/components/thumb";
 import { examples } from "@www/lib/examples.generated";
 import { GROUPS, items, registryName } from "@www/lib/registry";
@@ -17,6 +18,9 @@ const THUMB: Record<string, { scale: number; align?: "start" }> = {
   block: { scale: 0.22, align: "start" },
 };
 
+// Examples that move the page when they mount draw in a frame (see Thumb).
+const FRAMED = new Set(["command"]);
+
 export default function Library() {
   return (
     <Page>
@@ -25,7 +29,12 @@ export default function Library() {
         title="The library, piece by piece"
         lead={`Everything the ${registryName} site draws, as React components on Tailwind. Add any item and it brings the theme and what it needs.`}
       >
-        <Command command="npx agentcard-ds add <item>" />
+        <div className="mx-auto grid w-full max-w-140 gap-4">
+          <DocsSearch entries={items.map((i) => ({ name: i.name, title: i.title, group: GROUPS.find((g) => g.type === i.type)?.label ?? "Library", href: `/components/${i.name}` }))} />
+          <p className="text-body-sm text-fg-muted">
+            Add any item with <InlineCode>npx agentcard-ds add &lt;item&gt;</InlineCode>
+          </p>
+        </div>
       </PageIntro>
       {GROUPS.map((g) => {
         const list = items.filter((i) => i.type === g.type);
@@ -39,7 +48,7 @@ export default function Library() {
                 return (
                   <li key={i.name} className="group/card relative">
                     <Window name={i.name} className="h-full transition-[border-color] duration-150 ease-out group-hover/card:border-line-brand">
-                      {main && <Thumb example={main} scale={thumb.scale} align={thumb.align} className="h-44" />}
+                      {main && <Thumb example={main} scale={thumb.scale} align={thumb.align} className="h-44" src={FRAMED.has(i.name) ? `/still/${i.name}/Site` : undefined} />}
                       <div className="grid gap-1 border-t border-line-subtle p-5">
                         <Link
                           href={`/components/${i.name}`}

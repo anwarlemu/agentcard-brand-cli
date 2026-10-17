@@ -50,7 +50,7 @@ export function Command({ command, className }: { command: string; className?: s
 
 /** The docs' page column: the content column with room under the header and above the dock. */
 export function Page({ className, children }: { className?: string; children: React.ReactNode }) {
-  return <main className={cn("mx-auto grid w-(--ds-frame-column) grid-cols-[minmax(0,1fr)] gap-24 pt-32 pb-36 md:gap-28 md:pt-36", className)}>{children}</main>;
+  return <main className={cn("mx-auto grid w-(--ds-frame-column) grid-cols-[minmax(0,1fr)] gap-24 pt-28 pb-36 md:gap-28 md:pt-12", className)}>{children}</main>;
 }
 
 /** @deprecated The command now sits on the ink ground; kept so older imports read. */

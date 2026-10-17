@@ -40,6 +40,10 @@
 	--ds-color-bg-code: #171818;
 	--ds-color-bg-scrim: rgb(23 24 24 / 0.4);
 	--ds-color-bg-glass: rgb(23 24 24 / 0.42);
+	/* A note in a guide: sky at 22 percent on white. */
+	--ds-color-bg-note: #F4F7FF;
+	/* A guide's code block: ink at 94 percent on white. */
+	--ds-color-bg-code-soft: #252626;
 	--ds-color-bg-raised-on-brand: rgb(255 255 255 / 0.07);
 
 	/* Text: ink, and ink at 80, 68, 60 and 45 percent on white (solid, so they read the same on any white); white and
@@ -63,6 +67,8 @@
 	--ds-color-border-strong: rgb(23 24 24 / 0.35);
 	/* Customer windows, case cards and the dotted rules in plans. */
 	--ds-color-border-mid: rgb(23 24 24 / 0.22);
+	/* The rule under a page's head (the guides). */
+	--ds-color-border-rule: rgb(23 24 24 / 0.18);
 	/* A search field's edge, and its edge under the pointer (the guides' search). */
 	--ds-color-border-field: rgb(23 24 24 / 0.12);
 	--ds-color-border-field-hover: rgb(23 24 24 / 0.24);
@@ -102,6 +108,8 @@
 	--ds-font-display: "Neue Haas Grotesk Display Pro", "Neue Haas Grotesk Display", "Helvetica Neue", Helvetica, Arial, sans-serif;
 	/* Code is set in the display face too, as on the brand's code windows. */
 	--ds-font-mono: "Neue Haas Grotesk Display Pro", "Neue Haas Grotesk Display", "Helvetica Neue", Helvetica, Arial, sans-serif;
+	/* Code in the guides' code blocks: the system monospace. */
+	--ds-font-code: ui-monospace, SFMono-Regular, Menlo, monospace;
 	--ds-font-weight-regular: 400;
 	--ds-font-weight-medium: 500;
 	/* Headings, labels and keys in the display face are set at 500. */
@@ -184,6 +192,8 @@
 	--ds-shadow-pressed: inset 0 2px 3px rgb(23 24 24 / 0.22), inset 0 -1px 0 rgb(255 255 255 / 0.18);
 	/* A sunken track (tabs, a selected row's well). */
 	--ds-shadow-well: inset 0 1px 2px rgb(23 24 24 / 0.08), inset 0 -1px 0 #FFFFFF;
+	/* The guides' windows: the bevel's light top and a lighter drop than a card's. */
+	--ds-shadow-guide: inset 0 1px 0 #FFFFFF, inset 0 -1px 0 rgb(23 24 24 / 0.05), 0 1px 2px rgb(23 24 24 / 0.07), 0 4px 10px -6px rgb(23 24 24 / 0.14);
 	/* A search field's faint inner shadow. */
 	--ds-shadow-inset: inset 0 1px 2px rgb(23 24 24 / 0.06);
 	/* Cards: the window's soft drop, and the large card's hard offset shadow. */
