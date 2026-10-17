@@ -1,5 +1,4 @@
-import { InstallCommand } from "@www/components/chrome";
-import { SectionHeading, SiteSection } from "@www/components/chrome";
+import { InstallCommand, SectionHeading, SiteSection } from "@www/components/chrome";
 import { Code } from "@www/components/code";
 import { APPLY_COMMAND, registryName } from "@www/lib/registry";
 
@@ -24,33 +23,28 @@ const FLOW = [
 export default function CliPage() {
   return (
     <main>
-      <SiteSection lines header="under">
-        <SectionHeading
-          as="h1"
-          title="One command"
-          accent="applies the brand."
-          description={`Run it in any project: it swaps in library components where the app's own match, restyles everything else, and keeps coding agents on ${registryName}.`}
-        >
-          <InstallCommand command={APPLY_COMMAND} />
+      <SiteSection>
+        <SectionHeading as="h1" title="One command applies the brand" description={`Run it in any project: it swaps in library components where the app's own match, restyles everything else, and keeps coding agents on ${registryName}.`}>
+          <InstallCommand command={APPLY_COMMAND} className="mt-4" />
         </SectionHeading>
       </SiteSection>
 
-      <SiteSection lines>
+      <SiteSection>
         <SectionHeading title="What it does" />
         <ol className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {FLOW.map((s, i) => (
-            <li key={s.title} className="flex flex-col gap-3 rounded-card p-5 shadow-[0_0_0_1px_var(--ds-color-border-hairline),0_0_0_var(--ds-space-1-5)_var(--ds-color-ring-tint)]">
-              <span className="flex size-7 items-center justify-center rounded-pill bg-blue-10 font-mono text-caption text-fg-brand">{i + 1}</span>
-              <span className="text-body font-medium text-fg">{s.title}</span>
+            <li key={s.title} className="flex flex-col gap-3 rounded-card border border-hairline bg-surface p-6 shadow-card">
+              <span className="font-display text-caption text-fg-label">0{i + 1}</span>
+              <span className="font-display text-h3 leading-display font-medium tracking-tight text-fg">{s.title}</span>
               <span className="text-body-sm text-fg-muted">{s.body}</span>
             </li>
           ))}
         </ol>
       </SiteSection>
 
-      <SiteSection lines>
+      <SiteSection>
         <SectionHeading title="Commands" description="Once installed, the CLI is agentcard-ds in the project." />
-        <dl className="grid divide-y divide-line-subtle">
+        <dl className="mx-auto grid max-w-(--ds-layout-heading) divide-y divide-line-subtle">
           {COMMANDS.map(([cmd, what]) => (
             <div key={cmd} className="grid gap-1 py-4 sm:grid-cols-[16rem_1fr] sm:gap-6">
               <dt className="font-mono text-body-sm text-fg">npx agentcard-ds {cmd}</dt>
@@ -60,9 +54,9 @@ export default function CliPage() {
         </dl>
       </SiteSection>
 
-      <SiteSection lines>
-        <SectionHeading title="Add components" description="In a React project on Tailwind 4, add items by name. Files land in components/ui, product, site, blocks or visuals, honoring a src folder and the @ alias." />
-        <Code title="terminal" code={`npx agentcard-ds add button card tabs tooltip\nnpx agentcard-ds add app-shell overview-page`} />
+      <SiteSection>
+        <SectionHeading title="Add components" description="In a React project on Tailwind 4, add items by name. Files land in components/ui, site, blocks or visuals, honoring a src folder and the @ alias." />
+        <Code title="terminal" code={`npx agentcard-ds add button window tabs tooltip\nnpx agentcard-ds add hero pricing faq site-footer`} />
       </SiteSection>
     </main>
   );
