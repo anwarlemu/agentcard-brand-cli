@@ -9,8 +9,10 @@ import { cn } from "@/lib/utils";
 
 type Group = { label: string; items: { name: string; title: string }[] };
 
+// A row of the list: 14px, ink at 68 percent, a wash on hover; the current item is the brand's selected row (the
+// integrations picker's): a pale blue well with a blue edge and ink text.
 const LINK =
-  "block rounded-control px-2.5 py-1.5 text-body-sm text-fg-muted outline-none transition-colors duration-150 ease-out hover:text-fg focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-focus-ring aria-[current=page]:bg-blue-10 aria-[current=page]:text-fg-brand motion-reduce:transition-none";
+  "block rounded-sm border border-transparent px-2.5 py-1.5 text-body-sm text-fg-muted outline-none transition-[background-color,color] duration-150 ease-out hover:bg-wash-hover hover:text-fg focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-focus-ring aria-[current=page]:border-line-brand aria-[current=page]:bg-blue-5 aria-[current=page]:text-fg motion-reduce:transition-none";
 
 function useCurrent() {
   const pathname = usePathname();
@@ -19,7 +21,7 @@ function useCurrent() {
 
 function Filter({ value, onChange, className }: { value: string; onChange: (v: string) => void; className?: string }) {
   return (
-    <label className={cn("flex h-9 items-center gap-2 rounded-control bg-surface px-2.5 shadow-[0_0_0_1px_var(--ds-color-border-hairline)] transition-shadow duration-150 ease-out focus-within:shadow-[0_0_0_1px_var(--ds-color-blue-60)] motion-reduce:transition-none", className)}>
+    <label className={cn("flex h-9 items-center gap-2 border border-line-strong bg-surface px-2.5 transition-[border-color,box-shadow] duration-150 ease-out focus-within:border-line-brand focus-within:shadow-ring-hover motion-reduce:transition-none", className)}>
       <Search aria-hidden className="size-3.5 shrink-0 text-fg-subtle" />
       <input
         type="search"
@@ -41,7 +43,7 @@ function Groups({ groups, current, query }: { groups: Group[]; current?: string;
     <>
       {shown.map((g) => (
         <div key={g.label} className="mb-6 last:mb-0">
-          <p className="mb-1.5 px-2.5 text-body-sm font-medium text-fg">{g.label}</p>
+          <p className="mb-2 px-2.5 font-display text-caption tracking-label text-fg-label">{g.label}</p>
           <ul className="grid gap-px">
             {g.items.map((i) => (
               <li key={i.name}>
@@ -77,13 +79,13 @@ export function LibraryNav({ groups }: { groups: Group[] }) {
   }, [current]);
 
   return (
-    <aside aria-label="Library" className="sticky top-18 hidden h-[calc(100svh-var(--spacing)*18)] w-56 shrink-0 flex-col self-start lg:flex">
+    <aside aria-label="Library" className="sticky top-0 hidden h-svh w-56 shrink-0 flex-col self-start pt-4 lg:flex">
       <div className="pt-8 pb-3 pr-4">
         <Filter value={query} onChange={setQuery} />
       </div>
       <div
         ref={listRef}
-        className="relative min-h-0 flex-1 overflow-y-auto overscroll-contain pr-4 pb-10 [mask-image:linear-gradient(to_bottom,transparent,var(--ds-color-black)_var(--ds-space-3),var(--ds-color-black)_calc(100%-var(--ds-space-8)),transparent)] [scrollbar-width:thin] [scrollbar-color:var(--ds-color-neutral-20)_transparent]"
+        className="relative min-h-0 flex-1 overflow-y-auto overscroll-contain pr-4 pb-10 [mask-image:linear-gradient(to_bottom,transparent,var(--ds-color-black)_var(--ds-space-3),var(--ds-color-black)_calc(100%-var(--ds-space-8)),transparent)] [scrollbar-width:thin] [scrollbar-color:var(--ds-color-border-strong)_transparent]"
       >
         <div className="pt-3">
           <Groups groups={groups} current={current} query={query} />
@@ -101,21 +103,21 @@ export function LibraryBar({ groups }: { groups: Group[] }) {
   React.useEffect(() => setOpen(false), [current]);
   const title = groups.flatMap((g) => g.items).find((i) => i.name === current)?.title;
   return (
-    <div className="sticky top-16 z-30 border-b border-line-subtle bg-surface/90 backdrop-blur-[var(--ds-space-3)] min-[880px]:top-18 lg:hidden">
+    <div className="sticky top-16 z-30 border-b border-line-subtle bg-surface lg:hidden md:top-0">
       <button
         type="button"
         aria-expanded={open}
         onClick={() => setOpen((o) => !o)}
-        className="mx-auto flex h-11 w-full max-w-(--ds-frame-column) items-center justify-between gap-3 px-6 text-body-sm outline-none focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-focus-ring sm:px-8 md:px-10"
+        className="mx-auto flex h-11 w-(--ds-frame-column) items-center justify-between gap-3 font-display text-body-sm outline-none focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-focus-ring"
       >
         <span className="truncate">
-          <span className="text-fg-muted">Library</span>
+          <span className="text-fg-label">Library</span>
           {title && <span className="text-fg"> / {title}</span>}
         </span>
         <ChevronDown aria-hidden className={cn("size-4 shrink-0 text-fg-muted transition-transform duration-200 ease-out motion-reduce:transition-none", open && "rotate-180")} />
       </button>
       {open && (
-        <div className="mx-auto max-h-[70svh] max-w-(--ds-frame-column) overflow-y-auto overscroll-contain border-t border-line-subtle px-4 pt-3 pb-6 sm:px-6 md:px-8">
+        <div className="mx-auto max-h-[70svh] w-(--ds-frame-column) overflow-y-auto overscroll-contain border-t border-line-subtle pt-3 pb-6">
           <Filter value={query} onChange={setQuery} className="mb-4" />
           <Groups groups={groups} current={current} query={query} />
         </div>

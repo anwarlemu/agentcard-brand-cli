@@ -7,11 +7,11 @@ import { GROUPS, items } from "@www/lib/registry";
 export default function ItemLayout({ children }: { children: React.ReactNode }) {
   const groups = GROUPS.map((g) => ({ label: g.label, items: items.filter((i) => i.type === g.type).map((i) => ({ name: i.name, title: i.title })) })).filter((g) => g.items.length);
   return (
-    <div className="relative overflow-x-clip">
+    <div className="relative pt-20 max-md:pt-16">
       <LibraryBar groups={groups} />
-      <div className="relative mx-auto flex w-full max-w-(--ds-frame-column) gap-10 px-6 sm:px-8 md:px-10 lg:px-12">
+      <div className="relative mx-auto flex w-(--ds-frame-column) gap-10 lg:gap-14">
         <LibraryNav groups={groups} />
-        <div className="min-h-[calc(100svh-var(--spacing)*18)] min-w-0 flex-1">{children}</div>
+        <div className="min-h-svh min-w-0 flex-1">{children}</div>
       </div>
     </div>
   );

@@ -101,7 +101,7 @@ function CodeWindow({ title, code, children, language, copy = false, className, 
         <span aria-hidden className="size-2 rounded-[var(--ds-space-px)] bg-current opacity-45" />
         <span aria-hidden className="size-2 rounded-[var(--ds-space-px)] bg-current opacity-45" />
         {title ? <figcaption className="ml-2 min-w-0 truncate">{title}</figcaption> : null}
-        {copy && code ? <CopyButton value={code} label="Copy code" className="-mr-2 ml-auto size-6 text-white/55 hover:bg-white/10 hover:text-white" /> : null}
+        {copy && code ? <CopyButton value={code} label="Copy code" className="-mr-2 ml-auto size-6 border-transparent bg-transparent text-white/55 shadow-none hover:bg-white/10 hover:text-white data-copied:border-transparent data-copied:bg-white/10 data-copied:text-white data-copied:shadow-none" /> : null}
       </div>
       <pre
         tabIndex={0}

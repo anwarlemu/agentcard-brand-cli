@@ -2,19 +2,30 @@
 
 import { usePathname } from "next/navigation";
 
+import { NavDock } from "@/components/site/nav-dock";
 import { SiteHeader } from "@/components/site/site-header";
 
-// The docs header: the library's own site header on white, with the docs' sections and GitHub as the key.
-export function Header({ repo }: { name: string; repo: string; counts?: Record<string, number> }) {
+// The docs' navigation, as agentcard.sh draws its own: a bare header (the lockup, one key) over the page, and the glass
+// dock at the foot of the screen carrying the sections, which becomes the top bar with its sheet on a phone.
+export function Header({ repo, library: libraryItems }: { repo: string; library: { title: string; description: string; href: string }[] }) {
   const pathname = usePathname();
-  const links = [
-    { label: "Components", href: "/components" },
-    { label: "Theme", href: "/theme" },
-    { label: "CLI", href: "/cli" },
-  ].map((l) => ({ ...l, current: pathname.startsWith(l.href) }));
+  const onBlue = pathname === "/";
+  const library = pathname.startsWith("/components");
   return (
-    <div className="relative z-40 h-20">
-      <SiteHeader ground={pathname === "/" ? "blue" : "white"} overlay logoLabel="Agentcard UI, home" links={links} action={{ label: "GitHub", href: repo }} />
-    </div>
+    <>
+      <SiteHeader ground={onBlue ? "blue" : "white"} logoLabel="Agentcard UI, home" action={{ label: "GitHub", href: repo }} className="z-40 max-md:hidden" />
+      <NavDock
+        label="Docs"
+        hideAt="docs-footer"
+        center="Design system"
+        links={[
+          { label: "Overview", href: "/", current: pathname === "/" },
+          { label: "Library", current: library, items: libraryItems },
+          { label: "Theme", href: "/theme", current: pathname.startsWith("/theme") },
+          { label: "CLI", href: "/cli", current: pathname.startsWith("/cli") },
+        ]}
+        action={{ label: "GitHub", href: repo }}
+      />
+    </>
   );
 }

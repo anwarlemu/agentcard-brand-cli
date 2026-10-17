@@ -4,7 +4,7 @@ export function Prose({ text }: { text: string }) {
     <>
       {text.split(/(`[^`]+`)/g).map((part, i) =>
         part.startsWith("`") && part.endsWith("`") ? (
-          <code key={i} className="rounded-sm bg-subtle px-1 py-px font-mono text-[0.9em] text-fg">
+          <code key={i} className="rounded-chip bg-blue-5 px-1 py-px font-mono text-fg-brand">
             {part.slice(1, -1)}
           </code>
         ) : (

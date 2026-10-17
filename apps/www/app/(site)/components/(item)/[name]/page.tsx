@@ -1,8 +1,8 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
-import { InstallCommand } from "@www/components/chrome";
-import { Badge } from "@/components/ui/badge";
+import { Window } from "@/components/ui/window";
+import { Block, Command, PageIntro } from "@www/components/chrome";
 import { Code } from "@www/components/code";
 import { FramePreview } from "@www/components/frame-preview";
 import { Preview } from "@www/components/preview";
@@ -19,28 +19,24 @@ export async function generateMetadata({ params }: { params: Promise<{ name: str
   return item ? { title: item.title, description: item.description } : {};
 }
 
-const TYPE_LABEL: Record<Item["type"], string> = { ui: "Component", product: "Product", site: "Section", block: "Page", visual: "Visual", hook: "Hook", lib: "Library" };
+const TYPE_LABEL: Record<Item["type"], string> = { ui: "Component", product: "Component", site: "Section", block: "Page", visual: "Visual", hook: "Hook", lib: "Library" };
 
-// Every example renders on the site (Agentcard has a site only).
-function exampleSurface(_item: Item, _name: string): "site" {
-  return "site";
-}
 function exampleLabel(name: string) {
-  if (name === "Block") return "Full page";
+  if (name === "Block") return "Page";
   if (name === "Site") return "Preview";
   const words = name.replace(/([a-z])([A-Z])/g, "$1 $2").toLowerCase();
   return words.charAt(0).toUpperCase() + words.slice(1);
 }
 
-// From 1280px, the page's sections down the right, sticky under the header.
+// From 1280px, the page's sections down the right, sticky at the top of the screen.
 function OnThisPage({ sections }: { sections: { id: string; label: string }[] }) {
   return (
-    <nav aria-label="On this page" className="sticky top-18 hidden w-40 shrink-0 self-start pt-10 xl:block">
-      <p className="mb-2 text-body-sm font-medium text-fg">On this page</p>
-      <ul className="grid gap-px border-l border-line-subtle">
+    <nav aria-label="On this page" className="sticky top-0 hidden w-40 shrink-0 self-start pt-14 xl:block">
+      <p className="mb-3 font-display text-caption tracking-label text-fg-label">On this page</p>
+      <ul className="grid gap-px border-l border-line">
         {sections.map((s) => (
           <li key={s.id}>
-            <a href={`#${s.id}`} className="-ml-px block border-l border-transparent py-1 pl-3 text-body-sm text-fg-muted outline-none transition-colors duration-150 ease-out hover:border-fg-brand hover:text-fg focus-visible:outline-2 focus-visible:outline-focus-ring motion-reduce:transition-none">
+            <a href={`#${s.id}`} className="-ml-px block border-l border-transparent py-1 pl-3 text-body-sm text-fg-muted outline-none transition-[border-color,color] duration-150 ease-out hover:border-line-brand hover:text-fg focus-visible:outline-2 focus-visible:outline-focus-ring motion-reduce:transition-none">
               {s.label}
             </a>
           </li>
@@ -50,66 +46,53 @@ function OnThisPage({ sections }: { sections: { id: string; label: string }[] })
   );
 }
 
-function H2({ id, children }: { id: string; children: React.ReactNode }) {
-  return (
-    <h2 id={id} className="mt-16 mb-5 font-display text-h3 leading-display font-medium tracking-tight">
-      {children}
-    </h2>
-  );
-}
-
 export default async function ComponentPage({ params }: { params: Promise<{ name: string }> }) {
   const item = findItem((await params).name);
   if (!item) notFound();
-  // The main examples first (Block, then Site and Product), then its states (Loading, Empty...) in their own order.
+  // The main example first (a page, then the preview), then its states (Open, Few...) in their own order.
   const MAIN = ["Block", "Site"];
-  const demos = Object.fromEntries(Object.entries(examples[item.name] ?? {}).sort(([a], [b]) => (MAIN.includes(a) ? MAIN.indexOf(a) : 9) - (MAIN.includes(b) ? MAIN.indexOf(b) : 9)));
+  const demos = Object.entries(examples[item.name] ?? {}).sort(([a], [b]) => (MAIN.includes(a) ? MAIN.indexOf(a) : 9) - (MAIN.includes(b) ? MAIN.indexOf(b) : 9));
+  const framed = item.type === "site" || item.type === "block";
   const requires = item.dependencies.filter((d) => d !== "utils");
   const sections = [
-    ...(Object.keys(demos).length ? [{ id: "preview", label: "Preview" }] : []),
+    ...(demos.length ? [{ id: "preview", label: "Preview" }] : []),
     { id: "usage", label: "Usage" },
     ...(item.examples.length ? [{ id: "example", label: "Example" }] : []),
     { id: "source", label: "Source" },
   ];
   return (
-    <div className="flex gap-10">
-        <main className="min-w-0 flex-1 pt-10 pb-24">
-          <div className="mb-4 flex flex-wrap items-center gap-2">
-            <Badge variant="tag">{TYPE_LABEL[item.type]}</Badge>
-          </div>
-          <h1 className="font-display text-h1 leading-heading font-medium tracking-tight">{item.title}</h1>
-          <p className="mt-4 max-w-(--ds-layout-text) text-body-lg text-fg-muted"><Prose text={item.description} /></p>
-          <InstallCommand command={`npx agentcard-ds add ${item.name}`} className="mt-8" />
+    <div className="flex gap-12">
+      <main className="grid min-w-0 flex-1 grid-cols-[minmax(0,1fr)] content-start gap-20 pt-12 pb-36">
+        <PageIntro align="start" eyebrow={TYPE_LABEL[item.type]} title={item.title} lead={<Prose text={item.description} />}>
+          <Command command={`npx agentcard-ds add ${item.name}`} />
+        </PageIntro>
 
-          <div id="preview" className="mt-10 grid gap-6">
-            {Object.entries(demos).map(([name, Demo]) => (
-              item.type === "site" || item.type === "block" ? (
-                <FramePreview key={name} src={`/preview/${item.name}/${name}`} surface={exampleSurface(item, name)} label={exampleLabel(name)} />
-              ) : (
-                <Preview key={name} example={Demo} block={name === "Block"} surface={exampleSurface(item, name)} label={exampleLabel(name)} />
-              )
-            ))}
+        {demos.length > 0 && (
+          <div id="preview" className="grid scroll-mt-24 gap-8">
+            {demos.map(([name, Demo]) =>
+              framed ? <FramePreview key={name} src={`/preview/${item.name}/${name}`} name={item.name} label={exampleLabel(name)} /> : <Preview key={name} example={Demo} name={item.name} block={name === "Block"} label={exampleLabel(name)} />,
+            )}
           </div>
+        )}
 
-          <H2 id="usage">Usage</H2>
+        <Block id="usage" align="start" title="Usage">
           <div className="grid gap-4 md:grid-cols-2">
-            <div className="rounded-card border border-hairline bg-surface p-5 shadow-card">
-              <p className="mb-2 text-body-sm font-medium text-fg">Use it for</p>
-              <p className="text-body-sm text-fg-muted">
+            <Window name="use-it-for.md" bodyClassName="p-6">
+              <p className="text-body-sm leading-relaxed text-fg">
                 <Prose text={item.use_for} />
               </p>
-            </div>
+            </Window>
             {item.never.length > 0 && (
-              <div className="rounded-card border border-hairline bg-surface p-5 shadow-card">
-                <p className="mb-2 text-body-sm font-medium text-fg">Never</p>
-                <ul className="grid list-disc gap-1 pl-4 text-body-sm text-fg-muted marker:text-fg-subtle">
+              <Window name="never.md" bodyClassName="p-6">
+                <ul className="grid gap-2 text-body-sm text-fg">
                   {item.never.map((n) => (
-                    <li key={n}>
+                    <li key={n} className="flex gap-2.5">
+                      <span aria-hidden className="mt-2.25 h-px w-2.5 shrink-0 bg-danger" />
                       <Prose text={n} />
                     </li>
                   ))}
                 </ul>
-              </div>
+              </Window>
             )}
           </div>
           {(requires.length > 0 || item.npm.length > 0) && (
@@ -117,38 +100,39 @@ export default async function ComponentPage({ params }: { params: Promise<{ name
               Brings{" "}
               {requires.map((d, i) => (
                 <span key={d}>
-                  <Link href={`/components/${d}`} className="rounded-sm text-fg-brand outline-none hover:underline focus-visible:outline-2 focus-visible:outline-focus-ring">
+                  <Link href={`/components/${d}`} className="rounded-sm text-fg underline decoration-line-brand underline-offset-[0.2em] outline-none transition-colors duration-150 ease-out hover:text-fg-brand focus-visible:outline-2 focus-visible:outline-focus-ring">
                     {d}
                   </Link>
                   {i < requires.length - 1 || item.npm.length ? ", " : ""}
                 </span>
               ))}
               {item.npm.map((p, i) => (
-                <code key={p} className="font-mono text-caption text-fg">
+                <code key={p} className="font-mono text-body-sm text-fg">
                   {p}
                   {i < item.npm.length - 1 ? ", " : ""}
                 </code>
-              ))}
-              {" "}with it.
+              ))}{" "}
+              with it.
             </p>
           )}
+        </Block>
 
-          {item.examples.length > 0 && (
-            <>
-              <H2 id="example">Example</H2>
-              <Code title={`examples/${item.name}.tsx`} code={exampleSource(item.name)} />
-            </>
-          )}
+        {item.examples.length > 0 && (
+          <Block id="example" align="start" title="Example">
+            <Code title={`examples/${item.name}.tsx`} code={exampleSource(item.name)} />
+          </Block>
+        )}
 
-          <H2 id="source">Source</H2>
+        <Block id="source" align="start" title="Source">
           <div className="grid gap-5">
             {item.paths.map((p) => (
               <Code key={p} title={p} code={sourceOf(p)} tall />
             ))}
           </div>
-          {item.source && <p className="mt-6 text-caption text-fg-subtle">Ported from {item.source}.</p>}
-        </main>
-        <OnThisPage sections={sections} />
+          {item.source && <p className="mt-5 text-caption text-fg-subtle">Ported from {item.source}.</p>}
+        </Block>
+      </main>
+      <OnThisPage sections={sections} />
     </div>
   );
 }
