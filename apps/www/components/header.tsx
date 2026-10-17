@@ -1,32 +1,20 @@
-import Link from "next/link";
+"use client";
 
-import { Button } from "@/components/ui/button";
-import { Lockup } from "@www/components/logo";
+import { usePathname } from "next/navigation";
 
-// The docs header: the lockup, the docs' sections, and one key.
-export function Header({ name, repo }: { name: string; repo: string; counts?: Record<string, number> }) {
+import { SiteHeader } from "@/components/site/site-header";
+
+// The docs header: the library's own site header on white, with the docs' sections and GitHub as the key.
+export function Header({ repo }: { name: string; repo: string; counts?: Record<string, number> }) {
+  const pathname = usePathname();
+  const links = [
+    { label: "Components", href: "/components" },
+    { label: "Theme", href: "/theme" },
+    { label: "CLI", href: "/cli" },
+  ].map((l) => ({ ...l, current: pathname.startsWith(l.href) }));
   return (
-    <header className="sticky top-0 z-40 bg-surface/90 backdrop-blur-md">
-      <div className="mx-auto flex h-16 max-w-(--ds-frame-column) items-center justify-between gap-6">
-        <Link href="/" aria-label={`${name} UI home`} className="flex items-baseline gap-2 rounded-sm">
-          <Lockup className="h-6" />
-          <span className="font-display text-caption text-fg-label">ui</span>
-        </Link>
-        <nav className="flex items-center gap-1 font-display text-body-sm">
-          {[
-            { label: "Components", href: "/components" },
-            { label: "Theme", href: "/theme" },
-            { label: "CLI", href: "/cli" },
-          ].map((l) => (
-            <Link key={l.href} href={l.href} className="rounded-sm px-3.5 py-2 transition-colors duration-150 ease-out hover:bg-wash-hover max-sm:hidden">
-              {l.label}
-            </Link>
-          ))}
-          <Button asChild variant="secondary" className="ml-2">
-            <a href={repo}>GitHub</a>
-          </Button>
-        </nav>
-      </div>
-    </header>
+    <div className="relative z-40 h-20">
+      <SiteHeader ground="white" overlay logoLabel="Agentcard UI, home" links={links} action={{ label: "GitHub", href: repo }} />
+    </div>
   );
 }
