@@ -61,6 +61,8 @@
 	--ds-color-border-default: rgb(23 24 24 / 0.14);
 	--ds-color-border-subtle: rgb(23 24 24 / 0.08);
 	--ds-color-border-strong: rgb(23 24 24 / 0.35);
+	/* Customer windows, case cards and the dotted rules in plans. */
+	--ds-color-border-mid: rgb(23 24 24 / 0.22);
 	--ds-color-border-hairline: rgb(23 24 24 / 0.16);
 	/* A white key's edge: the hairline, kept when a blue ground re-points the hairline to white. */
 	--ds-color-border-key: rgb(23 24 24 / 0.16);
@@ -184,6 +186,8 @@
 	--ds-shadow-raised: inset 0 1px 0 #FFFFFF, inset 0 -2px 0 rgb(23 24 24 / 0.06), 7px 7px 0 rgb(23 24 24 / 0.1);
 	/* A code window lifted off the blue panel it sits on. */
 	--ds-shadow-code: 0 16px 36px -14px rgb(23 24 24 / 0.6);
+	/* A plan window: the bevel and a darker hard offset. */
+	--ds-shadow-plan: inset 0 1px 0 #FFFFFF, inset 0 -2px 0 rgb(23 24 24 / 0.06), 6px 6px 0 rgb(23 24 24 / 0.22);
 	--ds-shadow-tile: 0 1px 2px rgb(23 24 24 / 0.08), 0 6px 16px rgb(23 24 24 / 0.06);
 	/* Glass: the floating dock and its menus. */
 	--ds-shadow-floating: inset 0 1px 0 rgb(255 255 255 / 0.32), 0 8px 24px rgb(23 24 24 / 0.2);

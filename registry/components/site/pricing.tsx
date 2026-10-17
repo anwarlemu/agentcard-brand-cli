@@ -58,7 +58,7 @@ function PlanWindow({ plan, index, active }: { plan: Plan; index: number; active
       // The new product's plans come up one after another; the old ones fade out at once.
       style={{ transitionDelay: active ? `${index * 35}ms` : "0ms" }}
       className={cn(
-        "shadow-[inset_0_1px_0_var(--ds-color-white),inset_0_-2px_0_color-mix(in_srgb,var(--ds-color-ink)_6%,transparent),6px_6px_0_color-mix(in_srgb,var(--ds-color-ink)_22%,transparent)] lg:row-span-5 lg:grid lg:grid-rows-subgrid lg:gap-0",
+        "shadow-plan lg:row-span-5 lg:grid lg:grid-rows-subgrid lg:gap-0",
         "transition-[opacity,translate] duration-(--ds-duration-moderate) ease-out motion-reduce:transition-none",
         !active && "opacity-0 duration-150 motion-safe:translate-y-2",
       )}

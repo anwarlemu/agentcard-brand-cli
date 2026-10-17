@@ -50,7 +50,7 @@ function CaseWindow({ item, index }: { item: Case; index: number }) {
           {item.context && <p className="text-body-sm leading-5.5 opacity-72 text-pretty">{item.context}</p>}
           <p className={cn("text-h3 leading-7 font-medium tracking-tighter text-balance max-md:leading-6", item.context && "mt-2")}>{item.quote}</p>
         </blockquote>
-        <figcaption className="mt-5.5 flex items-center gap-2 border-t-2 border-dotted border-[color-mix(in_srgb,var(--ds-color-ink)_22%,transparent)] pt-4 text-body-sm">
+        <figcaption className="mt-5.5 flex items-center gap-2 border-t-2 border-dotted border-line-mid pt-4 text-body-sm">
           {item.logo && (
             <span aria-hidden className="flex size-5 flex-none items-center justify-center [&>img]:size-full [&>svg]:size-full">
               {item.logo}

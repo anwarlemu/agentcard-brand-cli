@@ -39,7 +39,7 @@ function CustomerWindow({ customer, index }: { customer: Customer; index: number
     <li
       data-trail-card=""
       style={{ "--trail-y": `${rest.y}px`, "--trail-rot": `${rest.rot}deg`, "--tint": TINT[tone] } as React.CSSProperties}
-      className="relative z-10 flex flex-col overflow-hidden rounded-[calc(var(--ds-radius-card)-0.125rem)] border border-[color-mix(in_srgb,var(--ds-color-ink)_22%,transparent)] bg-surface text-fg shadow-tile lg:[transform:translateY(var(--trail-y))_rotate(var(--trail-rot))]"
+      className="relative z-10 flex flex-col overflow-hidden rounded-[calc(var(--ds-radius-card)-0.125rem)] border border-line-mid bg-surface text-fg shadow-tile lg:[transform:translateY(var(--trail-y))_rotate(var(--trail-rot))]"
     >
       <div
         aria-hidden
