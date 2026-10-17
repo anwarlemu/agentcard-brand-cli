@@ -251,10 +251,21 @@ describe('blue ground', () => {
 		expect(css).toContain(':where([data-ds-hero], [data-ds-ground="blue"], .ds-on-blue) {\n\t--fg: var(--ds-color-text-default);\n}');
 		expect(css).not.toContain('--gap');
 		expect(groundAliases('body { color: red }')).toBe('');
+		expect(groundAliases('@theme { --color-ink: var(--ds-color-text-default); }\n@theme inline { --color-x: var(--ds-color-brand); }')).toContain('--color-ink: var(--ds-color-text-default);');
+		expect(groundAliases('@theme inline { --color-x: var(--ds-color-brand); }')).toBe('');
+		expect(groundAliases(':root { --text: var(--palette-white); --gap: 4px; }\n:root { --palette-white: var(--ds-color-text-default); }')).toContain('--text: var(--palette-white);');
+		expect(groundAliases(':root { --a: 1px; /* not var(--ds-color-brand) here */ --b: var(--ds-color-brand); }')).not.toContain('not var');
 	});
 });
 
 describe('elements', () => {
+	it('reads a stylesheet with long comments quickly, with the right line numbers', () => {
+		const css = `/* ${'note '.repeat(20000)}\n${'more\n'.repeat(50)} */\n.btn-primary { color: red }`;
+		const t = Date.now();
+		const hits = elementsIn('a.css', css.repeat(4), 'site');
+		expect(Date.now() - t).toBeLessThan(2000);
+		expect(hits[0]).toMatchObject({ kind: 'button-primary', line: 53 });
+	});
 	it('recognizes buttons, headings, cards and nav links', () => {
 		const html = '<header><nav><a href="/">Docs</a><a class="btn btn-primary">Start</a></nav></header><section class="hero"><h1>Title</h1></section><section><h2 class="title">Features</h2><div class="feature-card"><h3>One</h3></div><a class="btn-outline">More</a></section>';
 		const kinds = elementsIn('index.html', html, 'site').map((h) => h.kind);
@@ -304,6 +315,23 @@ describe('review', () => {
 		const schema = scorecardJsonSchema();
 		expect(schema.additionalProperties).toBe(false);
 		expect(schema.properties.punch_list.items.required).toEqual(['viewport', 'region', 'issue', 'fix', 'severity']);
+	});
+});
+
+describe('next fonts', () => {
+	it('wires the brand fonts after the last import, in a layout without semicolons', () => {
+		const p = project({
+			'package.json': JSON.stringify({ name: 'site', dependencies: { next: '16.0.0', react: '19.0.0' } }),
+			'app/globals.css': 'body { color: #111; }',
+			'app/layout.tsx': 'import type { Metadata } from "next"\nimport "./globals.css"\n\n/* A note; with a semicolon,\n   over two lines */\nexport default function RootLayout({ children }: { children: React.ReactNode }) {\n  return <html lang="en" className="h-full"><body>{children}</body></html>\n}\n',
+			'app/page.tsx': 'export default function Page() { return <main><h1>Hi</h1></main> }',
+		});
+		run(p);
+		const layout = readFileSync(join(p, 'app/layout.tsx'), 'utf8');
+		expect(layout).toContain('import "./globals.css"\nimport { dsFontVariables }');
+		expect(layout).toContain('/* A note; with a semicolon,\n   over two lines */');
+		expect(layout).toContain('className={`${dsFontVariables} h-full`}');
+		rmSync(p, { recursive: true });
 	});
 });
 

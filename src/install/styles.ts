@@ -78,9 +78,21 @@ export function installStyles(w: Writer, project: Project, surface: Surface, sty
 export function groundAliases(styleText: string) {
 	const hero = brand().touches.hero;
 	if (!hero) return '';
+	const vars = new Map<string, string>();
+	// Comments first: a comment that mentions a token would otherwise read as part of a declaration.
+	const css = styleText.replace(/\/\*[\s\S]*?\*\//g, '');
+	// Tailwind 4's @theme variables compile to the root too; @theme inline ones are written into the utilities, so they
+	// already follow the ground.
+	for (const block of css.matchAll(/(^|[}\s])((?::root|html|body|@theme(?!\s+inline))[^{}]*)\{([^{}]*)\}/g)) {
+		for (const d of block[3].matchAll(/(--(?!ds-)[\w-]+)\s*:\s*([^;{}]*);/g)) vars.set(d[1], d[2].trim());
+	}
+	// Every root variable that leads to a brand color, directly or through other variables (--text: var(--palette-white),
+	// --palette-white: var(--ds-color-text-default)): each was resolved at the root, so each is declared again.
 	const aliases = new Map<string, string>();
-	for (const block of styleText.matchAll(/(^|[}\s])((?::root|html|body)[^{}]*)\{([^{}]*)\}/g)) {
-		for (const d of block[3].matchAll(/(--(?!ds-)[\w-]+)\s*:\s*([^;]*var\(--ds-color-[^;]*);/g)) aliases.set(d[1], d[2].trim());
+	const leads = (v: string) => /var\(--ds-color-/.test(v) || [...v.matchAll(/var\((--[\w-]+)/g)].some((m) => aliases.has(m[1]));
+	for (let grew = true; grew; ) {
+		grew = false;
+		for (const [k, v] of vars) if (!aliases.has(k) && leads(v)) aliases.set(k, v), (grew = true);
 	}
 	if (!aliases.size) return '';
 	const decls = [...aliases].map(([k, v]) => `\t${k}: ${v};`).join('\n');
@@ -109,7 +121,8 @@ function wireNextFonts(w: Writer, project: Project) {
 	});
 	if (next === text) next = text.replace(/<html\b/, '<html className={dsFontVariables}');
 	if (next === text) return loader;
-	const lastImport = [...next.matchAll(/^import [^;]+;?\n/gm)].pop();
+	// The end of the last import statement, with or without semicolons (a bare `[^;]+` would run on into a comment).
+	const lastImport = [...next.matchAll(/^import[\s\S]*?from\s+["'][^"']+["'];?[^\n]*\n|^import\s+["'][^"']+["'];?[^\n]*\n/gm)].pop();
 	const line = `import { dsFontVariables } from '${from}';\n`;
 	next = lastImport ? next.slice(0, lastImport.index! + lastImport[0].length) + line + next.slice(lastImport.index! + lastImport[0].length) : line + next;
 	w.write(layout, next);

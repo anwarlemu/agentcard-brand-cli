@@ -72,14 +72,12 @@
 /* Touches. */
 
 /* The blue ground: the hero (marked by the CLI with data-ds-hero), and any band that sets ds-on-blue. The ground
-   re-points the role tokens, as the brand's .on-blue does: the site's own rules already read them (the converter
-   wrote them), so inside the hero its text turns white, its labels sky, its lines translucent white, and its main
-   action becomes the white key with blue text, without a rule per element. A header that sits over the hero takes
+   re-points the text, line and action tokens, as the brand's .on-blue does: the site's own rules already read them
+   (the converter wrote them), so inside the hero its text turns white, its labels sky, its lines translucent white,
+   and its main action becomes the white key with blue text, without a rule per element. Surfaces keep their values:
+   a white card stays a white card on the blue. A header that sits over the hero takes
    data-ds-ground="blue": the same colors, on its own background. */
 :where([data-ds-hero], [data-ds-ground="blue"], .ds-on-blue) {
-	--ds-color-bg-default: var(--ds-color-bg-brand);
-	--ds-color-bg-subtle: var(--ds-color-bg-raised-on-brand);
-	--ds-color-bg-frame: var(--ds-color-bg-raised-on-brand);
 	--ds-color-text-default: var(--ds-color-white);
 	--ds-color-text-secondary: var(--ds-color-text-on-brand-muted);
 	--ds-color-text-muted: var(--ds-color-text-on-brand-muted);
@@ -101,7 +99,9 @@
 	color: var(--ds-color-white);
 }
 
-:where([data-ds-hero], .ds-on-blue) {
+/* The ground itself, at a doubled selector so it wins over the site's own background on its hero class. */
+[data-ds-hero][data-ds-hero],
+.ds-on-blue.ds-on-blue {
 	position: relative;
 	background-color: var(--ds-color-bg-brand);
 }

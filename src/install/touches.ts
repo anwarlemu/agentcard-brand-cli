@@ -25,12 +25,12 @@ export function accentSplit(text: string): [string, string] | undefined {
 	return at > 0 ? [text.slice(0, at), trimmed.slice(at)] : undefined;
 }
 
-export function addTouches(text: string, jsx: boolean) {
+export function addTouches(text: string, jsx: boolean, heroDone = false) {
 	const cls = jsx ? 'className' : 'class';
 	const { hero, accent } = brand().touches;
 	let out = text;
-	// The hero: the first section or header whose class names it.
-	if (hero && !new RegExp(`\\b${hero.attribute}\\b`).test(out)) out = out.replace(/<(section|header|div)\b([^>]*\bclass(?:Name)?=["'][^"']*\bhero\b[^"']*["'][^>]*)>/i, (all, tag: string, attrs: string) => `<${tag}${attrs} ${hero.attribute}>`);
+	// The hero: the first section or header whose class names it, once across the home page's files.
+	if (hero && !heroDone && !new RegExp(`\\b${hero.attribute}\\b`).test(out)) out = out.replace(/<(section|header|div)\b([^>]*\bclass(?:Name)?=["'][^"']*\bhero\b[^"']*["'][^>]*)>/i, (all, tag: string, attrs: string) => `<${tag}${attrs} ${hero.attribute}>`);
 	if (!accent || /\bds-accent\b/.test(out)) return out;
 	let h1 = false;
 	return out.replace(/<(h1|h2)\b([^>]*)>([^<>{}]+)<\/\1>/gi, (all, tag: string, attrs: string, inner: string) => {
@@ -46,9 +46,13 @@ export function addTouches(text: string, jsx: boolean) {
 /** Adds the touches to the home page's own files (not the shared shell). Returns the files changed. */
 export function installTouches(w: Writer, files: string[]) {
 	const changed: string[] = [];
-	for (const rel of files.filter((f) => MARKUP.test(f))) {
-		const text = readFileSync(join(w.root, rel), 'utf8');
-		const next = addTouches(text, /\.(tsx|jsx)$/.test(rel));
+	const attribute = brand().touches.hero?.attribute;
+	const marked = (t: string) => !!attribute && new RegExp(`\\b${attribute}\\b`).test(t);
+	const texts = files.filter((f) => MARKUP.test(f)).map((rel) => [rel, readFileSync(join(w.root, rel), 'utf8')] as const);
+	let heroDone = texts.some(([, t]) => marked(t));
+	for (const [rel, text] of texts) {
+		const next = addTouches(text, /\.(tsx|jsx)$/.test(rel), heroDone);
+		heroDone ||= marked(next);
 		if (next !== text) {
 			w.write(rel, next);
 			changed.push(rel);

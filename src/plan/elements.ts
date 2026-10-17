@@ -107,12 +107,16 @@ const VOID = new Set(['input', 'img', 'br', 'hr', 'meta', 'link', 'source', 'are
 export function elementsIn(rel: string, text: string, surface: Surface): Hit[] {
 	const lineAt = (offset: number) => text.slice(0, offset).split('\n').length;
 	const hits: Hit[] = [];
-	const push = (offset: number, label: string, el: El, selector?: string) => {
+	const pushAt = (line: number, label: string, el: El, selector?: string) => {
 		const kind = kindOf(el, surface);
-		if (kind) hits.push({ line: lineAt(offset), label: label.replace(/\s+/g, ' '), kind, ...(selector ? { selector } : {}) });
+		if (kind) hits.push({ line, label: label.replace(/\s+/g, ' '), kind, ...(selector ? { selector } : {}) });
 	};
+	const push = (offset: number, label: string, el: El, selector?: string) => pushAt(lineAt(offset), label, el, selector);
 	if (/\.(css|scss|sass|less|styl)$/.test(rel)) {
-		const css = text.replace(/\/\*[\s\S]*?\*\//g, (c) => c.replace(/[^\n]/g, ' '));
+		// Comments go, their newlines kept so line numbers hold. Blanking them to spaces instead would leave long runs of
+		// whitespace, which the selector pattern below scans in quadratic time (a stylesheet with 700KB of comments hangs).
+		const css = text.replace(/\/\*[\s\S]*?\*\//g, (c) => c.replace(/[^\n]/g, ''));
+		const cssLine = (offset: number) => css.slice(0, offset).split('\n').length;
 		for (const m of css.matchAll(/(^|[};])\s*([^{}@;/][^{};]*?)\s*\{/g)) {
 			const selector = m[2].trim().split(',')[0].trim();
 			if (!selector || selector.startsWith(':root') || /^(from|to|\d+%)$/.test(selector) || /::?(before|after|placeholder|-webkit)|:(hover|focus|active|disabled|visited|focus-visible|checked)/.test(selector)) continue;
@@ -121,7 +125,7 @@ export function elementsIn(rel: string, text: string, surface: Surface): Hit[] {
 			const tag = (last.match(/^[a-z][a-z0-9]*/i)?.[0] ?? 'div').toLowerCase();
 			const split = splitClasses([...last.matchAll(/\.([\w-]+)/g)].map((c) => c[1]));
 			const context = parts.flatMap((c) => contextLabels((c.match(/^[a-z][a-z0-9]*/i)?.[0] ?? '').toLowerCase(), splitClasses([...c.matchAll(/\.([\w-]+)/g)].map((x) => x[1])).words));
-			push(m.index + m[1].length, selector.length > 60 ? `${selector.slice(0, 57)}...` : selector, { tag, ...split, attrs: last.match(/\[[^\]]*\]/g)?.join(' ') ?? '', context }, selector);
+			pushAt(cssLine(m.index + m[0].indexOf(m[2])), selector.length > 60 ? `${selector.slice(0, 57)}...` : selector, { tag, ...split, attrs: last.match(/\[[^\]]*\]/g)?.join(' ') ?? '', context }, selector);
 		}
 		return hits;
 	}
