@@ -3,7 +3,9 @@
 import * as React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { ChevronDown, Search } from "lucide-react";
+import { ChevronDown } from "lucide-react";
+
+import { Input } from "@/components/ui/input";
 
 import { cn } from "@/lib/utils";
 
@@ -20,19 +22,7 @@ function useCurrent() {
 }
 
 function Filter({ value, onChange, className }: { value: string; onChange: (v: string) => void; className?: string }) {
-  return (
-    <label className={cn("flex h-9 items-center gap-2 border border-line-strong bg-surface px-2.5 transition-[border-color,box-shadow] duration-150 ease-out focus-within:border-line-brand focus-within:shadow-ring-hover motion-reduce:transition-none", className)}>
-      <Search aria-hidden className="size-3.5 shrink-0 text-fg-subtle" />
-      <input
-        type="search"
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        placeholder="Filter the library"
-        aria-label="Filter the library"
-        className="min-w-0 flex-1 bg-transparent text-body-sm text-fg outline-none placeholder:text-fg-subtle [&::-webkit-search-cancel-button]:hidden"
-      />
-    </label>
-  );
+  return <Input variant="search" value={value} onChange={(e) => onChange(e.target.value)} placeholder="Filter the library" aria-label="Filter the library" className={className} />;
 }
 
 function Groups({ groups, current, query }: { groups: Group[]; current?: string; query: string }) {

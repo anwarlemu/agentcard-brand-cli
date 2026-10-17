@@ -34,3 +34,11 @@ export function States() {
     </div>
   );
 }
+
+export function Search() {
+  return (
+    <div className="max-w-80">
+      <Input variant="search" placeholder="Search the guides" aria-label="Search the guides" />
+    </div>
+  );
+}
