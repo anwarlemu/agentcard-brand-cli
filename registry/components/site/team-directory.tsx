@@ -32,6 +32,12 @@ type FooterCell = {
 
 const COLUMNS = { 1: "sm:grid-cols-1", 2: "sm:grid-cols-2", 3: "sm:grid-cols-3" } as const;
 
+/** White cells that finish a short last row, so the ruled grid never shows its line color as a gray block. */
+function Fill({ count, columns }: { count: number; columns: number }) {
+  const left = (columns - (count % columns)) % columns;
+  return Array.from({ length: left }, (_, i) => <li key={`fill-${i}`} aria-hidden className="hidden bg-surface sm:block" />);
+}
+
 /** The outbound arrow in a link cell's corner. */
 function Go() {
   return (
@@ -104,6 +110,7 @@ function TeamDirectory({ name, tone = "sky", columns = 2, people, footer, classN
             </Cell>
           );
         })}
+        <Fill count={people.length} columns={columns} />
       </ul>
       {footer?.length ? (
         <ul className="m-0 grid list-none grid-cols-1 gap-px border-t border-line bg-line p-0 sm:grid-cols-2">
@@ -113,6 +120,7 @@ function TeamDirectory({ name, tone = "sky", columns = 2, people, footer, classN
               {f.label ? <span className="text-body text-fg-muted">{f.label}</span> : null}
             </Cell>
           ))}
+          <Fill count={footer.length} columns={2} />
         </ul>
       ) : null}
     </Window>
