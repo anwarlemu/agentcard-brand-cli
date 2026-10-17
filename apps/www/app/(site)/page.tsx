@@ -12,8 +12,7 @@ export default function Home() {
         fullScreen={false}
         className="pt-40 pb-28"
         eyebrow="Design system"
-        title={`${registryName}, as code`}
-        subtitle={`Every component and section of the ${registryName} site for React and Tailwind, and one command that applies the brand to any site.`}
+        title={`${registryName} design system`}
         actions={
           <Button asChild variant="on-brand">
             <Link href="/components">Browse components</Link>
