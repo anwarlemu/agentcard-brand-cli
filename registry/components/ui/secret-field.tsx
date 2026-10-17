@@ -26,7 +26,8 @@ export function SecretText({ secret, masked, isRevealed, className }: { secret: 
   );
 }
 
-// An API key on a pale inset well: masked to its first characters, with show and copy buttons.
+// A key or a card number on a sunken well (pale, a hairline, the inner shadow), masked to its first characters in the
+// display face the brand sets code in, with a show key and a copy key.
 function SecretField({
   secret,
   visibleChars = 8,
@@ -43,15 +44,16 @@ function SecretField({
 }) {
   const [revealed, setRevealed] = React.useState(defaultRevealed);
   return (
-    <div data-slot="secret-field" className={cn("flex h-9 min-w-0 items-center gap-1 rounded-control bg-neutral-5 pr-1 pl-3 shadow-[inset_0_0_0_1px_var(--ds-color-border-subtle)]", className)}>
-      <SecretText secret={secret} masked={maskSecret(secret, visibleChars)} isRevealed={revealed} className="font-mono text-caption text-fg-muted" />
+    <div data-slot="secret-field" className={cn("flex h-11 min-w-0 items-center gap-1.5 rounded-control border border-hairline bg-subtle pr-1.5 pl-3.5 shadow-well", className)}>
+      <SecretText secret={secret} masked={maskSecret(secret, visibleChars)} isRevealed={revealed} className="font-mono text-body-sm text-fg" />
       <Tooltip>
         <TooltipTrigger asChild>
           <button
             type="button"
             onClick={() => setRevealed((r) => !r)}
             aria-label={revealed ? `Hide ${label}` : `Show ${label}`}
-            className="grid size-7 shrink-0 place-items-center rounded-control text-fg-subtle outline-none transition-colors duration-150 ease-out hover:bg-wash-hover hover:text-fg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-solid focus-visible:outline-focus-ring [&_svg]:size-3.5"
+            aria-pressed={revealed}
+            className="grid size-8 shrink-0 place-items-center rounded-control border border-hairline bg-surface text-fg-brand shadow-key outline-none transition-[background-color,box-shadow,translate] duration-150 ease-out hover:bg-sky-wash focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-solid focus-visible:outline-focus-ring active:translate-y-px active:shadow-pressed motion-reduce:transition-none motion-reduce:active:translate-y-0 [&_svg]:size-3.5"
           >
             {revealed ? <EyeOff strokeWidth={1.5} /> : <Eye strokeWidth={1.5} />}
           </button>

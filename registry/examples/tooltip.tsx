@@ -1,30 +1,41 @@
-import { Copy, Info } from "lucide-react";
+import { Pause, Plus, Settings } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 
-// Shown open: a one-line label naming an icon button, and a `wrap` label explaining a value. In use they wait a beat
-// on hover or focus, then the neighbors appear at once.
-export function Product() {
+const ACTIONS = [
+  { label: "New card", icon: Plus },
+  { label: "Pause card", icon: Pause },
+  { label: "Card settings", icon: Settings },
+];
+
+export function Site() {
   return (
-    <div className="flex items-center gap-16 pt-8 pb-4">
+    <div className="flex gap-2 pt-10">
+      {ACTIONS.map(({ label, icon: Icon }) => (
+        <Tooltip key={label}>
+          <TooltipTrigger asChild>
+            <Button variant="secondary" size="icon" aria-label={label}>
+              <Icon strokeWidth={1.5} />
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent>{label}</TooltipContent>
+        </Tooltip>
+      ))}
+    </div>
+  );
+}
+
+export function Open() {
+  return (
+    <div className="flex gap-2 pt-10">
       <Tooltip defaultOpen>
         <TooltipTrigger asChild>
-          <Button variant="ghost" size="icon" aria-label="Copy key">
-            <Copy strokeWidth={1.5} />
+          <Button variant="secondary" size="icon" aria-label="Pause card">
+            <Pause strokeWidth={1.5} />
           </Button>
         </TooltipTrigger>
-        <TooltipContent side="top">Copy key</TooltipContent>
-      </Tooltip>
-      <Tooltip defaultOpen>
-        <TooltipTrigger asChild>
-          <Button variant="ghost" size="icon" aria-label="About credits">
-            <Info strokeWidth={1.5} />
-          </Button>
-        </TooltipTrigger>
-        <TooltipContent side="right" wrap>
-          Credits reset on the first of each month. Unused credits do not roll over.
-        </TooltipContent>
+        <TooltipContent>Pause card</TooltipContent>
       </Tooltip>
     </div>
   );

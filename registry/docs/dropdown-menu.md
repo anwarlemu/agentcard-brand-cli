@@ -2,10 +2,10 @@
 name: dropdown-menu
 title: Dropdown menu
 type: ui
-surface: product
-description: Row menus with labels, separators, checks and hold-to-confirm destructive rows.
-kinds: []
-use_for: Overflow actions at the end of a row, account menus.
-never: [Destructive actions without a hold or a confirm]
-source: src/components/dashboard-ui/menu.tsx (ActionMenu, HoldMenuItem, MENU_* classes)
+surface: site
+description: "A menu on the brand's floating panel (white, a hairline, 8px corners) with rows in the 14px display face, or the dock's `glass` menu; it grows from its trigger."
+kinds: [nav-dock]
+use_for: "A short list of actions on one thing (a card's actions), or the products under a nav item (`variant=\"glass\"` on DropdownMenuContent over the blue ground or a photo). A row that closes or deletes uses DropdownMenuHoldItem."
+never: [Menus for navigation that should be visible, More than one level of submenu, A destructive row that fires on one click]
+source: "agentcard-website src/app/globals.css (.v7-dock-card); live https://www.agentcard.sh/"
 ---

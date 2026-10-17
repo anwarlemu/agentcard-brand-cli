@@ -4,18 +4,22 @@ import { cva, type VariantProps } from "class-variance-authority";
 
 import { cn } from "@/lib/utils";
 
-// The product's status label (the dashboard's StatusBadge): the word in mono caption on a hairline-bordered box, the
-// status told by its color alone. `tag` is the dashboard's tag chip (blue on blue 10); `chip` is the site's hairline pill.
+// A short label (agentcard.sh). `tag` is the brand's small caps tag, as on the updates page (.v7-upd-tag): the 10px
+// display face in caps, tracked wide, blue on a 1px blue border with square corners (the only caps the brand sets).
+// The status badges are a small white box in the 12px display face, sentence case, told apart by a dot and the color
+// of their text: ink, blue, green, amber or red. `chip` is a quiet rounded label on a pale wash, for counts and filters.
+const STATUS = "h-6 gap-1.5 rounded-sm border border-hairline bg-surface px-2 font-display text-caption leading-none before:size-1.5 before:shrink-0 before:rounded-pill before:bg-current";
+
 const badgeVariants = cva("inline-flex w-fit shrink-0 items-center justify-center gap-1 whitespace-nowrap [&>svg]:pointer-events-none [&>svg]:size-3", {
   variants: {
     variant: {
-      default: "rounded-control border border-line px-2 pt-0.75 pb-1 font-mono text-caption leading-none text-fg-subtle",
-      brand: "rounded-control border border-line px-2 pt-0.75 pb-1 font-mono text-caption leading-none text-fg-brand",
-      success: "rounded-control border border-line px-2 pt-0.75 pb-1 font-mono text-caption leading-none text-success",
-      warning: "rounded-control border border-line px-2 pt-0.75 pb-1 font-mono text-caption leading-none text-warning",
-      destructive: "rounded-control border border-line px-2 pt-0.75 pb-1 font-mono text-caption leading-none text-danger",
-      tag: "h-6 rounded-[calc(var(--ds-radius-control)-0.125rem)] bg-blue-10 px-2.5 text-caption text-fg-brand",
-      chip: "rounded-pill px-3 py-1 text-body-sm leading-snug text-fg-nav ring-1 ring-line ring-inset",
+      default: `${STATUS} text-fg-muted`,
+      brand: `${STATUS} border-line-window bg-blue-5 text-fg-brand`,
+      success: `${STATUS} text-success`,
+      warning: `${STATUS} text-warning`,
+      destructive: `${STATUS} text-danger`,
+      tag: "rounded-none border border-line-brand px-2 pt-1.25 pb-1 font-display text-micro leading-snug tracking-caps text-fg-brand uppercase",
+      chip: "h-6 rounded-sm bg-wash-pill px-2 font-display text-caption leading-none text-fg-secondary",
     },
   },
   defaultVariants: { variant: "default" },

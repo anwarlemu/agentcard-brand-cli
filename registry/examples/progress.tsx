@@ -1,13 +1,13 @@
 import { Progress } from "@/components/ui/progress";
 
-export function Product() {
+export function Site() {
   return (
-    <div className="grid w-full max-w-sm gap-2">
-      <div className="flex justify-between text-caption text-fg-muted">
-        <span>Credits used</span>
-        <span className="tabular-nums">6,420 / 10,000</span>
+    <div className="grid max-w-md gap-2">
+      <div className="flex items-baseline justify-between font-display text-body-sm">
+        <span className="text-fg">Spent this month</span>
+        <span className="text-fg-muted tabular-nums">$1,240 of $2,000</span>
       </div>
-      <Progress value={64} />
+      <Progress value={62} aria-label="Spent this month" />
     </div>
   );
 }

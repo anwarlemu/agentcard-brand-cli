@@ -2,6 +2,6 @@
 
 import { HoldButton } from "@/components/ui/hold-button";
 
-export function Product() {
-  return <HoldButton label="Delete workspace" onConfirm={() => {}} />;
+export function Site() {
+  return <HoldButton label="Hold to close card" onConfirm={() => {}} />;
 }

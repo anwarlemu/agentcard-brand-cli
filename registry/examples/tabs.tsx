@@ -1,43 +1,57 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
-export function Product() {
+const PLANS = [
+  { value: "vault", label: "Vault", body: "Store a card once and let your agent pay with a token. Free to start, then per purchase." },
+  { value: "issuing", label: "Issuing", body: "Give each agent its own prepaid or commercial card, with limits and a log of every purchase." },
+  { value: "agent", label: "Purchase Agent", body: "Hand off the whole checkout. Your agent finds the item and buys it on a card you control." },
+];
+
+export function Site() {
   return (
-    <div className="flex w-full max-w-md flex-col gap-6">
-      <Tabs defaultValue="all">
-        <TabsList aria-label="Monitors">
-          <TabsTrigger value="all">All</TabsTrigger>
-          <TabsTrigger value="active">Active</TabsTrigger>
-          <TabsTrigger value="paused">Paused</TabsTrigger>
+    <Tabs defaultValue="vault" className="max-w-170">
+      <TabsList className="w-full">
+        {PLANS.map((plan) => (
+          <TabsTrigger key={plan.value} value={plan.value}>
+            {plan.label}
+          </TabsTrigger>
+        ))}
+      </TabsList>
+      {PLANS.map((plan) => (
+        <TabsContent key={plan.value} value={plan.value} className="text-body text-fg-muted">
+          {plan.body}
+        </TabsContent>
+      ))}
+    </Tabs>
+  );
+}
+
+export function Topics() {
+  return (
+    <div className="grid gap-6">
+      <Tabs defaultValue="general">
+        <TabsList>
+          <TabsTrigger value="general">General</TabsTrigger>
+          <TabsTrigger value="vault">Vault</TabsTrigger>
+          <TabsTrigger value="issuing">Issuing</TabsTrigger>
         </TabsList>
-        <TabsContent value="all" className="text-body-sm text-fg-muted">Every monitor in this workspace.</TabsContent>
-        <TabsContent value="active" className="text-body-sm text-fg-muted">Monitors checking on schedule.</TabsContent>
-        <TabsContent value="paused" className="text-body-sm text-fg-muted">Monitors you stopped.</TabsContent>
       </Tabs>
-      <Tabs defaultValue="json">
-        <TabsList variant="segmented" aria-label="Output">
-          <TabsTrigger value="json">JSON</TabsTrigger>
-          <TabsTrigger value="markdown">Markdown</TabsTrigger>
-          <TabsTrigger value="html">HTML</TabsTrigger>
-        </TabsList>
-      </Tabs>
-      <Tabs defaultValue="day">
-        <TabsList size="sm" aria-label="Period">
-          <TabsTrigger value="day">Day</TabsTrigger>
-          <TabsTrigger value="week">Week</TabsTrigger>
-          <TabsTrigger value="month">Month</TabsTrigger>
+      <Tabs defaultValue="month">
+        <TabsList size="sm">
+          <TabsTrigger value="month">Monthly</TabsTrigger>
+          <TabsTrigger value="year">Yearly</TabsTrigger>
         </TabsList>
       </Tabs>
     </div>
   );
 }
 
-export function Site() {
+export function Plain() {
   return (
-    <Tabs defaultValue="typescript">
-      <TabsList variant="pill" aria-label="Language">
-        <TabsTrigger value="typescript">TypeScript</TabsTrigger>
-        <TabsTrigger value="python">Python</TabsTrigger>
-        <TabsTrigger value="curl">cURL</TabsTrigger>
+    <Tabs defaultValue="all">
+      <TabsList variant="plain">
+        <TabsTrigger value="all">All purchases</TabsTrigger>
+        <TabsTrigger value="approved">Approved</TabsTrigger>
+        <TabsTrigger value="declined">Declined</TabsTrigger>
       </TabsList>
     </Tabs>
   );

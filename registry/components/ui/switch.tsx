@@ -5,21 +5,22 @@ import * as SwitchPrimitive from "@radix-ui/react-switch";
 
 import { cn } from "@/lib/utils";
 
-// The thumb sits 3/16 rem inside the track on every side, so it reads as held by the track. Off, a hairline gives the
-// pale track an edge; on, the brand blue needs none. Measured in rem so the travel scales with the root size.
+// The brand's track and key, in small: off, a sunken track (pale, a hairline, the inner shadow) with a white key at the
+// left; on, the track turns blue and the key slides right (200ms ease-out, on transform). The key sits 2px inside the
+// track, its corners concentric with the track's 8px. Reduced motion moves it at once.
 function Switch({ className, ...props }: React.ComponentProps<typeof SwitchPrimitive.Root>) {
   return (
     <SwitchPrimitive.Root
       data-slot="switch"
       className={cn(
-        "peer inline-flex h-5 w-9 shrink-0 items-center rounded-pill transition-[background-color,box-shadow] duration-200 ease-out outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-solid focus-visible:outline-focus-ring disabled:cursor-not-allowed disabled:opacity-50 data-[state=checked]:bg-brand data-[state=unchecked]:bg-neutral-10 data-[state=unchecked]:shadow-[inset_0_0_0_1px_var(--ds-color-wash-hover)] motion-reduce:transition-none",
+        "peer inline-flex h-6 w-11 shrink-0 items-center rounded-control border outline-none transition-[background-color,border-color,box-shadow] duration-200 ease-out focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-solid focus-visible:outline-focus-ring disabled:cursor-not-allowed disabled:opacity-50 data-[state=checked]:border-line-brand-edge data-[state=checked]:bg-primary data-[state=checked]:shadow-pressed data-[state=unchecked]:border-hairline data-[state=unchecked]:bg-subtle data-[state=unchecked]:shadow-well motion-reduce:transition-none",
         className,
       )}
       {...props}
     >
       <SwitchPrimitive.Thumb
         data-slot="switch-thumb"
-        className="pointer-events-none block size-3.5 rounded-pill bg-white shadow-[0_1px_2px_rgb(0_0_0/0.12)] transition-transform duration-200 ease-out data-[state=checked]:translate-x-[1.1875rem] data-[state=unchecked]:translate-x-[0.1875rem] motion-reduce:transition-none"
+        className="pointer-events-none block size-4.5 translate-x-0.5 rounded-sm border border-hairline bg-white shadow-key transition-[translate] duration-200 ease-out data-[state=checked]:translate-x-5.5 motion-reduce:transition-none"
       />
     </SwitchPrimitive.Root>
   );

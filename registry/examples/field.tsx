@@ -1,14 +1,14 @@
 import { Field } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 
-export function Product() {
+export function Site() {
   return (
-    <div className="grid w-full max-w-sm gap-5">
-      <Field label="Webhook URL" htmlFor="hook" help="We POST every change here." required>
-        <Input id="hook" placeholder="https://acme.com/hooks/context" />
+    <div className="grid max-w-170 gap-4">
+      <Field label="Work email" htmlFor="field-email" required help="We reply within a day.">
+        <Input id="field-email" type="email" autoComplete="email" />
       </Field>
-      <Field label="Email" htmlFor="email" error="Enter a valid email.">
-        <Input id="email" defaultValue="anwar@" aria-invalid />
+      <Field label="Website" htmlFor="field-site" error="Enter a web address, like acme.com.">
+        <Input id="field-site" defaultValue="acme" aria-invalid />
       </Field>
     </div>
   );

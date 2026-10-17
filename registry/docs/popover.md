@@ -2,10 +2,10 @@
 name: popover
 title: Popover
 type: ui
-surface: product
-description: A white floating panel 6px off its trigger, growing out of the corner nearest it, for a small form or details.
-kinds: []
-use_for: Small forms and details anchored to a control.
-never: [Essential content only in a popover]
-source: src/components/dashboard-ui/menu.tsx (MENU_SURFACE_CLASS)
+surface: site
+description: "The brand's floating panel (white, a hairline, 8px corners, the tooltip shadow) or the dock's `glass` panel, growing from its trigger."
+kinds: [nav-dock]
+use_for: "A little more detail or a small control next to what it is about: an explanation, a filter. `variant=\"glass\"` over the blue ground or a photo."
+never: [Forms longer than a few fields (use a dialog), Popovers that open on hover (use a tooltip), Gray panels]
+source: "agentcard-website src/app/globals.css (.v7-dock-card)"
 ---

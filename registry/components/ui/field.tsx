@@ -3,8 +3,8 @@ import * as React from "react";
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
 
-// The dashboard's form field: the label above in body-sm (not muted), a red asterisk when required, help or an error
-// below in caption.
+// A form field as on the get-started form (.v7-gate-field): the label 6px above the input in the 12px display face at 68
+// percent ink, a red asterisk when required, and help or an error below in 14px Inter.
 function Field({
   label,
   htmlFor,
@@ -23,8 +23,8 @@ function Field({
   children: React.ReactNode;
 }) {
   return (
-    <div data-slot="field" data-invalid={error ? true : undefined} className={cn("flex flex-col gap-2", className)}>
-      <Label htmlFor={htmlFor} className="block">
+    <div data-slot="field" data-invalid={error ? true : undefined} className={cn("flex flex-col gap-1.5", className)}>
+      <Label htmlFor={htmlFor} className="block font-display text-caption leading-snug text-fg-muted">
         {label}
         {required && (
           <>
@@ -36,7 +36,7 @@ function Field({
         )}
       </Label>
       {children}
-      {(error || help) && <p className={cn("text-caption", error ? "text-danger" : "text-fg-subtle")}>{error ?? help}</p>}
+      {(error || help) && <p className={cn("text-body-sm leading-snug", error ? "text-danger" : "text-fg-muted")}>{error ?? help}</p>}
     </div>
   );
 }

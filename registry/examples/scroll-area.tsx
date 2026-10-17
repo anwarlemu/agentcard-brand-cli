@@ -1,15 +1,18 @@
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { Window } from "@/components/ui/window";
 
-export function Product() {
+const MERCHANTS = ["Delta", "United", "Marriott", "Hilton", "Airbnb", "Uber", "Lyft", "Amazon", "Notion", "Figma", "Linear", "Vercel", "GitHub", "Slack", "Zoom", "OpenTable"];
+
+export function Site() {
   return (
-    <div className="flex h-48 w-64 flex-col rounded-card bg-surface shadow-card">
-      <ScrollArea className="px-3 py-2 text-body-sm">
-        {Array.from({ length: 20 }, (_, i) => (
-          <p key={i} className="py-1 text-fg-muted">
-            Request {i + 1}
+    <Window name="merchants.list" className="h-72 w-72" bodyClassName="flex flex-col">
+      <ScrollArea className="px-4 py-2">
+        {MERCHANTS.map((merchant) => (
+          <p key={merchant} className="border-b border-line py-2.5 font-display text-body-sm text-fg last:border-b-0">
+            {merchant}
           </p>
         ))}
       </ScrollArea>
-    </div>
+    </Window>
   );
 }

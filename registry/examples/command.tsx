@@ -1,36 +1,42 @@
-import { BarChart3, Key, Settings } from "lucide-react";
+import { CreditCard, FileText, Settings, Wallet } from "lucide-react";
 
-import { Command, CommandEmpty, CommandFooter, CommandGroup, CommandInput, CommandItem, CommandList, CommandShortcut } from "@/components/ui/command";
+import { Command, CommandEmpty, CommandFooter, CommandGroup, CommandInput, CommandItem, CommandList, CommandSeparator, CommandShortcut } from "@/components/ui/command";
 import { Kbd } from "@/components/ui/kbd";
 
-export function Product() {
+export function Site() {
   return (
-    <Command className="w-full max-w-xl shadow-[0_0_0_1px_var(--ds-color-border-hairline),0_24px_64px_rgb(0_0_0/0.16)]">
-      <CommandInput placeholder="Search pages, APIs, and settings" />
+    <Command className="w-full max-w-xl rounded-card border border-hairline shadow-code">
+      <CommandInput placeholder="Search cards, guides and settings" />
       <CommandList>
         <CommandEmpty>Nothing matches.</CommandEmpty>
         <CommandGroup heading="Go to">
           <CommandItem>
-            <BarChart3 strokeWidth={1.5} /> Usage
+            <CreditCard strokeWidth={1.5} /> Cards
             <CommandShortcut>
-              <Kbd>G</Kbd> then <Kbd>U</Kbd>
+              <Kbd>G</Kbd> then <Kbd>C</Kbd>
             </CommandShortcut>
           </CommandItem>
           <CommandItem>
-            <Key strokeWidth={1.5} /> API keys
+            <Wallet strokeWidth={1.5} /> Vault
             <CommandShortcut>
-              <Kbd>G</Kbd> then <Kbd>K</Kbd>
+              <Kbd>G</Kbd> then <Kbd>V</Kbd>
             </CommandShortcut>
           </CommandItem>
           <CommandItem>
             <Settings strokeWidth={1.5} /> Settings
           </CommandItem>
         </CommandGroup>
+        <CommandSeparator />
+        <CommandGroup heading="Guides">
+          <CommandItem>
+            <FileText strokeWidth={1.5} /> Give an agent its first card
+          </CommandItem>
+        </CommandGroup>
       </CommandList>
       <CommandFooter>
         <span>
           <Kbd>↑</Kbd>
-          <Kbd>↓</Kbd> to navigate
+          <Kbd>↓</Kbd> to move
         </span>
         <span>
           <Kbd>↵</Kbd> to open

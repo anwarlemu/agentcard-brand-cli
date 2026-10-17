@@ -1,30 +1,43 @@
 import { Button } from "@/components/ui/button";
-import { Card, CardAction, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-
-export function Product() {
-  return (
-    <Card className="w-full max-w-sm">
-      <CardHeader>
-        <CardTitle>API usage</CardTitle>
-        <CardDescription>Requests this billing period.</CardDescription>
-        <CardAction>
-          <Button variant="ghost" size="sm">
-            Details
-          </Button>
-        </CardAction>
-      </CardHeader>
-      <CardContent>
-        <p className="font-data text-h4 tabular-nums">48,210</p>
-      </CardContent>
-    </Card>
-  );
-}
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 
 export function Site() {
   return (
-    <Card variant="ring" className="w-full max-w-md">
-      <CardTitle className="text-h4">Search</CardTitle>
-      <CardDescription className="text-body">Search the web or the news and get ranked results with clean page content, not just links.</CardDescription>
+    <div className="grid gap-8 md:grid-cols-2">
+      <Card>
+        <CardHeader>
+          <CardTitle>Vault</CardTitle>
+          <CardDescription>Store a card once. Your agent pays with a token that never leaves the vault.</CardDescription>
+        </CardHeader>
+        <CardFooter>
+          <Button variant="secondary">Explore Vault</Button>
+        </CardFooter>
+      </Card>
+      <Card>
+        <CardHeader>
+          <CardTitle>Issuing</CardTitle>
+          <CardDescription>Give each agent its own card, with a limit, a list of merchants and a log of every purchase.</CardDescription>
+        </CardHeader>
+        <CardFooter>
+          <Button variant="secondary">Explore Issuing</Button>
+        </CardFooter>
+      </Card>
+    </div>
+  );
+}
+
+export function Raised() {
+  return (
+    <Card variant="raised" className="mr-2 mb-2 grid gap-6 md:grid-cols-2 md:gap-12">
+      {/* The product's screen or object goes here; a tinted block holds its place. */}
+      <div aria-hidden className="aspect-[4/3] rounded-card bg-brand" />
+      <CardContent className="flex flex-col justify-center gap-4 p-3 md:p-6">
+        <CardTitle className="text-h2 font-normal tracking-tighter">Prepaid cards for every agent</CardTitle>
+        <CardDescription className="text-body-lg">Fund a card, choose what it can buy, and hand it to your agent.</CardDescription>
+        <div>
+          <Button>Start free</Button>
+        </div>
+      </CardContent>
     </Card>
   );
 }

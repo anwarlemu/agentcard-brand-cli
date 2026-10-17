@@ -1,10 +1,10 @@
 import { DocsLink } from "@/components/ui/docs-link";
 
-export function Product() {
+export function Site() {
   return (
-    <div className="flex flex-col gap-1">
-      <DocsLink href="https://docs.context.dev" />
-      <DocsLink href="https://docs.context.dev/monitors">Monitors guide</DocsLink>
+    <div className="flex flex-wrap items-center gap-6">
+      <DocsLink href="https://www.agentcard.sh">Read the docs</DocsLink>
+      <DocsLink href="https://www.agentcard.sh">Give an agent its first card</DocsLink>
     </div>
   );
 }

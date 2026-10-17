@@ -2,10 +2,10 @@
 name: separator
 title: Separator
 type: ui
-surface: both
-description: A light hairline between groups of content, horizontal or vertical.
+surface: site
+description: "A one pixel rule of ink at 14 percent, across or upright."
 kinds: []
-use_for: Dividing menu groups, card sections, toolbars.
-never: [Thick or dark rules]
-source: src/components/dashboard-ui/menu.tsx (MENU_SEPARATOR_CLASS); src/components/dashboard-ui/dialog.tsx (footer rule)
+use_for: "Between a page's title block and its body, between groups in a list or a menu, or upright between short inline items."
+never: [Thick or colored rules, Rules between every row of a card, A smooth fade between the blue and white grounds (that is the band divider)]
+source: "agentcard-website src/app/globals.css (--line); live https://www.agentcard.sh/get-started"
 ---

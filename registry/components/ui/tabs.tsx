@@ -7,53 +7,50 @@ import { cva } from "class-variance-authority";
 import { useTabGlide } from "@/hooks/use-tab-glide";
 import { cn } from "@/lib/utils";
 
-// The dashboard's tabs: plain labels, with one soft gray pill (no border) that glides to the selected one on a spring.
-// `segmented` sits them on a gray track with a white pill, so the unpicked ones still read as choices. Only the text
-// answers a hover, so nothing fades over the pill gliding in beneath. The site's `pill` tabs are pill-shaped labels, a
-// white pill outlined in brand blue gliding to the selected one (src/components/sections/faq.tsx).
-type Variant = "default" | "segmented" | "pill";
+// The brand's tabs (agentcard.sh, .plan-tabs on /pricing and .faq-tabs on /): a sunken track (pale, a hairline, 12px
+// corners, 4px inset, the inner shadow) of equal 40px tabs in the 14px display face, and one blue key (a darker blue
+// edge, the light line inside the top, the soft drop) that glides to the selected tab. Unselected labels are 68 percent
+// ink, turning ink with a faint wash under the pointer; the selected label turns white as the key arrives. `plain` drops
+// the track for dense rows: quiet labels with a pale wash gliding between them.
+type Variant = "default" | "plain";
 type Size = "sm" | "md";
 
-// The track's inner corners: the control radius less the track's 2px padding, so the pill sits concentric in it.
-const INNER_RADIUS = "rounded-[calc(var(--ds-radius-control)-0.125rem)]";
-const SEGMENTED_SURFACE = "bg-surface shadow-[0_1px_3px_rgb(0_0_0/0.08),0_0_0_1px_rgb(0_0_0/0.03)]";
-const PILL_SURFACE: Record<Variant, string> = {
-  default: "bg-wash-pill",
-  segmented: SEGMENTED_SURFACE,
-  pill: "rounded-pill border border-brand bg-surface",
+// The key, and the same surface on the selected trigger for the first paint before the key lands (or with no glide).
+const KEY: Record<Variant, string> = {
+  default: "rounded-control border border-line-brand-edge bg-primary shadow-key-brand",
+  plain: "rounded-sm bg-wash-pill",
 };
-// The same surface on the selected trigger, for the first paint before the pill lands (or for a list with no pill).
-const SELF_SURFACE: Record<Variant, string> = {
-  default: "data-[state=active]:bg-wash-pill",
-  segmented: "data-[state=active]:bg-surface data-[state=active]:shadow-[0_1px_3px_rgb(0_0_0/0.08),0_0_0_1px_rgb(0_0_0/0.03)]",
-  pill: "data-[state=active]:border-brand data-[state=active]:bg-surface",
+const SELF_KEY: Record<Variant, string> = {
+  default: "data-[state=active]:border-line-brand-edge data-[state=active]:bg-primary data-[state=active]:shadow-key-brand",
+  plain: "data-[state=active]:bg-wash-pill",
 };
 
 const tabsTriggerVariants = cva(
-  "inline-flex items-center justify-center gap-1.5 whitespace-nowrap outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-solid focus-visible:outline-focus-ring disabled:pointer-events-none disabled:opacity-50 motion-reduce:transition-none [&_svg]:size-4 [&_svg]:shrink-0",
+  "relative inline-flex items-center justify-center gap-1.5 border border-transparent font-display leading-none whitespace-nowrap outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-solid focus-visible:outline-focus-ring disabled:pointer-events-none disabled:opacity-50 motion-reduce:transition-none [&_svg]:size-4 [&_svg]:shrink-0",
   {
     variants: {
       variant: {
-        default: "text-fg-subtle transition-[color] duration-200 ease-out hover:text-fg data-[state=active]:text-fg",
-        segmented: "text-fg-muted transition-[color] duration-200 ease-out hover:text-fg data-[state=active]:text-fg",
-        pill: "rounded-pill border border-transparent px-5 py-2.5 text-body leading-snug text-fg-muted transition-[background-color,border-color,color] duration-200 ease-out hover:bg-blue-10 hover:text-fg data-[state=active]:text-fg-brand data-[state=active]:hover:bg-transparent",
+        // Only the label and a faint wash answer the pointer, so nothing fades over the key gliding in beneath.
+        default:
+          "rounded-control text-fg-muted transition-[background-color,color] duration-150 ease-out hover:text-fg data-[state=active]:text-on-primary data-[state=inactive]:hover:bg-wash-pill",
+        plain: "rounded-sm text-fg-muted transition-[color] duration-150 ease-out hover:text-fg data-[state=active]:text-fg",
       },
       size: { sm: "", md: "" },
     },
     compoundVariants: [
-      { variant: "default", size: "md", className: "h-9 rounded-control px-4 text-body-sm" },
-      { variant: "default", size: "sm", className: `h-7 px-3 text-caption ${INNER_RADIUS}` },
-      { variant: "segmented", size: "md", className: `h-8 px-3.5 text-body-sm ${INNER_RADIUS}` },
-      { variant: "segmented", size: "sm", className: `h-7 px-3 text-caption ${INNER_RADIUS}` },
+      { variant: "default", size: "md", className: "h-10 px-4 text-body-sm" },
+      { variant: "default", size: "sm", className: "h-8 px-3 text-caption" },
+      { variant: "plain", size: "md", className: "h-8 px-3 text-body-sm" },
+      { variant: "plain", size: "sm", className: "h-7 px-2.5 text-caption" },
     ],
     defaultVariants: { variant: "default", size: "md" },
   },
 );
 
 const ActiveValue = React.createContext<string | undefined>(undefined);
-const ListState = React.createContext<{ variant: Variant; size: Size; isPillPlaced: boolean }>({ variant: "default", size: "md", isPillPlaced: false });
+const ListState = React.createContext<{ variant: Variant; size: Size; isKeyPlaced: boolean }>({ variant: "default", size: "md", isKeyPlaced: false });
 
-// The active value is mirrored here so the list can move its pill in the same render Radix switches tabs, whether the
+// The active value is mirrored here so the list can move its key in the same render Radix switches tabs, whether the
 // value is controlled or not.
 function Tabs({ className, value, defaultValue, onValueChange, ...props }: React.ComponentProps<typeof TabsPrimitive.Root>) {
   const [uncontrolled, setUncontrolled] = React.useState(defaultValue);
@@ -67,7 +64,7 @@ function Tabs({ className, value, defaultValue, onValueChange, ...props }: React
           setUncontrolled(next);
           onValueChange?.(next);
         }}
-        className={cn("flex flex-col gap-4", className)}
+        className={cn("flex flex-col gap-6", className)}
         {...props}
       />
     </ActiveValue.Provider>
@@ -87,34 +84,37 @@ function TabsList({
   size?: Size;
   /** Off for lists whose triggers draw their own selected surface. */
   glide?: boolean;
-  /** The gliding pill's surface, for a list styled its own way. */
+  /** The gliding key's surface, for a list styled its own way. */
   pillClassName?: string;
 }) {
   const active = React.useContext(ActiveValue);
-  const pillRef = React.useRef<HTMLSpanElement>(null);
-  const isPlaced = useTabGlide(pillRef, active ?? "");
-  const pillRadius = variant === "pill" ? "" : variant === "default" && size === "md" ? "rounded-control" : INNER_RADIUS;
+  const keyRef = React.useRef<HTMLSpanElement>(null);
+  const isPlaced = useTabGlide(keyRef, active ?? "");
 
   return (
     <TabsPrimitive.List
       data-slot="tabs-list"
       className={cn(
-        "relative isolate inline-flex w-fit items-center",
-        variant === "pill" ? "gap-2" : variant === "segmented" ? "gap-0.5 rounded-control bg-neutral-5 p-0.5" : size === "sm" ? "gap-0.5" : "gap-1",
+        "relative isolate w-fit",
+        // Equal columns whatever the labels, as on the brand's page; add w-full to fill the row.
+        variant === "default" ? "inline-grid auto-cols-fr grid-flow-col gap-1 rounded-card border border-hairline bg-subtle p-1 shadow-well" : "inline-flex items-center gap-0.5",
         className,
       )}
       {...props}
     >
-      {glide && <span ref={pillRef} aria-hidden className={cn("pointer-events-none absolute top-0 left-0 -z-10", pillRadius, PILL_SURFACE[variant], pillClassName, !isPlaced && "invisible")} />}
-      <ListState.Provider value={{ variant, size, isPillPlaced: glide && isPlaced }}>{children}</ListState.Provider>
+      {glide && (
+        // The hook measures from the list's outer edge; -1px puts the key back inside the track's border.
+        <span ref={keyRef} aria-hidden className={cn("pointer-events-none absolute -z-10", variant === "default" ? "-top-px -left-px" : "top-0 left-0", KEY[variant], pillClassName, !isPlaced && "invisible")} />
+      )}
+      <ListState.Provider value={{ variant, size, isKeyPlaced: glide && isPlaced }}>{children}</ListState.Provider>
     </TabsPrimitive.List>
   );
 }
 
 function TabsTrigger({ className, value, ...props }: React.ComponentProps<typeof TabsPrimitive.Trigger>) {
-  const { variant, size, isPillPlaced } = React.useContext(ListState);
-  // Until the pill lands (or with no pill), the selected tab draws the surface itself, so the first paint matches.
-  return <TabsPrimitive.Trigger data-slot="tabs-trigger" data-tab-id={value} value={value} className={cn(tabsTriggerVariants({ variant, size }), !isPillPlaced && SELF_SURFACE[variant], className)} {...props} />;
+  const { variant, size, isKeyPlaced } = React.useContext(ListState);
+  // Until the key lands (or with no key), the selected tab draws the key itself, so the first paint matches.
+  return <TabsPrimitive.Trigger data-slot="tabs-trigger" data-tab-id={value} value={value} className={cn(tabsTriggerVariants({ variant, size }), !isKeyPlaced && SELF_KEY[variant], className)} {...props} />;
 }
 
 function TabsContent({ className, ...props }: React.ComponentProps<typeof TabsPrimitive.Content>) {

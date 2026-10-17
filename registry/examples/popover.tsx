@@ -1,27 +1,45 @@
-"use client";
-
 import { Button } from "@/components/ui/button";
-import { Field } from "@/components/ui/field";
-import { Input } from "@/components/ui/input";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Surface } from "@/lib/surface";
 
-// Shown open: a small form anchored to the control that opens it. Focus stays on the page until you reach in.
-export function Product() {
+function Limits({ defaultOpen }: { defaultOpen?: boolean }) {
   return (
-    <div className="h-44">
+    <Popover defaultOpen={defaultOpen}>
+      <PopoverTrigger asChild>
+        <Button variant="secondary">What are limits?</Button>
+      </PopoverTrigger>
+      <PopoverContent className="grid gap-2">
+        <p className="font-display text-body-sm font-medium text-fg">Spending limits</p>
+        <p className="text-body-sm leading-relaxed text-fg-muted">Each card stops at its per purchase and monthly limits, whatever the agent tries to buy.</p>
+      </PopoverContent>
+    </Popover>
+  );
+}
+
+export function Site() {
+  return <Limits />;
+}
+
+export function Open() {
+  return (
+    <div className="h-48">
+      <Limits defaultOpen />
+    </div>
+  );
+}
+
+export function Glass() {
+  return (
+    <Surface ground="blue" className="h-60 rounded-panel p-8">
       <Popover defaultOpen>
         <PopoverTrigger asChild>
-          <Button variant="outline">Rename</Button>
+          <Button variant="on-brand">About the dock</Button>
         </PopoverTrigger>
-        <PopoverContent onOpenAutoFocus={(event) => event.preventDefault()} className="grid gap-3">
-          <Field label="Workspace name" htmlFor="ws-name">
-            <Input id="ws-name" defaultValue="Acme" />
-          </Field>
-          <Button variant="primary" size="sm" className="justify-self-end">
-            Save
-          </Button>
+        <PopoverContent variant="glass" className="grid gap-1.5">
+          <p className="font-display text-body-sm">Always in reach</p>
+          <p className="text-body-sm leading-relaxed text-fg-on-brand-muted">The dock floats over every page, so the next step is one tap away.</p>
         </PopoverContent>
       </Popover>
-    </div>
+    </Surface>
   );
 }

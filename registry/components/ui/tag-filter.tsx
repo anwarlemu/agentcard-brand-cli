@@ -1,13 +1,13 @@
 "use client";
 
 import * as React from "react";
-import { Check, ChevronsUpDown, Tag, X } from "lucide-react";
+import { Check, X } from "lucide-react";
 
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
 
-// The dashboard's tag filter: the picked tags as small blue chips (each clears itself), then a bordered Tags button that
-// opens a searchable list, each row checked in blue when picked.
+// A tag filter: the picked tags as small blue labels on a pale blue ground (each clears itself), then a small white key,
+// Tags, that opens a searchable list on the brand's floating panel, each row ticked in blue when picked.
 function TagFilter({
   tags,
   tagOptions,
@@ -34,7 +34,7 @@ function TagFilter({
           type="button"
           onClick={() => onRemoveTag(tag)}
           aria-label={`Clear tag filter ${tag}`}
-          className="flex h-7 items-center gap-1 rounded-[calc(var(--ds-radius-control)-0.125rem)] bg-blue-10 pr-1.5 pl-2.5 text-caption text-fg-brand outline-none transition-colors duration-150 ease-out hover:bg-blue-20 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-solid focus-visible:outline-focus-ring"
+          className="flex h-8 items-center gap-1 rounded-sm border border-line-window bg-blue-5 pr-2 pl-2.5 font-display text-caption text-fg-brand outline-none transition-colors duration-150 ease-out hover:bg-blue-10 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-solid focus-visible:outline-focus-ring"
         >
           {tag}
           <X className="size-3" strokeWidth={1.75} />
@@ -43,23 +43,24 @@ function TagFilter({
       <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger
           aria-label="Filter by tags"
-          className="flex h-8 items-center gap-1.5 rounded-control border border-line px-3 text-body-sm whitespace-nowrap text-fg-muted outline-none transition-colors duration-150 ease-out hover:border-line-strong hover:text-fg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-solid focus-visible:outline-focus-ring data-[state=open]:border-line-strong data-[state=open]:text-fg"
+          className="flex h-8 items-center gap-2 rounded-control border border-hairline bg-surface px-3 font-display text-caption whitespace-nowrap text-fg shadow-key outline-none transition-[background-color,box-shadow,translate] duration-150 ease-out hover:bg-sky-wash focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-solid focus-visible:outline-focus-ring active:translate-y-px active:shadow-pressed data-[state=open]:bg-sky-wash motion-reduce:transition-none motion-reduce:active:translate-y-0"
         >
-          <Tag className="size-3.5 text-fg-subtle" strokeWidth={1.5} />
           Tags
-          <ChevronsUpDown className="size-3.5 text-fg-subtle" strokeWidth={1.5} />
+          <svg aria-hidden viewBox="0 0 10 6" className="h-1.5 w-2.5 fill-current text-fg-muted">
+            <path d="M0 0h10L5 6z" />
+          </svg>
         </PopoverTrigger>
-        <PopoverContent align="end" sideOffset={8} className="w-56 p-3">
+        <PopoverContent align="end" sideOffset={6} className="w-60 p-1">
           <input
             autoFocus
             value={query}
             onChange={(event) => setQuery(event.target.value)}
             placeholder="Search tags"
             aria-label="Search tags"
-            className="mb-1 h-8 w-full rounded-control bg-neutral-5 px-2.5 text-body-sm text-fg outline-none placeholder:text-fg-subtle"
+            className="mb-1 h-9 w-full rounded-none border border-line-strong bg-surface px-2.5 text-body-sm text-fg transition-[border-color,box-shadow] duration-150 ease-out outline-none placeholder:text-fg-faint focus:border-line-brand focus:shadow-ring-hover motion-reduce:transition-none"
           />
           <ul className="max-h-64 overflow-y-auto">
-            {options.length === 0 && <li className="px-2.5 py-2 text-body-sm text-fg-subtle">{tagOptions.length === 0 ? "No tags yet" : "No matching tags"}</li>}
+            {options.length === 0 && <li className="px-2.5 py-2 text-body-sm text-fg-muted">{tagOptions.length === 0 ? "No tags yet" : "No matching tags"}</li>}
             {options.map((tag) => {
               const isSelected = selected.has(tag);
               return (
@@ -69,12 +70,12 @@ function TagFilter({
                     aria-pressed={isSelected}
                     onClick={() => (isSelected ? onRemoveTag(tag) : onAddTag(tag))}
                     className={cn(
-                      "flex h-9 w-full items-center gap-2.5 rounded-control px-2.5 text-left text-body-sm outline-none transition-colors duration-150 ease-out hover:bg-wash-hover focus-visible:bg-wash-hover",
-                      isSelected ? "text-fg" : "text-fg-muted",
+                      "flex h-9 w-full items-center gap-2.5 rounded-sm px-2.5 text-left font-display text-body-sm outline-none hover:bg-wash-hover focus-visible:bg-wash-hover",
+                      isSelected ? "text-fg" : "text-fg-secondary",
                     )}
                   >
                     <span className="min-w-0 flex-1 truncate">{tag}</span>
-                    <Check className={cn("size-3.5 shrink-0 text-brand", !isSelected && "invisible")} strokeWidth={1.75} />
+                    <Check className={cn("size-3.5 shrink-0 text-fg-brand", !isSelected && "invisible")} strokeWidth={1.75} />
                   </button>
                 </li>
               );

@@ -2,10 +2,10 @@
 name: tag-filter
 title: Tag filter
 type: ui
-surface: product
-description: The picked tags as clearable blue chips, then a Tags button that opens a searchable, checkable list.
-kinds: []
-use_for: Filtering a list (monitors, keys, batches) by one or more tags in its toolbar.
-never: [Single-choice filters (use Select)]
-source: src/components/dashboard-ui/tag-filter.tsx
+surface: site
+description: "Picked tags as small blue labels that clear themselves, then a small white key that opens a searchable list on the brand's floating panel."
+kinds: [chip]
+use_for: "Filtering a list by any number of tags."
+never: [Filters that hide which tags are on, Colored tags per category]
+source: "agentcard-website src/app/globals.css (--bevel-white, .v7-dock-card)"
 ---

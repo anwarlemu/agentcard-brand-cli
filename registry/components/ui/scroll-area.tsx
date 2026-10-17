@@ -8,9 +8,9 @@ import { cn } from "@/lib/utils";
 const EDGE_FADE_PX = 28;
 
 /**
- * The dashboard's scroll area, which says when there's more: no scrollbar taking room on one side (so the padding stays
- * even), the content fading out at whichever edge has more past it, and while there's more below, a small chevron at
- * the bottom that scrolls the rest into view. The chevron fades and rises in 200ms ease-out.
+ * A scroll area that says when there's more: no scrollbar taking room on one side (so the padding stays even), the
+ * content fading out at whichever edge has more past it, and while there's more below, a small white key at the bottom
+ * that scrolls the rest into view. The key fades and rises in 200ms ease-out.
  */
 function ScrollArea({ className, children, ...props }: React.ComponentProps<"div">) {
   const ref = React.useRef<HTMLDivElement>(null);
@@ -55,7 +55,7 @@ function ScrollArea({ className, children, ...props }: React.ComponentProps<"div
         aria-hidden
         onClick={() => ref.current?.scrollBy({ top: ref.current.clientHeight * 0.8, behavior: "smooth" })}
         className={cn(
-          "absolute bottom-1 left-1/2 grid size-6 -translate-x-1/2 place-items-center rounded-pill bg-surface text-fg-muted shadow-card transition-[opacity,translate] duration-200 ease-out hover:text-fg motion-reduce:transition-[opacity]",
+          "absolute bottom-1 left-1/2 grid size-6 -translate-x-1/2 place-items-center rounded-sm border border-hairline bg-surface text-fg-brand shadow-key transition-[opacity,translate,background-color] duration-200 ease-out hover:bg-sky-wash motion-reduce:transition-[opacity]",
           edges.below ? "opacity-100" : "pointer-events-none translate-y-1 opacity-0",
         )}
       >
