@@ -4,11 +4,16 @@ import { cva, type VariantProps } from "class-variance-authority";
 
 import { cn } from "@/lib/utils";
 
-// A short label (agentcard.sh). `tag` is the brand's small caps tag, as on the updates page (.v7-upd-tag): the 10px
-// display face in caps, tracked wide, blue on a 1px blue border with square corners (the only caps the brand sets).
-// The status badges are a small white box in the 12px display face, sentence case, told apart by a dot and the color
-// of their text: ink, blue, green, amber or red. `chip` is a quiet rounded label on a pale wash, for counts and filters.
+// A short label (agentcard.sh). `tag` is the brand's small caps tag on the updates page (/updates, .v7-upd-tag): the 10px
+// display face in caps tracked 0.14em at 1.75 leading, 3px 8px 2px of padding, square corners and a 1px border in the
+// text's own color: blue for something added (`tag`), ink for something improved (`tag-ink`), the heart red for a fix
+// (`tag-heart`). Those are the only caps the brand sets. The status badges have no counterpart on the site; they are
+// drawn from the white key in small: a white box on the hairline, 6px corners, the 12px display face in sentence case,
+// told apart by a dot and the color of their text. `chip` is the guides' sky chip (.v7-guide-prose code): blue on a
+// pale sky wash with a pale blue edge, for counts and filters.
 const STATUS = "h-6 gap-1.5 rounded-sm border border-hairline bg-surface px-2 font-display text-caption leading-none before:size-1.5 before:shrink-0 before:rounded-pill before:bg-current";
+
+const TAG = "rounded-none border border-current px-2 pt-0.75 pb-0.5 font-display text-micro [line-height:1.75] tracking-caps uppercase";
 
 const badgeVariants = cva("inline-flex w-fit shrink-0 items-center justify-center gap-1 whitespace-nowrap [&>svg]:pointer-events-none [&>svg]:size-3", {
   variants: {
@@ -18,8 +23,10 @@ const badgeVariants = cva("inline-flex w-fit shrink-0 items-center justify-cente
       success: `${STATUS} text-success`,
       warning: `${STATUS} text-warning`,
       destructive: `${STATUS} text-danger`,
-      tag: "rounded-none border border-line-brand px-2 pt-1.25 pb-1 font-display text-micro leading-snug tracking-caps text-fg-brand uppercase",
-      chip: "h-6 rounded-sm bg-wash-pill px-2 font-display text-caption leading-none text-fg-secondary",
+      tag: `${TAG} text-fg-brand`,
+      "tag-ink": `${TAG} text-fg`,
+      "tag-heart": `${TAG} text-heart`,
+      chip: "h-6 rounded-sm border border-line-window bg-sky-wash px-2 font-display text-caption leading-none text-fg-brand",
     },
   },
   defaultVariants: { variant: "default" },

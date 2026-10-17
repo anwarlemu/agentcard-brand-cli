@@ -5,8 +5,8 @@ export function Site() {
     <div className="grid gap-6">
       <div className="flex flex-wrap items-center gap-2">
         <Badge variant="tag">Added</Badge>
-        <Badge variant="tag">Improved</Badge>
-        <Badge variant="tag">Fixed</Badge>
+        <Badge variant="tag-ink">Improved</Badge>
+        <Badge variant="tag-heart">Fixed</Badge>
       </div>
       <div className="flex flex-wrap items-center gap-2">
         <Badge>Pending</Badge>
