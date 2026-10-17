@@ -1,4 +1,4 @@
-import { cli, colorHex, isToken, scales, tokens } from '../lib/brand.js';
+import { brand, cli, colorHex, isToken, scales, tokens } from '../lib/brand.js';
 import { parseColor } from '../convert/color.js';
 import type { SourceFile } from './source.js';
 
@@ -96,7 +96,7 @@ export function checkDecl(d: Decl, push: (f: RawFinding) => void) {
 	if (d.prop === 'font-family' && !/var\(--ds-font-|^(inherit|initial|unset)$/.test(d.value)) push({ rule: 'font', message: `Font \`${d.value.slice(0, 40)}\``, hint: 'Use var(--ds-font-sans) (var(--ds-font-mono) for code, var(--ds-font-data) for a figure).', offset: offsetIn(0) });
 	if (d.prop === 'font-weight' && /^(600|700|800|900|bold|bolder)$/.test(d.value)) push({ rule: 'font', message: `Weight \`${d.value}\``, hint: 'The brand is never bold: var(--ds-font-weight-regular), or var(--ds-font-weight-medium) for emphasis in small UI text.', offset: offsetIn(0) });
 	if (d.prop === 'letter-spacing' && !/^(0|normal|inherit|0em|0px)$/.test(d.value) && !/var\(--ds-tracking-/.test(d.value)) push({ rule: 'font', message: `Letter spacing \`${d.value}\``, hint: 'Use normal, or var(--ds-tracking-tight) on large headings.', offset: offsetIn(0) });
-	if (d.prop === 'text-transform' && d.value === 'uppercase') push({ rule: 'font', message: 'Uppercase text', hint: 'The brand uses sentence case: text-transform: none.', offset: offsetIn(0) });
+	if (d.prop === 'text-transform' && d.value === 'uppercase' && !brand().type?.caps) push({ rule: 'font', message: 'Uppercase text', hint: 'The brand uses sentence case: text-transform: none.', offset: offsetIn(0) });
 	// Sizes: font sizes, spacing and radii on the brand scale.
 	if (/^(font-size|padding|margin|gap|row-gap|column-gap|border(-[a-z]+)*-radius)(-[a-z]+)*$/.test(d.prop) && !SKIP_PROPS.test(d.prop)) {
 		for (const m of d.value.matchAll(LENGTH)) {
@@ -140,7 +140,7 @@ export function checkClass(token: string, offset: number, push: (f: RawFinding) 
 	else if (TW_BOLD.test(cls)) push({ rule: 'font', message: `\`${cls}\``, hint: 'The brand is never bold: font-normal, or font-medium for emphasis in small UI text.', offset, length: cls.length });
 	else if (TW_SHADOW_DEFAULT.test(cls)) push({ rule: 'off-scale', message: `Default shadow \`${cls}\``, hint: 'Use shadow-card, shadow-raised or shadow-floating.', offset, length: cls.length });
 	else if (TW_EASE_IN.test(cls)) push({ rule: 'motion', message: '`ease-in`', hint: 'Use ease-out.', offset, length: cls.length });
-	else if (TW_UPPERCASE.test(cls) || TW_TRACKING.test(cls)) push({ rule: 'font', message: `\`${cls}\``, hint: 'The brand uses sentence case and normal tracking.', offset, length: cls.length });
+	else if ((TW_UPPERCASE.test(cls) && !brand().type?.caps) || TW_TRACKING.test(cls)) push({ rule: 'font', message: `\`${cls}\``, hint: 'The brand uses sentence case and normal tracking.', offset, length: cls.length });
 }
 
 /** Colors written in code (chart configs, native colors): only the brand's literal values are allowed. */

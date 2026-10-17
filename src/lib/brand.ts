@@ -21,6 +21,8 @@ export type BrandConfig = {
 	/** The markup the CLI adds to a site's home: an attribute on the hero (with an optional script, a file in brand/) and
 	 *  the closing words of headings wrapped in ds-accent. `does` says what each one gives, for the tasks. */
 	touches: { hero?: { attribute: string; does: string; script?: string }; accent?: { does: string } };
+	/** Type rules the check enforces beyond tokens: `caps` allows uppercase (a brand that sets small tags in caps). */
+	type?: { caps?: boolean };
 	variants: { site: { filled: string; outlined: string; quiet?: string; onBrand: string; card: string }; product?: { filled: string; black: string; outlined: string; ghost: string; onBrand: string; card: string } };
 };
 

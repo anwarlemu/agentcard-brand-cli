@@ -121,6 +121,9 @@
 	--ds-tracking-tight: -0.02em;
 	--ds-tracking-normal: 0;
 	--ds-tracking-label: 0.02em;
+	/* Caps on a small tag, and the arrow in a window bar. */
+	--ds-tracking-caps: 0.14em;
+	--ds-tracking-mark: 0.3em;
 
 	/* Space (rem, so it follows the root) */
 	--ds-space-0: 0;
