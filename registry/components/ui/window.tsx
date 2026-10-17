@@ -54,11 +54,11 @@ function WindowBar({ name, tone, actions, className, ...props }: Omit<React.Comp
 
 /**
  * A window: the bar, then its body. `name` is the bar's label (pricing.plan, team.dir); `tone` its color. `raised`
- * adds the large card's hard offset shadow.
+ * adds the plan window's hard offset shadow (6px at 22 percent ink, as on /pricing and /about).
  */
 function Window({ name, tone, actions, raised = false, className, bodyClassName, children, ...props }: React.ComponentProps<"div"> & { name: React.ReactNode; tone?: Tone; actions?: React.ReactNode; raised?: boolean; bodyClassName?: string }) {
   return (
-    <div data-slot="window" className={cn("flex flex-col overflow-hidden rounded-card border border-hairline bg-surface text-fg", raised ? "shadow-raised" : "shadow-card", className)} {...props}>
+    <div data-slot="window" className={cn("flex flex-col overflow-hidden rounded-card border border-hairline bg-surface text-fg", raised ? "shadow-plan" : "shadow-card", className)} {...props}>
       <WindowBar name={name} tone={tone} actions={actions} />
       <div className={cn("min-h-0 flex-1", bodyClassName)}>{children}</div>
     </div>
