@@ -3,6 +3,7 @@
 import assert from 'node:assert/strict';
 import { chromium } from 'playwright-core';
 import { checkOverlays } from './check-overlays.mjs';
+import { checkInteractions } from './check-interactions.mjs';
 
 const base = process.env.DOCS_URL ?? 'http://127.0.0.1:3000';
 const browser = await chromium.launch();
@@ -61,7 +62,7 @@ try {
   await page.goto(`${base}/components/faq`);
   const iframe = page.locator('iframe').first();
   await page.waitForFunction(() => { const frame = document.querySelector('iframe'); return frame && frame.style.height !== '900px'; });
-  assert.equal(await iframe.getAttribute('sandbox'), 'allow-scripts');
+  assert.equal(await iframe.getAttribute('sandbox'), 'allow-scripts allow-forms allow-popups allow-popups-to-escape-sandbox');
   const desktopHeight = await iframe.evaluate(frame => Number.parseFloat(frame.style.height));
   await page.getByRole('radio', { name: 'Phone', exact: true }).first().click();
   await page.waitForFunction(previous => { const frame = document.querySelector('iframe'); return frame?.style.width === '390px' && Number.parseFloat(frame.style.height) !== previous; }, desktopHeight);
@@ -90,6 +91,7 @@ try {
   assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth));
   console.log('PASS: mobile sidebar closes after choosing an item, without horizontal overflow.');
   await checkOverlays(page, base);
+  await checkInteractions(page, base);
   assert.deepEqual(errors, [], 'Browser errors');
   console.log('PASS: no browser runtime or resource errors.');
 } finally {

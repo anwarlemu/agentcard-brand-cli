@@ -23,10 +23,10 @@ const FOOTER = {
     </>
   ),
   groups: [
-    { title: "Product", links: [{ label: "Vault", href: "/vault" }, { label: "Issuing", href: "/issuing" }, { label: "Voice", href: "/voice" }, { label: "Purchase Agent", href: "/purchase-agent" }, { label: "Pricing", href: "/pricing" }, { label: "FAQ", href: "/#faq" }] },
-    { title: "Developers", links: [{ label: "Documentation", href: "https://docs.agentcard.sh" }, { label: "API reference", href: "https://docs.agentcard.sh/api-reference" }] },
-    { title: "Company", links: [{ label: "About", href: "/about" }, { label: "Changelog", href: "/updates" }, { label: "Trust Center", href: "/trust" }] },
-    { title: "Legal", links: [{ label: "Privacy Policy", href: "/privacy" }, { label: "Terms of Service", href: "/terms" }, { label: "Card Terms", href: "/card-terms" }, { label: "Card Terms (International)", href: "/card-terms-international" }] },
+    { title: "Product", links: [{ label: "Vault", href: "https://www.agentcard.sh/vault" }, { label: "Issuing", href: "https://www.agentcard.sh/issuing" }, { label: "Voice", href: "https://cal.com/team/agentcard/agentcard-call" }, { label: "Purchase Agent", href: "https://www.agentcard.sh/purchase-agent" }, { label: "Pricing", href: "https://www.agentcard.sh/pricing" }, { label: "FAQ", href: "#faq" }] },
+    { title: "Developers", links: [{ label: "Documentation", href: "https://docs.agentcard.sh" }, { label: "API reference", href: "https://docs.agentcard.sh/companies/api/reference" }] },
+    { title: "Company", links: [{ label: "About", href: "https://www.agentcard.sh/about" }, { label: "Changelog", href: "https://www.agentcard.sh/updates" }, { label: "Trust Center", href: "https://app.vanta.com/agentcard.sh/trust/8t52k9fqhneqwt4y2jpvmn" }] },
+    { title: "Legal", links: [{ label: "Privacy Policy", href: "https://legal.raincards.xyz/legal/privacy-policy" }, { label: "Terms of Service", href: "https://www.agentcard.sh/terms" }, { label: "Card Terms", href: "https://www.agentcard.sh/card-terms" }, { label: "Card Terms (International)", href: "https://www.agentcard.sh/card-terms-international" }] },
     { title: "Social", links: [{ label: "X / Twitter", href: "https://x.com/agentcardhq" }, { label: "Instagram", href: "https://www.instagram.com/agentcardhq/" }] },
   ],
   merchants: ["Amazon", "Walmart", "Target", "Best Buy", "Home Depot", "Lowe’s", "Macy’s", "Wayfair", "Staples", "DoorDash", "Good Eggs", "Flights"],
@@ -36,10 +36,10 @@ const FOOTER = {
 const PRODUCTS = {
   label: "Products",
   items: [
-    { title: "Vault", description: "Store customers’ cards and buy with an agent.", href: "/vault" },
-    { title: "Issuing", description: "One-time and multi-use cards for your agent.", href: "/issuing" },
-    { title: "Voice", description: "Approve an agent’s purchase by speaking.", href: "/voice" },
-    { title: "Purchase Agent", description: "Buy from Amazon, DoorDash and more.", href: "/purchase-agent" },
+    { title: "Vault", description: "Store customers’ cards and buy with an agent.", href: "https://www.agentcard.sh/vault" },
+    { title: "Issuing", description: "One-time and multi-use cards for your agent.", href: "https://www.agentcard.sh/issuing" },
+    { title: "Voice", description: "Approve an agent’s purchase by speaking.", href: "https://cal.com/team/agentcard/agentcard-call" },
+    { title: "Purchase Agent", description: "Buy from Amazon, DoorDash and more.", href: "https://www.agentcard.sh/purchase-agent" },
   ],
 };
 
@@ -49,19 +49,19 @@ const PRODUCTS = {
 
 const NAV = {
   links: [
-    { label: "Home", href: "/", current: true },
-    { label: "About", href: "/about" },
-    { label: "Pricing", href: "/pricing" },
+    { label: "Home", href: "https://www.agentcard.sh/", current: true },
+    { label: "About", href: "https://www.agentcard.sh/about" },
+    { label: "Pricing", href: "https://www.agentcard.sh/pricing" },
   ],
   menu: {
     label: "Products",
     items: [
-      { title: "Vault", description: "Store customers’ cards and buy with an agent.", href: "/vault" },
-      { title: "Issuing", description: "One-time and multi-use cards for your agent.", href: "/issuing" },
-      { title: "Purchase Agent", description: "Buy from Amazon, DoorDash and more.", href: "/purchase-agent" },
+      { title: "Vault", description: "Store customers’ cards and buy with an agent.", href: "https://www.agentcard.sh/vault" },
+      { title: "Issuing", description: "One-time and multi-use cards for your agent.", href: "https://www.agentcard.sh/issuing" },
+      { title: "Purchase Agent", description: "Buy from Amazon, DoorDash and more.", href: "https://www.agentcard.sh/purchase-agent" },
     ],
   },
-  action: { label: "Get started", href: "/get-started" },
+  action: { label: "Get started", href: "https://app.agentcard.sh/" },
 };
 
 const Glyph = ({ d }: { d: string }) => (
@@ -121,7 +121,7 @@ export function HomePage() {
   return (
     <main>
       <Hero
-        header={<SiteHeader ground="blue" action={NAV.action} />}
+        header={<SiteHeader href="https://www.agentcard.sh/" ground="blue" action={NAV.action} />}
         background={<Scene />}
         title="Let agents buy anything online"
         subtitle="Cards your agents can use anywhere, under limits you set."
@@ -147,10 +147,10 @@ export function HomePage() {
         <SectionHeading title="Explore our products" description="Vault, Issuing and the Purchase Agent: what an agent needs to pay for things." className="mb-10 lg:mb-18" />
         <ProductGrid
           products={[
-            { layout: "lead", title: "Vault", description: "Store customers’ cards and make purchases with agents safely.", action: { label: "Explore Vault", href: "/vault" }, media: <CardStack /> },
-            { layout: "half", title: "Purchase Agent", description: "Integrate our agent into yours and buy from many online stores.", action: { label: "Read the docs", href: "#", icon: <ArrowUpRight /> }, media: <Screen name="purchase.agent" rows={["Amazon", "DoorDash", "Walmart"]} /> },
-            { layout: "half", title: "Issuing", description: "Create one-time and multi-use cards for your agent.", action: { label: "Explore Issuing", href: "/issuing" }, media: <Screen name="issuing.product" rows={["Agentcard ···· 4832", "Agentcard ···· 7719"]} /> },
-            { layout: "lead", title: "Voice", description: "Let customers approve their agent’s purchases by speaking, with no screen to look at.", action: { label: "Explore Voice", href: "/voice" }, media: <Screen name="voice.product" rows={["Your usual from Rose Indian, $34.20", "Approved"]} /> },
+            { layout: "lead", title: "Vault", description: "Store customers’ cards and make purchases with agents safely.", action: { label: "Explore Vault", href: "https://www.agentcard.sh/vault" }, media: <CardStack /> },
+            { layout: "half", title: "Purchase Agent", description: "Integrate our agent into yours and buy from many online stores.", action: { label: "Read the docs", href: "https://docs.agentcard.sh", icon: <ArrowUpRight /> }, media: <Screen name="purchase.agent" rows={["Amazon", "DoorDash", "Walmart"]} /> },
+            { layout: "half", title: "Issuing", description: "Create one-time and multi-use cards for your agent.", action: { label: "Explore Issuing", href: "https://www.agentcard.sh/issuing" }, media: <Screen name="issuing.product" rows={["Agentcard ···· 4832", "Agentcard ···· 7719"]} /> },
+            { layout: "lead", title: "Voice", description: "Let customers approve their agent’s purchases by speaking, with no screen to look at.", action: { label: "Explore Voice", href: "https://cal.com/team/agentcard/agentcard-call" }, media: <Screen name="voice.product" rows={["Your usual from Rose Indian, $34.20", "Approved"]} /> },
           ]}
         />
       </SiteSection>

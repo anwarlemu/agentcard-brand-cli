@@ -6,11 +6,11 @@ export function Site() {
       <Prose eyebrow="Compliance" title="Terms of Use" meta="Last updated July 10, 2026">
         <p>
           Welcome to the service (the “Service”). These terms govern your use of the website, the cards and the tools for agents. By using the Service you agree to them and to our{" "}
-          <a href="#privacy">Privacy Policy</a>.
+          <a href="https://legal.raincards.xyz/legal/privacy-policy">Privacy Policy</a>.
         </p>
         <h2>Eligibility</h2>
         <p>
-          You must be at least 18 years old and able to form a binding contract. Cards are issued under the <a href="#cardholder">Cardholder Agreement</a>.
+          You must be at least 18 years old and able to form a binding contract. Cards are issued under the <a href="https://agentcard.sh/card-terms">Cardholder Agreement</a>.
         </p>
         <h2>Acceptable use</h2>
         <p>You agree not to:</p>
@@ -45,7 +45,7 @@ export function Site() {
             <tr>
               <th>Late payment</th>
               <td>
-                <strong>None.</strong> Learn more at <a href="#cfpb">consumerfinance.gov</a>.
+                <strong>None.</strong> Learn more at <a href="https://www.consumerfinance.gov">consumerfinance.gov</a>.
               </td>
             </tr>
           </tbody>

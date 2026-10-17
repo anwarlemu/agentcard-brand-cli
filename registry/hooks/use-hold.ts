@@ -2,44 +2,58 @@
 
 import { type KeyboardEvent, type PointerEvent, useEffect, useRef, useState } from "react";
 
-/** Fires `onConfirm` only after the pointer or key stays down for `durationMs`, so a stray click can't do anything. */
-export function useHold(durationMs: number, onConfirm: () => void) {
+/** Confirm once per uninterrupted hold. Releasing, losing focus or hiding the page cancels it. */
+export function useHold(durationMs: number, onConfirm: () => void, disabled = false) {
   const [isHolding, setHolding] = useState(false);
-  const timeoutRef = useRef<ReturnType<typeof setTimeout>>(undefined);
-  useEffect(() => () => clearTimeout(timeoutRef.current), []);
-
-  function start() {
-    if (isHolding) return;
-    setHolding(true);
-    timeoutRef.current = setTimeout(() => {
-      setHolding(false);
-      onConfirm();
-    }, durationMs);
-  }
+  const timeout = useRef<ReturnType<typeof setTimeout>>(undefined);
+  const active = useRef(false);
+  const callback = useRef(onConfirm);
+  useEffect(() => { callback.current = onConfirm; }, [onConfirm]);
 
   function cancel() {
-    clearTimeout(timeoutRef.current);
+    clearTimeout(timeout.current);
+    active.current = false;
     setHolding(false);
   }
 
+  useEffect(() => {
+    const reset = () => cancel();
+    const visibility = () => { if (document.hidden) reset(); };
+    window.addEventListener("blur", reset);
+    document.addEventListener("visibilitychange", visibility);
+    return () => {
+      clearTimeout(timeout.current);
+      window.removeEventListener("blur", reset);
+      document.removeEventListener("visibilitychange", visibility);
+    };
+  }, []);
+  useEffect(() => { if (disabled) cancel(); }, [disabled]);
+
+  function start(event: PointerEvent | KeyboardEvent) {
+    if (disabled || active.current || event.defaultPrevented) return;
+    active.current = true;
+    setHolding(true);
+    timeout.current = setTimeout(() => {
+      timeout.current = undefined;
+      setHolding(false);
+      // Keep active until release, preventing repeated keydown from confirming twice.
+      callback.current();
+    }, Math.max(0, durationMs));
+  }
+
   const handlers = {
-    // Only the main button holds; a touch the browser takes over for scrolling cancels (pointercancel), so a hold can
-    // never complete while the page scrolls under the finger.
-    onPointerDown: (event: PointerEvent) => {
-      if (event.button === 0) start();
-    },
+    onPointerDown: (event: PointerEvent) => { if (event.button === 0) start(event); },
     onPointerUp: cancel,
     onPointerLeave: cancel,
     onPointerCancel: cancel,
     onKeyDown: (event: KeyboardEvent) => {
       if ((event.key === "Enter" || event.key === " ") && !event.repeat) {
+        start(event);
         event.preventDefault();
-        start();
       }
     },
-    onKeyUp: cancel,
+    onKeyUp: (event: KeyboardEvent) => { if (event.key === "Enter" || event.key === " ") cancel(); },
     onBlur: cancel,
   };
-
   return { isHolding, handlers };
 }

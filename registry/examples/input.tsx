@@ -1,3 +1,6 @@
+"use client";
+
+import { useState } from "react";
 import { Field } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 
@@ -23,10 +26,12 @@ export function Site() {
 }
 
 export function States() {
+  const [email, setEmail] = useState("ada@");
+  const [valid, setValid] = useState(false);
   return (
     <div className="grid max-w-170 gap-4">
-      <Field label="Work email" htmlFor="input-invalid" error="Use your work email, not a personal one.">
-        <Input id="input-invalid" type="email" defaultValue="ada@gmail.com" aria-invalid />
+      <Field label="Work email" htmlFor="input-invalid" error={valid ? undefined : "Enter a valid work email address."} help="Email address accepted.">
+        <Input id="input-invalid" type="email" value={email} required onChange={(event) => { setEmail(event.target.value); setValid(event.target.validity.valid); }} />
       </Field>
       <Field label="Card nickname" htmlFor="input-disabled" help="Set by your team admin.">
         <Input id="input-disabled" defaultValue="Travel agent" disabled />
@@ -36,9 +41,12 @@ export function States() {
 }
 
 export function Search() {
+  const [query, setQuery] = useState("");
+  const guides = ["Create a card", "Set spending limits", "Manage merchants"].filter((guide) => guide.toLowerCase().includes(query.toLowerCase().trim()));
   return (
     <div className="max-w-80">
-      <Input variant="search" placeholder="Search the guides" aria-label="Search the guides" />
+      <Input variant="search" placeholder="Search the guides" aria-label="Search the guides" value={query} onChange={(event) => setQuery(event.target.value)} />
+      <ul aria-live="polite" className="mt-3 text-body-sm text-fg-muted">{guides.length ? guides.map((guide) => <li key={guide}>{guide}</li>) : <li>No guides match your search.</li>}</ul>
     </div>
   );
 }

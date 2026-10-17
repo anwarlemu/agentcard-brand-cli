@@ -52,16 +52,16 @@ export function Site() {
       </div>
       <ProductGrid
         products={[
-          { layout: "lead", title: "Vault", description: "Store customers’ cards and make purchases with agents safely.", action: { label: "Explore Vault", href: "#" }, media: <Cards /> },
+          { layout: "lead", title: "Vault", description: "Store customers’ cards and make purchases with agents safely.", action: { label: "Explore Vault", href: "https://www.agentcard.sh/vault" }, media: <Cards /> },
           {
             layout: "half",
             title: "Purchase Agent",
             description: "Integrate our agent into yours and enable purchases from Amazon, DoorDash and many other online stores.",
-            action: { label: "Read the docs", href: "#", icon: <ArrowUpRight /> },
+            action: { label: "Read the docs", href: "https://docs.agentcard.sh", icon: <ArrowUpRight /> },
             media: <Keys />,
           },
-          { layout: "half", title: "Issuing", description: "Create one-time and multi-use cards for your agent.", action: { label: "Explore Issuing", href: "#" }, media: <Screen name="issuing.product" rows={["Agentcard ···· 4832", "Agentcard ···· 7719", "Agentcard ···· 2051"]} /> },
-          { layout: "lead", title: "Voice", description: "Let customers approve their agent’s purchases by speaking, with no screen to look at.", action: { label: "Explore Voice", href: "#" }, media: <Screen name="voice.product" rows={["Your usual from Rose Indian, $34.20", "Approved"]} /> },
+          { layout: "half", title: "Issuing", description: "Create one-time and multi-use cards for your agent.", action: { label: "Explore Issuing", href: "https://www.agentcard.sh/issuing" }, media: <Screen name="issuing.product" rows={["Agentcard ···· 4832", "Agentcard ···· 7719", "Agentcard ···· 2051"]} /> },
+          { layout: "lead", title: "Voice", description: "Let customers approve their agent’s purchases by speaking, with no screen to look at.", action: { label: "Explore Voice", href: "https://cal.com/team/agentcard/agentcard-call" }, media: <Screen name="voice.product" rows={["Your usual from Rose Indian, $34.20", "Approved"]} /> },
         ]}
       />
     </section>

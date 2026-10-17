@@ -69,15 +69,22 @@ function DropdownMenuHoldItem({
   className,
   ...props
 }: Omit<React.ComponentProps<typeof DropdownMenuPrimitive.Item>, "onSelect"> & { holdMs?: number; onConfirm: () => void; variant?: "default" | "destructive" }) {
-  const { isHolding, handlers } = useHold(holdMs, onConfirm);
+  const { isHolding, handlers } = useHold(holdMs, onConfirm, props.disabled);
   const danger = variant === "destructive";
   return (
     <DropdownMenuPrimitive.Item
       data-slot="dropdown-menu-hold-item"
       onSelect={(event) => event.preventDefault()}
-      {...handlers}
       className={cn(ROW, "overflow-hidden", danger && DANGER, className)}
       {...props}
+      {...handlers}
+      onPointerDown={(event) => { props.onPointerDown?.(event); handlers.onPointerDown(event); }}
+      onKeyDown={(event) => { props.onKeyDown?.(event); handlers.onKeyDown(event); }}
+      onPointerUp={(event) => { handlers.onPointerUp(); props.onPointerUp?.(event); }}
+      onPointerLeave={(event) => { handlers.onPointerLeave(); props.onPointerLeave?.(event); }}
+      onPointerCancel={(event) => { handlers.onPointerCancel(); props.onPointerCancel?.(event); }}
+      onKeyUp={(event) => { handlers.onKeyUp(event); props.onKeyUp?.(event); }}
+      onBlur={(event) => { handlers.onBlur(); props.onBlur?.(event); }}
     >
       <span
         aria-hidden

@@ -6,12 +6,12 @@ const GROUPS = [
   {
     title: "Product",
     links: [
-      { label: "Vault", href: "/vault" },
-      { label: "Issuing", href: "/issuing" },
-      { label: "Voice", href: "/voice" },
-      { label: "Purchase Agent", href: "/purchase-agent" },
-      { label: "Pricing", href: "/pricing" },
-      { label: "FAQ", href: "/#faq" },
+      { label: "Vault", href: "https://www.agentcard.sh/vault" },
+      { label: "Issuing", href: "https://www.agentcard.sh/issuing" },
+      { label: "Voice", href: "https://cal.com/team/agentcard/agentcard-call" },
+      { label: "Purchase Agent", href: "https://www.agentcard.sh/purchase-agent" },
+      { label: "Pricing", href: "https://www.agentcard.sh/pricing" },
+      { label: "FAQ", href: "https://www.agentcard.sh/#faq" },
     ],
   },
   {
@@ -24,20 +24,20 @@ const GROUPS = [
   {
     title: "Company",
     links: [
-      { label: "About", href: "/about" },
-      { label: "Changelog", href: "/updates" },
-      { label: "Trust Center", href: "#trust" },
+      { label: "About", href: "https://www.agentcard.sh/about" },
+      { label: "Changelog", href: "https://www.agentcard.sh/updates" },
+      { label: "Trust Center", href: "https://app.vanta.com/agentcard.sh/trust/8t52k9fqhneqwt4y2jpvmn" },
     ],
   },
   {
     title: "Legal",
     links: [
-      { label: "Privacy Policy", href: "#privacy" },
-      { label: "Terms of Service", href: "/terms" },
-      { label: "Card Terms", href: "/card-terms" },
-      { label: "Card Terms (International)", href: "/card-terms-international" },
-      { label: "E-Sign Consent", href: "#e-sign" },
-      { label: "Prohibited Uses", href: "#prohibited" },
+      { label: "Privacy Policy", href: "https://legal.raincards.xyz/legal/privacy-policy" },
+      { label: "Terms of Service", href: "https://www.agentcard.sh/terms" },
+      { label: "Card Terms", href: "https://www.agentcard.sh/card-terms" },
+      { label: "Card Terms (International)", href: "https://www.agentcard.sh/card-terms-international" },
+      { label: "E-Sign Consent", href: "https://legal.raincards.xyz/legal/electronic-communications-notice" },
+      { label: "Prohibited Uses", href: "https://legal.raincards.xyz/legal/prohibitions" },
     ],
   },
   {

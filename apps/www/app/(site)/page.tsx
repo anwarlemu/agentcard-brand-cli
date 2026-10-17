@@ -32,8 +32,8 @@ export default function Home() {
       <Hero
         fullScreen={false}
         className="pt-40 pb-28 max-md:pt-32"
-        eyebrow="Design system"
         title={`${registryName} design system`}
+        titleClassName="max-w-none text-nowrap text-[length:min(var(--ds-text-hero),7vw)]"
         actions={
           <Button asChild variant="on-brand">
             <Link href="/components">Browse components</Link>

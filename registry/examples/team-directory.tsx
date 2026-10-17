@@ -15,10 +15,10 @@ function Initials({ name }: { name: string }) {
 }
 
 const TEAM = [
-  { name: "Ada Okafor", role: "CEO & Co-Founder", href: "https://example.com/ada" },
-  { name: "Luis Romero", role: "CTO & Co-Founder", href: "https://example.com/luis" },
-  { name: "Mara Lindqvist", role: "Member of Technical Staff", href: "https://example.com/mara" },
-  { name: "Noor Haddad", role: "Member of Marketing Staff", href: "https://example.com/noor" },
+  { name: "Ada Okafor", role: "CEO & Co-Founder" },
+  { name: "Luis Romero", role: "CTO & Co-Founder" },
+  { name: "Mara Lindqvist", role: "Member of Technical Staff" },
+  { name: "Noor Haddad", role: "Member of Marketing Staff" },
 ];
 
 const INVESTORS = [
@@ -52,7 +52,7 @@ export function Site() {
         <TeamDirectory name="team.dir" tone="blue" columns={2} people={TEAM.map((p) => ({ ...p, photo: <Initials name={p.name} /> }))} />
         <p className="mt-4 text-body-sm text-fg-muted">
           We are not hiring, but you can always send us an{" "}
-          <a href="mailto:hello@example.com" className="text-fg-brand underline underline-offset-3">
+          <a href="mailto:support@agentcard.sh" className="text-fg-brand underline underline-offset-3">
             email
           </a>
           .
@@ -67,8 +67,8 @@ export function Site() {
           columns={3}
           people={INVESTORS.map(([name, role]) => ({ name, role, photo: <Initials name={name} /> }))}
           footer={[
-            { logo: <YMark />, label: "Backed by an accelerator", href: "https://example.com/accelerator" },
-            { logo: <span className="font-display text-h5 tracking-mark text-fg">NORTHFUND</span>, href: "https://example.com/fund", ariaLabel: "North Fund" },
+            { logo: <YMark />, label: "Backed by an accelerator" },
+            { logo: <span className="font-display text-h5 tracking-mark text-fg">NORTHFUND</span>, ariaLabel: "North Fund" },
           ]}
         />
       </section>

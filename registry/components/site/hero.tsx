@@ -12,6 +12,8 @@ import { cn } from "@/lib/utils";
 
 type HeroProps = Omit<React.ComponentProps<"section">, "title"> & {
   title: React.ReactNode;
+  /** Override title sizing and wrapping for shorter headlines. */
+  titleClassName?: string;
   eyebrow?: React.ReactNode;
   subtitle?: React.ReactNode;
   /** The keys under the title: the on-brand Button (one main action). */
@@ -34,6 +36,7 @@ type HeroProps = Omit<React.ComponentProps<"section">, "title"> & {
 
 function Hero({
   title,
+  titleClassName,
   eyebrow,
   subtitle,
   actions,
@@ -73,6 +76,7 @@ function Hero({
                 "max-w-[14ch] font-display text-hero leading-tight font-medium tracking-display text-balance text-white",
                 tilt &&
                   "[transform:rotateY(30deg)_rotateX(14deg)_rotateZ(-19deg)_scale(1.25)] [text-shadow:0_1px_0_var(--ds-color-blue-mid),0_2px_0_var(--ds-color-blue-mid),0_3px_0_var(--ds-color-blue-mid),0_4px_0_var(--ds-color-blue-mid),0_5px_0_var(--ds-color-blue-edge)] [transform-style:preserve-3d]",
+                titleClassName,
               )}
             >
               {title}

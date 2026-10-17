@@ -1,6 +1,9 @@
+"use client";
+
 import * as React from "react";
 import { cva, type VariantProps } from "class-variance-authority";
 
+import { useFieldControl } from "@/components/ui/field";
 import { cn } from "@/lib/utils";
 
 // Two fields. `field` is the get-started form's (agentcard.sh/get-started, .v7-gate-field input, computed): square, a
@@ -34,7 +37,7 @@ function SearchIcon() {
 }
 
 function Input({ className, type, variant, ...props }: React.ComponentProps<"input"> & VariantProps<typeof inputVariants>) {
-  const input = <input type={variant === "search" ? (type ?? "search") : type} data-slot="input" className={cn(inputVariants({ variant }), variant !== "search" && className)} {...props} />;
+  const input = <input type={variant === "search" ? (type ?? "search") : type} data-slot="input" className={cn(inputVariants({ variant }), variant !== "search" && className)} {...useFieldControl(props)} />;
   if (variant !== "search") return input;
   return (
     <div data-slot="search" className={cn("relative w-full", className)}>

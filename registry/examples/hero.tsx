@@ -26,13 +26,13 @@ function Scene() {
 export function Site() {
   return (
     <Hero
-      header={<SiteHeader ground="blue" action={{ label: "Get started", href: "#" }} />}
+      header={<SiteHeader href="https://www.agentcard.sh/" ground="blue" action={{ label: "Get started", href: "https://app.agentcard.sh/" }} />}
       background={<Scene />}
       title="Let agents buy anything online"
       subtitle="Cards your agents can use anywhere, under limits you set."
       actions={
         <Button asChild variant="on-brand">
-          <a href="#">Get started</a>
+          <a href="https://app.agentcard.sh/">Get started</a>
         </Button>
       }
     />
@@ -40,5 +40,5 @@ export function Site() {
 }
 
 export function Tilted() {
-  return <Hero header={<SiteHeader ground="blue" action={{ label: "Get started", href: "#" }} />} background={<Scene />} title="Let agents buy anything online" tilt />;
+  return <Hero header={<SiteHeader href="https://www.agentcard.sh/" ground="blue" action={{ label: "Get started", href: "https://app.agentcard.sh/" }} />} background={<Scene />} title="Let agents buy anything online" tilt />;
 }

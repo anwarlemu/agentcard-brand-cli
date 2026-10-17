@@ -505,9 +505,12 @@ export function Help({ children, ...props }: any) { return <PopoverPanel classNa
     expect(elementLayer('select.css', '.select-content { color: red } .select-item { color: red }', 'site').styled).toEqual([{selector:'.select-content',kind:'menu-panel'},{selector:'.select-item',kind:'menu-item'}]);
   });
   it('CLI add ships the corrected components, dependencies and theme', () => {
-    const dir = project({ 'package.json': JSON.stringify({ dependencies: { react: '19.0.0', tailwindcss: '4.1.0', '@radix-ui/react-dropdown-menu': '*', '@radix-ui/react-popover': '*', '@radix-ui/react-select': '*', 'lucide-react': '*', clsx: '*', 'tailwind-merge': '*', 'class-variance-authority': '*' } }), 'tsconfig.json': JSON.stringify({compilerOptions:{paths:{'@/*':['./*']}}}), 'app/globals.css': '@import "tailwindcss";' });
+    const dir = project({ 'package.json': JSON.stringify({ dependencies: { react: '19.0.0', tailwindcss: '4.1.0', '@radix-ui/react-dropdown-menu': '*', '@radix-ui/react-popover': '*', '@radix-ui/react-select': '*', '@radix-ui/react-label': '*', '@radix-ui/react-progress': '*', 'lucide-react': '*', clsx: '*', 'tailwind-merge': '*', 'class-variance-authority': '*' } }), 'tsconfig.json': JSON.stringify({compilerOptions:{paths:{'@/*':['./*']}}}), 'app/globals.css': '@import "tailwindcss";' });
     try {
-      run(dir, 'add', 'dropdown-menu', 'select', 'popover');
+      run(dir, 'add', 'dropdown-menu', 'select', 'popover', 'input', 'tags-input', 'progress');
+      for (const name of ['field', 'input', 'tags-input', 'progress']) {
+        expect(readFileSync(join(dir, `components/ui/${name}.tsx`), 'utf8')).toBe(readFileSync(join(ROOT, `registry/components/ui/${name}.tsx`), 'utf8'));
+      }
       const installed = readFileSync(join(dir, 'components/ui/dropdown-menu.tsx'), 'utf8');
       expect(installed).toBe(readFileSync(join(ROOT, 'registry/components/ui/dropdown-menu.tsx'), 'utf8'));
       expect(installed).toContain('MenuVariant.Provider');

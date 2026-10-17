@@ -34,20 +34,20 @@ export function Site() {
           {
             label: "Vault",
             plans: [
-              { name: "Vault Free", line: "Store customers’ cards and buy with an agent", price: "Free", unit: "up to 5,000 users", features: VAULT, action: { label: "Start free", href: "#" } },
-              { name: "Vault Enterprise", line: "Store customers’ cards and buy with an agent", price: "Talk to us", includes: "All features in the Free plan, plus:", features: ENTERPRISE, featured: true, action: { label: "Talk to us", href: "#" } },
+              { name: "Vault Free", line: "Store customers’ cards and buy with an agent", price: "Free", unit: "up to 5,000 users", features: VAULT, action: { label: "Start free", href: "https://app.agentcard.sh/" } },
+              { name: "Vault Enterprise", line: "Store customers’ cards and buy with an agent", price: "Talk to us", includes: "All features in the Free plan, plus:", features: ENTERPRISE, featured: true, action: { label: "Talk to us", href: "https://cal.com/team/agentcard/agentcard-call" } },
             ],
           },
           {
             label: "Issuing",
             plans: [
-              { name: "Issuing", line: "Cards for your own agents", price: "$5,000", unit: "/ month", features: ISSUING, action: { label: "Start now", href: "#" } },
-              { name: "Issuing Startups", line: "For teams just starting out", price: "Talk to us", includes: "All features in the Issuing plan.", featured: true, action: { label: "Talk to us", href: "#" } },
+              { name: "Issuing", line: "Cards for your own agents", price: "$5,000", unit: "/ month", features: ISSUING, action: { label: "Start now", href: "https://app.agentcard.sh/" } },
+              { name: "Issuing Startups", line: "For teams just starting out", price: "Talk to us", includes: "All features in the Issuing plan.", featured: true, action: { label: "Talk to us", href: "https://cal.com/team/agentcard/agentcard-call" } },
             ],
           },
           {
             label: "Purchase Agent",
-            plans: [{ name: "Purchase Agent", line: "Our agent inside yours", price: "Talk to us", featured: true, action: { label: "Book a call", href: "#" } }],
+            plans: [{ name: "Purchase Agent", line: "Our agent inside yours", price: "Talk to us", featured: true, action: { label: "Book a call", href: "https://cal.com/team/agentcard/agentcard-call" } }],
           },
         ]}
       />

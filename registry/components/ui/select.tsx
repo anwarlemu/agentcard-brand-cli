@@ -6,6 +6,7 @@ import { Check, ChevronDown, ChevronUp } from "lucide-react";
 import { cva, type VariantProps } from "class-variance-authority";
 
 import { usePortalContainer } from "@/lib/surface";
+import { useFieldControl } from "@/components/ui/field";
 import { cn } from "@/lib/utils";
 
 // A single choice. `field` is the brand's select (the get-started form, .v7-gate-field select): the input's square box,
@@ -58,8 +59,9 @@ function SelectValue(props: React.ComponentProps<typeof SelectPrimitive.Value>) 
 }
 
 function SelectTrigger({ className, appearance, compact, children, ...props }: React.ComponentProps<typeof SelectPrimitive.Trigger> & VariantProps<typeof triggerVariants>) {
+  const { required, ...control } = useFieldControl(props);
   return (
-    <SelectPrimitive.Trigger data-slot="select-trigger" className={cn(triggerVariants({ appearance, compact }), className)} {...props}>
+    <SelectPrimitive.Trigger data-slot="select-trigger" className={cn(triggerVariants({ appearance, compact }), className)} aria-required={required || undefined} {...control}>
       {children}
       <SelectPrimitive.Icon asChild>
         <SelectMark className={appearance === "field" || appearance == null ? "ml-auto text-fg" : "text-fg-muted"} />

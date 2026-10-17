@@ -10,7 +10,7 @@ import { cn } from "@/lib/utils";
 const WIDTHS = { desktop: 1440, phone: 390 } as const;
 const MAX_HEIGHT = 2400;
 // Next's development runtime needs cookies and same-origin HMR. Published previews stay isolated.
-const PREVIEW_SANDBOX = process.env.NODE_ENV === "development" ? "allow-scripts allow-same-origin" : "allow-scripts";
+const PREVIEW_SANDBOX = process.env.NODE_ENV === "development" ? "allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox" : "allow-scripts allow-forms allow-popups allow-popups-to-escape-sandbox";
 
 // Each mounted frame owns its height listener, including device changes and navigation.
 function MeasuredFrame({ src, label, width, height, scale, onHeightChange }: { src: string; label: string; width: number; height: number; scale: number; onHeightChange: (height: number) => void }) {

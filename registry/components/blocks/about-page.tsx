@@ -15,10 +15,10 @@ const FOOTER = {
     </>
   ),
   groups: [
-    { title: "Product", links: [{ label: "Vault", href: "/vault" }, { label: "Issuing", href: "/issuing" }, { label: "Voice", href: "/voice" }, { label: "Purchase Agent", href: "/purchase-agent" }, { label: "Pricing", href: "/pricing" }, { label: "FAQ", href: "/#faq" }] },
-    { title: "Developers", links: [{ label: "Documentation", href: "https://docs.agentcard.sh" }, { label: "API reference", href: "https://docs.agentcard.sh/api-reference" }] },
-    { title: "Company", links: [{ label: "About", href: "/about" }, { label: "Changelog", href: "/updates" }, { label: "Trust Center", href: "/trust" }] },
-    { title: "Legal", links: [{ label: "Privacy Policy", href: "/privacy" }, { label: "Terms of Service", href: "/terms" }, { label: "Card Terms", href: "/card-terms" }, { label: "Card Terms (International)", href: "/card-terms-international" }] },
+    { title: "Product", links: [{ label: "Vault", href: "https://www.agentcard.sh/vault" }, { label: "Issuing", href: "https://www.agentcard.sh/issuing" }, { label: "Voice", href: "https://cal.com/team/agentcard/agentcard-call" }, { label: "Purchase Agent", href: "https://www.agentcard.sh/purchase-agent" }, { label: "Pricing", href: "https://www.agentcard.sh/pricing" }, { label: "FAQ", href: "https://www.agentcard.sh/#faq" }] },
+    { title: "Developers", links: [{ label: "Documentation", href: "https://docs.agentcard.sh" }, { label: "API reference", href: "https://docs.agentcard.sh/companies/api/reference" }] },
+    { title: "Company", links: [{ label: "About", href: "https://www.agentcard.sh/about" }, { label: "Changelog", href: "https://www.agentcard.sh/updates" }, { label: "Trust Center", href: "https://app.vanta.com/agentcard.sh/trust/8t52k9fqhneqwt4y2jpvmn" }] },
+    { title: "Legal", links: [{ label: "Privacy Policy", href: "https://legal.raincards.xyz/legal/privacy-policy" }, { label: "Terms of Service", href: "https://www.agentcard.sh/terms" }, { label: "Card Terms", href: "https://www.agentcard.sh/card-terms" }, { label: "Card Terms (International)", href: "https://www.agentcard.sh/card-terms-international" }] },
     { title: "Social", links: [{ label: "X / Twitter", href: "https://x.com/agentcardhq" }, { label: "Instagram", href: "https://www.instagram.com/agentcardhq/" }] },
   ],
   merchants: ["Amazon", "Walmart", "Target", "Best Buy", "Home Depot", "Lowe’s", "Macy’s", "Wayfair", "Staples", "DoorDash", "Good Eggs", "Flights"],
@@ -28,10 +28,10 @@ const FOOTER = {
 const PRODUCTS = {
   label: "Products",
   items: [
-    { title: "Vault", description: "Store customers’ cards and buy with an agent.", href: "/vault" },
-    { title: "Issuing", description: "One-time and multi-use cards for your agent.", href: "/issuing" },
-    { title: "Voice", description: "Approve an agent’s purchase by speaking.", href: "/voice" },
-    { title: "Purchase Agent", description: "Buy from Amazon, DoorDash and more.", href: "/purchase-agent" },
+    { title: "Vault", description: "Store customers’ cards and buy with an agent.", href: "https://www.agentcard.sh/vault" },
+    { title: "Issuing", description: "One-time and multi-use cards for your agent.", href: "https://www.agentcard.sh/issuing" },
+    { title: "Voice", description: "Approve an agent’s purchase by speaking.", href: "https://cal.com/team/agentcard/agentcard-call" },
+    { title: "Purchase Agent", description: "Buy from Amazon, DoorDash and more.", href: "https://www.agentcard.sh/purchase-agent" },
   ],
 };
 
@@ -56,7 +56,7 @@ const person = (name: string, role: string) => ({ name, role, photo: <Initials n
 export function AboutPage() {
   return (
     <main className="relative">
-      <SiteHeader ground="white" action={{ label: "Get started", href: "/get-started" }} />
+      <SiteHeader href="https://www.agentcard.sh/" ground="white" action={{ label: "Get started", href: "https://app.agentcard.sh/" }} />
       <PageHeader
         eyebrow="The company"
         title="About"
@@ -68,7 +68,7 @@ export function AboutPage() {
           <TeamDirectory name="team.dir" tone="blue" columns={2} people={[person("Ada Okafor", "CEO & Co-Founder"), person("Luis Romero", "CTO & Co-Founder"), person("Mara Lindqvist", "Member of Technical Staff"), person("Noor Haddad", "Member of Marketing Staff")]} />
           <p className="mt-3.5 text-body-sm text-fg-muted">
             We are not hiring, but you can always send us an{" "}
-            <a href="mailto:hello@example.com" className="text-fg underline decoration-line-brand underline-offset-[0.2em] transition-colors duration-150 ease-out hover:text-fg-brand">
+            <a href="mailto:support@agentcard.sh" className="text-fg underline decoration-line-brand underline-offset-[0.2em] transition-colors duration-150 ease-out hover:text-fg-brand">
               email
             </a>
             .
@@ -80,7 +80,7 @@ export function AboutPage() {
             name="investors.dir"
             columns={3}
             people={[person("Priya Raman", "Co-founder, a fund"), person("Tom Becker", "CEO, a commerce platform"), person("Elena Ruiz", "CTO, a CRM"), person("Sam Wu", "CEO, an auth company"), person("Jonas Berg", "CEO, a cloud"), person("Ines Duarte", "Board, an AI lab")]}
-            footer={[{ label: "Backed by Y Combinator", href: "https://www.ycombinator.com" }, { label: "Pioneer", href: "https://pioneer.app" }]}
+            footer={[{ label: "Backed by Y Combinator", href: "https://www.ycombinator.com" }, { label: "Pioneer", href: "https://pioneerfund.vc" }]}
           />
         </section>
       </div>
@@ -88,11 +88,11 @@ export function AboutPage() {
       <NavDock
         menu={PRODUCTS}
         links={[
-          { label: "Home", href: "/" },
-          { label: "About", href: "/about", current: true },
-          { label: "Pricing", href: "/pricing" },
+          { label: "Home", href: "https://www.agentcard.sh/" },
+          { label: "About", href: "https://www.agentcard.sh/about", current: true },
+          { label: "Pricing", href: "https://www.agentcard.sh/pricing" },
         ]}
-        action={{ label: "Get started", href: "/get-started" }}
+        action={{ label: "Get started", href: "https://app.agentcard.sh/" }}
       />
     </main>
   );

@@ -9,17 +9,18 @@ import { cn } from "@/lib/utils";
 // red from the left while held. The fill carries a white copy of the label and is revealed by clip-path, so the label
 // reads red on white ahead of the fill and white on red behind it at every moment. The reveal runs at a constant rate
 // while held (2s, linear) and snaps back in 200ms ease-out on release; the key sinks a pixel while pressed.
-function HoldButton({ label, onConfirm, holdMs = 2000, className }: { label: string; onConfirm: () => void; holdMs?: number; className?: string }) {
-  const { isHolding, handlers } = useHold(holdMs, onConfirm);
+function HoldButton({ label, onConfirm, holdMs = 2000, className, disabled = false }: { label: string; onConfirm: () => void; holdMs?: number; className?: string; disabled?: boolean }) {
+  const { isHolding, handlers } = useHold(holdMs, onConfirm, disabled);
   const text = isHolding ? "Keep holding" : label;
   return (
     <button
       type="button"
+      disabled={disabled}
       data-slot="hold-button"
       data-holding={isHolding || undefined}
       {...handlers}
       className={cn(
-        "relative inline-flex h-10 shrink-0 items-center justify-center overflow-hidden rounded-control border border-hairline bg-surface px-5 font-display text-body-sm leading-none whitespace-nowrap text-danger shadow-key outline-none transition-[box-shadow,translate] duration-150 ease-out select-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-solid focus-visible:outline-focus-ring data-holding:translate-y-px data-holding:shadow-pressed motion-reduce:transition-none motion-reduce:data-holding:translate-y-0",
+        "disabled:opacity-50 disabled:pointer-events-none relative inline-flex h-10 shrink-0 items-center justify-center overflow-hidden rounded-control border border-hairline bg-surface px-5 font-display text-body-sm leading-none whitespace-nowrap text-danger shadow-key outline-none transition-[box-shadow,translate] duration-150 ease-out select-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-solid focus-visible:outline-focus-ring data-holding:translate-y-px data-holding:shadow-pressed motion-reduce:transition-none motion-reduce:data-holding:translate-y-0",
         className,
       )}
     >

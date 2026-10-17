@@ -10,7 +10,7 @@ export function Site() {
           <CardDescription>Store a card once. Your agent pays with a token that never leaves the vault.</CardDescription>
         </CardHeader>
         <CardFooter>
-          <Button variant="secondary">Explore Vault</Button>
+          <Button variant="secondary" asChild><a href="https://www.agentcard.sh/vault" target="_blank" rel="noreferrer">Explore Vault</a></Button>
         </CardFooter>
       </Card>
       <Card>
@@ -19,7 +19,7 @@ export function Site() {
           <CardDescription>Give each agent its own card, with a limit, a list of merchants and a log of every purchase.</CardDescription>
         </CardHeader>
         <CardFooter>
-          <Button variant="secondary">Explore Issuing</Button>
+          <Button variant="secondary" asChild><a href="https://www.agentcard.sh/issuing" target="_blank" rel="noreferrer">Explore Issuing</a></Button>
         </CardFooter>
       </Card>
     </div>
@@ -35,7 +35,7 @@ export function Raised() {
         <CardTitle className="text-h2 font-normal tracking-tighter">Prepaid cards for every agent</CardTitle>
         <CardDescription className="text-body-lg">Fund a card, choose what it can buy, and hand it to your agent.</CardDescription>
         <div>
-          <Button>Start free</Button>
+          <Button asChild><a href="https://app.agentcard.sh/" target="_blank" rel="noreferrer">Start free</a></Button>
         </div>
       </CardContent>
     </Card>

@@ -1,3 +1,6 @@
+"use client";
+
+import { useState } from "react";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 
@@ -8,18 +11,19 @@ const MERCHANTS = [
 ];
 
 export function Site() {
+  const [selected, setSelected] = useState(MERCHANTS.filter((merchant) => merchant.checked).map((merchant) => merchant.id));
   return (
     <fieldset className="grid gap-3">
       <legend className="mb-3 font-display text-caption text-fg-muted">What this card can buy</legend>
       {MERCHANTS.map((merchant) => (
         <Label key={merchant.id} htmlFor={`checkbox-${merchant.id}`}>
-          <Checkbox id={`checkbox-${merchant.id}`} defaultChecked={merchant.checked} />
+          <Checkbox id={`checkbox-${merchant.id}`} checked={selected.includes(merchant.id)} onCheckedChange={(checked) => setSelected((current) => checked ? [...current, merchant.id] : current.filter((id) => id !== merchant.id))} />
           {merchant.label}
         </Label>
       ))}
       <Label htmlFor="checkbox-all" className="mt-2">
-        <Checkbox id="checkbox-all" checked="indeterminate" />
-        Some categories
+        <Checkbox id="checkbox-all" checked={selected.length === MERCHANTS.length ? true : selected.length ? "indeterminate" : false} onCheckedChange={(checked) => setSelected(checked ? MERCHANTS.map((merchant) => merchant.id) : [])} />
+        All categories
       </Label>
       <Label htmlFor="checkbox-disabled">
         <Checkbox id="checkbox-disabled" disabled />

@@ -10,7 +10,7 @@ export function Site() {
         description="Issue a card in minutes and set the limits it spends under."
         actions={
           <Button asChild variant="on-brand">
-            <a href="#">Get started</a>
+            <a href="https://app.agentcard.sh/">Get started</a>
           </Button>
         }
       />
@@ -26,7 +26,7 @@ export function WithMedia() {
       title="Let your agent buy"
       actions={
         <Button asChild variant="on-brand">
-          <a href="#">Get started</a>
+          <a href="https://app.agentcard.sh/">Get started</a>
         </Button>
       }
       media={
