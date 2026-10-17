@@ -247,7 +247,7 @@ describe('elements', () => {
 		const html = '<header><nav><a href="/">Docs</a><a class="btn btn-primary">Start</a></nav></header><section class="hero"><h1>Title</h1></section><section><h2 class="title">Features</h2><div class="feature-card"><h3>One</h3></div><a class="btn-outline">More</a></section>';
 		const kinds = elementsIn('index.html', html, 'site').map((h) => h.kind);
 		expect(kinds).toEqual(expect.arrayContaining(['header', 'nav-link', 'header-action', 'hero', 'hero-title', 'section-heading', 'card', 'button-secondary']));
-		const app = elementsIn('page.tsx', '<div class="window"><div class="window-bar">team.dir</div></div><table><th>Name</th></table><button className="btn-primary">Create</button>', 'site').map((h) => h.kind);
+		const app = elementsIn('page.tsx', '<div class="window"><div class="titlebar">team.dir</div></div><table><th>Name</th></table><button className="btn-primary">Create</button>', 'site').map((h) => h.kind);
 		expect(app).toEqual(expect.arrayContaining(['window', 'window-bar', 'table', 'button-primary']));
 	});
 });
