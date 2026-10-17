@@ -12,9 +12,15 @@ export function Site() {
         <p className="text-body-sm text-fg-muted">Store customers' cards and buy with an agent</p>
       </Window>
       <div className="grid grid-cols-3 gap-4 sm:col-span-2">
-        {(["sage", "rose", "teal"] as const).map((tone) => (
-          <Window key={tone} name={`${tone}.case`} tone={tone} bodyClassName="flex h-20 items-center justify-center font-display text-body-sm">
-            Customer
+        {(
+          [
+            ["sage", "Orchid"],
+            ["rose", "Fieldwork"],
+            ["teal", "Northwind"],
+          ] as const
+        ).map(([tone, customer]) => (
+          <Window key={tone} name="" tone={tone} bodyClassName="flex min-h-21 items-center justify-center font-display text-h4 tracking-tight">
+            {customer}
           </Window>
         ))}
       </div>

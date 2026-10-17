@@ -5,9 +5,10 @@ import { X } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 
-// A tags field in the brand's input box (square, a 35 percent ink border, blue on focus with the soft ring): each tag a
-// small blue label on a pale blue ground (red when invalid) with its own remove button, typed with Enter or a comma,
-// removed with Backspace, and a pasted list split into tags.
+// A tags field in the brand's form box (the get-started form, .v7-gate-field: square, a 35 percent ink border, at least
+// 44px, the form's 2px blue outline on focus). Each tag is the guides' inline code chip (.v7-guide-prose code: blue text
+// on the pale sky, a faint blue edge, small corners), red when invalid, with its own remove button; typed with Enter or
+// a comma, removed with Backspace, and a pasted list split into tags.
 function TagsInput({
   id,
   tags,
@@ -38,8 +39,8 @@ function TagsInput({
     <div
       data-slot="tags-input"
       className={cn(
-        "flex min-h-11.5 w-full flex-wrap items-center gap-1.5 px-2 py-1.5",
-        !bare && "rounded-none border border-line-strong bg-surface transition-[border-color,box-shadow] duration-150 ease-out focus-within:border-line-brand focus-within:shadow-ring-hover motion-reduce:transition-none",
+        "flex min-h-11 w-full flex-wrap items-center gap-1.5 px-2 py-1.5",
+        !bare && "rounded-none border border-line-strong bg-surface focus-within:outline-2 focus-within:-outline-offset-1 focus-within:outline-solid focus-within:outline-focus-ring",
         className,
       )}
     >
@@ -47,8 +48,8 @@ function TagsInput({
         <span
           key={tag}
           className={cn(
-            "flex h-7 items-center gap-1 rounded-sm border pr-1 pl-2.5 font-display text-caption",
-            isTagInvalid?.(tag) ? "border-danger bg-surface text-danger" : "border-line-window bg-blue-5 text-fg-brand",
+            "flex h-7 items-center gap-0.5 rounded-sm border pr-0.5 pl-2 font-display text-body-sm leading-none",
+            isTagInvalid?.(tag) ? "border-danger bg-surface text-danger" : "border-line-window bg-sky-wash text-fg-brand",
           )}
         >
           {tag}
@@ -56,7 +57,7 @@ function TagsInput({
             type="button"
             aria-label={`Remove ${tag}`}
             onClick={() => onTagsChange(tags.filter((existing) => existing !== tag))}
-            className="grid size-5 place-items-center rounded-chip outline-none transition-colors duration-150 ease-out hover:bg-primary hover:text-on-primary focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-solid focus-visible:outline-focus-ring"
+            className="grid size-5.5 place-items-center rounded-[calc(var(--ds-radius-sm)/2)] opacity-70 outline-none transition-[opacity,background-color] duration-150 ease-out hover:bg-wash-selected hover:opacity-100 focus-visible:opacity-100 focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-solid focus-visible:outline-focus-ring motion-reduce:transition-none"
           >
             <X className="size-3" strokeWidth={1.75} />
           </button>

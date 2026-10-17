@@ -7,7 +7,7 @@ import { cva } from "class-variance-authority";
 import { useTabGlide } from "@/hooks/use-tab-glide";
 import { cn } from "@/lib/utils";
 
-// The brand's tabs (agentcard.sh, .plan-tabs on /pricing and .faq-tabs on /): a sunken track (pale, a hairline, 12px
+// The brand's tabs (agentcard.sh, .plan-tabs on /pricing and .faq-tabs on /; `sm` is the guides' .v7-guide-tablist): a sunken track (pale, a hairline, 12px
 // corners, 4px inset, the inner shadow) of equal 40px tabs in the 14px display face, and one blue key (a darker blue
 // edge, the light line inside the top, the soft drop) that glides to the selected tab. Unselected labels are 68 percent
 // ink, turning ink with a faint wash under the pointer; the selected label turns white as the key arrives. `plain` drops
@@ -39,7 +39,8 @@ const tabsTriggerVariants = cva(
     },
     compoundVariants: [
       { variant: "default", size: "md", className: "h-10 px-4 text-body-sm" },
-      { variant: "default", size: "sm", className: "h-8 px-3 text-caption" },
+      // The guides' tab track (.v7-guide-tablist): 30px keys with 6px corners in the 12px display face.
+      { variant: "default", size: "sm", className: "h-7.5 rounded-sm px-3 text-caption" },
       { variant: "plain", size: "md", className: "h-8 px-3 text-body-sm" },
       { variant: "plain", size: "sm", className: "h-7 px-2.5 text-caption" },
     ],
@@ -98,13 +99,15 @@ function TabsList({
         "relative isolate w-fit",
         // Equal columns whatever the labels, as on the brand's page; add w-full to fill the row.
         variant === "default" ? "inline-grid auto-cols-fr grid-flow-col gap-1 rounded-card border border-hairline bg-subtle p-1 shadow-well" : "inline-flex items-center gap-0.5",
+        // The small track's corners stay concentric with its 6px keys: 10px.
+        variant === "default" && size === "sm" && "rounded-[calc(var(--ds-radius-sm)+var(--ds-space-1))]",
         className,
       )}
       {...props}
     >
       {glide && (
         // The hook measures from the list's outer edge; -1px puts the key back inside the track's border.
-        <span ref={keyRef} aria-hidden className={cn("pointer-events-none absolute -z-10", variant === "default" ? "-top-px -left-px" : "top-0 left-0", KEY[variant], pillClassName, !isPlaced && "invisible")} />
+        <span ref={keyRef} aria-hidden className={cn("pointer-events-none absolute -z-10", variant === "default" ? "-top-px -left-px" : "top-0 left-0", KEY[variant], variant === "default" && size === "sm" && "rounded-sm", pillClassName, !isPlaced && "invisible")} />
       )}
       <ListState.Provider value={{ variant, size, isKeyPlaced: glide && isPlaced }}>{children}</ListState.Provider>
     </TabsPrimitive.List>

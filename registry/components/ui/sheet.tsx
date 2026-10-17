@@ -8,8 +8,8 @@ import { WindowBar } from "@/components/ui/window";
 import { usePortalContainer } from "@/lib/surface";
 import { cn } from "@/lib/utils";
 
-// A side panel that is one of the brand's windows: white, a 16 percent ink hairline, 12px corners, the 32px sky title bar
-// (`name`) with a close mark where the [*] sits, floating 8px in from the screen's edge over a 40 percent ink scrim. It
+// A side panel that is one of the brand's windows (the guides' panel, .v7-guide-nav, which closes to its bar over the page): white, a 16 percent ink hairline, 12px corners, the 32px sky title bar
+// (`name`) with a close mark where the [*] sits, floating 8px in from the screen's edge over the ink scrim, blurred 4px as behind the get-started dialog (.v7-gate::backdrop). It
 // slides in from its side as it fades (260ms ease-out, on transform); reduced motion keeps the fade. Pass
 // `modal={false}` to Sheet to keep the page behind it usable (no scrim then).
 function Sheet(props: React.ComponentProps<typeof SheetPrimitive.Root>) {
@@ -46,7 +46,7 @@ function SheetContent({
   const container = usePortalContainer();
   return (
     <SheetPrimitive.Portal container={container}>
-      <SheetPrimitive.Overlay data-slot="sheet-overlay" className="fixed inset-0 z-50 bg-scrim transition-opacity duration-260 ease-out starting:opacity-0" />
+      <SheetPrimitive.Overlay data-slot="sheet-overlay" className="fixed inset-0 z-50 bg-scrim backdrop-blur-xs transition-opacity duration-260 ease-out starting:opacity-0" />
       <SheetPrimitive.Content
         data-slot="sheet-content"
         className={cn(

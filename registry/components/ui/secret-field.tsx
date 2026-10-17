@@ -26,8 +26,9 @@ export function SecretText({ secret, masked, isRevealed, className }: { secret: 
   );
 }
 
-// A key or a card number on a sunken well (pale, a hairline, the inner shadow), masked to its first characters in the
-// display face the brand sets code in, with a show key and a copy key.
+// A key or a card number in the guides' search box (.v7-guide-search: white, 8px corners, a 12 percent ink edge with a
+// faint inner shadow, 14px text), here 44px tall to hold the brand's small white keys: the value masked to its first
+// characters in the display face the brand sets code in, then a show key and a copy key (.v7-command's white key).
 function SecretField({
   secret,
   visibleChars = 8,
@@ -44,7 +45,7 @@ function SecretField({
 }) {
   const [revealed, setRevealed] = React.useState(defaultRevealed);
   return (
-    <div data-slot="secret-field" className={cn("flex h-11 min-w-0 items-center gap-1.5 rounded-control border border-hairline bg-subtle pr-1.5 pl-3.5 shadow-well", className)}>
+    <div data-slot="secret-field" className={cn("flex h-11 min-w-0 items-center gap-1.5 rounded-control border border-line-field bg-surface pr-1.5 pl-3.5 shadow-inset", className)}>
       <SecretText secret={secret} masked={maskSecret(secret, visibleChars)} isRevealed={revealed} className="font-mono text-body-sm text-fg" />
       <Tooltip>
         <TooltipTrigger asChild>
