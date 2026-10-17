@@ -1,7 +1,7 @@
 import { Window } from "@/components/ui/window";
 import { Block, Command, Page, PageIntro } from "@www/components/chrome";
 import { Code } from "@www/components/code";
-import { CLI_COMMAND } from "@www/lib/registry";
+import { INSTALL_COMMAND } from "@www/lib/registry";
 
 export const metadata = { title: "CLI" };
 
@@ -22,8 +22,8 @@ const FLOW = [
 
 export default function CliPage() {
   return <Page>
-    <PageIntro title="CLI" lead="Use the CLI to build Agentcard pages and interfaces with the components and design tokens in this library.">
-      <Command command={`${CLI_COMMAND} add button card field input`} />
+    <PageIntro title="CLI" lead="Install the CLI once from the project root. Then use it to add components, find tokens and check your work.">
+      <Command command={INSTALL_COMMAND} wrap />
     </PageIntro>
 
     <Block title="Build a page">
@@ -43,17 +43,17 @@ Connect every control to its intended behavior. Include validation, loading, emp
 Run the project checks and the CLI token check. Test keyboard interaction and desktop and phone layouts.`} />
     </Block>
 
-    <Block title="Add components" description="Run these commands from the project root. Components follow the project’s src folder and @ alias. The theme is added to its main stylesheet.">
-      <Code title="terminal" code={`${CLI_COMMAND} add button card field input
-${CLI_COMMAND} add hero section site-header site-footer`} />
+    <Block title="Add components" description="After installation, add the components the page needs. These are examples; choose the names from the library. Adding components also installs their dependencies and the theme.">
+      <Code title="terminal" code={`npx agentcard-ds add button card field input
+npx agentcard-ds add hero section site-header site-footer`} />
     </Block>
 
     <Block title="Check the implementation" description="Run the token check after edits. Start the local development server before reviewing a page. Visual review does not replace testing the controls.">
-      <Code title="terminal" code={`${CLI_COMMAND} check --changed
-${CLI_COMMAND} review http://localhost:3000 --any`} />
+      <Code title="terminal" code={`npx agentcard-ds check --changed
+npx agentcard-ds review http://localhost:3000 --any`} />
     </Block>
 
-    <Block title="Commands" description="Append these commands to the CLI invocation shown above.">
+    <Block title="Commands" description="Run commands with npx agentcard-ds after installing the CLI.">
       <Window name="agentcard-ds --help" className="mx-auto max-w-(--ds-layout-heading)">
         <dl className="divide-y divide-line-subtle px-5">
           {COMMANDS.map(([command, description]) => <div key={command} className="grid gap-1 py-4 sm:grid-cols-[13rem_1fr] sm:gap-6">
@@ -65,8 +65,8 @@ ${CLI_COMMAND} review http://localhost:3000 --any`} />
     </Block>
 
     <Block title="Update an existing interface" description="Running the CLI without a subcommand applies the design system to existing code. It can replace matching components, convert style values and install agent rules and checks. Review the diff before continuing.">
-      <Code title="terminal" code={`${CLI_COMMAND} --dry-run
-${CLI_COMMAND}`} />
+      <Code title="terminal" code={`npx agentcard-ds --dry-run
+npx agentcard-ds`} />
     </Block>
   </Page>;
 }

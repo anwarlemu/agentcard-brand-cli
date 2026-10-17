@@ -24,6 +24,7 @@ export const registryName = index.name;
 export const registryUrl = index.url;
 export const REPO = "https://github.com/anwarlemu/agentcard-brand-cli";
 export const BRAND_SITE = "https://www.agentcard.sh";
+export const INSTALL_COMMAND = "npm install --save-dev github:anwarlemu/agentcard-brand-cli#release";
 export const CLI_COMMAND = "npx -y github:anwarlemu/agentcard-brand-cli#release";
 export const items = (index.items as Item[]).filter((i) => i.type !== "lib" && i.type !== "hook");
 

@@ -8,10 +8,10 @@ import { Block, Command, Page } from "@www/components/chrome";
 import { Prose } from "@www/components/prose";
 import { Thumb } from "@www/components/thumb";
 import { examples } from "@www/lib/examples.generated";
-import { CLI_COMMAND, findItem, registryName } from "@www/lib/registry";
+import { INSTALL_COMMAND, findItem, registryName } from "@www/lib/registry";
 
 const STEPS = [
-  { name: "components", title: "Choose components", body: "Check the library for an existing component or page template. Read its usage notes and examples." },
+  { name: "components", title: "Choose components", body: "Find a component or page template in the library. Use its add command, then read the usage notes and examples." },
   { name: "implementation", title: "Build the interface", body: "Use the component variants and design tokens. Connect forms, menus and actions to the page’s state and data." },
   { name: "checks", title: "Check the page", body: "Run the token check. Test the interactions and review the layout at desktop and phone widths." },
 ];
@@ -35,15 +35,18 @@ export default function Home() {
         title={`${registryName} design system`}
         titleClassName="max-w-none text-nowrap text-[length:min(var(--ds-text-hero),7vw)]"
         actions={
-          <Button asChild variant="on-brand">
-            <Link href="/components">Browse components</Link>
-          </Button>
+          <div className="grid w-[calc(100vw-2*var(--ds-layout-gutter))] max-w-2xl justify-items-center gap-4">
+            <p className="text-body-sm text-fg-on-brand-muted">Install the CLI in your project.</p>
+            <Command command={INSTALL_COMMAND} wrap />
+            <Button asChild variant="on-brand">
+              <Link href="/components">Browse components</Link>
+            </Button>
+          </div>
         }
       />
       <Page className="pt-24 md:pt-28">
-        <Block title="Build a page" description="Add the components you need to the Agentcard project, then use their examples to build the interface.">
-          <Command command={`${CLI_COMMAND} add button card field input`} className="mx-auto" />
-          <ol className="mt-12 grid gap-4 md:grid-cols-3">
+        <Block title="Build a page" description="Once the CLI is installed, choose components from the library, build the interface and check the result.">
+          <ol className="grid gap-4 md:grid-cols-3">
             {STEPS.map((s) => (
               <li key={s.name}>
                 <Window name={s.name} className="h-full" bodyClassName="grid content-start gap-2 p-6">

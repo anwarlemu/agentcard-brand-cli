@@ -4,21 +4,31 @@ Components, design tokens and a CLI for building Agentcard pages and interfaces.
 
 Reference: https://agentcard-ds.vercel.app
 
-## Add components
+## Install the CLI
 
-Run from a React and Tailwind 4 project:
+Run once from the project root:
 
 ```sh
-npx -y github:anwarlemu/agentcard-brand-cli#release add button card field input
+npm install --save-dev github:anwarlemu/agentcard-brand-cli#release
+```
+
+Then use `npx agentcard-ds` with the commands below.
+
+## Add components
+
+In a React and Tailwind 4 project, add the components the page needs. For example:
+
+```sh
+npx agentcard-ds add button card field input
 ```
 
 The CLI copies component source, installs dependencies and adds the theme. It uses the project’s `src` folder and
 `@` alias when configured. Read each component’s examples and usage notes before changing it.
 
 ```sh
-npx -y github:anwarlemu/agentcard-brand-cli#release add hero section site-header site-footer
-npx -y github:anwarlemu/agentcard-brand-cli#release list
-npx -y github:anwarlemu/agentcard-brand-cli#release tokens border
+npx agentcard-ds add hero section site-header site-footer
+npx agentcard-ds list
+npx agentcard-ds tokens border
 ```
 
 ## Instructions for coding agents
@@ -36,8 +46,8 @@ Run the project checks and the CLI token check. Test keyboard interaction and de
 ## Check the implementation
 
 ```sh
-npx -y github:anwarlemu/agentcard-brand-cli#release check --changed
-npx -y github:anwarlemu/agentcard-brand-cli#release review http://localhost:3000 --any
+npx agentcard-ds check --changed
+npx agentcard-ds review http://localhost:3000 --any
 ```
 
 Start the development server before running `review`. It captures desktop and phone screenshots and compares the
@@ -48,8 +58,7 @@ control behavior; test those separately.
 
 ## Commands
 
-Append these to `npx -y github:anwarlemu/agentcard-brand-cli#release`. In a project with the CLI already installed,
-use `npx agentcard-ds`.
+Run these commands with `npx agentcard-ds` after installing the CLI.
 
 | Command | Purpose |
 |---|---|
@@ -71,8 +80,8 @@ components, convert style values, install styles and fonts, and add agent rules 
 continuing. This conversion preserves existing copy and behavior.
 
 ```sh
-npx -y github:anwarlemu/agentcard-brand-cli#release --dry-run
-npx -y github:anwarlemu/agentcard-brand-cli#release
+npx agentcard-ds --dry-run
+npx agentcard-ds
 ```
 
 Subsequent runs report the next screen to review. `--redo` repeats conversion after an update. Component decisions

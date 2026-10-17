@@ -36,13 +36,13 @@ export function Block({ id, title, description, align = "center", children, clas
 }
 
 /** A shell command on the ink ground, as the brand sets code: a sky prompt, the command in the display face, a copy key. */
-export function Command({ command, className }: { command: string; className?: string }) {
+export function Command({ command, wrap = false, className }: { command: string; wrap?: boolean; className?: string }) {
   return (
     <div className={cn("flex w-full max-w-2xl items-center gap-3 rounded-control bg-code py-1.5 pr-1.5 pl-4 shadow-code", className)}>
       <span aria-hidden className="font-mono text-body-sm text-fg-on-brand-label">
         $
       </span>
-      <code className="min-w-0 flex-1 truncate text-left font-mono text-body-sm text-fg-on-brand-muted">{command}</code>
+      <code className={cn("min-w-0 flex-1 text-left font-mono text-body-sm text-fg-on-brand-muted", wrap ? "break-all whitespace-normal" : "truncate")}>{command}</code>
       <CopyButton value={command} label="Copy command" />
     </div>
   );
