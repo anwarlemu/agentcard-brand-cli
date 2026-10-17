@@ -6,8 +6,11 @@ import { Check, X } from "lucide-react";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
 
-// A tag filter: the picked tags as small blue labels on a pale blue ground (each clears itself), then a small white key,
-// Tags, that opens a searchable list on the brand's floating panel, each row ticked in blue when picked.
+// A tag filter. The picked tags are the guides' inline code chips (.v7-guide-prose code: blue text on the pale sky, a
+// faint blue edge, small corners), each clearing itself; then a small white key, Tags, opens the brand's floating panel
+// with the guides' search panel inside it in small (.v7-guide-search-field: a blue search mark, a borderless field in the
+// display face over a dotted rule; .v7-guide-search-results: rows that take the sky wash under the pointer), each row
+// ticked in blue when picked.
 function TagFilter({
   tags,
   tagOptions,
@@ -34,7 +37,7 @@ function TagFilter({
           type="button"
           onClick={() => onRemoveTag(tag)}
           aria-label={`Clear tag filter ${tag}`}
-          className="flex h-8 items-center gap-1 rounded-sm border border-line-window bg-blue-5 pr-2 pl-2.5 font-display text-caption text-fg-brand outline-none transition-colors duration-150 ease-out hover:bg-blue-10 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-solid focus-visible:outline-focus-ring"
+          className="flex h-8 items-center gap-1 rounded-sm border border-line-window bg-sky-wash pr-2 pl-2.5 font-display text-body-sm leading-none text-fg-brand outline-none transition-[background-color] duration-150 ease-out hover:bg-blue-10 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-solid focus-visible:outline-focus-ring motion-reduce:transition-none [&_svg]:opacity-70"
         >
           {tag}
           <X className="size-3" strokeWidth={1.75} />
@@ -50,17 +53,24 @@ function TagFilter({
             <path d="M0 0h10L5 6z" />
           </svg>
         </PopoverTrigger>
-        <PopoverContent align="end" sideOffset={6} className="w-60 p-1">
-          <input
-            autoFocus
-            value={query}
-            onChange={(event) => setQuery(event.target.value)}
-            placeholder="Search tags"
-            aria-label="Search tags"
-            className="mb-1 h-9 w-full rounded-none border border-line-strong bg-surface px-2.5 text-body-sm text-fg transition-[border-color,box-shadow] duration-150 ease-out outline-none placeholder:text-fg-faint focus:border-line-brand focus:shadow-ring-hover motion-reduce:transition-none"
-          />
-          <ul className="max-h-64 overflow-y-auto">
-            {options.length === 0 && <li className="px-2.5 py-2 text-body-sm text-fg-muted">{tagOptions.length === 0 ? "No tags yet" : "No matching tags"}</li>}
+        <PopoverContent align="end" sideOffset={6} className="w-64 p-0">
+          <label className="flex items-center gap-2.5 border-b-2 border-dotted border-line-mid px-3.5 text-fg-brand">
+            <svg aria-hidden viewBox="0 0 16 16" className="size-3.75 shrink-0 fill-none stroke-current [stroke-linecap:round] [stroke-width:1.5]">
+              <circle cx="7" cy="7" r="4.75" />
+              <path d="M10.5 10.5 14 14" />
+            </svg>
+            <input
+              autoFocus
+              type="search"
+              value={query}
+              onChange={(event) => setQuery(event.target.value)}
+              placeholder="Search tags"
+              aria-label="Search tags"
+              className="h-11 min-w-0 flex-1 bg-transparent font-display text-body text-fg caret-primary outline-none placeholder:text-fg-faint [&::-webkit-search-cancel-button]:hidden"
+            />
+          </label>
+          <ul className="max-h-64 overflow-y-auto p-1">
+            {options.length === 0 && <li className="px-2.5 py-2 font-display text-body-sm text-fg-muted">{tagOptions.length === 0 ? "No tags yet" : "No matching tags"}</li>}
             {options.map((tag) => {
               const isSelected = selected.has(tag);
               return (
@@ -70,7 +80,7 @@ function TagFilter({
                     aria-pressed={isSelected}
                     onClick={() => (isSelected ? onRemoveTag(tag) : onAddTag(tag))}
                     className={cn(
-                      "flex h-9 w-full items-center gap-2.5 rounded-sm px-2.5 text-left font-display text-body-sm outline-none hover:bg-wash-hover focus-visible:bg-wash-hover",
+                      "flex h-9 w-full items-center gap-2.5 rounded-sm px-2.5 text-left font-display text-body-sm outline-none hover:bg-sky-wash focus-visible:bg-sky-wash",
                       isSelected ? "text-fg" : "text-fg-secondary",
                     )}
                   >

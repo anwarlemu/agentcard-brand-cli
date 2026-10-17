@@ -8,17 +8,19 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { usePortalContainer } from "@/lib/surface";
 import { cn } from "@/lib/utils";
 
-// A single choice. `field` is the brand's select (the get-started form): the input's square box, 35 percent ink border
-// and 18px Inter, with a small ink triangle at the right; focus or open turns the border blue with the soft ring.
-// `compact` shortens it to 14px for dense rows. `ghost` is the white key for a toolbar, `chip` a quiet label on a wash.
-// The list is the brand's floating panel: white, a hairline, 8px corners, growing from its trigger in a quick ease-out.
+// A single choice. `field` is the brand's select (the get-started form, .v7-gate-field select): the input's square box,
+// 35 percent ink border and 18px Inter, 10px by 12px of padding, with a small ink triangle (10 by 5px) 13px in from the
+// right; focus is the form's 2px blue outline laid over the border. `compact` shortens it to 14px for dense rows. `ghost`
+// is the white key for a toolbar, `chip` a quiet label on a wash. The list is the brand's floating panel (white, a
+// hairline, 8px corners) growing from its trigger in a quick ease-out; the row under the pointer or the keys takes the
+// guides' search results' sky wash (.v7-guide-search-results [aria-selected]), the chosen one a blue tick.
 const triggerVariants = cva(
-  "flex items-center gap-2 whitespace-nowrap outline-none transition-[background-color,border-color,box-shadow,color] duration-150 ease-out disabled:pointer-events-none disabled:opacity-50 motion-reduce:transition-none [&_svg]:shrink-0",
+  "flex items-center gap-2 whitespace-nowrap outline-none transition-[background-color,border-color,box-shadow,color,translate] duration-150 ease-out disabled:pointer-events-none disabled:opacity-50 motion-reduce:transition-none [&_svg]:shrink-0",
   {
     variants: {
       appearance: {
         field:
-          "w-full rounded-none border border-line-strong bg-surface font-sans text-fg focus-visible:border-line-brand focus-visible:shadow-ring-hover data-[state=open]:border-line-brand data-[state=open]:shadow-ring-hover data-placeholder:text-fg-faint aria-invalid:border-danger [&>span]:flex-1 [&>span]:truncate [&>span]:text-left",
+          "w-full gap-3.25 rounded-none border border-line-strong bg-surface font-sans text-fg focus-visible:outline-2 focus-visible:-outline-offset-1 focus-visible:outline-solid focus-visible:outline-focus-ring data-[state=open]:outline-2 data-[state=open]:-outline-offset-1 data-[state=open]:outline-solid data-[state=open]:outline-focus-ring data-placeholder:text-fg-faint aria-invalid:border-danger [&>span]:flex-1 [&>span]:truncate [&>span]:text-left",
         ghost:
           "h-8 rounded-control border border-hairline bg-surface px-3 font-display text-caption text-fg shadow-key hover:bg-sky-wash focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-solid focus-visible:outline-focus-ring active:translate-y-px active:shadow-pressed data-[state=open]:bg-sky-wash motion-reduce:active:translate-y-0",
         chip: "h-7 rounded-sm bg-wash-pill px-2.5 font-display text-caption text-fg-secondary hover:text-fg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-solid focus-visible:outline-focus-ring data-[state=open]:text-fg",
@@ -27,18 +29,18 @@ const triggerVariants = cva(
       compact: { true: "", false: "" },
     },
     compoundVariants: [
-      { appearance: "field", compact: false, className: "py-2.5 pr-3 pl-3 text-h5 leading-snug" },
-      { appearance: "field", compact: true, className: "h-9 px-2.5 text-body-sm" },
+      { appearance: "field", compact: false, className: "min-h-11 py-2.5 pr-3.25 pl-3 text-h5 leading-snug" },
+      { appearance: "field", compact: true, className: "h-9 pr-3.25 pl-2.5 text-body-sm" },
     ],
     defaultVariants: { appearance: "field", compact: false },
   },
 );
 
-/** The brand's select mark: a small filled triangle, pointing down. */
+/** The brand's select mark: a small filled triangle, 10 by 5px, pointing down. */
 function SelectMark({ className }: { className?: string }) {
   return (
-    <svg aria-hidden viewBox="0 0 10 6" className={cn("h-1.5 w-2.5 fill-current", className)}>
-      <path d="M0 0h10L5 6z" />
+    <svg aria-hidden viewBox="0 0 10 5" className={cn("h-1.25 w-2.5 fill-current", className)}>
+      <path d="M0 0h10L5 5z" />
     </svg>
   );
 }
@@ -101,7 +103,7 @@ function SelectItem({ className, children, description, ...props }: React.Compon
     <SelectPrimitive.Item
       data-slot="select-item"
       className={cn(
-        "relative flex w-full cursor-default items-start gap-2 rounded-sm py-2 pr-8 pl-2.5 font-display text-body-sm leading-snug text-fg-secondary outline-none select-none data-[disabled]:pointer-events-none data-[disabled]:opacity-40 data-[highlighted]:bg-wash-hover data-[highlighted]:text-fg data-[state=checked]:text-fg",
+        "relative flex w-full cursor-default items-start gap-2 rounded-sm py-2 pr-8 pl-2.5 font-display text-body-sm leading-snug text-fg-secondary outline-none select-none data-[disabled]:pointer-events-none data-[disabled]:opacity-40 data-[highlighted]:bg-sky-wash data-[highlighted]:text-fg data-[state=checked]:text-fg",
         className,
       )}
       {...props}

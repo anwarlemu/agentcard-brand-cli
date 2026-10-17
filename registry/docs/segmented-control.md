@@ -7,5 +7,5 @@ description: "The brand's tab track as a value picker: a sunken track with the b
 kinds: [tabs]
 use_for: "Picking one of two to four values in place, such as a billing period or a card type, where the choice changes what is shown next to it. `size=\"sm\"` in a tight card, `plain` in a dense toolbar."
 never: [Switching between pages or panels (use tabs), More than four options, Pill-shaped tracks]
-source: "agentcard-website src/app/globals.css (.plan-tabs, .plan-tabs-thumb); live https://www.agentcard.sh/pricing"
+source: "live https://www.agentcard.sh/pricing (.plan-tabs, .plan-tabs-thumb); src/app/globals.css (.v7-guide-tablist for size sm)"
 ---

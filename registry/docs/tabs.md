@@ -7,5 +7,5 @@ description: "The brand's tab track: a sunken track of equal 40px tabs in the 14
 kinds: [tabs]
 use_for: "Two to five sibling views: plans, FAQ topics, product details. `default` everywhere it can breathe (add w-full to match the content's width), `size=\"sm\"` in a tight card, `plain` for a filter row in a dense list, `glide={false}` when your triggers draw their own selected surface."
 never: [Tabs for actions, Underlined tabs, Pill-shaped tabs, More than one blue key in a track]
-source: "agentcard-website src/app/globals.css (.plan-tabs, .plan-tab, .plan-tabs-thumb, .faq-tabs); live https://www.agentcard.sh/pricing"
+source: "live https://www.agentcard.sh/pricing (.plan-tabs, .plan-tab, .plan-tabs-thumb); src/app/globals.css (.v7-guide-tablist for size sm)"
 ---

@@ -7,5 +7,5 @@ description: "A single choice: the brand's square select (35 percent ink border,
 kinds: [input]
 use_for: "Picking one of a few known options in a form (`field`, the default, inside a Field), a dense row (`compact`), a toolbar (`ghost`, the white key) or a quiet filter (`chip`)."
 never: [Rounded field triggers, A select for two options (use a segmented control), Long lists without a search (use a command)]
-source: "agentcard-website src/app/globals.css (.v7-gate-field select); live https://www.agentcard.sh/get-started"
+source: "live https://www.agentcard.sh/get-started (.v7-gate-field select); src/app/globals.css (.v7-guide-search-results)"
 ---

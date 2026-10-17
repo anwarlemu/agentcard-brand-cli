@@ -3,9 +3,9 @@ name: sonner
 title: Toast
 type: ui
 surface: site
-description: "The brand's toast: white with a hairline, 12px corners and the tooltip shadow, the title in the display face, the action as the blue key and cancel as the white key."
+description: "The brand's toast: one 40px white line at the bottom left with a hairline and 8px corners, a 24px blue key with a tick, the title in the 14px display face beside its 12px line."
 kinds: []
-use_for: "A brief note that something happened (a card created, a copy made), with at most one action. Mount one Toaster near the root and call toast() from anywhere."
-never: [Toasts for errors that need an answer (use a dialog or a banner), More than one action, Dark toasts]
-source: "agentcard-website src/app/globals.css (--bevel-blue, --bevel-white)"
+use_for: "A brief note that something happened (a key copied, a card created), at most one small action. Mount one Toaster near the root and call toast.success() from anywhere."
+never: [Toasts for errors that need an answer (use a dialog or a banner), More than one action, Dark toasts, Long sentences in a toast]
+source: "agentcard-website src/app/globals.css (.v7-toast, .v7-toast-icon), src/components/v7/guide-client.tsx (GuideToaster)"
 ---

@@ -6,7 +6,7 @@ export function Site() {
       <div className="grid gap-4">
         <p className="font-display text-caption text-fg-label">Get started</p>
         <h2 className="text-h1 leading-heading">Let your agent buy</h2>
-        <p className="font-display text-caption tracking-caps text-fg-muted uppercase">A few answers, then a call</p>
+        <p className="text-body-lg text-fg-muted">A few answers, then a call.</p>
       </div>
       <Separator />
       <div className="flex h-5 items-center gap-4 font-display text-body-sm text-fg-muted">
