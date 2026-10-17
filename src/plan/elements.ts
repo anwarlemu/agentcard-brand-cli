@@ -13,7 +13,7 @@ export const UTILITY = /[:[\]/]|^-?(text|bg|border|rounded|p[xytrbl]?|m[xytrbl]?
 function splitClasses(classes: string[]) {
 	const names: string[] = [];
 	const utilities: string[] = [];
-	for (const c of classes) (UTILITY.test(c) ? utilities : names).push(c.toLowerCase());
+	for (const c of classes) (UTILITY.test(c) && !/^select-(content|item)$/.test(c) ? utilities : names).push(c.toLowerCase());
 	// The last word of a class says what the part is: plan-card is a card, hero-title a title.
 	const heads = names.map((n) => n.split(/[_-]+/).filter((w) => !/^(is|has)$/.test(w)).pop() ?? '').join(' ');
 	return { words: names.join(' ').replace(/__/g, ' '), heads, utilities: utilities.join(' ') };
@@ -65,6 +65,15 @@ export function kindOf(el: El, surface: Surface): string | undefined {
 	const defs = elements()[surface];
 	const look = ['a', 'button', 'input'].includes(el.tag) || /\b(btn|button|cta)\b/.test(el.words) ? buttonLook(el) : undefined;
 	const inHeader = el.context.includes('header') || el.context.includes('nav');
+	// Explicit menu parts take precedence over generic navigation links and fields.
+	const menuKinds = ['glass-menu-item', 'glass-menu', 'menu-item', 'menu-panel', 'popover-panel'];
+	const names = el.words.split(/\s+/);
+	const role = el.attrs.match(/role\s*=\s*["']?([\w-]+)/)?.[1] ?? '';
+	const menu = menuKinds.find((id) => {
+		const match = defs[id]?.match;
+		return match?.words?.some((word) => names.some((name) => name === word || name.endsWith(`-${word}`))) || match?.roles?.includes(role);
+	});
+	if (menu) return menu;
 	// Links and buttons first: their look decides more than their name.
 	if (surface === 'site') {
 		if (el.tag === 'h1') return 'hero-title';

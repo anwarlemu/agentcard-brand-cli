@@ -9,3 +9,5 @@ use_for: "Naming an icon key or adding a few words to a control. Next ones in a 
 never: [Tooltips for anything needed to finish a task, Long text (use a popover), Dark tooltips]
 source: "agentcard-website src/app/globals.css (.v7-dock-card)"
 ---
+
+Wrap adjacent tooltips in `TooltipProvider` to share the hover delay. A standalone `Tooltip` supplies its own provider.

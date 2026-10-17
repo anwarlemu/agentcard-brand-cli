@@ -6,7 +6,9 @@ import { useEffect } from "react";
 export function PreviewHeight() {
   useEffect(() => {
     const root = document.querySelector<HTMLElement>("[data-preview-root]");
-    if (!root || window.parent === window) return;
+    if (!root) return;
+    root.setAttribute("data-preview-ready", "");
+    if (window.parent === window) return;
     const observer = new ResizeObserver(() => {
       window.parent.postMessage({ type: "agentcard:preview-height", height: root.getBoundingClientRect().height }, window.location.origin);
     });

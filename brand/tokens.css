@@ -84,6 +84,7 @@
 	--ds-color-wash-pill: rgb(23 24 24 / 0.07);
 	--ds-color-wash-selected: rgb(0 0 255 / 0.07);
 	--ds-color-wash-on-brand: rgb(255 255 255 / 0.14);
+	--ds-color-wash-glass-hover: rgb(255 255 255 / 0.17);
 	--ds-color-ring-tint: rgb(0 0 255 / 0.2);
 
 	/* Actions and states. The main action is the blue key; on the blue ground it is the white key. */
@@ -179,6 +180,7 @@
 	/* Shape: an 8px key, 12px windows and panels, 20px for the large product cards. */
 	--ds-radius-chip: 2px;
 	--ds-radius-sm: 0.375rem;
+	--ds-radius-menu: 0.3125rem;
 	--ds-radius-control: 0.5rem;
 	--ds-radius-card: 0.75rem;
 	--ds-radius-panel: 0.75rem;
@@ -206,6 +208,7 @@
 	--ds-shadow-tile: 0 1px 2px rgb(23 24 24 / 0.08), 0 6px 16px rgb(23 24 24 / 0.06);
 	/* Glass: the floating dock and its menus. */
 	--ds-shadow-floating: inset 0 1px 0 rgb(255 255 255 / 0.32), 0 8px 24px rgb(23 24 24 / 0.2);
+	--ds-shadow-glass-hover: inset 0 1px 0 rgb(255 255 255 / 0.42), inset 0 0 0 1px rgb(255 255 255 / 0.16), 0 1px 2px rgb(23 24 24 / 0.24);
 	--ds-shadow-tooltip: 0 1px 2px rgb(23 24 24 / 0.14), 0 8px 24px rgb(23 24 24 / 0.16);
 	--ds-shadow-ring-hover: 0 0 0 3px rgb(0 0 255 / 0.2);
 	--ds-glass-sheen: linear-gradient(180deg, rgb(255 255 255 / 0.14), transparent 60%);

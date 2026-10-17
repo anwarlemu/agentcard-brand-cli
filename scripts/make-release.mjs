@@ -29,6 +29,7 @@ await build({
 const pkg = JSON.parse(readFileSync(join(root, 'package.json'), 'utf8'));
 delete pkg.devDependencies;
 delete pkg.dependencies;
+delete pkg.workspaces;
 pkg.scripts = {};
 writeFileSync(join(out, 'package.json'), `${JSON.stringify(pkg, null, 2)}\n`);
 console.log(`release tree in ${out}`);

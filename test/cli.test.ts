@@ -17,6 +17,7 @@ import { elements, tokens } from '../src/lib/brand.js';
 import { elementsIn } from '../src/plan/elements.js';
 import { adaptComponent, restyleRoot } from '../src/library/adapt.js';
 import { componentsIn, identify } from '../src/library/components.js';
+import { restyleOverlays } from '../src/library/overlay-styles.js';
 import { applyComponents } from '../src/library/swap.js';
 import { parse as parseTs } from '@babel/parser';
 import { readState } from '../src/plan/state.js';
@@ -167,7 +168,7 @@ describe('project', () => {
 		expect(found.surface).toBe('site');
 		expect(listScreens(detectProject(s), styledFiles(s), found).map((x) => x.url)).toEqual(['/', '/about.html', '/pricing.html', '/404.html']);
 		// A project route that shares the CLI's name is still the project's; only the files the CLI writes are skipped.
-		const n = project({ 'src/app/agentcard-ds/page.tsx': '<div style={{ color: "#ff0000" }} />', 'src/app/agentcard-ds/brand.css': ':root{}' });
+		const n = project({ 'src/app/agentcard-ds/page.tsx': '<div style={{ color: "#ff0000" }} />', 'src/app/_agentcard-ds/brand.css': ':root{}' });
 		expect(styledFiles(n)).toEqual(['src/app/agentcard-ds/page.tsx']);
 		rmSync(n, { recursive: true });
 		for (const d of [p, s]) rmSync(d, { recursive: true });
@@ -450,4 +451,72 @@ export function Button({ variant = "primary", size, loading, className, children
 		expect(readFileSync(join(dir, 'components/Button.tsx'), 'utf8')).toBe(BUTTON);
 		rmSync(dir, { recursive: true });
 	});
+});
+
+describe('overlay styling', () => {
+  const menu = `import * as Menu from "@radix-ui/react-dropdown-menu";
+import { Content as PopoverPanel } from "@radix-ui/react-popover";
+export function DropdownMenuContent({ className, children, ...props }: any) {
+  return <Menu.Portal><Menu.Content sideOffset={9} onEscapeKeyDown={props.onEscapeKeyDown} className={cn("z-50 min-w-48 rounded-xl bg-purple-900 p-3 text-white shadow-lg", className)} {...props}>{children}</Menu.Content></Menu.Portal>;
+}
+export function DropdownMenuItem({ danger, children, ...props }: any) {
+  return <Menu.Item onSelect={props.onSelect} className={cn("relative flex pr-8 rounded-xl p-3 text-white focus:bg-purple-800", danger === "danger" && "text-red-500")} {...props}>{children}</Menu.Item>;
+}
+export function Help({ children, ...props }: any) { return <PopoverPanel className="w-80 bg-black rounded-xl p-8 text-white" {...props}>{children}</PopoverPanel>; }
+`;
+  it('styles portalled parts without replacing refs, state, handlers, placement or variant conditions', () => {
+    const out = restyleOverlays(menu, 'site');
+    expect(out.parts).toEqual(['dropdown-menu.Content', 'dropdown-menu.Item', 'popover.Content']);
+    expect(out.text).toContain('border-hairline bg-surface');
+    expect(out.text).toContain('shadow-tooltip');
+    expect(out.text).toContain('data-[highlighted]:bg-wash-hover');
+    expect(out.text).toContain('max-h-(--radix-dropdown-menu-content-available-height)');
+    expect(out.text).toContain('danger === "danger" && "text-red-500"');
+    expect(out.text).toContain('onSelect={props.onSelect}');
+    expect(out.text).toContain('sideOffset={9} onEscapeKeyDown={props.onEscapeKeyDown}');
+    expect(out.text).toContain('pr-8');
+    expect(out.text).toContain('w-80');
+    expect(out.text).not.toMatch(/bg-purple|rounded-xl|bg-black/);
+    expect(() => parseTs(out.text, { sourceType: 'module', plugins: ['jsx', 'typescript'] })).not.toThrow();
+    expect(restyleOverlays(out.text, 'site').text).toBe(out.text);
+    expect(restyleOverlays(menu.replaceAll('@radix-ui/react-', 'custom-'), 'site').text).toBe(menu.replaceAll('@radix-ui/react-', 'custom-'));
+  });
+  it('includes compound styles in CLI apply, retaining dry-run behavior', () => {
+    const dir = project({ 'package.json': JSON.stringify({ dependencies: { react: '19.0.0', tailwindcss: '4.1.0' } }), 'components/dropdown-menu.tsx': menu, 'app/page.tsx': menu.replaceAll('DropdownMenu', 'PageMenu') });
+    try {
+      const dry = applyComponents(detectProject(dir), () => 'site', { dryRun: true })!;
+      expect(dry.styled).toContain('components/dropdown-menu.tsx');
+      expect(readFileSync(join(dir, 'components/dropdown-menu.tsx'), 'utf8')).toBe(menu);
+      run(dir);
+      const applied = readFileSync(join(dir, 'components/dropdown-menu.tsx'), 'utf8');
+      expect(applied).toContain('shadow-tooltip');
+      expect(applied).toContain('data-[highlighted]:bg-wash-hover');
+      expect(applied).toContain('onSelect={props.onSelect}');
+      expect(readFileSync(join(dir, 'app/page.tsx'), 'utf8')).toContain('shadow-tooltip');
+    } finally { rmSync(dir, { recursive: true }); }
+  });
+  it('styles explicit CSS menu names without restyling generic navigation or containers', () => {
+    const css = '.dropdown-menu { position: absolute } .menu-item { display: flex } .glass-menu { width: 240px } .glass-menu-item { display: grid } .popover-content { color: red } .menu { display: flex }';
+    const out = elementLayer('menu.css', css, 'site');
+    expect(out.styled).toEqual([{selector:'.dropdown-menu',kind:'menu-panel'},{selector:'.menu-item',kind:'menu-item'},{selector:'.glass-menu',kind:'glass-menu'},{selector:'.glass-menu-item',kind:'glass-menu-item'},{selector:'.popover-content',kind:'popover-panel'}]);
+    expect(out.block).toContain('var(--ds-shadow-glass-hover)');
+    expect(out.block).toContain('var(--ds-radius-menu)');
+    expect(out.block).not.toMatch(/position:|display:|width:/);
+    expect(elementLayer('select.css', '.select-content { color: red } .select-item { color: red }', 'site').styled).toEqual([{selector:'.select-content',kind:'menu-panel'},{selector:'.select-item',kind:'menu-item'}]);
+  });
+  it('CLI add ships the corrected components, dependencies and theme', () => {
+    const dir = project({ 'package.json': JSON.stringify({ dependencies: { react: '19.0.0', tailwindcss: '4.1.0', '@radix-ui/react-dropdown-menu': '*', '@radix-ui/react-popover': '*', '@radix-ui/react-select': '*', 'lucide-react': '*', clsx: '*', 'tailwind-merge': '*', 'class-variance-authority': '*' } }), 'tsconfig.json': JSON.stringify({compilerOptions:{paths:{'@/*':['./*']}}}), 'app/globals.css': '@import "tailwindcss";' });
+    try {
+      run(dir, 'add', 'dropdown-menu', 'select', 'popover');
+      const installed = readFileSync(join(dir, 'components/ui/dropdown-menu.tsx'), 'utf8');
+      expect(installed).toBe(readFileSync(join(ROOT, 'registry/components/ui/dropdown-menu.tsx'), 'utf8'));
+      expect(installed).toContain('MenuVariant.Provider');
+      expect(installed).toContain('collisionPadding = 8');
+      expect(installed).toContain('shadow-glass-hover');
+      expect(existsSync(join(dir, 'lib/surface.tsx'))).toBe(true);
+      expect(existsSync(join(dir, 'hooks/use-hold.ts'))).toBe(true);
+      expect(readFileSync(join(dir, 'lib/utils.ts'), 'utf8')).toContain('"glass-hover"');
+      expect(readFileSync(join(dir, 'app/_agentcard-ds/brand.css'), 'utf8')).toContain('--ds-shadow-glass-hover');
+    } finally { rmSync(dir, { recursive: true }); }
+  });
 });

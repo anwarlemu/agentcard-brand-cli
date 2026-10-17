@@ -19,7 +19,7 @@ export default async function ExamplePage({ params }: { params: Promise<{ name: 
   const Example = examples[name]?.[example];
   if (!item || !Example) notFound();
   return (
-    <Surface data-preview-root="" className="bg-surface">
+    <Surface data-preview-root="" className={item.type === "ui" ? "min-h-120 bg-surface p-6 sm:p-10" : "bg-surface"}>
       <Example />
       <PreviewHeight />
     </Surface>

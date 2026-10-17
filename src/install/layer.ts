@@ -16,6 +16,11 @@ const BLOCK = /\/\* ds:elements:start[\s\S]*?\/\* ds:elements:end \*\/\n?/;
 
 // Applied only where the class itself says what the element is; anything less certain is left to the tasks.
 const SURE: Record<string, RegExp> = {
+	'menu-panel': /(^|[-_])(?:dropdown[-_](?:menu|content)|dropdown[-_]menu[-_]content|menu[-_](?:panel|content)|select[-_]content)$/,
+	'menu-item': /(^|[-_])(?:dropdown[-_](?:menu[-_])?item|menu[-_]item|select[-_]item)$/,
+	'glass-menu': /(^|[-_])(?:glass[-_](?:menu|dropdown)|dock[-_]card)$/,
+	'glass-menu-item': /(^|[-_])(?:glass[-_](?:menu|dropdown)[-_]item|dock[-_]card[-_]item)$/,
+	'popover-panel': /(^|[-_])popover[-_](?:panel|content)$/,
 	'button-primary': /(^|[-_])(btn|button)[-_]?(primary|solid|filled|dark)\b|^(btn|button)[-_]?cta$|(^|[-_])cta[-_]?(btn|button)$/,
 	'button-secondary': /(^|[-_])(btn|button)[-_]?(secondary|ghost|outline|outlined|light|tertiary)\b/,
 	card: /(^|[-_])(card|tile)$/,
@@ -38,14 +43,14 @@ const lastClasses = (sel: string) => {
 	return parts.slice(-2).flatMap((p) => [...p.matchAll(/\.([\w-]+)/g)].map((m) => m[1].toLowerCase()));
 };
 const SKIN = /^(color|background(-color|-image|-clip)?|border(-[a-z]+)*|outline(-[a-z]+)*|box-shadow|font-(family|size|weight|style)|line-height|letter-spacing|text-(transform|decoration)|transition|backdrop-filter)$/;
-const CONTROL_KINDS = /(button|chip|input|action|announcement)/;
+const CONTROL_KINDS = /(button|chip|input|action|announcement|menu|popover)/;
 const CONTROL = /^(padding(-[a-z]+)*|gap|white-space)$/;
 
 type Def = { css: Record<string, string>; states?: Record<string, Record<string, string>> };
 
 function skin(kind: string, decls: Record<string, string>, state = false) {
 	const out: [string, string][] = [];
-	for (const [k, v] of Object.entries(decls)) if (SKIN.test(k) || (CONTROL_KINDS.test(kind) && CONTROL.test(k)) || (state && k === 'transform')) out.push([k, v]);
+	for (const [k, v] of Object.entries(decls)) if (SKIN.test(k) || (CONTROL_KINDS.test(kind) && CONTROL.test(k)) || (state && (k === 'transform' || /menu-item$/.test(kind) && ['opacity', 'pointer-events'].includes(k)))) out.push([k, v]);
 	return out;
 }
 

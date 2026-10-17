@@ -22,7 +22,7 @@ function PopoverTrigger(props: React.ComponentProps<typeof PopoverPrimitive.Trig
   return <PopoverPrimitive.Trigger data-slot="popover-trigger" {...props} />;
 }
 
-function PopoverContent({ className, align = "start", sideOffset = 6, variant = "default", ...props }: React.ComponentProps<typeof PopoverPrimitive.Content> & { variant?: keyof typeof VARIANTS }) {
+function PopoverContent({ className, align = "start", sideOffset = 6, collisionPadding = 8, variant = "default", ...props }: React.ComponentProps<typeof PopoverPrimitive.Content> & { variant?: keyof typeof VARIANTS }) {
   return (
     <PopoverPrimitive.Portal container={usePortalContainer()}>
       <PopoverPrimitive.Content
@@ -30,7 +30,8 @@ function PopoverContent({ className, align = "start", sideOffset = 6, variant = 
         data-variant={variant}
         align={align}
         sideOffset={sideOffset}
-        className={cn("z-50 w-72 origin-(--radix-popover-content-transform-origin) animate-pop-in rounded-control border p-4 text-body-sm outline-none", VARIANTS[variant], className)}
+        collisionPadding={collisionPadding}
+        className={cn("z-50 w-72 max-w-(--radix-popover-content-available-width) max-h-(--radix-popover-content-available-height) overflow-y-auto overscroll-contain origin-(--radix-popover-content-transform-origin) animate-pop-in rounded-control border p-4 text-body-sm outline-none", VARIANTS[variant], className)}
         {...props}
       />
     </PopoverPrimitive.Portal>

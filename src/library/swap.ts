@@ -5,6 +5,7 @@ import { brand, tokens } from '../lib/brand.js';
 import { styledFiles, type Project } from '../project/detect.js';
 import type { Surface } from '../project/surface.js';
 import { adaptable, adaptComponent, libraryClasses, lookOf, restyleRoot, variantsFor } from './adapt.js';
+import { restyleOverlays } from './overlay-styles.js';
 import { type Identified, componentsIn, identify, usesIn } from './components.js';
 import { itemName, loadIndexSync, loadItemSync, type RegistryItem } from './registry.js';
 
@@ -99,8 +100,9 @@ export function applyComponents(project: Project, surfaceOf: (rel: string) => Su
 	const index = loadIndexSync();
 	if (!index.length) return undefined;
 	const kindsOf = (item: string) => index.find((i) => i.name === item)?.kinds ?? [];
-	const files = styledFiles(root).filter((f) => /\.(tsx|jsx)$/.test(f) && !LIBRARY_DIR.test(f) && !ROUTE_FILE.test(f));
-	const texts = new Map(files.map((f) => [f, readFileSync(join(root, f), 'utf8')]));
+	const overlayFiles = styledFiles(root).filter((f) => /\.(tsx|jsx)$/.test(f) && !LIBRARY_DIR.test(f));
+	const files = overlayFiles.filter((f) => !ROUTE_FILE.test(f));
+	const texts = new Map(overlayFiles.map((f) => [f, readFileSync(join(root, f), 'utf8')]));
 
 	// Find and identify every component, and how the app uses each.
 	const found = files.flatMap((f) => componentsIn(f, texts.get(f)!));
@@ -208,6 +210,14 @@ export function applyComponents(project: Project, surfaceOf: (rel: string) => Su
 			if (!fresh) continue;
 			result.decisions.push(decide({ ...first, ...fresh }));
 		}
+	}
+	// Compound primitives have several styled parts under a portal; a root-only pass cannot reach them.
+	for (const file of overlayFiles) {
+		const styled = restyleOverlays(current.get(file)!, surfaceOf(file));
+		if (!styled.parts.length) continue;
+		if (styled.text !== current.get(file)) write(file, styled.text);
+		if (!result.styled.includes(file)) result.styled.push(file);
+		for (const name of styled.parts) result.decisions.push({ file, name, confidence: 1, signals: ['Radix primitive import'], uses: 0, action: 'style', reason: 'its panel or row takes the brand styling, preserving the existing interaction' });
 	}
 	result.packages = [...packages];
 	if (dryRun) return result;

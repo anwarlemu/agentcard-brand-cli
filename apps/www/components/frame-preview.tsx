@@ -45,12 +45,12 @@ function MeasuredFrame({ src, label, width, height, scale, onHeightChange }: { s
  * A full-page example in an iframe at a real window width, scaled down to the frame: desktop (1440px) or phone
  * (390px). The frame takes the page's own height (up to a cap) so nothing scrolls inside it.
  */
-export function FramePreview({ src, name, label }: { src: string; name: string; label: string; surface?: "site" }) {
+export function FramePreview({ src, name, label, component = false }: { src: string; name: string; label: string; component?: boolean }) {
   const box = React.useRef<HTMLDivElement>(null);
   const [device, setDevice] = React.useState<keyof typeof WIDTHS>("desktop");
   const [boxWidth, setBoxWidth] = React.useState(0);
-  const [pageHeight, setPageHeight] = React.useState(900);
-  const width = WIDTHS[device];
+  const [pageHeight, setPageHeight] = React.useState(component ? 480 : 900);
+  const width = component && device === "desktop" ? boxWidth : WIDTHS[device];
   const scale = boxWidth ? Math.min(1, boxWidth / width) : 0;
 
   React.useEffect(() => {

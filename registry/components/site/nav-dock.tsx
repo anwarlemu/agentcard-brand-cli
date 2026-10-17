@@ -26,7 +26,7 @@ const isMenu = (entry: DockEntry): entry is DockMenu => "items" in entry;
 const GLASS = "border border-line-on-brand bg-glass bg-(image:--ds-glass-sheen) text-white shadow-floating [backdrop-filter:var(--ds-glass-blur)]";
 // A label in the bar.
 const ITEM =
-  "flex items-center gap-2 rounded-sm px-3.5 py-2.25 font-display text-body-sm leading-none whitespace-nowrap outline-none transition-[background-color,color,scale] duration-150 ease-out focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white active:scale-96 motion-reduce:active:scale-100";
+  "flex items-center gap-2 rounded-menu px-3.5 py-2.25 font-display text-body-sm leading-none whitespace-nowrap outline-none transition-[background-color,color,scale] duration-150 ease-out focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white active:scale-96 motion-reduce:active:scale-100";
 const HOVER_GRACE = 220;
 
 function Arrow({ className }: { className?: string }) {
@@ -193,14 +193,14 @@ function NavDock({ links, menu, action, logo, logoHref = "/", logoLabel = "Agent
           {openMenu && (
             // The wrap pads the gap under the card, so a mouse crossing from the bar never leaves the dock.
             <div className="absolute inset-x-0 bottom-full pb-2">
-              <div id={cardId} className={cn("w-full animate-pop-in rounded-control p-1 font-display text-caption motion-reduce:animate-fade-in", GLASS)} style={{ transformOrigin: origin }}>
+              <div id={cardId} className={cn("w-full animate-pop-in rounded-control p-1 font-display text-body-sm motion-reduce:animate-fade-in", GLASS)} style={{ transformOrigin: origin }}>
                 <button
                   ref={headRef}
                   type="button"
                   aria-expanded="true"
                   aria-controls={cardId}
                   onClick={() => close(true)}
-                  className="flex w-full cursor-pointer items-center justify-between rounded-sm px-2.75 pt-2.25 pb-3.25 text-body-sm leading-none outline-none focus-visible:outline-2 focus-visible:outline-white"
+                  className="flex w-full cursor-pointer items-center justify-between rounded-menu px-2.75 pt-2.25 pb-3.25 text-body-sm leading-none outline-none focus-visible:outline-2 focus-visible:outline-white"
                 >
                   {openMenu.label}
                   <span aria-hidden className="text-micro leading-none opacity-80">
@@ -213,11 +213,11 @@ function NavDock({ links, menu, action, logo, logoHref = "/", logoLabel = "Agent
                       <a
                         href={item.href}
                         onClick={() => close(false)}
-                        className="group/item grid gap-1.5 rounded-sm px-2.75 py-3 outline-none transition-[background-color,box-shadow] duration-150 ease-out hover:bg-white/17 hover:shadow-[inset_0_1px_0_color-mix(in_srgb,var(--ds-color-white)_42%,transparent),inset_0_0_0_1px_color-mix(in_srgb,var(--ds-color-white)_16%,transparent),0_1px_2px_color-mix(in_srgb,var(--ds-color-ink)_24%,transparent)] focus-visible:outline-2 focus-visible:outline-white"
+                        className="group/item grid gap-1.5 rounded-menu px-2.75 py-3 outline-none transition-[background-color,box-shadow] duration-150 ease-out hover:bg-wash-glass-hover hover:shadow-glass-hover focus-visible:outline-2 focus-visible:outline-white"
                       >
                         <span className="leading-none">{item.title}</span>
                         {item.description && (
-                          <span className="font-sans text-body-sm leading-5 opacity-78 transition-opacity duration-150 ease-out group-hover/item:opacity-100">{item.description}</span>
+                          <span className="font-sans text-caption leading-normal opacity-78 transition-opacity duration-150 ease-out group-hover/item:opacity-100">{item.description}</span>
                         )}
                       </a>
                     </li>
@@ -318,7 +318,7 @@ function MobileBar({
   }, [sheet]);
 
   const done = () => setSheet(false);
-  const row = "flex min-h-11 items-center rounded-sm border border-transparent px-2.5 leading-none outline-none focus-visible:outline-2 focus-visible:outline-white";
+  const row = "flex min-h-11 items-center rounded-menu border border-transparent px-2.5 leading-none outline-none focus-visible:outline-2 focus-visible:outline-white";
 
   return (
     <div ref={barRef} data-slot="nav-dock-bar" data-open={sheet || undefined} className={cn("fixed inset-x-3.5 top-3.5 z-91 rounded-control font-display text-caption md:hidden", GLASS)}>
@@ -333,7 +333,7 @@ function MobileBar({
           aria-controls={sheetId}
           aria-label={sheet ? "Close menu" : "Open menu"}
           onClick={() => setSheet((now) => !now)}
-          className="relative grid size-9 cursor-pointer place-content-center gap-1.25 justify-self-end rounded-sm outline-none transition-[background-color] duration-150 ease-out after:absolute after:-inset-1 focus-visible:outline-2 focus-visible:outline-white aria-expanded:bg-wash-on-brand"
+          className="relative grid size-9 cursor-pointer place-content-center gap-1.25 justify-self-end rounded-menu outline-none transition-[background-color] duration-150 ease-out after:absolute after:-inset-1 focus-visible:outline-2 focus-visible:outline-white aria-expanded:bg-wash-on-brand"
         >
           <i
             aria-hidden

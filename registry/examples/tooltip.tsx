@@ -1,7 +1,7 @@
 import { Pause, Plus, Settings } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 const ACTIONS = [
   { label: "New card", icon: Plus },
@@ -11,6 +11,7 @@ const ACTIONS = [
 
 export function Site() {
   return (
+    <TooltipProvider>
     <div className="flex gap-2 pt-10">
       {ACTIONS.map(({ label, icon: Icon }) => (
         <Tooltip key={label}>
@@ -23,6 +24,7 @@ export function Site() {
         </Tooltip>
       ))}
     </div>
+    </TooltipProvider>
   );
 }
 

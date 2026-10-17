@@ -2,6 +2,7 @@
 // Requires the optional playwright-core dependency and its Chromium browser.
 import assert from 'node:assert/strict';
 import { chromium } from 'playwright-core';
+import { checkOverlays } from './check-overlays.mjs';
 
 const base = process.env.DOCS_URL ?? 'http://127.0.0.1:3000';
 const browser = await chromium.launch();
@@ -88,6 +89,7 @@ try {
   assert.equal(await nav.getByRole('button').getAttribute('aria-expanded'), 'false');
   assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth));
   console.log('PASS: mobile sidebar closes after choosing an item, without horizontal overflow.');
+  await checkOverlays(page, base);
   assert.deepEqual(errors, [], 'Browser errors');
   console.log('PASS: no browser runtime or resource errors.');
 } finally {

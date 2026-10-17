@@ -75,7 +75,7 @@ export default async function ComponentPage({ params }: { params: Promise<{ name
         {demos.length > 0 && (
           <div id="preview" className="grid scroll-mt-6 gap-8">
             {demos.map(([name, Demo]) =>
-              framed ? <FramePreview key={name} src={`/preview/${item.name}/${name}`} name={item.name} label={exampleLabel(name)} /> : <Preview key={name} example={Demo} name={item.name} block={name === "Block"} label={exampleLabel(name)} />,
+              framed ? <FramePreview key={name} src={`/preview/${item.name}/${name}`} name={item.name} label={exampleLabel(name)} component={item.type === "ui"} /> : <Preview key={name} example={Demo} name={item.name} block={name === "Block"} label={exampleLabel(name)} />,
             )}
           </div>
         )}

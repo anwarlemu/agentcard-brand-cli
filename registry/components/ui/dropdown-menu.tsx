@@ -18,9 +18,11 @@ const PANEL = {
   glass: "border-line-on-brand bg-glass bg-(image:--ds-glass-sheen) text-on-brand shadow-floating [backdrop-filter:var(--ds-glass-blur)]",
 } as const;
 
+const MenuVariant = React.createContext<keyof typeof PANEL>("default");
+
 const ROW =
-  "relative flex w-full cursor-default items-center gap-2 rounded-sm px-2.5 py-2 font-display text-body-sm leading-snug text-fg-secondary outline-none select-none data-[disabled]:pointer-events-none data-[disabled]:opacity-40 data-[highlighted]:bg-wash-hover data-[highlighted]:text-fg group-data-[variant=glass]/menu:text-on-brand group-data-[variant=glass]/menu:data-[highlighted]:bg-wash-on-brand group-data-[variant=glass]/menu:data-[highlighted]:text-on-brand [&_svg]:size-3.5 [&_svg]:shrink-0";
-const DANGER = "text-danger data-[highlighted]:bg-danger/6 data-[highlighted]:text-danger";
+  "relative flex w-full cursor-default items-center gap-2 rounded-menu px-2.5 py-2 font-display text-body-sm leading-snug text-fg-secondary outline-none select-none data-[disabled]:pointer-events-none data-[disabled]:opacity-40 data-[highlighted]:bg-wash-hover data-[highlighted]:text-fg group-data-[variant=glass]/menu:text-on-brand group-data-[variant=glass]/menu:leading-none group-data-[variant=glass]/menu:px-2.75 group-data-[variant=glass]/menu:py-3 group-data-[variant=glass]/menu:data-[highlighted]:bg-wash-glass-hover group-data-[variant=glass]/menu:data-[highlighted]:shadow-glass-hover group-data-[variant=glass]/menu:data-[highlighted]:text-on-brand [&_svg]:size-3.5 [&_svg]:shrink-0";
+const DANGER = "text-danger data-[highlighted]:bg-danger/6 data-[highlighted]:text-danger group-data-[variant=glass]/menu:text-danger group-data-[variant=glass]/menu:data-[highlighted]:text-danger";
 const QUIET = "text-fg-muted group-data-[variant=glass]/menu:text-fg-on-brand-muted";
 
 function DropdownMenu(props: React.ComponentProps<typeof DropdownMenuPrimitive.Root>) {
@@ -31,17 +33,20 @@ function DropdownMenuTrigger(props: React.ComponentProps<typeof DropdownMenuPrim
   return <DropdownMenuPrimitive.Trigger data-slot="dropdown-menu-trigger" {...props} />;
 }
 
-function DropdownMenuContent({ className, sideOffset = 6, align = "end", variant = "default", ...props }: React.ComponentProps<typeof DropdownMenuPrimitive.Content> & { variant?: keyof typeof PANEL }) {
+function DropdownMenuContent({ className, sideOffset = 6, collisionPadding = 8, align = "end", variant = "default", ...props }: React.ComponentProps<typeof DropdownMenuPrimitive.Content> & { variant?: keyof typeof PANEL; onOpenAutoFocus?: (event: Event) => void }) {
   return (
     <DropdownMenuPrimitive.Portal container={usePortalContainer()}>
-      <DropdownMenuPrimitive.Content
-        data-slot="dropdown-menu-content"
-        data-variant={variant}
-        sideOffset={sideOffset}
-        align={align}
-        className={cn("group/menu z-50 flex min-w-48 origin-(--radix-dropdown-menu-content-transform-origin) animate-pop-in flex-col gap-0.5 rounded-control border p-1 outline-none", PANEL[variant], className)}
-        {...props}
-      />
+      <MenuVariant.Provider value={variant}>
+        <DropdownMenuPrimitive.Content
+          data-slot="dropdown-menu-content"
+          data-variant={variant}
+          sideOffset={sideOffset}
+          collisionPadding={collisionPadding}
+          align={align}
+          className={cn("group/menu z-50 flex min-w-[min(12rem,var(--radix-dropdown-menu-content-available-width))] max-w-(--radix-dropdown-menu-content-available-width) max-h-(--radix-dropdown-menu-content-available-height) overflow-y-auto overscroll-contain origin-(--radix-dropdown-menu-content-transform-origin) animate-pop-in flex-col gap-0.5 rounded-control border p-1 outline-none", PANEL[variant], className)}
+          {...props}
+        />
+      </MenuVariant.Provider>
     </DropdownMenuPrimitive.Portal>
   );
 }
@@ -129,22 +134,27 @@ function DropdownMenuSub(props: React.ComponentProps<typeof DropdownMenuPrimitiv
 
 function DropdownMenuSubTrigger({ className, children, ...props }: React.ComponentProps<typeof DropdownMenuPrimitive.SubTrigger>) {
   return (
-    <DropdownMenuPrimitive.SubTrigger data-slot="dropdown-menu-sub-trigger" className={cn(ROW, "data-[state=open]:bg-wash-hover group-data-[variant=glass]/menu:data-[state=open]:bg-wash-on-brand", className)} {...props}>
+    <DropdownMenuPrimitive.SubTrigger data-slot="dropdown-menu-sub-trigger" className={cn(ROW, "data-[state=open]:bg-wash-hover group-data-[variant=glass]/menu:data-[state=open]:bg-wash-glass-hover group-data-[variant=glass]/menu:data-[state=open]:shadow-glass-hover", className)} {...props}>
       {children}
       <ChevronRight className="ml-auto" strokeWidth={1.5} />
     </DropdownMenuPrimitive.SubTrigger>
   );
 }
 
-function DropdownMenuSubContent({ className, variant = "default", ...props }: React.ComponentProps<typeof DropdownMenuPrimitive.SubContent> & { variant?: keyof typeof PANEL }) {
+function DropdownMenuSubContent({ className, variant: variantProp, collisionPadding = 8, ...props }: React.ComponentProps<typeof DropdownMenuPrimitive.SubContent> & { variant?: keyof typeof PANEL }) {
+  const inheritedVariant = React.useContext(MenuVariant);
+  const variant = variantProp ?? inheritedVariant;
   return (
     <DropdownMenuPrimitive.Portal container={usePortalContainer()}>
-      <DropdownMenuPrimitive.SubContent
-        data-slot="dropdown-menu-sub-content"
-        data-variant={variant}
-        className={cn("group/menu z-50 flex min-w-40 origin-(--radix-dropdown-menu-content-transform-origin) animate-pop-in flex-col gap-0.5 rounded-control border p-1", PANEL[variant], className)}
-        {...props}
-      />
+      <MenuVariant.Provider value={variant}>
+        <DropdownMenuPrimitive.SubContent
+          data-slot="dropdown-menu-sub-content"
+          collisionPadding={collisionPadding}
+          data-variant={variant}
+          className={cn("group/menu z-50 flex min-w-[min(10rem,var(--radix-dropdown-menu-content-available-width))] max-w-(--radix-dropdown-menu-content-available-width) max-h-(--radix-dropdown-menu-content-available-height) overflow-y-auto overscroll-contain origin-(--radix-dropdown-menu-content-transform-origin) animate-pop-in flex-col gap-0.5 rounded-control border p-1", PANEL[variant], className)}
+          {...props}
+        />
+      </MenuVariant.Provider>
     </DropdownMenuPrimitive.Portal>
   );
 }
