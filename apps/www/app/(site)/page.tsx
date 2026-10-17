@@ -8,7 +8,7 @@ import { Block, Command, Page } from "@www/components/chrome";
 import { Prose } from "@www/components/prose";
 import { Thumb } from "@www/components/thumb";
 import { examples } from "@www/lib/examples.generated";
-import { INSTALL_COMMAND, findItem, registryName } from "@www/lib/registry";
+import { CLI_COMMAND, findItem, registryName } from "@www/lib/registry";
 
 const STEPS = [
   { name: "components", title: "Choose components", body: "Find a component or page template in the library. Use its add command, then read the usage notes and examples." },
@@ -36,8 +36,8 @@ export default function Home() {
         titleClassName="max-w-none text-nowrap text-[length:min(var(--ds-text-hero),7vw)]"
         actions={
           <div className="grid w-[calc(100vw-2*var(--ds-layout-gutter))] max-w-2xl justify-items-center gap-4">
-            <p className="text-body-sm text-fg-on-brand-muted">Install the CLI in your project.</p>
-            <Command command={INSTALL_COMMAND} wrap />
+            <p className="text-body-sm text-fg-on-brand-muted">Set up the design system in your project.</p>
+            <Command command={CLI_COMMAND} wrap />
             <Button asChild variant="on-brand">
               <Link href="/components">Browse components</Link>
             </Button>
