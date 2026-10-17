@@ -1,7 +1,5 @@
 "use client";
 
-import { MoreVertical, Pencil, Copy, Trash2 } from "lucide-react";
-
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -10,36 +8,66 @@ import {
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
+  DropdownMenuShortcut,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { Surface } from "@/lib/surface";
 
-// A row's overflow menu (open it from the button): a label, actions, a separator and a delete that must be held.
-export function Product() {
+function CardMenu({ defaultOpen }: { defaultOpen?: boolean }) {
   return (
-    <div className="flex w-full max-w-md flex-col">
-      <div className="flex items-center justify-between rounded-card bg-surface py-2 pr-2 pl-4 text-body-sm text-fg shadow-card">
-        Production key
-        <DropdownMenu modal={false}>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" size="icon" aria-label="Key actions">
-              <MoreVertical strokeWidth={1.5} />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent>
-            <DropdownMenuLabel>Production key</DropdownMenuLabel>
-            <DropdownMenuItem>
-              <Pencil strokeWidth={1.5} /> Rename
-            </DropdownMenuItem>
-            <DropdownMenuItem>
-              <Copy strokeWidth={1.5} /> Duplicate
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuHoldItem onConfirm={() => {}}>
-              <Trash2 strokeWidth={1.5} /> Delete
-            </DropdownMenuHoldItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      </div>
+    <DropdownMenu defaultOpen={defaultOpen} modal={false}>
+      <DropdownMenuTrigger asChild>
+        <Button variant="secondary">Card actions</Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="start">
+        <DropdownMenuLabel>Travel agent</DropdownMenuLabel>
+        <DropdownMenuItem>
+          Edit limits
+          <DropdownMenuShortcut>E</DropdownMenuShortcut>
+        </DropdownMenuItem>
+        <DropdownMenuItem>
+          Add funds
+          <DropdownMenuShortcut>F</DropdownMenuShortcut>
+        </DropdownMenuItem>
+        <DropdownMenuItem>Pause card</DropdownMenuItem>
+        <DropdownMenuSeparator />
+        <DropdownMenuHoldItem onConfirm={() => {}}>Close card</DropdownMenuHoldItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
+}
+
+export function Site() {
+  return <CardMenu />;
+}
+
+export function Open() {
+  return (
+    <div className="h-64">
+      <CardMenu defaultOpen />
     </div>
+  );
+}
+
+// The dock's menu: glass over whatever is behind it.
+export function Glass() {
+  return (
+    <Surface ground="blue" className="flex h-80 items-start rounded-panel p-8">
+      <DropdownMenu defaultOpen modal={false}>
+        <DropdownMenuTrigger asChild>
+          <Button variant="on-brand">Products</Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent variant="glass" align="start" className="w-64">
+          <DropdownMenuItem>Vault</DropdownMenuItem>
+          <DropdownMenuItem>Issuing</DropdownMenuItem>
+          <DropdownMenuItem>Voice</DropdownMenuItem>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem>
+            Updates
+            <DropdownMenuShortcut>New</DropdownMenuShortcut>
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+    </Surface>
   );
 }

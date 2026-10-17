@@ -2,10 +2,10 @@
 name: tabs
 title: Tabs
 type: ui
-surface: both
-description: "Switch between views. The product's plain labels with a soft gray pill gliding to the selected one (or `segmented`, a white pill on a gray track), or the site's pills with a blue-outlined pill gliding between them."
+surface: site
+description: "The brand's tab track: a sunken track of equal 40px tabs in the 14px display face, with the blue key gliding to the selected one. `plain` drops the track for dense rows."
 kinds: [tabs]
-use_for: "Two to six sibling views. `size=\"sm\"` in dense cards, `pill` on the site, `glide={false}` when your triggers draw their own selected surface."
-never: [Tabs for actions, Underlined tabs]
-source: src/components/dashboard-ui/tabs.tsx; src/components/dashboard-ui/hooks/use-tab-glide.ts; src/components/sections/faq.tsx (site pill tabs)
+use_for: "Two to five sibling views: plans, FAQ topics, product details. `default` everywhere it can breathe (add w-full to match the content's width), `size=\"sm\"` in a tight card, `plain` for a filter row in a dense list, `glide={false}` when your triggers draw their own selected surface."
+never: [Tabs for actions, Underlined tabs, Pill-shaped tabs, More than one blue key in a track]
+source: "agentcard-website src/app/globals.css (.plan-tabs, .plan-tab, .plan-tabs-thumb, .faq-tabs); live https://www.agentcard.sh/pricing"
 ---

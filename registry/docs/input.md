@@ -2,10 +2,10 @@
 name: input
 title: Input
 type: ui
-surface: both
-description: A 40px text field; its border darkens on hover and turns brand blue on focus.
+surface: site
+description: "The brand's field: square, a 35 percent ink border, 18px Inter, 10px by 12px of padding; focus turns the border blue with a soft blue ring."
 kinds: [input]
-use_for: Any single-line text entry. Pair with Label.
-never: [Gray filled fields, Placeholder as the only label]
-source: src/components/dashboard-ui/form.tsx (INPUT_CLASS)
+use_for: "Every single-line text entry, inside a Field so it has its 12px display label above. `aria-invalid` with the Field's error for a value that will not do."
+never: [Rounded inputs, Gray filled inputs, Placeholder text as the only label, A colored glow on focus beyond the soft ring]
+source: "agentcard-website src/app/globals.css (.v7-gate-field input); live https://www.agentcard.sh/get-started"
 ---

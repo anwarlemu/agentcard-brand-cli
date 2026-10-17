@@ -2,10 +2,10 @@
 name: tags-input
 title: Tags input
 type: ui
-surface: product
-description: A field that turns typed or pasted values into small blue chips, red when invalid.
-kinds: []
-use_for: Lists of short values in a form (domains, emails, URLs, tags).
-never: [Long free text, A single value]
-source: src/components/dashboard-ui/form.tsx (TagsInput)
+surface: site
+description: "A tags field in the brand's square input box: each tag a small blue label with its own remove button, red when invalid."
+kinds: [input]
+use_for: "Entering a short list of values (merchant domains, emails) typed with Enter or a comma, inside a Field."
+never: [Rounded fields, Tags without a way to remove them, Free text that should be a textarea]
+source: "agentcard-website src/app/globals.css (.v7-gate-field input)"
 ---

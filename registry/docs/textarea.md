@@ -2,10 +2,10 @@
 name: textarea
 title: Textarea
 type: ui
-surface: both
-description: Multi-line text entry with the input's border and states (hover, brand-blue focus, invalid, disabled), fixed in size.
-kinds: []
-use_for: Notes, prompts, messages.
-never: [Fixed tiny heights]
-source: src/components/dashboard-ui/form.tsx (TEXTAREA_CLASS)
+surface: site
+description: "The brand's multi-line field: the input's square box, 35 percent ink border, 18px Inter and blue focus, growing only downward."
+kinds: [input]
+use_for: "Free text longer than a line: a message, a brief, notes. Inside a Field for its label."
+never: [Rounded corners, Gray fills, Resizing sideways]
+source: "agentcard-website src/app/globals.css (.v7-gate-field); live https://www.agentcard.sh/get-started"
 ---

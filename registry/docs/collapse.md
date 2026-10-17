@@ -2,10 +2,10 @@
 name: collapse
 title: Collapse
 type: ui
-surface: product
-description: Grows to its content's height and back, so what sits below glides rather than jumps.
+surface: site
+description: "Grows from nothing to its content's height and back (300ms ease-out with a fade), so what sits below glides rather than jumps."
 kinds: []
-use_for: Advanced settings, optional fields and details shown on demand.
-never: [Hiding content people need to finish a task]
-source: src/components/dashboard-ui/collapse.tsx
+use_for: "Showing more of a form or a list in place: optional settings, extra details. Pair it with a button that has aria-expanded and aria-controls."
+never: [Hiding the main action, Nesting collapses, Questions and answers (use the accordion)]
+source: "agentcard-website src/app/globals.css (the FAQ's slide, .faq-list details::details-content)"
 ---

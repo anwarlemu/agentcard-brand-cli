@@ -5,12 +5,16 @@ import * as React from "react";
 import { useTabGlide } from "@/hooks/use-tab-glide";
 import { cn } from "@/lib/utils";
 
-// The dashboard's tabs used as a value picker inside a form or a chart (form.tsx SegmentedControl): the same gliding
-// soft gray pill, with radio semantics. `segmented` sits the options on a gray track with a white pill.
+// The brand's tab track used as a value picker (a billing period, a card type): the sunken track and the gliding blue key
+// of Tabs, each option sized to its label, with radio semantics. `plain` drops the track for dense rows: quiet labels with
+// a pale wash gliding between them.
 type Option<T extends string> = { value: T; label: React.ReactNode; count?: number };
+type Variant = "default" | "plain";
 
-const INNER_RADIUS = "rounded-[calc(var(--ds-radius-control)-0.125rem)]";
-const PILL_SURFACE = { plain: "bg-wash-pill", segmented: "bg-surface shadow-[0_1px_3px_rgb(0_0_0/0.08),0_0_0_1px_rgb(0_0_0/0.03)]" };
+const KEY: Record<Variant, string> = {
+  default: "rounded-control border border-line-brand-edge bg-primary shadow-key-brand",
+  plain: "rounded-sm bg-wash-pill",
+};
 
 function SegmentedControl<T extends string>({
   value,
@@ -18,7 +22,7 @@ function SegmentedControl<T extends string>({
   options,
   label,
   size = "md",
-  variant = "plain",
+  variant = "default",
   className,
 }: {
   value: T;
@@ -26,22 +30,22 @@ function SegmentedControl<T extends string>({
   options: Option<T>[];
   label: string;
   size?: "sm" | "md";
-  variant?: "plain" | "segmented";
+  variant?: Variant;
   className?: string;
 }) {
-  const pillRef = React.useRef<HTMLSpanElement>(null);
-  const isPlaced = useTabGlide(pillRef, value);
-  const segmented = variant === "segmented";
-  const radius = size === "sm" || segmented ? INNER_RADIUS : "rounded-control";
+  const keyRef = React.useRef<HTMLSpanElement>(null);
+  const isPlaced = useTabGlide(keyRef, value);
+  const track = variant === "default";
 
   return (
     <div
       role="radiogroup"
       aria-label={label}
       data-slot="segmented-control"
-      className={cn("relative isolate inline-flex w-fit items-center", segmented ? "gap-0.5 rounded-control bg-neutral-5 p-0.5" : size === "sm" ? "gap-0.5" : "gap-1", className)}
+      className={cn("relative isolate inline-flex w-fit items-center", track ? "gap-1 rounded-card border border-hairline bg-subtle p-1 shadow-well" : "gap-0.5", className)}
     >
-      <span ref={pillRef} aria-hidden className={cn("pointer-events-none absolute top-0 left-0 -z-10", radius, PILL_SURFACE[variant], !isPlaced && "invisible")} />
+      {/* The hook measures from the outer edge; -1px puts the key back inside the track's border. */}
+      <span ref={keyRef} aria-hidden className={cn("pointer-events-none absolute -z-10", track ? "-top-px -left-px" : "top-0 left-0", KEY[variant], !isPlaced && "invisible")} />
       {options.map((o) => {
         const selected = o.value === value;
         return (
@@ -53,17 +57,17 @@ function SegmentedControl<T extends string>({
             data-tab-id={o.value}
             onClick={() => onValueChange(o.value)}
             className={cn(
-              "flex items-center gap-1.5 whitespace-nowrap outline-none transition-[color] duration-200 ease-out focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-solid focus-visible:outline-focus-ring motion-reduce:transition-none",
-              radius,
-              size === "sm" ? "h-7 px-3 text-caption" : segmented ? "h-8 px-3.5 text-body-sm" : "h-9 px-4 text-body-sm",
-              // Only the text answers a hover, so nothing fades over the pill gliding in beneath.
-              selected ? "text-fg" : cn("hover:text-fg", segmented ? "text-fg-muted" : "text-fg-subtle"),
-              // Until the pill lands, the selected option draws the surface itself so the first paint matches.
-              selected && !isPlaced && PILL_SURFACE[variant],
+              "flex items-center justify-center gap-1.5 border border-transparent font-display leading-none whitespace-nowrap outline-none transition-[background-color,color] duration-150 ease-out focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-solid focus-visible:outline-focus-ring motion-reduce:transition-none",
+              track ? "rounded-control" : "rounded-sm",
+              size === "sm" ? (track ? "h-8 px-3 text-caption" : "h-7 px-2.5 text-caption") : track ? "h-10 px-4 text-body-sm" : "h-8 px-3 text-body-sm",
+              // Only the label and a faint wash answer the pointer, so nothing fades over the key gliding in beneath.
+              selected ? (track ? "text-on-primary" : "text-fg") : cn("text-fg-muted hover:text-fg", track && "hover:bg-wash-pill"),
+              // Until the key lands, the selected option draws it itself so the first paint matches.
+              selected && !isPlaced && KEY[variant],
             )}
           >
             {o.label}
-            {o.count !== undefined && <span className={cn("tabular-nums transition-[color] duration-200 ease-out", selected ? "text-fg-muted" : "text-fg-subtle")}>{o.count}</span>}
+            {o.count !== undefined && <span className={cn("tabular-nums", selected && track ? "text-fg-on-brand-muted" : "text-fg-subtle")}>{o.count}</span>}
           </button>
         );
       })}

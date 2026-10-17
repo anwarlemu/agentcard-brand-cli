@@ -1,31 +1,46 @@
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogBody, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
 import { Field } from "@/components/ui/field";
+import { Input } from "@/components/ui/input";
 
-export function Product() {
+function NewCard({ defaultOpen }: { defaultOpen?: boolean }) {
   return (
-    <Dialog>
+    <Dialog defaultOpen={defaultOpen}>
       <DialogTrigger asChild>
-        <Button variant="brand">Create key</Button>
+        <Button>New card</Button>
       </DialogTrigger>
-      <DialogContent>
+      <DialogContent name="card.new">
         <DialogHeader>
-          <DialogTitle>Create an API key</DialogTitle>
-          <DialogDescription>Keys work for every endpoint on your plan.</DialogDescription>
+          <DialogTitle>Give an agent a card</DialogTitle>
+          <DialogDescription>Name the card and set the most it can spend at one checkout. You can change both later.</DialogDescription>
         </DialogHeader>
-        <DialogBody>
-          <Field label="Name" htmlFor="key-name" help="Only you see this.">
-            <Input id="key-name" placeholder="Production" />
+        <DialogBody className="grid gap-4">
+          <Field label="Card name" htmlFor="dialog-name">
+            <Input id="dialog-name" defaultValue="Travel agent" />
+          </Field>
+          <Field label="Per purchase limit" htmlFor="dialog-limit">
+            <Input id="dialog-limit" defaultValue="$250" />
           </Field>
         </DialogBody>
         <DialogFooter>
           <DialogClose asChild>
-            <Button variant="outline">Cancel</Button>
+            <Button variant="secondary">Cancel</Button>
           </DialogClose>
-          <Button variant="brand">Create</Button>
+          <Button>Create card</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
+  );
+}
+
+export function Site() {
+  return <NewCard />;
+}
+
+export function Open() {
+  return (
+    <div className="h-130">
+      <NewCard defaultOpen />
+    </div>
   );
 }

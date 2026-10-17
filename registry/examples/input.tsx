@@ -1,35 +1,36 @@
+import { Field } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 
-// Empty with a placeholder, filled, invalid and disabled.
-export function Product() {
+export function Site() {
   return (
-    <div className="grid w-full max-w-sm gap-4">
-      <div className="grid gap-2">
-        <Label htmlFor="input-url">Website</Label>
-        <Input id="input-url" placeholder="https://acme.com" />
-      </div>
-      <div className="grid gap-2">
-        <Label htmlFor="input-name">Key name</Label>
-        <Input id="input-name" defaultValue="Production" />
-      </div>
-      <div className="grid gap-2">
-        <Label htmlFor="input-email">Email</Label>
-        <Input id="input-email" defaultValue="anwar@" aria-invalid />
-      </div>
-      <div className="group grid gap-2" data-disabled="true">
-        <Label htmlFor="input-org">Organization ID</Label>
-        <Input id="input-org" defaultValue="org_3f9a2c" disabled />
+    <div className="grid max-w-170 gap-4">
+      <Field label="Your name" htmlFor="input-name">
+        <Input id="input-name" autoComplete="name" />
+      </Field>
+      <Field label="Work email" htmlFor="input-email">
+        <Input id="input-email" type="email" autoComplete="email" />
+      </Field>
+      <div className="grid gap-4 md:grid-cols-2">
+        <Field label="Company" htmlFor="input-company">
+          <Input id="input-company" />
+        </Field>
+        <Field label="Website" htmlFor="input-site">
+          <Input id="input-site" placeholder="acme.com" />
+        </Field>
       </div>
     </div>
   );
 }
 
-export function Site() {
+export function States() {
   return (
-    <div className="grid w-full max-w-sm gap-2">
-      <Label htmlFor="input-work-email">Work email</Label>
-      <Input id="input-work-email" type="email" placeholder="you@company.com" />
+    <div className="grid max-w-170 gap-4">
+      <Field label="Work email" htmlFor="input-invalid" error="Use your work email, not a personal one.">
+        <Input id="input-invalid" type="email" defaultValue="ada@gmail.com" aria-invalid />
+      </Field>
+      <Field label="Card nickname" htmlFor="input-disabled" help="Set by your team admin.">
+        <Input id="input-disabled" defaultValue="Travel agent" disabled />
+      </Field>
     </div>
   );
 }

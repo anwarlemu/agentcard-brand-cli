@@ -1,30 +1,21 @@
 import { Separator } from "@/components/ui/separator";
 
-export function Product() {
-  return (
-    <div className="w-full max-w-sm text-body-sm">
-      <p className="text-fg">Monitors</p>
-      <p className="text-fg-muted">Watch pages for changes.</p>
-      <Separator className="my-3" />
-      <div className="flex h-5 items-center gap-3 text-fg-muted">
-        <span>Daily</span>
-        <Separator orientation="vertical" />
-        <span>Weekly</span>
-        <Separator orientation="vertical" />
-        <span>Monthly</span>
-      </div>
-    </div>
-  );
-}
-
 export function Site() {
   return (
-    <div className="w-full max-w-md">
-      <p className="text-h5 text-fg">Scrape</p>
-      <p className="text-body text-fg-muted">Any page as clean Markdown.</p>
-      <Separator className="my-5" />
-      <p className="text-h5 text-fg">Search</p>
-      <p className="text-body text-fg-muted">The web, read for you.</p>
+    <div className="grid max-w-2xl gap-8">
+      <div className="grid gap-4">
+        <p className="font-display text-caption text-fg-label">Get started</p>
+        <h2 className="text-h1 leading-heading">Let your agent buy</h2>
+        <p className="font-display text-caption tracking-caps text-fg-muted uppercase">A few answers, then a call</p>
+      </div>
+      <Separator />
+      <div className="flex h-5 items-center gap-4 font-display text-body-sm text-fg-muted">
+        <span>Vault</span>
+        <Separator orientation="vertical" />
+        <span>Issuing</span>
+        <Separator orientation="vertical" />
+        <span>Voice</span>
+      </div>
     </div>
   );
 }

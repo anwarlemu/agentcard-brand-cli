@@ -2,10 +2,10 @@
 name: dialog
 title: Dialog
 type: ui
-surface: product
-description: A white panel in a 6px frame, top-aligned at 12vh, rising as it fades in. Focus trap, scroll lock and Escape included.
-kinds: []
-use_for: Confirmations, short forms, pickers. Title h5, body padded 20px, actions right-aligned over a light line.
-never: [Centered dialogs, Dialogs for long workflows (use a page)]
-source: src/components/dashboard-ui/dialog.tsx
+surface: site
+description: "One of the brand's windows as a modal: white, a hairline, 12px corners, the sky title bar with a file-like name and a close mark, centered over the ink scrim, popping in from scale 0.97."
+kinds: [window, window-bar]
+use_for: "A short task or a confirmation that needs the reader's full attention: create a card, confirm a change. `name` labels the bar (card.new); `tone=\"blue\"` for the one that matters; `size` for wider content."
+never: [Dialogs for long reading, A dialog opened from another dialog, Blurring the page behind, Sliding in from an edge (use a sheet)]
+source: "agentcard-website src/app/globals.css (.v7-windowbar); src/components/v7/window-mark.tsx"
 ---

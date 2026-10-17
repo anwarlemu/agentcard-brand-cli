@@ -2,10 +2,10 @@
 name: secret-field
 title: Secret field
 type: ui
-surface: product
-description: An API key on a pale inset well, masked after its first characters, with show and copy buttons; it can start revealed for the moment after a key is created.
+surface: site
+description: "A key or a card number on a sunken well, masked to its first characters in the display face, with a show key and a copy key."
 kinds: []
-use_for: API keys and tokens.
-never: [Showing secrets unmasked by default]
-source: src/components/dashboard-ui/secret-field.tsx; src/components/dashboard-ui/mask-secret.ts
+use_for: "Showing an API key or a card number that should stay hidden until asked for. `defaultRevealed` for the moment right after it is created."
+never: [Showing a secret in full by default, Editable secrets (use an input), Secrets without a copy key]
+source: "agentcard-website src/app/globals.css (.plan-tabs well, --bevel-white)"
 ---

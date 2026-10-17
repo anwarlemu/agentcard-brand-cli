@@ -1,11 +1,11 @@
 ---
 name: sonner
-title: Toaster
+title: Toast
 type: ui
-surface: product
-description: Where toasts appear (Toaster, with `toast()` from sonner to raise one). White toasts with a light border, a soft shadow and a close button, at the bottom center.
+surface: site
+description: "The brand's toast: white with a hairline, 12px corners and the tooltip shadow, the title in the display face, the action as the blue key and cancel as the white key."
 kinds: []
-use_for: Confirming an action that happened.
-never: [Toasts for errors that need action]
-source: src/components/ui/sonner.tsx
+use_for: "A brief note that something happened (a card created, a copy made), with at most one action. Mount one Toaster near the root and call toast() from anywhere."
+never: [Toasts for errors that need an answer (use a dialog or a banner), More than one action, Dark toasts]
+source: "agentcard-website src/app/globals.css (--bevel-blue, --bevel-white)"
 ---

@@ -2,10 +2,10 @@
 name: scroll-area
 title: Scroll area
 type: ui
-surface: product
-description: A scroller with no scrollbar that fades at whichever edge has more, with a chevron that scrolls the rest into view.
+surface: site
+description: "A scroll area that says when there is more: the edges fade where content runs past, and a small white key at the bottom scrolls the rest into view."
 kinds: []
-use_for: Long lists inside panels.
-never: []
-source: src/components/dashboard-ui/scroll-area.tsx
+use_for: "A list or a log inside a window or a panel of fixed height."
+never: [Scroll areas inside scroll areas, Hiding the main content in one, Scrolling the whole page in one]
+source: "agentcard-website src/app/globals.css (--bevel-white)"
 ---

@@ -5,8 +5,9 @@ import { X } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 
-// The dashboard's tags field: each tag a small blue chip (red when invalid) with its own remove button, typed with Enter
-// or a comma, removed with Backspace, and a pasted list split into tags. Borders like an input.
+// A tags field in the brand's input box (square, a 35 percent ink border, blue on focus with the soft ring): each tag a
+// small blue label on a pale blue ground (red when invalid) with its own remove button, typed with Enter or a comma,
+// removed with Backspace, and a pasted list split into tags.
 function TagsInput({
   id,
   tags,
@@ -37,22 +38,25 @@ function TagsInput({
     <div
       data-slot="tags-input"
       className={cn(
-        "flex min-h-10 w-full flex-wrap items-center gap-1.5 px-2 py-1.5",
-        !bare && "rounded-control border border-line bg-surface transition-[border-color,box-shadow] duration-150 ease-out focus-within:border-brand hover:border-line-strong motion-reduce:transition-none",
+        "flex min-h-11.5 w-full flex-wrap items-center gap-1.5 px-2 py-1.5",
+        !bare && "rounded-none border border-line-strong bg-surface transition-[border-color,box-shadow] duration-150 ease-out focus-within:border-line-brand focus-within:shadow-ring-hover motion-reduce:transition-none",
         className,
       )}
     >
       {tags.map((tag) => (
         <span
           key={tag}
-          className={cn("flex h-6 items-center gap-1 rounded-[calc(var(--ds-radius-control)-0.125rem)] pr-1 pl-2.5 text-caption", isTagInvalid?.(tag) ? "bg-danger/8 text-danger" : "bg-blue-10 text-fg-brand")}
+          className={cn(
+            "flex h-7 items-center gap-1 rounded-sm border pr-1 pl-2.5 font-display text-caption",
+            isTagInvalid?.(tag) ? "border-danger bg-surface text-danger" : "border-line-window bg-blue-5 text-fg-brand",
+          )}
         >
           {tag}
           <button
             type="button"
             aria-label={`Remove ${tag}`}
             onClick={() => onTagsChange(tags.filter((existing) => existing !== tag))}
-            className="grid size-4 place-items-center rounded-sm outline-none transition-colors duration-150 ease-out hover:bg-brand hover:text-on-brand focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-solid focus-visible:outline-focus-ring"
+            className="grid size-5 place-items-center rounded-chip outline-none transition-colors duration-150 ease-out hover:bg-primary hover:text-on-primary focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-solid focus-visible:outline-focus-ring"
           >
             <X className="size-3" strokeWidth={1.75} />
           </button>
@@ -85,7 +89,7 @@ function TagsInput({
         }}
         onBlur={() => draft && commit(draft)}
         placeholder={tags.length === 0 ? placeholder : ""}
-        className="h-7 min-w-24 flex-1 bg-transparent px-1.5 text-body-sm text-fg outline-none placeholder:text-fg-subtle"
+        className="h-8 min-w-24 flex-1 bg-transparent px-1.5 text-h5 leading-snug text-fg outline-none placeholder:text-fg-faint"
       />
     </div>
   );

@@ -2,10 +2,10 @@
 name: tooltip
 title: Tooltip
 type: ui
-surface: product
-description: A short label on hover or focus; waits a beat, then appears at once for neighbors.
+surface: site
+description: "A short floating label: white, a hairline, 8px corners and the tooltip shadow, in the 12px display face, growing from its trigger after a beat."
 kinds: []
-use_for: "Naming icon buttons and explaining truncated values; `wrap` for a sentence-long label."
-never: [Essential information only in a tooltip, Long paragraphs]
-source: src/components/dashboard-ui/tooltip.tsx
+use_for: "Naming an icon key or adding a few words to a control. Next ones in a row appear at once."
+never: [Tooltips for anything needed to finish a task, Long text (use a popover), Dark tooltips]
+source: "agentcard-website src/app/globals.css (.v7-dock-card)"
 ---

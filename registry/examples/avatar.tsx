@@ -1,28 +1,30 @@
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 
-// Initials on the brand blue stand in when there is no picture; 28px by default, 24px in dense rows.
-export function Product() {
+const TEAM = [
+  { name: "Ada Park", initials: "AP" },
+  { name: "Jonah Reyes", initials: "JR" },
+  { name: "Mia Chen", initials: "MC" },
+];
+
+export function Site() {
   return (
-    <div className="flex flex-col gap-4">
-      <div className="flex items-center gap-2">
-        <Avatar>
-          <AvatarFallback>AL</AvatarFallback>
-        </Avatar>
-        <Avatar>
-          <AvatarFallback>MJ</AvatarFallback>
-        </Avatar>
-        <Avatar className="size-6">
-          <AvatarFallback>RK</AvatarFallback>
-        </Avatar>
-      </div>
-      <div className="flex items-center gap-2.5">
-        <Avatar>
-          <AvatarFallback>AL</AvatarFallback>
-        </Avatar>
-        <div className="text-body-sm leading-tight">
-          <p className="text-fg">Anwar Lemu</p>
-          <p className="text-caption text-fg-subtle">anwar@acme.com</p>
-        </div>
+    <div className="grid gap-6">
+      <ul className="grid gap-3">
+        {TEAM.map((person) => (
+          <li key={person.name} className="flex items-center gap-3">
+            <Avatar>
+              <AvatarFallback>{person.initials}</AvatarFallback>
+            </Avatar>
+            <span className="font-display text-body-sm text-fg">{person.name}</span>
+          </li>
+        ))}
+      </ul>
+      <div className="flex -space-x-2">
+        {TEAM.map((person) => (
+          <Avatar key={person.name} className="size-10 ring-2 ring-white">
+            <AvatarFallback>{person.initials}</AvatarFallback>
+          </Avatar>
+        ))}
       </div>
     </div>
   );

@@ -1,37 +1,37 @@
 import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 
-const rows = [
-  { name: "Production", created: "Oct 2, 2026", requests: "48,210", status: "Active" },
-  { name: "Staging", created: "Sep 14, 2026", requests: "1,302", status: "Active" },
-  { name: "Old key", created: "Mar 3, 2026", requests: "0", status: "Revoked" },
-];
+const ROWS = [
+  { merchant: "Delta", card: "Travel agent", date: "Oct 14", amount: "$412.00", status: "Approved" },
+  { merchant: "Notion", card: "Ops agent", date: "Oct 13", amount: "$96.00", status: "Approved" },
+  { merchant: "Uber", card: "Travel agent", date: "Oct 12", amount: "$31.75", status: "Declined" },
+] as const;
 
-export function Product() {
+export function Site() {
   return (
-    <div className="w-full max-w-2xl">
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead>Name</TableHead>
-            <TableHead>Created</TableHead>
-            <TableHead className="text-right">Requests</TableHead>
-            <TableHead>Status</TableHead>
+    <Table className="max-w-3xl">
+      <TableHeader>
+        <TableRow>
+          <TableHead>Merchant</TableHead>
+          <TableHead>Card</TableHead>
+          <TableHead>Date</TableHead>
+          <TableHead className="text-right">Amount</TableHead>
+          <TableHead className="text-right">Status</TableHead>
+        </TableRow>
+      </TableHeader>
+      <TableBody>
+        {ROWS.map((row) => (
+          <TableRow key={row.merchant}>
+            <TableCell>{row.merchant}</TableCell>
+            <TableCell className="text-fg-muted">{row.card}</TableCell>
+            <TableCell className="text-fg-muted">{row.date}</TableCell>
+            <TableCell className="text-right">{row.amount}</TableCell>
+            <TableCell className="text-right">
+              <Badge variant={row.status === "Approved" ? "success" : "destructive"}>{row.status}</Badge>
+            </TableCell>
           </TableRow>
-        </TableHeader>
-        <TableBody>
-          {rows.map((r) => (
-            <TableRow key={r.name}>
-              <TableCell>{r.name}</TableCell>
-              <TableCell className="text-fg-muted">{r.created}</TableCell>
-              <TableCell className="text-right">{r.requests}</TableCell>
-              <TableCell>
-                <Badge variant={r.status === "Active" ? "success" : "default"}>{r.status}</Badge>
-              </TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-    </div>
+        ))}
+      </TableBody>
+    </Table>
   );
 }

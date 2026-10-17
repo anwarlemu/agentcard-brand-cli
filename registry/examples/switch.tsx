@@ -1,21 +1,20 @@
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 
-// On, off and disabled, each named by its label.
-export function Product() {
+export function Site() {
   return (
-    <div className="grid gap-4">
-      <div className="flex items-center gap-3">
-        <Switch id="switch-top-up" defaultChecked />
-        <Label htmlFor="switch-top-up">Auto top-up</Label>
+    <div className="grid max-w-sm gap-4">
+      <div className="flex items-center justify-between gap-4">
+        <Label htmlFor="switch-receipts">Email a receipt for every purchase</Label>
+        <Switch id="switch-receipts" defaultChecked />
       </div>
-      <div className="flex items-center gap-3">
-        <Switch id="switch-digest" />
-        <Label htmlFor="switch-digest">Weekly usage email</Label>
+      <div className="flex items-center justify-between gap-4">
+        <Label htmlFor="switch-pause">Pause this card</Label>
+        <Switch id="switch-pause" />
       </div>
-      <div className="flex items-center gap-3">
-        <Switch id="switch-sso" disabled />
-        <Label htmlFor="switch-sso">Require SSO</Label>
+      <div className="flex items-center justify-between gap-4">
+        <Label htmlFor="switch-locked">International purchases</Label>
+        <Switch id="switch-locked" disabled />
       </div>
     </div>
   );
