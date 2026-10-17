@@ -1,31 +1,48 @@
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Window } from "@/components/ui/window";
 
-const TEAM = [
-  { name: "Ada Park", initials: "AP" },
-  { name: "Jonah Reyes", initials: "JR" },
-  { name: "Mia Chen", initials: "MC" },
+const FOUNDERS = [
+  { name: "Ada Park", role: "CEO & Co-Founder", initials: "AP" },
+  { name: "Jonah Reyes", role: "CTO & Co-Founder", initials: "JR" },
 ];
+
+const ANGELS = [
+  { name: "Mia Chen", role: "Founder, Ledgerline", initials: "MC" },
+  { name: "Sam Okafor", role: "Partner, North Fund", initials: "SO" },
+  { name: "Lena Ruiz", role: "Angel investor", initials: "LR" },
+];
+
+function Person({ person, size }: { person: { name: string; role: string; initials: string }; size?: "md" | "lg" }) {
+  return (
+    <li className="flex items-center gap-3.5 p-4">
+      <Avatar size={size}>
+        <AvatarFallback>{person.initials}</AvatarFallback>
+      </Avatar>
+      <span className="grid min-w-0 gap-1">
+        <b className="font-display text-body leading-snug font-medium">{person.name}</b>
+        <span className="font-display text-micro [letter-spacing:0.04em] text-fg-muted">{person.role}</span>
+      </span>
+    </li>
+  );
+}
 
 export function Site() {
   return (
-    <div className="grid gap-6">
-      <ul className="grid gap-3">
-        {TEAM.map((person) => (
-          <li key={person.name} className="flex items-center gap-3">
-            <Avatar>
-              <AvatarFallback>{person.initials}</AvatarFallback>
-            </Avatar>
-            <span className="font-display text-body-sm text-fg">{person.name}</span>
-          </li>
-        ))}
-      </ul>
-      <div className="flex -space-x-2">
-        {TEAM.map((person) => (
-          <Avatar key={person.name} className="size-10 ring-2 ring-white">
-            <AvatarFallback>{person.initials}</AvatarFallback>
-          </Avatar>
-        ))}
-      </div>
+    <div className="grid w-full max-w-170 gap-6">
+      <Window name="team.dir" tone="blue">
+        <ul className="grid gap-px bg-line sm:grid-cols-2 [&>li]:bg-surface">
+          {FOUNDERS.map((person) => (
+            <Person key={person.name} person={person} size="lg" />
+          ))}
+        </ul>
+      </Window>
+      <Window name="angels.dir">
+        <ul className="grid gap-px bg-line sm:grid-cols-3 [&>li]:bg-surface">
+          {ANGELS.map((person) => (
+            <Person key={person.name} person={person} />
+          ))}
+        </ul>
+      </Window>
     </div>
   );
 }

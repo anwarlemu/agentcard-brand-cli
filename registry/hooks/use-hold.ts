@@ -1,6 +1,6 @@
 "use client";
 
-import { type KeyboardEvent, useEffect, useRef, useState } from "react";
+import { type KeyboardEvent, type PointerEvent, useEffect, useRef, useState } from "react";
 
 /** Fires `onConfirm` only after the pointer or key stays down for `durationMs`, so a stray click can't do anything. */
 export function useHold(durationMs: number, onConfirm: () => void) {
@@ -23,9 +23,14 @@ export function useHold(durationMs: number, onConfirm: () => void) {
   }
 
   const handlers = {
-    onPointerDown: start,
+    // Only the main button holds; a touch the browser takes over for scrolling cancels (pointercancel), so a hold can
+    // never complete while the page scrolls under the finger.
+    onPointerDown: (event: PointerEvent) => {
+      if (event.button === 0) start();
+    },
     onPointerUp: cancel,
     onPointerLeave: cancel,
+    onPointerCancel: cancel,
     onKeyDown: (event: KeyboardEvent) => {
       if ((event.key === "Enter" || event.key === " ") && !event.repeat) {
         event.preventDefault();
