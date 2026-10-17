@@ -1,0 +1,48 @@
+@import "tailwindcss";
+@import "../../../build/tokens.css";
+@import "../../../build/theme.css";
+
+@source "../../../registry";
+
+/* The display steps shrink on phones, as on the brand's pages (brand/site.css). */
+@media (max-width: 47.9375rem) {
+  :root {
+    --ds-text-display: 3rem;
+    --ds-text-hero: 2.5rem;
+    --ds-text-h1: 2.125rem;
+    --ds-text-h2: 1.75rem;
+    --ds-text-h3: 1.25rem;
+    --ds-layout-gutter: 1.25rem;
+  }
+}
+
+/* In the base layer, so the library's utilities (text-white on the blue band's heading) win over these defaults. */
+@layer base {
+  html {
+    color-scheme: light;
+    scrollbar-gutter: stable;
+    overflow-x: clip;
+    scroll-padding-top: calc(var(--spacing) * 24);
+    background-color: var(--ds-color-bg-page);
+  }
+
+  body {
+    background-color: var(--ds-color-bg-default);
+    color: var(--ds-color-text-default);
+    font-family: var(--ds-font-sans);
+    font-size: var(--ds-text-body);
+    line-height: var(--ds-leading-body);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  :where(h1, h2, h3, h4) {
+    font-family: var(--ds-font-display);
+    font-weight: var(--ds-font-weight-medium);
+    letter-spacing: var(--ds-tracking-tight);
+    text-wrap: balance;
+  }
+
+  ::selection {
+    background-color: var(--ds-color-ring-tint);
+  }
+}

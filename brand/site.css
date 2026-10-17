@@ -1,0 +1,124 @@
+/* The site layer: what every Agentcard page has before any component is styled, measured from agentcard.sh. Defaults
+   use :where() so the site's own rules still win; only the touches are added. */
+
+/* The display steps shrink on phones so a headline holds to three lines; the gutter narrows to 20px. */
+@media (max-width: 47.9375rem) {
+	:root {
+		--ds-text-display: 3rem;
+		--ds-text-hero: 2.5rem;
+		--ds-text-h1: 2.125rem;
+		--ds-text-h2: 1.75rem;
+		--ds-text-h3: 1.25rem;
+		--ds-layout-gutter: 1.25rem;
+	}
+}
+
+/* Element defaults sit in the base layer, so a utility class on an element (a library component's text-white) wins
+   over them; their :where() selectors already let an app's own rules win. */
+@layer base {
+	html {
+		background-color: var(--ds-color-bg-page);
+	}
+
+	html,
+	body {
+		color: var(--ds-color-text-default);
+	}
+
+	body {
+		background-color: var(--ds-color-bg-default);
+		font-family: var(--ds-font-sans);
+		font-size: var(--ds-text-body);
+		line-height: var(--ds-leading-body);
+		-webkit-font-smoothing: antialiased;
+		-moz-osx-font-smoothing: grayscale;
+	}
+
+	:where(h1, h2, h3, h4, h5, h6) {
+		font-family: var(--ds-font-display);
+		font-weight: var(--ds-font-weight-medium);
+		color: inherit;
+		letter-spacing: var(--ds-tracking-tight);
+		line-height: var(--ds-leading-display);
+		text-wrap: balance;
+	}
+
+	:where(h1) {
+		line-height: var(--ds-leading-heading);
+	}
+
+	:where(h2) {
+		letter-spacing: var(--ds-tracking-tighter);
+	}
+
+	:where(p, li, blockquote, figcaption, dd, td) {
+		text-wrap: pretty;
+	}
+
+	:where(code, kbd, pre, samp) {
+		font-family: var(--ds-font-mono);
+	}
+
+	::selection {
+		background-color: var(--ds-color-ring-tint);
+	}
+
+	:where(a, button, input, select, textarea, summary, [tabindex]):focus-visible {
+		outline: 2px solid var(--ds-color-focus-ring);
+		outline-offset: 2px;
+	}
+}
+
+/* Touches. */
+
+/* The blue ground: the hero (marked by the CLI with data-ds-hero), and any band that sets ds-on-blue. Text is white,
+   labels sky, and the white key is the main action there. */
+:where([data-ds-hero], .ds-on-blue) {
+	position: relative;
+	background-color: var(--ds-color-bg-brand);
+	color: var(--ds-color-text-on-brand);
+}
+
+:where([data-ds-hero], .ds-on-blue) :where(h1, h2, h3, h4, p, li) {
+	color: inherit;
+}
+
+/* The band divider: where the blue hero meets the white page below, four 9px steps walk from one ground to the
+   other, a staircase rather than a gradient, as at every seam on the brand's pages. */
+[data-ds-hero] {
+	margin-bottom: calc(var(--ds-band-step) * 4);
+}
+
+[data-ds-hero]::after {
+	content: "";
+	position: absolute;
+	inset-inline: 0;
+	top: 100%;
+	height: calc(var(--ds-band-step) * 4);
+	background: linear-gradient(
+		color-mix(in srgb, var(--ds-color-bg-default) var(--ds-band-mix-1), var(--ds-color-bg-brand)) 0 25%,
+		color-mix(in srgb, var(--ds-color-bg-default) var(--ds-band-mix-2), var(--ds-color-bg-brand)) 25% 50%,
+		color-mix(in srgb, var(--ds-color-bg-default) var(--ds-band-mix-3), var(--ds-color-bg-brand)) 50% 75%,
+		color-mix(in srgb, var(--ds-color-bg-default) var(--ds-band-mix-4), var(--ds-color-bg-brand)) 75% 100%
+	);
+	pointer-events: none;
+}
+
+/* The same seam drawn on its own, between any two grounds: <div class="ds-band"> or the library's band divider. */
+.ds-band {
+	height: calc(var(--ds-band-step) * 4);
+	background: linear-gradient(
+		color-mix(in srgb, var(--ds-band-to, var(--ds-color-bg-brand)) var(--ds-band-mix-1), var(--ds-band-from, var(--ds-color-bg-default))) 0 25%,
+		color-mix(in srgb, var(--ds-band-to, var(--ds-color-bg-brand)) var(--ds-band-mix-2), var(--ds-band-from, var(--ds-color-bg-default))) 25% 50%,
+		color-mix(in srgb, var(--ds-band-to, var(--ds-color-bg-brand)) var(--ds-band-mix-3), var(--ds-band-from, var(--ds-color-bg-default))) 50% 75%,
+		color-mix(in srgb, var(--ds-band-to, var(--ds-color-bg-brand)) var(--ds-band-mix-4), var(--ds-band-from, var(--ds-color-bg-default))) 75% 100%
+	);
+}
+
+/* A label set in the display face: eyebrows, window bars, footer headings. Sentence case, never caps. */
+.ds-label {
+	font-family: var(--ds-font-display);
+	font-size: var(--ds-text-caption);
+	letter-spacing: var(--ds-tracking-label);
+	color: var(--ds-color-text-label);
+}
