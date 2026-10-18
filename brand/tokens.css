@@ -18,7 +18,8 @@
 	--ds-color-blue-10: #E5E5FF;
 	--ds-color-blue-mid: #4B50F4;
 	--ds-color-blue-mist: #ECEAF7;
-	--ds-color-sky-wash: #E8F0FF;
+	--ds-color-sky-wash: color-mix(in srgb, var(--ds-color-sky) 45%, var(--ds-color-white));
+	--ds-color-bg-search-selected: color-mix(in srgb, var(--ds-color-sky) 55%, var(--ds-color-white));
 	/* The heart, the one warm accent, and the window tints (one pale hue per window bar in a grid of apps). */
 	--ds-color-heart: #F24656;
 	--ds-color-tint-sage: #CFE3C9;

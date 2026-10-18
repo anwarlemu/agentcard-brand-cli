@@ -42,7 +42,7 @@ const TONES: Record<Tone, string> = {
 
 function UpdateTag({ tag, tone, className }: { tag: string; tone?: Tone; className?: string }) {
   const t = tone ?? TAG_TONE[tag.toLowerCase()] ?? "ink";
-  return <span className={cn("w-fit border px-2 pt-0.75 pb-0.5 font-display text-micro leading-4.5 tracking-caps uppercase", TONES[t], className)}>{tag}</span>;
+  return <span className={cn("w-fit border px-2 pt-0.75 pb-0.5 font-display text-micro [line-height:1.75] tracking-caps uppercase", TONES[t], className)}>{tag}</span>;
 }
 
 function Entry({ entry }: { entry: UpdateEntry }) {

@@ -177,6 +177,7 @@ writeFileSync(
 // Serve the same usage rules, examples and source to readers that cannot execute JavaScript.
 const publicDir = join(ROOT, 'apps', 'www', 'public');
 const guide = agentGuide();
+writeFileSync(join(out, "audit.json"), readFileSync(join(ROOT, "brand/component-audit.json"), "utf8"));
 writeFileSync(join(publicDir, 'agents.md'), `${guide}\n`);
 writeFileSync(join(out, 'guide.json'), `${JSON.stringify({ schemaVersion: 1, name: brand.name, instructions: guide }, null, 2)}\n`);
 const references = items.map(item => {
@@ -185,6 +186,7 @@ const references = items.map(item => {
 		`# ${item.title}`, item.description, '', `Install: ${cli()} add ${item.name}`,
 		`Requires: ${item.requires.join(', ') || 'none'}`, `Packages: ${item.packages.join(', ') || 'none'}`,
 		`Exports: ${detail.exports?.join(', ') || 'See source'}`, `Client boundary: ${detail.client ? 'yes' : 'not required by this entry file'}`,
+		...(item.source ? [`Reference: ${item.source}`, ''] : []),
 		'', '## Usage', detail.useFor ?? '', ...(detail.constraints ?? []).map(rule => `- Avoid: ${rule}`), detail.documentation ?? '',
 		...(detail.examples?.length ? ['\n## Examples', ...detail.examples.flatMap(e => [`Example components: ${cli()} add ${e.requires.join(' ')}`, ...(e.packages.length ? [`Example packages: ${e.packages.join(', ')}`] : []), e.previews.map(p => `[${p.name}](${p.url})`).join(' | '), `\n${e.path}\n\n\`\`\`tsx\n${e.content}\n\`\`\``])] : []),
 		'\n## Source', ...item.files.map(f => `\n${f.path}\n\n\`\`\`${f.path.endsWith('.css') ? 'css' : 'tsx'}\n${f.content}\n\`\`\``),

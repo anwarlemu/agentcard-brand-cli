@@ -41,11 +41,11 @@ function Toaster({ toastOptions, ...props }: ToasterProps) {
         ...toastOptions,
         classNames: {
           toast:
-            "flex h-10 w-max max-w-[calc(100vw-2.25rem)] items-center gap-2.5 rounded-control border border-hairline bg-surface pr-1.5 pl-1.75 font-sans text-fg shadow-card [&:not(:has([data-button]))]:pr-3.5",
+            "flex h-10 w-max max-w-[calc(100vw-2.25rem)] items-center gap-2.5 rounded-control border border-hairline bg-surface pr-1.5 pl-1.75 font-sans text-fg shadow-[inset_0_1px_0_var(--ds-color-white),inset_0_-1px_0_color-mix(in_srgb,var(--ds-color-ink)_5%,transparent),0_2px_4px_color-mix(in_srgb,var(--ds-color-ink)_8%,transparent),0_12px_24px_-12px_color-mix(in_srgb,var(--ds-color-ink)_30%,transparent)] [&:not(:has([data-button]))]:pr-3.5",
           icon: cn(KEY, "m-0 border-line-brand-edge bg-primary shadow-key-brand"),
           content: "flex min-w-0 items-baseline gap-2",
           title: "font-display text-body-sm leading-snug font-medium whitespace-nowrap",
-          description: "max-w-55 truncate font-display text-caption leading-snug text-fg-muted",
+          description: "max-w-55 truncate font-display text-caption [line-height:1.4] text-fg-muted",
           actionButton:
             "ml-1.5 h-7 shrink-0 cursor-pointer rounded-sm border border-line-brand-edge bg-primary px-2.5 font-display text-caption text-on-primary shadow-key-brand outline-none transition-[background-color,box-shadow,translate] duration-150 ease-out hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus-ring active:translate-y-px active:shadow-pressed motion-reduce:transition-none",
           cancelButton:

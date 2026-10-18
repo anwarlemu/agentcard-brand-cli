@@ -106,7 +106,7 @@ function IntegrationCode({ name, children, className }: { name: React.ReactNode;
         <i className="size-2 rounded-chip bg-[color-mix(in_srgb,currentColor_45%,transparent)]" />
         <span className="ml-2">{name}</span>
       </div>
-      <pre className="overflow-hidden px-4 pt-3.5 pb-15 font-mono text-micro leading-4.5 whitespace-pre md:text-caption">{children}</pre>
+      <pre className="overflow-hidden px-4 pt-3.5 pb-15 font-mono text-micro [line-height:1.55] whitespace-pre md:text-caption">{children}</pre>
     </div>
   );
 }

@@ -21,7 +21,7 @@ const buttonVariants = cva(
       },
       size: {
         // The site's key: 40px, 22px of padding, 14px display face.
-        md: "h-10 px-5 text-body-sm",
+        md: "h-10 px-5.5 text-body-sm leading-body",
         sm: "h-8 px-3.5 text-caption",
         // The header's Get started and the pricing actions are md; a full-width action adds w-full.
         icon: "size-8 px-0 [&_svg:not([class*='size-'])]:size-4",

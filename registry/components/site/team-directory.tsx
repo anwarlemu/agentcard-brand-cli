@@ -62,7 +62,7 @@ function Cell({ href, ariaLabel, large, className, children }: { href?: string; 
           aria-label={ariaLabel}
           className={cn(
             box,
-            "group/cell pr-9 outline-none transition-[background-color] duration-150 ease-out hover:bg-sky-wash focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-solid focus-visible:outline-focus-ring motion-reduce:transition-none",
+            "group/cell pr-9 outline-none transition-[background-color] duration-150 ease-out hover:bg-[color-mix(in_srgb,var(--ds-color-sky)_40%,var(--ds-color-white))] focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-solid focus-visible:outline-focus-ring motion-reduce:transition-none",
           )}
         >
           {children}

@@ -16,16 +16,16 @@ export function Site() {
     <fieldset className="grid gap-3">
       <legend className="mb-3 font-display text-caption text-fg-muted">What this card can buy</legend>
       {MERCHANTS.map((merchant) => (
-        <Label key={merchant.id} htmlFor={`checkbox-${merchant.id}`}>
+        <Label variant="control" key={merchant.id} htmlFor={`checkbox-${merchant.id}`}>
           <Checkbox id={`checkbox-${merchant.id}`} checked={selected.includes(merchant.id)} onCheckedChange={(checked) => setSelected((current) => checked ? [...current, merchant.id] : current.filter((id) => id !== merchant.id))} />
           {merchant.label}
         </Label>
       ))}
-      <Label htmlFor="checkbox-all" className="mt-2">
+      <Label variant="control" htmlFor="checkbox-all" className="mt-2">
         <Checkbox id="checkbox-all" checked={selected.length === MERCHANTS.length ? true : selected.length ? "indeterminate" : false} onCheckedChange={(checked) => setSelected(checked ? MERCHANTS.map((merchant) => merchant.id) : [])} />
         All categories
       </Label>
-      <Label htmlFor="checkbox-disabled">
+      <Label variant="control" htmlFor="checkbox-disabled">
         <Checkbox id="checkbox-disabled" disabled />
         Cash withdrawals (never allowed)
       </Label>

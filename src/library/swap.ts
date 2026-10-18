@@ -55,22 +55,34 @@ function brandMerge() {
 
 // The brand's scales have their own names (text-body-sm, rounded-card, shadow-floating): taught here so a merge keeps
 // both text-body-sm and a text color, and a brand radius replaces a default one.
-const twMerge = extendTailwindMerge({
+const twMerge = extendTailwindMerge<"brand-font-size">({
   extend: {
     theme: {
+      leading: [${names('--ds-leading-')}],
+      tracking: [${names('--ds-tracking-')}],
       radius: [${names('--ds-radius-')}],
       shadow: [${names('--ds-shadow-')}],
     },
     classGroups: {
-      "font-size": [{ text: [${names('--ds-text-')}] }],
+      "brand-font-size": [{ text: [${names('--ds-text-')}] }],
     },
+    conflictingClassGroups: {
+      "brand-font-size": ["font-size"],
+      "font-size": ["brand-font-size"],
+    },
+    conflictingClassGroupModifiers: { "brand-font-size": ["leading"] },
   },
 });`;
 }
 
 /** Teaches the app's cn the brand's scales, keeping every other export of its utils file. */
 export function patchUtils(text: string): string | undefined {
-	if (/extendTailwindMerge/.test(text) && /"body"/.test(text)) return undefined;
+	if (/extendTailwindMerge/.test(text) && /"brand-font-size"/.test(text)) return undefined;
+	// Upgrade the older generated merge without replacing the app's other utility exports.
+	if (/extendTailwindMerge/.test(text) && /"font-size": \[\{ text: \[/.test(text) && /"body"/.test(text)) {
+		const declaration = /const twMerge = extendTailwindMerge\(\{[\s\S]*?\n\}\);/;
+		if (declaration.test(text)) return text.replace(declaration, brandMerge().replace(/^import[^\n]+\n\n/, ''));
+	}
 	const importRe = /import\s*\{\s*twMerge\s*\}\s*from\s*["']tailwind-merge["'];?/;
 	if (importRe.test(text)) return text.replace(importRe, brandMerge());
 	// A utils file that re-exports cn from a package gets the brand-aware cn instead, the same clsx plus tailwind-merge.

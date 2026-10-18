@@ -48,7 +48,7 @@ function CaseWindow({ item, index }: { item: Case; index: number }) {
         </span>
         <blockquote className="mt-3.5 flex-1">
           {item.context && <p className="text-body-sm leading-5.5 opacity-72 text-pretty">{item.context}</p>}
-          <p className={cn("text-h3 leading-7 font-medium tracking-tighter text-balance max-md:leading-6", item.context && "mt-2")}>{item.quote}</p>
+          <p className={cn("text-h3 [line-height:1.2] font-medium [letter-spacing:-0.03em] text-balance", item.context && "mt-2")}>{item.quote}</p>
         </blockquote>
         <figcaption className="mt-5.5 flex items-center gap-2 border-t-2 border-dotted border-line-mid pt-4 text-body-sm">
           {item.logo && (

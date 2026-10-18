@@ -42,8 +42,8 @@ export async function checkOverlays(page, base) {
     const row = frame.getByRole('menuitem', { name: 'Vault', exact: true });
     await row.hover();
     const style = await row.evaluate(el => { const s = getComputedStyle(el); return { radius: s.borderRadius, size: s.fontSize, padding: s.padding, shadow: s.boxShadow, bg: s.backgroundColor }; });
-    assert.equal(style.radius, '5px');
-    assert.equal(style.size, '14px');
+    assert.equal(style.radius, '6px');
+    assert.equal(style.size, '12px');
     assert.equal(style.padding, '12px 11px');
     assert.notEqual(style.shadow, 'none', 'Glass highlight uses the reference inset edge');
     assert.equal(style.bg, 'rgba(255, 255, 255, 0.17)');

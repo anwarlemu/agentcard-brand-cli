@@ -75,7 +75,7 @@ function SiteHeader({
         </nav>
       )}
       {action && (
-        <Button asChild variant="on-brand" className="ml-auto px-5.5 font-medium">
+        <Button asChild variant="on-brand" className="ml-auto px-5.5 font-medium leading-tight">
           <a href={action.href}>{action.label}</a>
         </Button>
       )}

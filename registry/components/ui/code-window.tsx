@@ -106,7 +106,7 @@ function CodeWindow({ title, code, children, language, copy = false, className, 
       <pre
         tabIndex={0}
         className={cn(
-          "m-0 min-h-0 flex-1 overflow-auto px-4 pt-3.5 pb-4 font-mono text-caption leading-4.5 whitespace-pre outline-none [scrollbar-width:thin] focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-sky",
+          "m-0 min-h-0 flex-1 overflow-auto px-4 pt-3.5 pb-4 font-mono text-micro [line-height:1.55] md:text-caption whitespace-pre outline-none [scrollbar-width:thin] focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-sky",
           preClassName,
         )}
       >

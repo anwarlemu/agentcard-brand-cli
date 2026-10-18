@@ -77,7 +77,7 @@ function SegmentedControl<T extends string>({
             className={cn(
               "disabled:opacity-50 disabled:pointer-events-none flex items-center justify-center gap-1.5 border border-transparent font-display leading-none whitespace-nowrap outline-none transition-[background-color,color] duration-150 ease-out focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-solid focus-visible:outline-focus-ring motion-reduce:transition-none",
               track && size === "md" ? "rounded-control" : "rounded-sm",
-              size === "sm" ? (track ? "h-7.5 px-3 text-caption" : "h-7 px-2.5 text-caption") : track ? "h-10 px-4 text-body-sm" : "h-8 px-3 text-body-sm",
+              size === "sm" ? (track ? "h-7.5 px-3 text-caption" : "h-7 px-2.5 text-caption") : track ? "h-10 px-4 text-body-sm leading-body" : "h-8 px-3 text-body-sm",
               // Only the label and a faint wash answer the pointer, so nothing fades over the key gliding in beneath.
               selected ? (track ? "text-on-primary" : "text-fg") : cn("text-fg-muted hover:text-fg", track && "hover:bg-wash-pill"),
               // Until the key lands, the selected option draws it itself so the first paint matches.

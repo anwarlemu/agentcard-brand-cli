@@ -15,7 +15,7 @@ const BODY = [
   // Paragraphs and lists read at 82 percent ink.
   "[&_p]:text-ink/82 [&_li]:text-ink/82",
   // Headings.
-  "[&_h2]:font-display [&_h2]:text-h3 [&_h2]:leading-display [&_h2]:font-medium [&_h2]:tracking-tight [&_h2]:text-fg",
+  "[&_h2]:font-display [&_h2]:text-h3 [&_h2]:[line-height:1.2] [&_h2]:font-medium [&_h2]:tracking-tight [&_h2]:text-fg",
   "[&_h3]:font-display [&_h3]:text-body [&_h3]:leading-display [&_h3]:font-medium [&_h3]:tracking-tight [&_h3]:text-fg",
   "[&_h4]:font-display [&_h4]:text-body-sm [&_h4]:font-medium [&_h4]:text-fg",
   // Lists.

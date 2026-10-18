@@ -80,7 +80,7 @@ function TagFilter({
                     aria-pressed={isSelected}
                     onClick={() => (isSelected ? onRemoveTag(tag) : onAddTag(tag))}
                     className={cn(
-                      "flex h-9 w-full items-center gap-2.5 rounded-sm px-2.5 text-left font-display text-body-sm outline-none hover:bg-sky-wash focus-visible:bg-sky-wash",
+                      "flex h-9 w-full items-center gap-2.5 rounded-sm px-2.5 text-left font-display text-body-sm outline-none hover:bg-search-selected focus-visible:bg-search-selected",
                       isSelected ? "text-fg" : "text-fg-secondary",
                     )}
                   >

@@ -67,8 +67,8 @@ export function restyleOverlays(text: string, surface: Surface): { text: string;
 		if (!def) return;
 		let classes = `${def.tailwind} motion-reduce:animate-none`;
 		if (family === 'select') {
-			if (kind === 'input') classes += ' min-h-11 min-w-0 gap-3.25 pr-3.25 data-placeholder:text-fg-muted disabled:pointer-events-none disabled:opacity-50 aria-invalid:border-danger [&>span]:min-w-0 [&>span]:truncate [&>span]:text-left';
-			if (kind === 'menu-item' || kind === 'menu-panel') classes = classes.replace('font-display', 'font-sans').replace('text-body-sm', 'text-h5').replace('bg-wash-hover', 'bg-sky-wash');
+			if (kind === 'input') classes += ' min-h-11 min-w-0 gap-3.25 pr-3.25 data-placeholder:text-fg disabled:pointer-events-none disabled:opacity-50 aria-invalid:border-danger [&>span]:min-w-0 [&>span]:truncate [&>span]:text-left';
+			if (kind === 'menu-item' || kind === 'menu-panel') classes = classes.replace('font-display', 'font-sans').replace('text-body-sm', 'text-h5').replace('bg-wash-hover', 'bg-search-selected');
 			if (kind === 'menu-panel') classes += ' min-w-0 w-[max(11rem,var(--radix-select-trigger-width))]';
 		}
 		if (menu && kind === 'menu-panel') {

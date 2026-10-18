@@ -46,6 +46,8 @@ The add command above is an example, not the list required for every page. Choos
 
 For HTTP-only agents, fetch `{{registry}}/r/index.json`, then `{{registry}}/r/<name>.json` or `{{registry}}/r/<name>.md`. Follow `requires` recursively. Each `files[].path` is relative to the source root; `files[].content` is the exact source. Each example lists its own `requires` and `packages`; install these too when using that example. Do not copy the example file as the component implementation. The CLI handles dependency ordering and theme installation for you.
 
+The component reference states its source. `{{registry}}/r/audit.json` records the reference basis for all components. Some controls extend shared Agentcard patterns because the public site has no standalone equivalent. Select uses the site’s field styling with a portable Radix menu; the reference site’s menu is native to the browser. Do not describe extensions as exact copies of live controls.
+
 ## Compose the interface
 
 - Follow the user's brief. For new pages, add the required content and behavior. When only restyling an existing page, preserve its content, links, order and behavior unless the user requests changes.

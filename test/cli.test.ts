@@ -490,7 +490,7 @@ export function Picker(props: any) { return <Select.Root name="card" value={prop
     expect(out.text).toContain('font-sans text-h5');
     expect(out.text).toContain('w-[max(11rem,var(--radix-select-trigger-width))]');
     expect(out.text).toContain('max-w-(--radix-select-content-available-width)');
-    expect(out.text).toContain('data-[highlighted]:bg-sky-wash');
+    expect(out.text).toContain('data-[highlighted]:bg-search-selected');
     expect(out.text).toContain('value={props.value} onValueChange={props.onValueChange} required');
     expect(out.text).toContain('ref={props.ref}');
     expect(out.text).toContain('disabled={props.disabled} onKeyDown={props.onKeyDown}');

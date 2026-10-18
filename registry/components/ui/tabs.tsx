@@ -38,7 +38,7 @@ const tabsTriggerVariants = cva(
       size: { sm: "", md: "" },
     },
     compoundVariants: [
-      { variant: "default", size: "md", className: "h-10 px-4 text-body-sm" },
+      { variant: "default", size: "md", className: "h-10 px-4 text-body-sm leading-body" },
       // The guides' tab track (.v7-guide-tablist): 30px keys with 6px corners in the 12px display face.
       { variant: "default", size: "sm", className: "h-7.5 rounded-sm px-3 text-caption" },
       { variant: "plain", size: "md", className: "h-8 px-3 text-body-sm" },

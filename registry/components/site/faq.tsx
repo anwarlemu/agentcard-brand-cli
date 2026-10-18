@@ -17,7 +17,7 @@ type FaqItem = { question: React.ReactNode; answer: React.ReactNode };
 type FaqTopic = { label: string; items: FaqItem[] };
 
 const QUESTION =
-  "group items-baseline gap-4 rounded-sm px-3.5 py-5 font-display text-body-sm leading-4 font-medium tracking-tight text-fg transition-[background-color,color] duration-(--ds-duration-fast) ease-out hover:bg-[color-mix(in_srgb,var(--ds-color-ink)_5%,transparent)] hover:text-fg-brand data-[state=open]:text-fg-brand motion-reduce:transition-none";
+  "group items-baseline gap-4 rounded-sm px-3.5 py-5 font-display text-body-sm [line-height:1.2] font-medium [letter-spacing:-0.01em] text-fg transition-[background-color,color] duration-(--ds-duration-fast) ease-out hover:bg-[color-mix(in_srgb,var(--ds-color-ink)_5%,transparent)] hover:text-fg-brand data-[state=open]:text-fg-brand motion-reduce:transition-none";
 
 // The + is drawn, not typed: a bar across and a bar down, turning an eighth into an x when open.
 const PLUS =
@@ -88,7 +88,7 @@ function Faq({
                     <AccordionTrigger className={QUESTION} icon={<span aria-hidden className={PLUS} />}>
                       {item.question}
                     </AccordionTrigger>
-                    <AccordionContent className="max-w-[70ch] px-3.5 pb-5.5 text-body-sm leading-6.5 text-fg-muted opacity-80">{item.answer}</AccordionContent>
+                    <AccordionContent className="max-w-135 px-3.5 pb-5.5 text-body-sm [line-height:1.8] text-fg-muted opacity-80">{item.answer}</AccordionContent>
                   </AccordionItem>
                 ))}
               </Accordion>

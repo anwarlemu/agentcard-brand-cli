@@ -193,7 +193,7 @@ function NavDock({ links, menu, action, logo, logoHref = "/", logoLabel = "Agent
           {openMenu && (
             // The wrap pads the gap under the card, so a mouse crossing from the bar never leaves the dock.
             <div className="absolute inset-x-0 bottom-full pb-2">
-              <div id={cardId} className={cn("w-full animate-pop-in rounded-control p-1 font-display text-body-sm motion-reduce:animate-fade-in", GLASS)} style={{ transformOrigin: origin }}>
+              <div id={cardId} className={cn("w-full animate-pop-in rounded-control p-1 font-display text-caption motion-reduce:animate-fade-in", GLASS)} style={{ transformOrigin: origin }}>
                 <button
                   ref={headRef}
                   type="button"
@@ -213,11 +213,11 @@ function NavDock({ links, menu, action, logo, logoHref = "/", logoLabel = "Agent
                       <a
                         href={item.href}
                         onClick={() => close(false)}
-                        className="group/item grid gap-1.5 rounded-menu px-2.75 py-3 outline-none transition-[background-color,box-shadow] duration-150 ease-out hover:bg-wash-glass-hover hover:shadow-glass-hover focus-visible:outline-2 focus-visible:outline-white"
+                        className="group/item grid gap-1.5 rounded-sm px-2.75 py-3 outline-none transition-[background-color,box-shadow] duration-150 ease-out hover:bg-wash-glass-hover hover:shadow-glass-hover focus-visible:outline-2 focus-visible:outline-white"
                       >
                         <span className="leading-none">{item.title}</span>
                         {item.description && (
-                          <span className="font-sans text-caption leading-normal opacity-78 transition-opacity duration-150 ease-out group-hover/item:opacity-100">{item.description}</span>
+                          <span className="font-sans text-body-sm [line-height:1.45] opacity-78 transition-opacity duration-150 ease-out group-hover/item:opacity-100">{item.description}</span>
                         )}
                       </a>
                     </li>

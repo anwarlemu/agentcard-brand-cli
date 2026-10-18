@@ -10,7 +10,7 @@ import { cn } from "@/lib/utils";
 // percent ink rule, ink marks at 45 percent; the window itself 10px corners, a 22 percent ink edge and the tile's soft
 // drop.
 const windowBarVariants = cva(
-  "flex h-8 shrink-0 items-center justify-between gap-3 border-b px-2.5 font-display text-micro leading-none",
+  "flex h-8 shrink-0 items-center justify-between gap-3 border-b px-2.5 font-display text-micro leading-body",
   {
     variants: {
       tone: {

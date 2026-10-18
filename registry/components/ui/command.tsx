@@ -124,7 +124,7 @@ function CommandItem({ className, children, description, ...props }: React.Compo
     <CommandPrimitive.Item
       data-slot="command-item"
       className={cn(
-        "group/item relative grid cursor-pointer gap-0.75 rounded-sm py-2.5 pr-10 pl-3.5 text-fg outline-none select-none data-[disabled=true]:pointer-events-none data-[disabled=true]:opacity-40 data-[selected=true]:bg-sky-wash",
+        "group/item relative grid cursor-pointer gap-0.75 rounded-sm py-2.5 pr-10 pl-3.5 text-fg outline-none select-none data-[disabled=true]:pointer-events-none data-[disabled=true]:opacity-40 data-[selected=true]:bg-search-selected",
         className,
       )}
       {...props}

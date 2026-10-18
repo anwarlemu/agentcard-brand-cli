@@ -17,7 +17,7 @@ function Accordion(props: React.ComponentProps<typeof AccordionPrimitive.Root>) 
 }
 
 function AccordionItem({ className, ...props }: React.ComponentProps<typeof AccordionPrimitive.Item>) {
-  return <AccordionPrimitive.Item data-slot="accordion-item" className={cn("border-b border-b-line-mid first:border-t first:border-t-line", className)} {...props} />;
+  return <AccordionPrimitive.Item data-slot="accordion-item" className={cn("border-b border-b-ink/20 first:border-t first:border-t-line", className)} {...props} />;
 }
 
 /** The FAQ's mark: a 12px plus drawn in two 1.5px bars, in a 30px box so a column of them lines up. */
@@ -37,7 +37,7 @@ function AccordionTrigger({ className, children, icon, ...props }: React.Compone
       <AccordionPrimitive.Trigger
         data-slot="accordion-trigger"
         className={cn(
-          "group flex flex-1 cursor-pointer items-center justify-between gap-3.75 rounded-sm px-3.5 py-5 text-left font-display text-body-sm font-medium [letter-spacing:-0.01em] [line-height:1.2] text-fg transition-[background-color] duration-160 ease-out outline-none hover:bg-wash-hover hover:text-fg-brand focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-solid focus-visible:outline-focus-ring disabled:pointer-events-none disabled:opacity-50 data-[state=open]:text-fg-brand motion-reduce:transition-none",
+          "group flex flex-1 cursor-pointer items-center justify-between gap-3.75 rounded-sm px-3.5 py-5 text-left font-display text-body-sm font-medium [letter-spacing:-0.01em] [line-height:1.2] text-fg transition-[background-color] duration-160 ease-out outline-none hover:bg-ink/5 hover:text-fg-brand focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-solid focus-visible:outline-focus-ring disabled:pointer-events-none disabled:opacity-50 data-[state=open]:text-fg-brand motion-reduce:transition-none",
           className,
         )}
         {...props}

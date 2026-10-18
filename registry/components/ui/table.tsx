@@ -16,7 +16,7 @@ function Table({ className, label = "Table", ...props }: React.ComponentProps<"t
       tabIndex={0}
       className="relative w-full overflow-x-auto rounded-card border border-hairline bg-surface shadow-guide outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-solid focus-visible:outline-focus-ring"
     >
-      <table data-slot="table" className={cn("w-full caption-bottom border-collapse text-left text-body-sm text-fg max-sm:block", className)} {...props} />
+      <table data-slot="table" className={cn("w-full caption-bottom border-collapse text-left text-body-sm leading-normal text-fg max-sm:block", className)} {...props} />
     </div>
   );
 }

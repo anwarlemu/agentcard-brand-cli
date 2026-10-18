@@ -21,7 +21,7 @@ const triggerVariants = cva(
     variants: {
       appearance: {
         field:
-          "w-full gap-3.25 rounded-none border border-line-strong bg-surface font-sans text-fg focus-visible:outline-2 focus-visible:-outline-offset-1 focus-visible:outline-solid focus-visible:outline-focus-ring data-[state=open]:outline-2 data-[state=open]:-outline-offset-1 data-[state=open]:outline-solid data-[state=open]:outline-focus-ring data-placeholder:text-fg-muted aria-invalid:border-danger [&>span]:flex-1 [&>span]:truncate [&>span]:text-left",
+          "w-full gap-3.25 rounded-none border border-line-strong bg-surface font-sans text-fg focus-visible:outline-2 focus-visible:-outline-offset-1 focus-visible:outline-solid focus-visible:outline-focus-ring data-[state=open]:outline-2 data-[state=open]:-outline-offset-1 data-[state=open]:outline-solid data-[state=open]:outline-focus-ring data-placeholder:text-fg aria-invalid:border-danger [&>span]:flex-1 [&>span]:truncate [&>span]:text-left",
         ghost:
           "h-8 rounded-control border border-hairline bg-surface px-3 font-display text-caption text-fg shadow-key hover:bg-sky-wash focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-solid focus-visible:outline-focus-ring active:translate-y-px active:shadow-pressed data-[state=open]:bg-sky-wash motion-reduce:active:translate-y-0",
         chip: "h-7 rounded-sm bg-wash-pill px-2.5 font-display text-caption text-fg-secondary hover:text-fg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-solid focus-visible:outline-focus-ring data-[state=open]:text-fg",
@@ -109,7 +109,7 @@ function SelectItem({ className, children, description, ...props }: React.Compon
     <SelectPrimitive.Item
       data-slot="select-item"
       className={cn(
-        "relative flex w-full cursor-default items-start gap-2 rounded-sm py-2 pr-8 pl-2.5 break-words text-fg-secondary outline-none select-none data-[disabled]:pointer-events-none data-[disabled]:opacity-40 data-[highlighted]:bg-sky-wash data-[highlighted]:text-fg data-[state=checked]:text-fg",
+        "relative flex w-full cursor-default items-start gap-2 rounded-sm py-2 pr-8 pl-2.5 break-words text-fg-secondary outline-none select-none data-[disabled]:pointer-events-none data-[disabled]:opacity-40 data-[highlighted]:bg-search-selected data-[highlighted]:text-fg data-[state=checked]:text-fg",
         className,
       )}
       {...props}

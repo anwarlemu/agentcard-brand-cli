@@ -1060,8 +1060,7 @@
 				"color": "var(--ds-color-text-default)",
 				"font-family": "var(--ds-font-sans)",
 				"font-size": "var(--ds-text-h5)",
-				"line-height": "var(--ds-leading-snug)",
-				"transition": "border-color var(--ds-duration-fast) var(--ds-easing-out), box-shadow var(--ds-duration-fast) var(--ds-easing-out)"
+				"line-height": "var(--ds-leading-snug)"
 			},
 			"states": {
 				":focus-visible": {
@@ -1241,7 +1240,7 @@
 			"states": {},
 			"rules": [
 				"Use the floating panel and display labels; keep the existing interaction and placement.",
-				"Glass rows use the dock’s lit hover edge and white text."
+				"Glass rows use the dock\u2019s lit hover edge and white text."
 			],
 			"source": "src/app/globals.css (.v7-dock-card, .v7-guide-search-results, .v7-tooltip)"
 		},
@@ -1256,15 +1255,15 @@
 			},
 			"css": {
 				"padding": "var(--ds-space-3) calc(var(--ds-space-3) - 1px)",
-				"border-radius": "var(--ds-radius-menu)",
+				"border-radius": "var(--ds-radius-sm)",
 				"background-color": "transparent",
 				"color": "var(--ds-color-text-on-brand)",
 				"font-family": "var(--ds-font-display)",
-				"font-size": "var(--ds-text-body-sm)",
+				"font-size": "var(--ds-text-caption)",
 				"line-height": "1",
 				"outline": "none"
 			},
-			"tailwind": "rounded-menu px-2.75 py-3 font-display text-body-sm leading-none text-on-brand outline-none data-[highlighted]:bg-wash-glass-hover data-[highlighted]:shadow-glass-hover",
+			"tailwind": "rounded-sm px-2.75 py-3 font-display text-caption leading-none text-on-brand outline-none data-[highlighted]:bg-wash-glass-hover data-[highlighted]:shadow-glass-hover",
 			"states": {
 				":hover": {
 					"background-color": "var(--ds-color-wash-glass-hover)",
@@ -1279,7 +1278,7 @@
 			},
 			"rules": [
 				"Use the floating panel and display labels; keep the existing interaction and placement.",
-				"Glass rows use the dock’s lit hover edge and white text."
+				"Glass rows use the dock\u2019s lit hover edge and white text."
 			],
 			"source": "src/app/globals.css (.v7-dock-card, .v7-guide-search-results, .v7-tooltip)"
 		},

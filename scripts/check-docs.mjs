@@ -5,7 +5,7 @@ import { chromium } from 'playwright-core';
 import { checkOverlays } from './check-overlays.mjs';
 import { checkInteractions } from './check-interactions.mjs';
 
-const base = process.env.DOCS_URL ?? 'http://127.0.0.1:3000';
+const base = process.env.DOCS_URL ?? 'http://127.0.0.1:4645';
 const browser = await chromium.launch();
 const page = await browser.newPage({ viewport: { width: 1440, height: 1000 } });
 const errors = [];
