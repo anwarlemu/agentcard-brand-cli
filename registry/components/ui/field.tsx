@@ -30,7 +30,7 @@ function Field({ label, htmlFor, help, error, required = false, className, child
   const description = message ? `${id}-description` : undefined;
   return (
     <FieldContext.Provider value={{ id, description, invalid: Boolean(error), required }}>
-      <div data-slot="field" data-invalid={error ? true : undefined} className={cn("flex flex-col gap-1.5", className)}>
+      <div data-slot="field" data-invalid={error ? true : undefined} className={cn("flex min-w-0 flex-col gap-1.5", className)}>
         <Label htmlFor={id} className="block font-display text-caption leading-snug text-fg-muted">
           {label}
           {required && <><span aria-hidden className="ml-0.5 text-danger">*</span><span className="sr-only"> (required)</span></>}

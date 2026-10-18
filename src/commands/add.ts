@@ -2,7 +2,7 @@ import { spawnSync } from 'node:child_process';
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { cli } from '../lib/brand.js';
-import { color } from '../lib/output.js';
+import { color, emit } from '../lib/output.js';
 import { findProjectRoot } from '../lib/paths.js';
 import { Writer } from '../install/files.js';
 import { installStyles } from '../install/styles.js';
@@ -14,7 +14,7 @@ import { profile } from '../project/surface.js';
 // `add <items...>`: copies library components into a React + Tailwind project as source the project owns, with the
 // items they need, the theme and their npm packages.
 
-type AddOptions = { overwrite?: boolean; dryRun?: boolean };
+type AddOptions = { overwrite?: boolean; dryRun?: boolean; json?: boolean };
 
 export function readPackage(root: string): { dependencies?: Record<string, string>; devDependencies?: Record<string, string> } {
 	try {
@@ -30,7 +30,8 @@ export async function add(names: string[], opts: AddOptions) {
 	const pkg = readPackage(root);
 	const deps = { ...pkg.dependencies, ...pkg.devDependencies };
 	if (!deps.react || (project.tailwindMajor ?? 0) < 4) throw new Error(`Library components need React and Tailwind 4. For any other project, \`${cli()}\` applies the brand by restyling it.`);
-	if (!project.hasAlias) console.log(color.yellow(`The components import from "@/…". Add "paths": { "@/*": ["./${project.srcDir ? 'src/' : ''}*"] } to tsconfig.json.`));
+	const warnings: string[] = [];
+	if (!project.hasAlias) warnings.push(`The components import from "@/…". Add "paths": { "@/*": ["./${project.srcDir ? 'src/' : ''}*"] } to tsconfig.json.`);
 
 	const items = await closure(names);
 	const base = project.srcDir ? 'src' : '';
@@ -65,22 +66,23 @@ export async function add(names: string[], opts: AddOptions) {
 	if (items.some((i) => i.type === 'theme')) {
 		const files = styledFiles(root);
 		const styleText = files.filter((f) => STYLES.test(f) || MARKUP.test(f)).map((f) => readFileSync(join(root, f), 'utf8')).join('\n');
-		installStyles(w, project, profile(root, files).surface, styleText);
+		warnings.push(...installStyles(w, project, profile(root, files).surface, styleText).notes);
 	}
 	if (npm.size && !opts.dryRun) {
 		const pm = project.packageManager;
 		const args = pm === 'npm' ? ['install', ...npm] : ['add', ...npm];
 		process.stderr.write(`Installing ${[...npm].join(', ')}...\n`);
 		const res = spawnSync(pm, args, { cwd: root, stdio: ['ignore', 'ignore', 'inherit'] });
-		if (res.status !== 0) console.log(color.yellow(`Could not install the packages. Run \`${pm} ${args.join(' ')}\`.`));
+		if (res.status !== 0) throw new Error(`Could not install the packages. Run \`${pm} ${args.join(' ')}\`. Source files were written; resolve the dependency error before building.`);
 	}
 	recordInstalled(root, items.filter((i) => i.type !== 'theme').map((i) => i.name), opts.dryRun);
-	console.log(
+	emit(opts, { ok: true, dryRun: Boolean(opts.dryRun), items: items.map(i => i.name), written, kept, changes: w.changes, packages: [...npm], warnings }, () =>
 		[
 			color.bold(`${opts.dryRun ? 'Would add' : 'Added'} ${items.filter((i) => i.type !== 'theme' && i.type !== 'lib').map((i) => i.name).join(', ') || 'nothing new'}.`),
 			...written.map((f) => `  + ${f}`),
 			...kept.map((f) => color.dim(`  = ${f} (kept; --overwrite replaces it)`)),
 			...w.changes.map((c) => color.dim(`  ~ ${c.file} (${c.action}: brand theme)`)),
+			...warnings.map(note => `  Note: ${note}`),
 			...(npm.size ? [`  npm: ${[...npm].join(', ')}`] : []),
 		].join('\n'),
 	);
@@ -100,8 +102,9 @@ function recordInstalled(root: string, names: string[], dryRun?: boolean) {
 
 /** `list`: every library item, grouped. */
 export async function list(opts: { json?: boolean }) {
-	const items = (await loadIndex()).filter((i) => i.type !== 'theme' && i.type !== 'lib' && i.type !== 'hook');
-	if (opts.json) return console.log(JSON.stringify(items, null, 2));
+	const all = await loadIndex();
+	if (opts.json) return console.log(JSON.stringify(all, null, 2));
+	const items = all.filter((i) => i.type !== 'theme' && i.type !== 'lib' && i.type !== 'hook');
 	const groups = new Map<string, typeof items>();
 	for (const i of items) groups.set(i.type, [...(groups.get(i.type) ?? []), i]);
 	for (const [type, list] of groups) {

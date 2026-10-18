@@ -40,7 +40,7 @@ function TooltipContent({ className, side, sideOffset, collisionPadding = 8, wra
         collisionPadding={collisionPadding}
         sideOffset={sideOffset ?? (side === "left" || side === "right" ? 8 : 6)}
         className={cn(
-          "z-50 origin-(--radix-tooltip-content-transform-origin) rounded-control border border-hairline bg-surface px-2 py-1.5 font-display text-caption leading-snug text-fg shadow-tooltip data-[state=delayed-open]:animate-pop-in",
+          "z-50 origin-(--radix-tooltip-content-transform-origin) rounded-control border border-hairline bg-surface px-2 py-1.5 font-display text-caption leading-snug text-fg shadow-tooltip motion-safe:data-[state=delayed-open]:animate-pop-in motion-reduce:animate-none",
           wrap ? "w-max max-w-[min(16rem,var(--radix-tooltip-content-available-width))] text-pretty" : "w-max max-w-(--radix-tooltip-content-available-width) break-words",
           className,
         )}

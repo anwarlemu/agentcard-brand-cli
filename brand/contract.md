@@ -1,11 +1,11 @@
 # {{brand}} design system
-- This project uses the {{brand}} design system for how it looks. It never changes what the project says or does.
-- To apply it or continue applying it: run `{{cli}}` and do the task it prints; run it again after each task until it says the project is done.
-- Restyle only: keep every word, link, image and element, their order and each screen's purpose. Never add sections, components or copy.
-- Keep each element's size, place and effects relative to the rest. An arrangement wider than the column is scaled as a whole, never by enlarging one part or moving pieces over others.
-- The only markup you may add: `data-ds-hero` on the home hero (its blue ground and the stepped bands under it), and `data-ds-ground="blue"` on a header that sits over it.
-- Style each element the way `{{cli}} look <file>` shows (exact CSS and Tailwind, with states).
-- Style values are brand tokens, `var(--ds-*)`; `{{cli}} tokens <term>` finds one. No raw colors, sizes, fonts or timings.
-- Writes that add off-brand values are blocked, and you cannot finish while `{{cli}} check` has errors.
-- A screen is done when `{{cli}} review <url>` scores it 7 or more. Fix its punch list, do not argue with it.
+- Read `.ds/agent-guide.md` before changing UI. It contains setup, component discovery, composition and verification instructions for any coding agent.
+- Follow the user's brief. Build new pages and controls when requested; when only restyling, preserve existing content, links, order and behavior.
+- Use `{{cli}} list --json` to discover components, then `{{cli}} show <name> --json` for exact exports, usage, examples and source. Do not guess props.
+- Use `{{cli}} init` to prepare new work, then `{{cli}} add <names...>` for the components it needs. Inspect planned writes with `--dry-run`.
+- The bare `{{cli}}` command converts existing UI and creates review tasks. Use it only for a requested restyle; subsequent runs show the next task.
+- Use component variants and brand tokens. `{{cli}} look <file>` gives element guidance; `{{cli}} tokens <term>` finds values.
+- Connect controls to state, validation and real actions. Test keyboard controls, focus, invalid/disabled/loading states, and phone and desktop layouts.
+- Run the project's checks and build, then `{{cli}} check --json`. Token checks alone do not verify appearance or behavior.
+- Review screenshots against the library. `{{cli}} review <url> --any` captures and reviews an untracked page; report manual review honestly when no reviewer is available.
 - A `ds-override: <reason>` comment only counts after the user approves it with `{{cli}} approve`.

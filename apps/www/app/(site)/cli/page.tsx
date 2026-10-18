@@ -6,6 +6,9 @@ import { INSTALL_COMMAND } from "@www/lib/registry";
 export const metadata = { title: "CLI" };
 
 const COMMANDS = [
+  ["init", "Install styles, fonts and agent instructions for new work. Does not convert existing components."],
+  ["guide", "Read the shared agent workflow. Works offline."],
+  ["show <item> --json", "Read exports, usage rules, examples, dependencies and exact component source."],
   ["add <items...>", "Copy components, their dependencies and the theme into the project. Requires React and Tailwind 4."],
   ["list", "List the available components, sections, page templates and visuals."],
   ["look <file>", "Show the component and token guidance for the elements in a file."],
@@ -26,6 +29,12 @@ export default function CliPage() {
       <Command command={INSTALL_COMMAND} wrap />
     </PageIntro>
 
+    <Block title="Prepare the project" description="Requires Node.js 20 or later. React components need React, Tailwind CSS 4 and an @/* alias pointing to the source root. Run init after installing the CLI.">
+      <Code title="terminal" code={`npx agentcard-ds init
+npx agentcard-ds guide
+npx agentcard-ds list --json`} />
+    </Block>
+
     <Block title="Build a page">
       <ol className="grid gap-4 md:grid-cols-3">
         {FLOW.map((step) => <li key={step.name}><Window name={step.name} className="h-full" bodyClassName="grid content-start gap-2 p-6">
@@ -37,14 +46,16 @@ export default function CliPage() {
 
     <Block title="Instructions for coding agents" description="Include this with the page requirements.">
       <Code title="agent instructions" lang="text" code={`Build this page using the Agentcard design system at https://agentcard-ds.vercel.app.
-Read the relevant component examples and usage notes before writing code.
+Read https://agentcard-ds.vercel.app/agents.md first.
+Use npx agentcard-ds show <name> --json to read exact component exports, examples and source.
 Add existing components with the CLI. Use design tokens for custom layout and styling.
 Connect every control to its intended behavior. Include validation, loading, empty and error states where needed.
 Run the project checks and the CLI token check. Test keyboard interaction and desktop and phone layouts.`} />
     </Block>
 
     <Block title="Add components" description="After installation, add the components the page needs. These are examples; choose the names from the library. Adding components also installs their dependencies and the theme.">
-      <Code title="terminal" code={`npx agentcard-ds add button card field input
+      <Code title="terminal" code={`npx agentcard-ds show button --json
+npx agentcard-ds add button card field input
 npx agentcard-ds add hero section site-header site-footer`} />
     </Block>
 

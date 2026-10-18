@@ -55,7 +55,7 @@ export function restyleOverlays(text: string, surface: Surface): { text: string;
 		if (!found) return;
 		const { family, part } = found;
 		const menu = family === 'dropdown-menu' || family === 'context-menu' || family === 'select';
-		const kind = menu ? ROWS.has(part) ? 'menu-item' : ['Content', 'SubContent'].includes(part) ? 'menu-panel' : undefined : part === 'Content' ? 'popover-panel' : undefined;
+		const kind = family === 'select' && part === 'Trigger' ? 'input' : menu ? ROWS.has(part) ? 'menu-item' : ['Content', 'SubContent'].includes(part) ? 'menu-panel' : undefined : part === 'Content' ? 'popover-panel' : undefined;
 		if (!kind) return;
 		const attr = n.attributes.find((a: Node) => a.type === 'JSXAttribute' && a.name.name === 'className');
 		const literals = classLiterals(attr?.value);
@@ -65,8 +65,12 @@ export function restyleOverlays(text: string, surface: Surface): { text: string;
 		const key = glass && menu ? kind === 'menu-item' ? 'glass-menu-item' : 'glass-menu' : kind;
 		const def = defs[key] ?? elements().site[key];
 		if (!def) return;
-		let classes = def.tailwind;
-		if (family === 'select' && kind === 'menu-item') classes = classes.replace('bg-wash-hover', 'bg-sky-wash');
+		let classes = `${def.tailwind} motion-reduce:animate-none`;
+		if (family === 'select') {
+			if (kind === 'input') classes += ' min-h-11 min-w-0 gap-3.25 pr-3.25 data-placeholder:text-fg-muted disabled:pointer-events-none disabled:opacity-50 aria-invalid:border-danger [&>span]:min-w-0 [&>span]:truncate [&>span]:text-left';
+			if (kind === 'menu-item' || kind === 'menu-panel') classes = classes.replace('font-display', 'font-sans').replace('text-body-sm', 'text-h5').replace('bg-wash-hover', 'bg-sky-wash');
+			if (kind === 'menu-panel') classes += ' min-w-0 w-[max(11rem,var(--radix-select-trigger-width))]';
+		}
 		if (menu && kind === 'menu-panel') {
 			const prefix = family === 'select' ? 'select' : family;
 			if (part === 'SubContent') classes += ` min-w-[min(10rem,var(--radix-${prefix}-content-available-width))]`;
@@ -77,6 +81,7 @@ export function restyleOverlays(text: string, surface: Surface): { text: string;
 			const kept = literal.value.split(/\s+/).filter((cls: string) => {
 				// Keep app-specific variants, indicator offsets and layout; replace the base skin and focus wash.
 				if (classes.split(/\s+/).includes(cls) || part === 'SubContent' && cls.startsWith('min-w-')) return false;
+				if (family === 'select' && kind === 'menu-panel' && /^(w|min-w)-/.test(cls)) return false;
 				const base = cls.split(':').pop()!;
 				if (cls.includes(':') && !/^(focus|focus-visible|data-\[highlighted\]):/.test(cls)) return true;
 				return cls && (KEEP_TEXT.test(base) || !LOOK.test(base) && !/^(p|px|py)-/.test(base) && !/^max-[hw]-/.test(base));

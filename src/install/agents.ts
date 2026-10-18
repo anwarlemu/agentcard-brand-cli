@@ -1,6 +1,7 @@
 import { chmodSync, existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { brand, cli } from '../lib/brand.js';
+import { agentGuide } from '../lib/guide.js';
 import { PKG_ROOT, pkgPath } from '../lib/paths.js';
 import { type Writer, upsertBlock } from './files.js';
 
@@ -53,13 +54,15 @@ function mergeHooks(existing: any, cmd: string, harness: 'claude-code' | 'codex'
 
 export function installAgents(w: Writer) {
 	const text = contract();
+	w.write('.ds/agent-guide.md', `${agentGuide()}\n`);
+	for (const rel of ['GEMINI.md', '.github/copilot-instructions.md']) w.write(rel, upsertBlock(w.read(rel) ?? '', text, START, END));
 	// A CLAUDE.md that only imports AGENTS.md gets the contract through it.
 	const claude = w.read('CLAUDE.md');
 	if (claude === undefined && w.read('AGENTS.md') !== undefined) w.write('CLAUDE.md', '@AGENTS.md\n');
 	const importsAgents = /^@AGENTS\.md\s*$/m.test(w.read('CLAUDE.md') ?? '');
 	for (const rel of importsAgents ? ['AGENTS.md'] : ['CLAUDE.md', 'AGENTS.md']) w.write(rel, upsertBlock(w.read(rel) ?? '', text, START, END));
 	// Agents that read their own file first when it exists (Hermes: .hermes.md before AGENTS.md; Gemini: GEMINI.md).
-	for (const rel of ['.hermes.md', 'HERMES.md', 'GEMINI.md']) if (w.read(rel) !== undefined) w.write(rel, upsertBlock(w.read(rel)!, text, START, END));
+	for (const rel of ['.hermes.md', 'HERMES.md']) if (w.read(rel) !== undefined) w.write(rel, upsertBlock(w.read(rel)!, text, START, END));
 	w.write('.cursor/rules/ds.mdc', `---\ndescription: ${brand().name} design system\nalwaysApply: true\n---\n\n${START}\n${text}\n${END}\n`);
 	w.write('.claude/settings.json', `${JSON.stringify(mergeHooks(w.json('.claude/settings.json'), binCommand(w.root, 'claude-code'), 'claude-code'), null, 2)}\n`);
 	w.write('.codex/hooks.json', `${JSON.stringify(mergeHooks(w.json('.codex/hooks.json'), binCommand(w.root, 'codex'), 'codex'), null, 2)}\n`);

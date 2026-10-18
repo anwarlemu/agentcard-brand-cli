@@ -53,7 +53,7 @@ function AccordionContent({ className, children, ...props }: React.ComponentProp
   return (
     <AccordionPrimitive.Content
       data-slot="accordion-content"
-      className="overflow-hidden text-body-sm [line-height:1.8] text-fg-muted data-[state=closed]:animate-accordion-up data-[state=closed]:[animation-duration:var(--ds-duration-base)] data-[state=open]:animate-accordion-down motion-reduce:animate-none"
+      className="overflow-hidden text-body-sm [line-height:1.8] text-fg-muted motion-safe:data-[state=closed]:animate-accordion-up data-[state=closed]:[animation-duration:var(--ds-duration-base)] motion-safe:data-[state=open]:animate-accordion-down motion-reduce:animate-none"
       {...props}
     >
       <div className={cn("max-w-135 px-3.5 pb-5.5 opacity-80 transition-[opacity,translate] delay-40 duration-240 ease-out starting:-translate-y-1 starting:opacity-0 motion-reduce:transition-none", className)}>{children}</div>

@@ -24,7 +24,8 @@
     "release": "sh scripts/release.sh",
     "registry": "tsx scripts/build-registry.ts",
     "doctor": "npm run doctor --workspace www --",
-    "test:docs": "node scripts/check-docs.mjs"
+    "test:docs": "node scripts/check-docs.mjs",
+    "test:library": "node scripts/check-library.mjs"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.129.0",

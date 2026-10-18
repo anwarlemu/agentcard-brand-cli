@@ -481,6 +481,21 @@ export function Help({ children, ...props }: any) { return <PopoverPanel classNa
     expect(restyleOverlays(out.text, 'site').text).toBe(out.text);
     expect(restyleOverlays(menu.replaceAll('@radix-ui/react-', 'custom-'), 'site').text).toBe(menu.replaceAll('@radix-ui/react-', 'custom-'));
   });
+  it('styles Select fields and menus consistently while preserving value, refs and keyboard handlers', () => {
+    const source = `import * as Select from "@radix-ui/react-select";
+export function Picker(props: any) { return <Select.Root name="card" value={props.value} onValueChange={props.onValueChange} required><Select.Trigger ref={props.ref} className="flex h-10 rounded-xl bg-black text-white px-4"><Select.Value /></Select.Trigger><Select.Portal><Select.Content position="popper" className="w-full min-w-20 rounded-xl bg-black text-white font-display text-body-sm"><Select.Viewport><Select.Item value="travel" disabled={props.disabled} onKeyDown={props.onKeyDown} className="py-2 font-display text-body-sm focus:bg-purple-500"><Select.ItemText>Travel</Select.ItemText></Select.Item></Select.Viewport></Select.Content></Select.Portal></Select.Root>; }`;
+    const out = restyleOverlays(source, 'site');
+    expect(out.parts).toEqual(['select.Trigger', 'select.Content', 'select.Item']);
+    expect(out.text).toContain('rounded-none');
+    expect(out.text).toContain('font-sans text-h5');
+    expect(out.text).toContain('w-[max(11rem,var(--radix-select-trigger-width))]');
+    expect(out.text).toContain('max-w-(--radix-select-content-available-width)');
+    expect(out.text).toContain('data-[highlighted]:bg-sky-wash');
+    expect(out.text).toContain('value={props.value} onValueChange={props.onValueChange} required');
+    expect(out.text).toContain('ref={props.ref}');
+    expect(out.text).toContain('disabled={props.disabled} onKeyDown={props.onKeyDown}');
+    expect(restyleOverlays(out.text, 'site').text).toBe(out.text);
+  });
   it('includes compound styles in CLI apply, retaining dry-run behavior', () => {
     const dir = project({ 'package.json': JSON.stringify({ dependencies: { react: '19.0.0', tailwindcss: '4.1.0' } }), 'components/dropdown-menu.tsx': menu, 'app/page.tsx': menu.replaceAll('DropdownMenu', 'PageMenu') });
     try {

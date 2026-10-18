@@ -3,12 +3,12 @@ import { notFound } from "next/navigation";
 import { PreviewHeight } from "@www/components/preview-height";
 import { Surface } from "@/lib/surface";
 import { examples } from "@www/lib/examples.generated";
-import { findItem, items, needsPreviewFrame } from "@www/lib/registry";
+import { findItem, items } from "@www/lib/registry";
 
 // One example alone on a page, at the window's real width: full-page items (site sections, page blocks) switch layout
 // on it, so the docs show them in a frame at desktop or phone width instead of squeezed into the column.
 export function generateStaticParams() {
-  return items.filter(needsPreviewFrame).flatMap((i) => Object.keys(examples[i.name] ?? {}).map((example) => ({ name: i.name, example })));
+  return items.flatMap((i) => Object.keys(examples[i.name] ?? {}).map((example) => ({ name: i.name, example })));
 }
 
 export const metadata = { robots: { index: false } };

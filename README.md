@@ -12,7 +12,16 @@ Run once from the project root:
 npm install --save-dev github:anwarlemu/agentcard-brand-cli#release
 ```
 
-Then use `npx agentcard-ds` with the commands below.
+Prepare styles, fonts and agent instructions for new work:
+
+```sh
+npx agentcard-ds init
+npx agentcard-ds guide
+```
+
+`init` does not convert existing components. The bare command does; see "Update an existing interface" below.
+Requires Node.js 20 or later. Read [the agent guide](https://agentcard-ds.vercel.app/agents.md) with any coding agent.
+The same guide is installed at `.ds/agent-guide.md`. Agents that do not auto-load project instructions should read it explicitly.
 
 ## Add components
 
@@ -27,7 +36,8 @@ The CLI copies component source, installs dependencies and adds the theme. It us
 
 ```sh
 npx agentcard-ds add hero section site-header site-footer
-npx agentcard-ds list
+npx agentcard-ds list --json
+npx agentcard-ds show select --json
 npx agentcard-ds tokens border
 ```
 
@@ -37,7 +47,8 @@ Include this with the page requirements:
 
 ```text
 Build this page using the Agentcard design system at https://agentcard-ds.vercel.app.
-Read the relevant component examples and usage notes before writing code.
+Read https://agentcard-ds.vercel.app/agents.md first.
+Run npx agentcard-ds show <name> --json for exact exports, usage rules, examples and source.
 Add existing components with the CLI. Use design tokens for custom layout and styling.
 Connect every control to its intended behavior. Include validation, loading, empty and error states where needed.
 Run the project checks and the CLI token check. Test keyboard interaction and desktop and phone layouts.
@@ -62,6 +73,9 @@ Run these commands with `npx agentcard-ds` after installing the CLI.
 
 | Command | Purpose |
 |---|---|
+| `init` | Install styles, fonts and agent instructions without converting existing components. |
+| `guide` | Read the portable agent workflow, including setup and verification. |
+| `show <item>` | Read usage rules, exports, examples and source. Use `--json` for structured output. |
 | `add <items...>` | Copy components, dependencies and the theme into a React and Tailwind 4 project. |
 | `list` | List available components, sections, page templates and visuals. |
 | `look <file\|element>` | Show component and token guidance for a file or element type. |
@@ -87,6 +101,18 @@ npx agentcard-ds
 Subsequent runs report the next screen to review. `--redo` repeats conversion after an update. Component decisions
 are recorded in `.ds/components.json`. The conversion also installs checks for Claude Code, Codex, Cursor and Git
 commits. Adding individual components with `add` does not run this conversion.
+
+## Text and structured references
+
+- `/agents.md`: the agent workflow.
+- `/llms.txt`: short catalog with links to every component.
+- `/llms-full.txt`: complete guide, examples and source.
+- `/r/index.json`: all items, including hooks, helpers and theme.
+- `/r/<name>.md` and `/r/<name>.json`: usage rules, exports, dependencies, examples and exact source.
+
+All references are generated from the same registry the CLI installs. Prefer individual component references to
+the complete file. `guide`, `list`, `show`, `look`, `tokens` and `check` without `--fix` are read-only. `init` and
+`add` accept `--dry-run`; add `--json` for structured results. JSON goes to stdout; progress goes to stderr.
 
 ## Source
 

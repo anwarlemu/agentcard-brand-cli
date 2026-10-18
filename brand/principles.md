@@ -36,7 +36,7 @@ is playful in its imagery and exact in its type.
 ## Always
 
 - Keep what each screen is for: its main action stays the most prominent thing, its key information easy to scan.
-- Keep every word, link, image and element. Only how it looks changes.
+- For new pages, follow the user's brief. When only restyling existing UI, preserve its words, links, images, elements and behavior.
 - Text contrast at least 4.5:1; touch targets at least 44px on phones; visible focus on every control.
 - Motion is small and quick (160 to 260ms, a strong ease-out), never ease-in; in-out only for something that travels
   on screen (a tab's key). Everything stills with reduced motion.

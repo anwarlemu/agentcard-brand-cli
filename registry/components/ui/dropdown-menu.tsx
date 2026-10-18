@@ -43,7 +43,7 @@ function DropdownMenuContent({ className, sideOffset = 6, collisionPadding = 8, 
           sideOffset={sideOffset}
           collisionPadding={collisionPadding}
           align={align}
-          className={cn("group/menu z-50 flex min-w-[min(12rem,var(--radix-dropdown-menu-content-available-width))] max-w-(--radix-dropdown-menu-content-available-width) max-h-(--radix-dropdown-menu-content-available-height) overflow-y-auto overscroll-contain origin-(--radix-dropdown-menu-content-transform-origin) animate-pop-in flex-col gap-0.5 rounded-control border p-1 outline-none", PANEL[variant], className)}
+          className={cn("group/menu z-50 flex min-w-[min(12rem,var(--radix-dropdown-menu-content-available-width))] max-w-(--radix-dropdown-menu-content-available-width) max-h-(--radix-dropdown-menu-content-available-height) overflow-y-auto overscroll-contain origin-(--radix-dropdown-menu-content-transform-origin) animate-pop-in motion-reduce:animate-none flex-col gap-0.5 rounded-control border p-1 outline-none", PANEL[variant], className)}
           {...props}
         />
       </MenuVariant.Provider>
@@ -158,7 +158,7 @@ function DropdownMenuSubContent({ className, variant: variantProp, collisionPadd
           data-slot="dropdown-menu-sub-content"
           collisionPadding={collisionPadding}
           data-variant={variant}
-          className={cn("group/menu z-50 flex min-w-[min(10rem,var(--radix-dropdown-menu-content-available-width))] max-w-(--radix-dropdown-menu-content-available-width) max-h-(--radix-dropdown-menu-content-available-height) overflow-y-auto overscroll-contain origin-(--radix-dropdown-menu-content-transform-origin) animate-pop-in flex-col gap-0.5 rounded-control border p-1", PANEL[variant], className)}
+          className={cn("group/menu z-50 flex min-w-[min(10rem,var(--radix-dropdown-menu-content-available-width))] max-w-(--radix-dropdown-menu-content-available-width) max-h-(--radix-dropdown-menu-content-available-height) overflow-y-auto overscroll-contain origin-(--radix-dropdown-menu-content-transform-origin) animate-pop-in motion-reduce:animate-none flex-col gap-0.5 rounded-control border p-1", PANEL[variant], className)}
           {...props}
         />
       </MenuVariant.Provider>

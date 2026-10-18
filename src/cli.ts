@@ -3,6 +3,8 @@ import { join } from 'node:path';
 import { Command } from 'commander';
 import { review, snapshot } from './commands/review.js';
 import { run } from './commands/run.js';
+import { init } from './commands/init.js';
+import { guide, show } from './commands/guide.js';
 import { add, list } from './commands/add.js';
 import { approve, check, done, look, skip, tokensCommand } from './commands/small.js';
 import { type HookResult, cursorPreToolUse, cursorStop, preToolUse, sessionStart, stop, userPromptSubmit } from './hooks/handlers.js';
@@ -26,12 +28,16 @@ program
 	.option('--json', 'JSON output')
 	.action((opts) => run(opts));
 
-program.command('add <items...>').description('Copy library components into a React + Tailwind project, with what they need').option('--overwrite', 'replace files that already exist').option('--dry-run', 'show what would be written').action((items, opts) => add(items, opts));
-program.command('list').description(`Every component, ${hasProduct() ? 'block' : 'section'} and visual in the library`).option('--json', 'JSON output').action((opts) => list(opts));
-program.command('review [url]').description('Screenshot a page at desktop and phone width and score it against the brand; a task is done when it passes').option('--threshold <n>', 'minimum score').option('--submit <dir>', 'record the scorecard an agent wrote itself (when no separate reviewer is available)').option('--all', 'review every task screen that is not done yet, at once (pass the app\'s address)').option('--any', 'review a page that is not a task').option('--json', 'JSON output').action((url, opts) => review(url, opts));
-program.command('look [target]').description('The brand styling (CSS, Tailwind, states) for every element in a file, or for one element kind').option('--surface <surface>', 'site or product').option('--json', 'JSON output').action((target, opts) => look(target, opts));
-program.command('check [files...]').description('Check that every style value is a brand token (used by hooks, pre-commit and CI)').option('--fix', 'replace exact matches with their token').option('--changed', 'only files changed in git').option('--json', 'JSON output').action((files, opts) => check(files ?? [], opts));
-program.command('tokens [term]').description('Find a brand token by name or value').option('--json', 'JSON output').action((term, opts) => tokensCommand(term, opts));
+program.command('init').description('Install styles, fonts and agent instructions without converting existing UI').option('--dry-run', 'show planned changes').action((_opts, command) => init(command.optsWithGlobals()));
+program.command('guide').description('Read the portable agent workflow').action((_opts, command) => guide(command.optsWithGlobals()));
+program.command('show <item>').description('Read a component’s exports, examples, rules and exact source').action((item, _opts, command) => show(item, command.optsWithGlobals()));
+
+program.command('add <items...>').description('Copy library components into a React + Tailwind project, with what they need').option('--overwrite', 'replace files that already exist').option('--dry-run', 'show what would be written').action((items, _opts, command) => add(items, command.optsWithGlobals()));
+program.command('list').description(`Every component, ${hasProduct() ? 'block' : 'section'} and visual in the library`).option('--json', 'JSON output').action((_opts, command) => list(command.optsWithGlobals()));
+program.command('review [url]').description('Screenshot a page at desktop and phone width and score it against the brand; a task is done when it passes').option('--threshold <n>', 'minimum score').option('--submit <dir>', 'record the scorecard an agent wrote itself (when no separate reviewer is available)').option('--all', 'review every task screen that is not done yet, at once (pass the app\'s address)').option('--any', 'review a page that is not a task').option('--json', 'JSON output').action((url, _opts, command) => review(url, command.optsWithGlobals()));
+program.command('look [target]').description('The brand styling (CSS, Tailwind, states) for every element in a file, or for one element kind').option('--surface <surface>', 'site or product').option('--json', 'JSON output').action((target, _opts, command) => look(target, command.optsWithGlobals()));
+program.command('check [files...]').description('Check that every style value is a brand token (used by hooks, pre-commit and CI)').option('--fix', 'replace exact matches with their token').option('--changed', 'only files changed in git').option('--json', 'JSON output').action((files, _opts, command) => check(files ?? [], command.optsWithGlobals()));
+program.command('tokens [term]').description('Find a brand token by name or value').option('--json', 'JSON output').action((term, _opts, command) => tokensCommand(term, command.optsWithGlobals()));
 program.command('approve').description('Approve ds-override comments (a person, in a terminal)').option('--all', 'approve every pending override').action((opts) => approve(opts));
 program.command('snapshot [url]').description('Save how each main screen looks before hand edits (run once, with the app running); reviews compare against it').action((url) => snapshot(url));
 program.command('skip <screen>').description('Leave a screen as it is when it cannot pass without changing words or elements; the person sees the reason').requiredOption('--reason <text>', 'why').action((id, opts) => skip(id, opts.reason));
@@ -67,7 +73,8 @@ program
 	});
 
 program.parseAsync().catch((error: Error) => {
-	process.stderr.write(`${error.message}\n`);
+	if (program.opts().json || process.argv.includes('--json')) process.stdout.write(`${JSON.stringify({ ok: false, error: error.message })}\n`);
+	else process.stderr.write(`${error.message}\n`);
 	process.exit(1);
 });
 void cli;

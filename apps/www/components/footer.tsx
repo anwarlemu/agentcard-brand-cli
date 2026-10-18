@@ -14,7 +14,7 @@ export function Footer({ name, repo, site }: { name: string; repo: string; site:
       }
       groups={[
         { title: "Library", links: [{ label: "Components", href: "/components#components" }, { label: "Sections", href: "/components#site" }, { label: "Pages", href: "/components#blocks" }, { label: "Visuals", href: "/components#visuals" }] },
-        { title: "Reference", links: [{ label: "Theme", href: "/theme" }, { label: "CLI", href: "/cli" }, { label: "Registry index", href: "/r/index.json" }] },
+        { title: "Reference", links: [{ label: "Theme", href: "/theme" }, { label: "CLI", href: "/cli" }, { label: "Agent instructions", href: "/agents" }, { label: "Text reference", href: "/llms.txt" }, { label: "Registry index", href: "/r/index.json" }] },
         { title: name, links: [{ label: "Website", href: site, external: true }, { label: "GitHub", href: repo, external: true }] },
       ]}
     />

@@ -31,7 +31,7 @@ function PopoverContent({ className, align = "start", sideOffset = 6, collisionP
         align={align}
         sideOffset={sideOffset}
         collisionPadding={collisionPadding}
-        className={cn("z-50 w-72 max-w-(--radix-popover-content-available-width) max-h-(--radix-popover-content-available-height) overflow-y-auto overscroll-contain origin-(--radix-popover-content-transform-origin) animate-pop-in rounded-control border p-4 text-body-sm outline-none", VARIANTS[variant], className)}
+        className={cn("z-50 w-72 max-w-(--radix-popover-content-available-width) max-h-(--radix-popover-content-available-height) overflow-y-auto overscroll-contain origin-(--radix-popover-content-transform-origin) animate-pop-in motion-reduce:animate-none rounded-control border p-4 text-body-sm outline-none", VARIANTS[variant], className)}
         {...props}
       />
     </PopoverPrimitive.Portal>

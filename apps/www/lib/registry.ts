@@ -18,6 +18,8 @@ export type Item = {
   npm: string[];
   examples: string[];
   body: string;
+  exports: string[];
+  client: boolean;
 };
 
 export const registryName = index.name;

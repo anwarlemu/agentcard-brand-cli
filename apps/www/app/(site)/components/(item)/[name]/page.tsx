@@ -19,7 +19,7 @@ export function generateStaticParams() {
 
 export async function generateMetadata({ params }: { params: Promise<{ name: string }> }) {
   const item = findItem((await params).name);
-  return item ? { title: item.title, description: item.description } : {};
+  return item ? { title: item.title, description: item.description, alternates: { canonical: `/components/${item.name}`, types: { "text/markdown": `/r/${item.name}.md`, "application/json": `/r/${item.name}.json` } } } : {};
 }
 
 const TYPE_LABEL: Record<Item["type"], string> = { ui: "Component", product: "Component", site: "Section", block: "Page", visual: "Visual", hook: "Hook", lib: "Library" };
@@ -68,6 +68,11 @@ export default async function ComponentPage({ params }: { params: Promise<{ name
           <h1 className="mt-3 font-display text-h2 leading-display font-medium tracking-tight text-pretty">{item.title}</h1>
           <p className="mt-3.5 text-body-lg leading-normal text-fg-muted">
             <Prose text={item.description} />
+          </p>
+          <p className="mt-4 flex flex-wrap gap-x-5 gap-y-2 text-body-sm text-fg-brand">
+            <a href={`/r/${item.name}.md`} className="underline underline-offset-4">Text reference</a>
+            <a href={`/r/${item.name}.json`} className="underline underline-offset-4">Source and examples as JSON</a>
+            <Link href="/agents" className="underline underline-offset-4">Agent instructions</Link>
           </p>
           <Command command={`${CLI_COMMAND} add ${item.name}`} className="mt-7 max-w-none" />
         </header>
@@ -130,6 +135,8 @@ function Usage({ item }: { item: Item }) {
           </Window>
         )}
       </div>
+      <p className="mt-5 text-body-sm text-fg-muted">Exports: <InlineCode>{item.exports.join(", ")}</InlineCode>. {item.client ? "This component includes a client boundary. Keep event handlers and state in a client component." : "Read the examples for composition and props."}</p>
+      {item.body && <div className="mt-5 text-body-sm leading-relaxed"><Prose text={item.body} /></div>}
       {(requires.length > 0 || item.npm.length > 0) && (
         <p className="mt-5 text-body-sm text-fg-muted">
           Dependencies: {" "}

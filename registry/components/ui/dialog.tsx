@@ -30,7 +30,7 @@ function DialogPortal(props: React.ComponentProps<typeof DialogPrimitive.Portal>
 }
 
 function DialogOverlay({ className, ...props }: React.ComponentProps<typeof DialogPrimitive.Overlay>) {
-  return <DialogPrimitive.Overlay data-slot="dialog-overlay" className={cn("fixed inset-0 z-50 animate-fade-in bg-scrim", className)} {...props} />;
+  return <DialogPrimitive.Overlay data-slot="dialog-overlay" className={cn("fixed inset-0 z-50 animate-fade-in motion-reduce:animate-none bg-scrim", className)} {...props} />;
 }
 
 /** The close mark in a window bar, in the bar's own color. */
@@ -72,7 +72,7 @@ function DialogContent({
       <DialogPrimitive.Content
         data-slot="dialog-content"
         className={cn(
-          "fixed top-1/2 left-1/2 z-50 flex max-h-[calc(100dvh-2rem)] w-[calc(100%-2rem)] -translate-1/2 animate-pop-in flex-col overflow-hidden rounded-card border border-hairline bg-surface text-fg shadow-code outline-none [animation-duration:var(--ds-duration-base)]",
+          "fixed top-1/2 left-1/2 z-50 flex max-h-[calc(100dvh-2rem)] w-[calc(100%-2rem)] -translate-1/2 animate-pop-in motion-reduce:animate-none flex-col overflow-hidden rounded-card border border-hairline bg-surface text-fg shadow-code outline-none [animation-duration:var(--ds-duration-base)]",
           WIDTHS[size],
           className,
         )}

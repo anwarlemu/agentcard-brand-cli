@@ -7,6 +7,9 @@ import { existsSync, mkdirSync, readFileSync, readdirSync, rmSync, writeFileSync
 import { join } from 'node:path';
 import { parse } from 'yaml';
 import { z } from 'zod';
+import ts from 'typescript';
+import { agentGuide } from '../src/lib/guide.js';
+import { cli } from '../src/lib/brand.js';
 
 const ROOT = new URL('..', import.meta.url).pathname;
 const REG = join(ROOT, 'registry');
@@ -88,6 +91,7 @@ const tokensJson = JSON.parse(readFileSync(join(ROOT, 'build', 'tokens.json'), '
 const themeCss = readFileSync(join(ROOT, 'build', 'theme.css'), 'utf8');
 const productOnly = Object.fromEntries(Object.entries(tokensJson.product).filter(([k, v]) => tokensJson.site[k] !== v));
 const themeItem = {
+	schemaVersion: 1,
 	name: 'theme',
 	type: 'theme',
 	title: `${brand.name} theme`,
@@ -103,6 +107,21 @@ const themeItem = {
 	tokens: { site: tokensJson.site, ...(Object.keys(productOnly).length ? { product: productOnly, dark: tokensJson.dark } : {}) },
 };
 
+function exportsOf(path: string, content: string) {
+	const source = ts.createSourceFile(path, content, ts.ScriptTarget.Latest, true, path.endsWith('.tsx') ? ts.ScriptKind.TSX : ts.ScriptKind.TS);
+	const names = new Set<string>();
+	for (const node of source.statements) {
+		if (ts.isExportDeclaration(node) && node.exportClause && ts.isNamedExports(node.exportClause)) {
+			for (const part of node.exportClause.elements) names.add(part.name.text);
+		}
+		if (ts.canHaveModifiers(node) && ts.getModifiers(node)?.some(m => m.kind === ts.SyntaxKind.ExportKeyword)) {
+			if ('name' in node && node.name && ts.isIdentifier(node.name as ts.Node)) names.add((node.name as ts.Identifier).text);
+			if (ts.isVariableStatement(node)) for (const decl of node.declarationList.declarations) if (ts.isIdentifier(decl.name)) names.add(decl.name.text);
+		}
+	}
+	return [...names];
+}
+
 const index: Record<string, unknown>[] = [];
 const items = [
 	themeItem,
@@ -113,9 +132,23 @@ const items = [
 		const example = join(REG, 'examples', `${d.name}.tsx`);
 		const exampleText = existsSync(example) ? readFileSync(example, 'utf8') : '';
 		if (d.type !== 'lib' && d.type !== 'hook' && !exampleText) problems.push(`${d.name}: no registry/examples/${d.name}.tsx`);
-		index.push({ ...d, dependencies: deps, npm, examples: [...exampleText.matchAll(/export function (\w+)/g)].map((m) => m[1]) });
+		const exampleExports = exportsOf(example, exampleText);
+		const exampleDeps = exampleText ? importsOf(d.name, [`examples/${d.name}.tsx`]) : { internal: [], npm: [] };
+		const files = d.paths.map(p => ({ path: p, content: readFileSync(join(REG, p), 'utf8') }));
+		const exports = [...new Set(files.flatMap(f => exportsOf(f.path, f.content)))];
+		const client = files.some(f => /^['"]use client['"];?/m.test(f.content));
+		index.push({ ...d, exports, client, dependencies: deps, npm, examples: exampleExports });
 		return {
+			schemaVersion: 1,
 			name: d.name,
+			useFor: d.use_for,
+			constraints: d.never,
+			documentation: d.body,
+			source: d.source,
+			exports, client,
+			docsUrl: `${brand.registryUrl}/${d.type === "lib" || d.type === "hook" ? `r/${d.name}.md` : `components/${d.name}`}`,
+			markdownUrl: `${brand.registryUrl}/r/${d.name}.md`,
+			examples: exampleText ? [{ path: `examples/${d.name}.tsx`, content: exampleText, exports: exampleExports, requires: [d.name, ...exampleDeps.internal], packages: exampleDeps.npm, previews: exampleExports.map(name => ({ name, url: `${brand.registryUrl}/preview/${d.name}/${name}` })) }] : [],
 			type: d.type,
 			title: d.title,
 			description: d.description,
@@ -123,7 +156,7 @@ const items = [
 			kinds: d.kinds,
 			requires: [...(d.type === 'lib' ? [] : ['theme']), ...deps],
 			packages: npm,
-			files: d.paths.map((p) => ({ path: p, content: readFileSync(join(REG, p), 'utf8') })),
+			files,
 		};
 	}),
 ];
@@ -139,8 +172,32 @@ mkdirSync(out, { recursive: true });
 for (const item of items) writeFileSync(join(out, `${item.name}.json`), `${JSON.stringify(item, null, 2)}\n`);
 writeFileSync(
 	join(out, 'index.json'),
-	`${JSON.stringify({ name: brand.name, homepage: brand.registryUrl, items: items.map(({ name, type, title, description, surface, kinds, requires }) => ({ name, type, title, description, surface, kinds, requires })) }, null, 2)}\n`,
+	`${JSON.stringify({ schemaVersion: 1, name: brand.name, homepage: brand.registryUrl, guide: `${brand.registryUrl}/agents.md`, items: items.map(({ files: _files, ...item }) => { const { examples: _examples, documentation: _docs, ...entry } = item as typeof item & { examples?: unknown; documentation?: string }; return entry; }) }, null, 2)}\n`,
 );
+// Serve the same usage rules, examples and source to readers that cannot execute JavaScript.
+const publicDir = join(ROOT, 'apps', 'www', 'public');
+const guide = agentGuide();
+writeFileSync(join(publicDir, 'agents.md'), `${guide}\n`);
+writeFileSync(join(out, 'guide.json'), `${JSON.stringify({ schemaVersion: 1, name: brand.name, instructions: guide }, null, 2)}\n`);
+const references = items.map(item => {
+	const detail = item as typeof items[number] & { useFor?: string; constraints?: string[]; documentation?: string; exports?: string[]; client?: boolean; examples?: { path: string; content: string; requires: string[]; packages: string[]; previews: { name: string; url: string }[] }[] };
+	const text = [
+		`# ${item.title}`, item.description, '', `Install: ${cli()} add ${item.name}`,
+		`Requires: ${item.requires.join(', ') || 'none'}`, `Packages: ${item.packages.join(', ') || 'none'}`,
+		`Exports: ${detail.exports?.join(', ') || 'See source'}`, `Client boundary: ${detail.client ? 'yes' : 'not required by this entry file'}`,
+		'', '## Usage', detail.useFor ?? '', ...(detail.constraints ?? []).map(rule => `- Avoid: ${rule}`), detail.documentation ?? '',
+		...(detail.examples?.length ? ['\n## Examples', ...detail.examples.flatMap(e => [`Example components: ${cli()} add ${e.requires.join(' ')}`, ...(e.packages.length ? [`Example packages: ${e.packages.join(', ')}`] : []), e.previews.map(p => `[${p.name}](${p.url})`).join(' | '), `\n${e.path}\n\n\`\`\`tsx\n${e.content}\n\`\`\``])] : []),
+		'\n## Source', ...item.files.map(f => `\n${f.path}\n\n\`\`\`${f.path.endsWith('.css') ? 'css' : 'tsx'}\n${f.content}\n\`\`\``),
+	].join('\n');
+	writeFileSync(join(out, `${item.name}.md`), `${text}\n`);
+	return text;
+});
+const catalog = `# ${brand.name} design system\n\n> Components, tokens and instructions for building ${brand.name} interfaces.\n\n## Start here\n\n- [Agent instructions](${brand.registryUrl}/agents.md): setup, choosing components, composing pages and verification.\n- [Registry JSON](${brand.registryUrl}/r/index.json): complete inventory including dependencies.\n- [Complete reference](${brand.registryUrl}/llms-full.txt): guide, examples and source for every item. Prefer individual references when possible.\n\n## Components and tokens\n\n${items.map(i => `- [${i.title}](${brand.registryUrl}/r/${i.name}.md): ${i.description}`).join('\n')}\n`;
+writeFileSync(join(publicDir, 'llms.txt'), catalog);
+writeFileSync(join(publicDir, 'llms-full.txt'), `${guide}\n\n${references.join('\n\n')}\n`);
+writeFileSync(join(publicDir, 'robots.txt'), `User-agent: *\nAllow: /\nDisallow: /preview/\nSitemap: ${brand.registryUrl}/sitemap.xml\n`);
+const routes = ['', '/agents', '/cli', '/theme', '/components', ...docs.filter(d => d.type !== 'lib' && d.type !== 'hook').map(d => `/components/${d.name}`)];
+writeFileSync(join(publicDir, 'sitemap.xml'), `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">${routes.map(route => `<url><loc>${brand.registryUrl}${route}</loc></url>`).join('')}</urlset>\n`);
 mkdirSync(join(ROOT, 'apps', 'www', 'lib'), { recursive: true });
 writeFileSync(join(ROOT, 'apps', 'www', 'lib', 'registry-index.json'), `${JSON.stringify({ name: brand.name, url: brand.registryUrl, items: index }, null, 2)}\n`);
 // The docs render every example from source: one static import per item that has one.

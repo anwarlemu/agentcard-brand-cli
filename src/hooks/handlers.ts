@@ -46,7 +46,7 @@ export function sessionStart(root: string, input: HookInput = {}): HookResult {
 	} catch {}
 	const state = readState(root);
 	const b = brand();
-	if (!state) return { stdout: `${b.name} design system is installed here. To apply it, run \`${cli()}\` and do the task it prints.` };
+	if (!state) return { stdout: `${b.name} design system is installed here. Read .ds/agent-guide.md or run \`${cli()} guide\`, then inspect components with \`${cli()} show <name>\`. Build to the user’s brief; use the bare command only for a requested conversion.` };
 	const screens = mainScreens(state);
 	const done = screens.filter((sc, i) => taskStatus(root, state, sc, i).done).length;
 	return { stdout: [`${b.name} design system is active (${state.surface}): ${done} of ${screens.length} screens done.`, done < screens.length ? `Continue with \`${cli()}\`: it prints the next task.` : 'Keep new work on the brand: style values are brand tokens; `look <file>` shows how each element is styled.', 'Writes with off-brand values are blocked; you cannot finish while the check fails.'].join('\n') };
@@ -57,7 +57,7 @@ const APPLY_BRAND = /\b(apply|applying|restyle|rebrand|re-brand|reskin|re-skin|t
 export function userPromptSubmit(root: string, input: HookInput): HookResult {
 	const prompt = promptOf(input);
 	if (!APPLY_BRAND.test(prompt)) return {};
-	return { stdout: `${cli()}: to apply the brand, run \`${cli()}\` and do the task it prints; run it again after each task until it says the project is done. Styling only: keep every word, element and each screen's purpose.` };
+	return { stdout: `${cli()}: read .ds/agent-guide.md first. For new interfaces, use init, show and add, then build to the user’s brief. For a requested restyle, preview with \`${cli()} --dry-run\`, run the bare command and complete its tasks while preserving existing content and behavior.` };
 }
 
 export function preToolUse(root: string, input: HookInput): HookResult {

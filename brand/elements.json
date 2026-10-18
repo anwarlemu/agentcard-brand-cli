@@ -1064,16 +1064,18 @@
 				"transition": "border-color var(--ds-duration-fast) var(--ds-easing-out), box-shadow var(--ds-duration-fast) var(--ds-easing-out)"
 			},
 			"states": {
-				":focus": {
-					"border-color": "var(--ds-color-border-brand)",
-					"box-shadow": "var(--ds-shadow-ring-hover)",
-					"outline": "none"
+				":focus-visible": {
+					"outline": "2px solid var(--ds-color-focus-ring)",
+					"outline-offset": "-1px"
+				},
+				"[aria-invalid=true]": {
+					"border-color": "var(--ds-color-status-danger)"
 				}
 			},
-			"tailwind": "px-3 py-2.5 border border-line-strong rounded-none bg-surface text-fg font-sans text-h5 leading-snug transition-[border-color,box-shadow] duration-150 ease-out focus:border-brand focus:shadow-ring-hover",
+			"tailwind": "px-3 py-2.5 border border-line-strong rounded-none bg-surface text-fg font-sans text-h5 leading-snug outline-none focus-visible:outline-2 focus-visible:-outline-offset-1 focus-visible:outline-solid focus-visible:outline-focus-ring aria-invalid:border-danger",
 			"rules": [
 				"Square fields: a 35 percent ink border, no corners, 18px Inter, 10px by 12px padding.",
-				"Focus turns the border blue with a 3px blue ring; labels sit above in 16px Inter."
+				"Focus draws a 2px blue outline just inside the edge. Labels use the 12px display face above the control; invalid fields use the danger border."
 			],
 			"source": "src/app/globals.css (.v7-gate-field input)"
 		},

@@ -10,6 +10,7 @@ const inter = Inter({ subsets: ["latin"], variable: "--font-inter", display: "sw
 export const metadata: Metadata = {
   metadataBase: new URL(registryUrl),
   title: { default: `${registryName} design system`, template: `%s | ${registryName} design system` },
+  alternates: { types: { "text/markdown": "/agents.md", "text/plain": "/llms.txt" } },
   description: `Components, design tokens and CLI guidance for building ${registryName} pages and interfaces.`,
 };
 

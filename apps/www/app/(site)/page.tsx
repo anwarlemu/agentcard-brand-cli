@@ -11,7 +11,7 @@ import { examples } from "@www/lib/examples.generated";
 import { CLI_COMMAND, findItem, registryName } from "@www/lib/registry";
 
 const STEPS = [
-  { name: "components", title: "Choose components", body: "Find a component or page template in the library. Use its add command, then read the usage notes and examples." },
+  { name: "components", title: "Choose components", body: "Find a component or page template in the library. Read its usage notes and examples with show, then add the components the page needs." },
   { name: "implementation", title: "Build the interface", body: "Use the component variants and design tokens. Connect forms, menus and actions to the page’s state and data." },
   { name: "checks", title: "Check the page", body: "Run the token check. Test the interactions and review the layout at desktop and phone widths." },
 ];
@@ -36,11 +36,12 @@ export default function Home() {
         titleClassName="max-w-none text-nowrap text-[length:min(var(--ds-text-hero),7vw)]"
         actions={
           <div className="grid w-[calc(100vw-2*var(--ds-layout-gutter))] max-w-2xl justify-items-center gap-4">
-            <p className="text-body-sm text-fg-on-brand-muted">Set up the design system in your project.</p>
+            <p className="text-body-sm text-fg-on-brand-muted">Install and apply the design system to an existing project.</p>
             <Command command={CLI_COMMAND} wrap />
-            <Button asChild variant="on-brand">
-              <Link href="/components">Browse components</Link>
-            </Button>
+            <div className="flex flex-wrap justify-center gap-3">
+              <Button asChild variant="on-brand"><Link href="/agents">Instructions for agents</Link></Button>
+              <Button asChild variant="on-brand"><Link href="/components">Browse components</Link></Button>
+            </div>
           </div>
         }
       />

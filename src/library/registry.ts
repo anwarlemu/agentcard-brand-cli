@@ -10,8 +10,18 @@ import { pkgPath } from '../lib/paths.js';
 export type ItemType = 'ui' | 'product' | 'site' | 'visual' | 'block' | 'hook' | 'lib' | 'theme';
 export type RegistryFile = { path: string; content: string };
 export type RegistryItem = {
+	schemaVersion?: number;
 	name: string;
 	type: ItemType;
+	useFor?: string;
+	constraints?: string[];
+	documentation?: string;
+	exports?: string[];
+	client?: boolean;
+	docsUrl?: string;
+	markdownUrl?: string;
+	source?: string;
+	examples?: (RegistryFile & { exports: string[]; requires: string[]; packages: string[]; previews: { name: string; url: string }[] })[];
 	title?: string;
 	description?: string;
 	surface?: string;
@@ -20,7 +30,7 @@ export type RegistryItem = {
 	packages?: string[];
 	files?: RegistryFile[];
 };
-export type IndexEntry = Omit<RegistryItem, 'files' | 'packages'>;
+export type IndexEntry = Omit<RegistryItem, 'files' | 'examples' | 'documentation'>;
 
 function sources() {
 	const env = process.env.DS_REGISTRY;
