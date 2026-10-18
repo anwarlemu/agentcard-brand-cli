@@ -3,6 +3,7 @@ import { ArrowUpRight } from "lucide-react";
 
 import { Hero } from "@/components/site/hero";
 import { Button } from "@/components/ui/button";
+import { Window } from "@/components/ui/window";
 import { Block, Command, Page } from "@www/components/chrome";
 import { Prose } from "@www/components/prose";
 import { Thumb } from "@www/components/thumb";
