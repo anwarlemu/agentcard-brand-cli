@@ -1,6 +1,3 @@
-import Link from "next/link";
-
-import { Button } from "@/components/ui/button";
 import { Lockup } from "@/components/ui/logo";
 import { Scan } from "@/components/visuals/band-divider";
 import { CopyButton } from "@/components/ui/copy-button";
@@ -23,9 +20,6 @@ export function CtaCard({ command }: { command: string }) {
           <code className="min-w-0 flex-1 truncate font-code text-micro text-fg-on-brand-muted">{command}</code>
           <CopyButton value={command} label="Copy command" className="size-6" />
         </div>
-        <Button asChild variant="secondary" size="sm" className="w-full">
-          <Link href="/cli">CLI reference</Link>
-        </Button>
       </div>
     </aside>
   );

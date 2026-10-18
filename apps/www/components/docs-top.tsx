@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { ArrowUpRight } from "lucide-react";
 
 import { Lockup } from "@/components/ui/logo";
 import { Scan } from "@/components/visuals/band-divider";
@@ -27,9 +26,6 @@ export function DocsTop({ entries, repo }: { entries: SearchEntry[]; repo: strin
           <a href={repo} className={cn(KEY, "border-line-on-brand bg-glass bg-(image:--ds-glass-sheen) text-white shadow-floating hover:border-line-on-brand-strong focus-visible:outline-white max-md:px-2.5")}>
             GitHub
           </a>
-          <Link href="/cli" className={cn(KEY, "border-line-key bg-white text-fg-brand shadow-key hover:bg-sky-wash focus-visible:outline-white max-md:px-2.5")}>
-            CLI <ArrowUpRight aria-hidden className="size-3 max-md:hidden" />
-          </Link>
         </div>
       </div>
       <div aria-hidden className="h-5 bg-[linear-gradient(color-mix(in_srgb,var(--ds-color-white)_var(--ds-band-mix-1),var(--ds-color-bg-brand))_0_25%,color-mix(in_srgb,var(--ds-color-white)_var(--ds-band-mix-2),var(--ds-color-bg-brand))_25%_50%,color-mix(in_srgb,var(--ds-color-white)_var(--ds-band-mix-3),var(--ds-color-bg-brand))_50%_75%,color-mix(in_srgb,var(--ds-color-white)_var(--ds-band-mix-4),var(--ds-color-bg-brand))_75%_100%)]" />
@@ -51,9 +47,6 @@ export function DocsHeader({ repo }: { repo: string }) {
         <a href={repo} className={cn(KEY, "border-hairline bg-surface text-fg shadow-key hover:bg-sky-wash focus-visible:outline-focus-ring")}>
           GitHub
         </a>
-        <Link href="/cli" className={cn(KEY, "border-line-brand-edge bg-primary text-on-primary shadow-key-brand hover:bg-primary-hover focus-visible:outline-focus-ring")}>
-          CLI <ArrowUpRight aria-hidden className="size-3" />
-        </Link>
       </div>
     </header>
   );

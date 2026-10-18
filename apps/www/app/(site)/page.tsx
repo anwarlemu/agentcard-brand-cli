@@ -33,7 +33,6 @@ export default function Home() {
             <p className="text-body-sm text-fg-on-brand-muted">Install and apply the design system to an existing project.</p>
             <Command command={CLI_COMMAND} wrap />
             <div className="flex flex-wrap justify-center gap-3">
-              <Button asChild variant="on-brand"><Link href="/agents">Instructions for agents</Link></Button>
               <Button asChild variant="on-brand"><Link href="/components">Browse components</Link></Button>
             </div>
           </div>

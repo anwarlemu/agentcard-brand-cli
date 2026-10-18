@@ -47,7 +47,7 @@ export default function ThemePage() {
         <Command command={`${CLI_COMMAND} add theme`} />
       </PageIntro>
 
-      <Block title="Color" description="Choose tokens by their role: surface, text, border, action or status.">
+      <Block title="Colour" description="Choose tokens by their role: surface, text, border, action or status.">
         <div className="grid gap-6">
           {GROUPS.map((g) => {
             const list = colors.filter(([k]) => g.test.test(k) && !GROUPS.slice(0, GROUPS.indexOf(g)).some((p) => p.test.test(k)));

@@ -72,7 +72,6 @@ export default async function ComponentPage({ params }: { params: Promise<{ name
           <p className="mt-4 flex flex-wrap gap-x-5 gap-y-2 text-body-sm text-fg-brand">
             <a href={`/r/${item.name}.md`} className="underline underline-offset-4">Text reference</a>
             <a href={`/r/${item.name}.json`} className="underline underline-offset-4">Source and examples as JSON</a>
-            <Link href="/agents" className="underline underline-offset-4">Agent instructions</Link>
           </p>
           <Command command={`${CLI_COMMAND} add ${item.name}`} className="mt-7 max-w-none" />
         </header>

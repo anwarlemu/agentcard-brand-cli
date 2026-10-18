@@ -30,8 +30,6 @@ export function Header({ repo, library, entries }: { repo: string; library: { ti
           { label: "Overview", href: "/", current: pathname === "/" },
           { label: "Library", current: pathname.startsWith("/components"), items: library },
           { label: "Theme", href: "/theme", current: pathname.startsWith("/theme") },
-          { label: "Agents", href: "/agents", current: pathname.startsWith("/agents") },
-          { label: "CLI", href: "/cli", current: pathname.startsWith("/cli") },
         ]}
         action={{ label: "GitHub", href: repo }}
       />

@@ -9,7 +9,6 @@ export default function SiteLayout({ children }: { children: React.ReactNode }) 
   const entries = [
     ...items.map((i) => ({ name: i.name, title: i.title, group: label[i.type] ?? "Library", href: `/components/${i.name}` })),
     { name: "theme", title: "Theme", group: "Docs", href: "/theme" },
-    { name: "cli", title: "CLI", group: "Docs", href: "/cli" },
   ];
   return (
     <>
