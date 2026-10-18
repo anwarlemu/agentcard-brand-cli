@@ -17,12 +17,6 @@ const COMMANDS = [
   ["review <url> --any", "Capture and review a page at desktop and phone widths."],
 ];
 
-const FLOW = [
-  { name: "components", title: "Add components", body: "Read the component’s usage notes and add it by name. The CLI copies the source and installs its dependencies." },
-  { name: "implementation", title: "Build the page", body: "Compose the components, use the design tokens for the layout, and connect the controls to real state and actions." },
-  { name: "checks", title: "Verify the result", body: "Run the project’s checks, test the interactions, and review the page at desktop and phone widths." },
-];
-
 export default function CliPage() {
   return <Page>
     <PageIntro title="CLI" lead="Install the CLI once from the project root. Then use it to add components, find tokens and check your work.">
@@ -33,15 +27,6 @@ export default function CliPage() {
       <Code title="terminal" code={`npx agentcard-ds init
 npx agentcard-ds guide
 npx agentcard-ds list --json`} />
-    </Block>
-
-    <Block title="Build a page">
-      <ol className="grid gap-4 md:grid-cols-3">
-        {FLOW.map((step) => <li key={step.name}><Window name={step.name} className="h-full" bodyClassName="grid content-start gap-2 p-6">
-          <h3 className="font-display text-h3 leading-display font-medium tracking-tight">{step.title}</h3>
-          <p className="text-body-sm text-fg-muted">{step.body}</p>
-        </Window></li>)}
-      </ol>
     </Block>
 
     <Block title="Instructions for coding agents" description="Include this with the page requirements.">
