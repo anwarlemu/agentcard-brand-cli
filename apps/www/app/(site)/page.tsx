@@ -3,18 +3,11 @@ import { ArrowUpRight } from "lucide-react";
 
 import { Hero } from "@/components/site/hero";
 import { Button } from "@/components/ui/button";
-import { Window } from "@/components/ui/window";
 import { Block, Command, Page } from "@www/components/chrome";
 import { Prose } from "@www/components/prose";
 import { Thumb } from "@www/components/thumb";
 import { examples } from "@www/lib/examples.generated";
 import { CLI_COMMAND, findItem, registryName } from "@www/lib/registry";
-
-const STEPS = [
-  { name: "components", title: "Choose components", body: "Find a component or page template in the library. Read its usage notes and examples with show, then add the components the page needs." },
-  { name: "implementation", title: "Build the interface", body: "Use the component variants and design tokens. Connect forms, menus and actions to the page’s state and data." },
-  { name: "checks", title: "Check the page", body: "Run the token check. Test the interactions and review the layout at desktop and phone widths." },
-];
 
 // A few pieces that carry the look, each drawn live.
 const SHOWCASE: { item: string; example: string; scale: number; align?: "start" }[] = [
@@ -46,19 +39,6 @@ export default function Home() {
         }
       />
       <Page className="pt-24 md:pt-28">
-        <Block title="Build a page" description="Once the CLI is installed, choose components from the library, build the interface and check the result.">
-          <ol className="grid gap-4 md:grid-cols-3">
-            {STEPS.map((s) => (
-              <li key={s.name}>
-                <Window name={s.name} className="h-full" bodyClassName="grid content-start gap-2 p-6">
-                  <h3 className="font-display text-h3 leading-display font-medium tracking-tight">{s.title}</h3>
-                  <p className="text-body-sm text-fg-muted">{s.body}</p>
-                </Window>
-              </li>
-            ))}
-          </ol>
-        </Block>
-
         <Block title="Components and page sections" description="Preview the components, read the usage notes and copy the source into the project.">
           <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {SHOWCASE.map((s) => {
