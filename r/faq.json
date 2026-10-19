@@ -1,0 +1,65 @@
+{
+  "schemaVersion": 1,
+  "name": "faq",
+  "useFor": "Pass title, lead and topics containing questions and answers. A single topic hides the tabs. Set bar to label the window.",
+  "constraints": [
+    "More than four topics",
+    "Answers longer than a short paragraph",
+    "Questions in caps",
+    "A chevron in place of the drawn +"
+  ],
+  "documentation": "",
+  "source": "agentcard-website src/components/faq.tsx, src/app/globals.css:932 (.faq2, .faq-list); agentcard.sh / (.faq-card, .faq-tabs, .faq-list, computed)",
+  "exports": [
+    "Faq",
+    "FaqTopic",
+    "FaqItem"
+  ],
+  "client": true,
+  "docsUrl": "https://agentcard-ds.vercel.app/components/faq",
+  "markdownUrl": "https://agentcard-ds.vercel.app/r/faq.md",
+  "examples": [
+    {
+      "path": "examples/faq.tsx",
+      "content": "import { Faq } from \"@/components/site/faq\";\n\nexport function Site() {\n  return (\n    <section className=\"mx-auto w-full max-w-(--ds-frame-column) py-20\">\n      <Faq\n        bar=\"faq.help / Agentcard\"\n        title=\"Frequently asked questions\"\n        lead=\"Everything you need to know about Agentcard.\"\n        topics={[\n          {\n            label: \"General\",\n            items: [\n              { question: \"What does Agentcard do?\", answer: \"Agentcard lets AI agents buy anything online: it stores your customers’ cards or issues new ones, and pays where a human would.\" },\n              { question: \"Vault or Issuing: which should we start with?\", answer: \"Vault if your customers already have cards they want their agent to use; Issuing if the agent should spend from a card you fund.\" },\n              { question: \"Is Agentcard B2B or for consumers?\", answer: \"Both. Consumer apps store their users’ cards; companies give cards to their own agents.\" },\n              { question: \"Does the merchant need to integrate anything?\", answer: \"No. The agent pays at checkout with a card, as a person would.\" },\n              { question: \"How is this different from Stripe Link?\", answer: \"Link fills in a saved card for a person. Agentcard lets an agent pay on its own, within the limits the owner sets.\" },\n              { question: \"How does the Purchase Agent work, and how reliable is it?\", answer: \"It drives a real browser through checkout and hands the result back to your agent.\" },\n              { question: \"Do you support x402, AP2 or other agent payment protocols?\", answer: \"Yes, where the merchant supports them; a card works everywhere else.\" },\n            ],\n          },\n          {\n            label: \"Vault\",\n            items: [\n              { question: \"Where are the cards stored?\", answer: \"Cards are encrypted on the user’s device before they are stored.\" },\n              { question: \"Can users approve each payment?\", answer: \"Yes, with their passkey or master password, or automatically within the limits they set.\" },\n              { question: \"Who owns the Vault?\", answer: \"You do, and so does every card in it.\" },\n            ],\n          },\n          {\n            label: \"Issuing\",\n            items: [\n              { question: \"What kinds of cards can we issue?\", answer: \"One-time cards for a single purchase, and multi-use cards with a monthly limit.\" },\n              { question: \"How are the cards funded?\", answer: \"From a balance you top up.\" },\n            ],\n          },\n        ]}\n      />\n    </section>\n  );\n}\n",
+      "exports": [
+        "Site"
+      ],
+      "requires": [
+        "faq"
+      ],
+      "packages": [],
+      "previews": [
+        {
+          "name": "Site",
+          "url": "https://agentcard-ds.vercel.app/preview/faq/Site"
+        }
+      ]
+    }
+  ],
+  "type": "site",
+  "title": "FAQ",
+  "description": "FAQ section with optional topic tabs and expandable answers.",
+  "surface": "site",
+  "kinds": [
+    "faq",
+    "tabs",
+    "window",
+    "window-bar"
+  ],
+  "requires": [
+    "theme",
+    "accordion",
+    "window",
+    "utils"
+  ],
+  "packages": [
+    "@radix-ui/react-tabs"
+  ],
+  "files": [
+    {
+      "path": "components/site/faq.tsx",
+      "content": "\"use client\";\n\nimport * as React from \"react\";\nimport * as TabsPrimitive from \"@radix-ui/react-tabs\";\n\nimport { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from \"@/components/ui/accordion\";\nimport { Window } from \"@/components/ui/window\";\nimport { cn } from \"@/lib/utils\";\n\n// The FAQ (agentcard.sh home; .faq-card, .faq-tabs, .faq-list): one large window (the sky bar, faq.help) holding the\n// 52px title, a one-line lead, topic tabs on the brand's sunken track with the blue key gliding to the chosen one, and\n// the questions on light rules. A question is the display face at 14px and 500 beside a drawn +, which turns into an x\n// as the answer slides open; hovering washes the row and turns it blue. The topics share one cell, so the window keeps\n// the tallest topic's height and never jumps; switching fades the old questions out and brings the new ones up in turn.\n\ntype FaqItem = { question: React.ReactNode; answer: React.ReactNode };\ntype FaqTopic = { label: string; items: FaqItem[] };\n\nconst QUESTION =\n  \"group items-baseline gap-4 rounded-sm px-3.5 py-5 font-display text-body-sm [line-height:1.2] font-medium [letter-spacing:-0.01em] text-fg transition-[background-color,color] duration-(--ds-duration-fast) ease-out hover:bg-[color-mix(in_srgb,var(--ds-color-ink)_5%,transparent)] hover:text-fg-brand data-[state=open]:text-fg-brand motion-reduce:transition-none\";\n\n// The + is drawn, not typed: a bar across and a bar down, turning an eighth into an x when open.\nconst PLUS =\n  \"h-3.5 w-7.5 flex-none self-center bg-[linear-gradient(currentColor,currentColor),linear-gradient(currentColor,currentColor)] bg-[length:12px_1.5px,1.5px_12px] bg-center bg-no-repeat text-fg-faint transition-[rotate,color] duration-200 ease-out group-hover:text-fg-brand group-data-[state=open]:rotate-45 group-data-[state=open]:text-fg-brand motion-reduce:transition-none\";\n\nfunction Faq({\n  title,\n  lead,\n  topics,\n  bar = \"faq.help\",\n  className,\n  ...props\n}: Omit<React.ComponentProps<\"div\">, \"title\"> & { title: React.ReactNode; lead?: React.ReactNode; topics: FaqTopic[]; bar?: React.ReactNode }) {\n  const [active, setActive] = React.useState(0);\n  const index = Math.min(active, topics.length - 1);\n  const tabbed = topics.length > 1;\n  return (\n    <Window\n      name={bar}\n      data-slot=\"faq\"\n      className={cn(\"mx-auto w-full max-w-198 shadow-[var(--ds-shadow-card),0_18px_40px_-24px_color-mix(in_srgb,var(--ds-color-ink)_45%,transparent)]\", className)}\n      bodyClassName=\"flex flex-col items-center px-5 pt-5 pb-5 md:px-14 md:pt-13.5 md:pb-13.5\"\n      {...props}\n    >\n      <div className=\"flex flex-col items-center gap-4 text-center\">\n        <h2 className=\"font-display text-h1 leading-display font-medium tracking-tight text-balance\">{title}</h2>\n        {lead && <p className=\"max-w-[36ch] text-body text-fg-muted\">{lead}</p>}\n      </div>\n      <TabsPrimitive.Root value={String(index)} onValueChange={(v) => setActive(Number(v))} className=\"flex w-full max-w-170 flex-col\">\n        {tabbed && (\n          <TabsPrimitive.List\n            style={{ \"--tabs\": topics.length, \"--tab\": index } as React.CSSProperties}\n            className=\"relative isolate mt-8 mb-6 grid grid-cols-[repeat(var(--tabs),minmax(0,1fr))] gap-1 rounded-card border border-hairline bg-subtle p-1 shadow-well md:mt-11 md:mb-9\"\n          >\n            {/* The blue key: one thumb under the labels, travelling to the chosen tab. */}\n            <span\n              aria-hidden\n              className=\"pointer-events-none absolute top-1 bottom-1 left-1 w-[calc((100%-0.5rem-(var(--tabs)-1)*0.25rem)/var(--tabs))] translate-x-[calc(var(--tab)*(100%+0.25rem))] rounded-control border border-line-brand-edge bg-primary shadow-key-brand transition-[translate] duration-(--ds-duration-moderate) ease-in-out motion-reduce:transition-none\"\n            />\n            {topics.map((topic, i) => (\n              <TabsPrimitive.Trigger\n                key={topic.label}\n                value={String(i)}\n                className=\"relative z-10 flex h-10 items-center justify-center rounded-control border border-transparent px-4 font-display text-body-sm whitespace-nowrap text-fg-muted outline-none transition-[background-color,color] duration-150 ease-out hover:bg-[color-mix(in_srgb,var(--ds-color-ink)_6%,transparent)] hover:text-fg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-solid focus-visible:outline-focus-ring data-[state=active]:text-on-primary data-[state=active]:delay-100 data-[state=active]:hover:bg-transparent max-sm:px-0 motion-reduce:transition-none\"\n              >\n                {topic.label}\n              </TabsPrimitive.Trigger>\n            ))}\n          </TabsPrimitive.List>\n        )}\n        <div className={cn(\"grid w-full\", !tabbed && \"mt-8 md:mt-11\")}>\n          {topics.map((topic, t) => (\n            <TabsPrimitive.Content\n              key={topic.label}\n              value={String(t)}\n              forceMount\n              className=\"group/topic [grid-area:1/1] self-start outline-none transition-[visibility] duration-150 data-[state=inactive]:pointer-events-none data-[state=inactive]:invisible\"\n            >\n              <Accordion type=\"multiple\">\n                {topic.items.map((item, i) => (\n                  <AccordionItem\n                    key={i}\n                    value={String(i)}\n                    // The chosen topic's questions come up one after another; the old ones fade out at once.\n                    style={{ transitionDelay: t === index ? `${110 + i * 22}ms` : \"0ms\" }}\n                    className=\"border-b border-[color-mix(in_srgb,var(--ds-color-ink)_20%,transparent)] transition-[opacity,translate] duration-(--ds-duration-moderate) ease-out first:border-t first:border-t-line group-data-[state=inactive]/topic:opacity-0 group-data-[state=inactive]/topic:duration-150 motion-safe:group-data-[state=inactive]/topic:translate-y-2\"\n                  >\n                    <AccordionTrigger className={QUESTION} icon={<span aria-hidden className={PLUS} />}>\n                      {item.question}\n                    </AccordionTrigger>\n                    <AccordionContent className=\"max-w-135 px-3.5 pb-5.5 text-body-sm [line-height:1.8] text-fg-muted opacity-80\">{item.answer}</AccordionContent>\n                  </AccordionItem>\n                ))}\n              </Accordion>\n            </TabsPrimitive.Content>\n          ))}\n        </div>\n      </TabsPrimitive.Root>\n    </Window>\n  );\n}\n\nexport { Faq, type FaqTopic, type FaqItem };\n"
+    }
+  ]
+}

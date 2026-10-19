@@ -1,0 +1,64 @@
+{
+  "schemaVersion": 1,
+  "name": "prose",
+  "useFor": "Use for documentation, guides, legal content and release notes. Pass semantic HTML or rendered Markdown. Use wide for a wider content column.",
+  "constraints": [
+    "Bold headings or table headers",
+    "Body text wider than 680px",
+    "Links without the underline",
+    "Centered long text"
+  ],
+  "documentation": "`Prose` props: `eyebrow`, `title`, `meta` (the head; any of them renders it), `wide` (820px instead of 680px),\n`bodyClassName`, and children (the HTML to style). It styles `p`, `h2` (24px), `h3` (16px), `h4`, `ul`, `ol`, `a`,\n`strong`, `table` with `th` and `td`, inline `code`, `pre`, `blockquote`, `hr`, `img` and `figcaption`.\n\nThe brand's tables set headers and `strong` in 700 and its h3 in 600; here they are medium (500), as the brand's rules\nsay nothing is bold.",
+  "source": "agentcard-website src/app/globals.css:1808 (.v7-about-sheet), 2199 (.v7-guide-prose); agentcard.sh/terms and /card-terms (computed: .v7-about-head, .v7-prose)",
+  "exports": [
+    "Prose",
+    "ProseProps"
+  ],
+  "client": false,
+  "docsUrl": "https://agentcard-ds.vercel.app/components/prose",
+  "markdownUrl": "https://agentcard-ds.vercel.app/r/prose.md",
+  "examples": [
+    {
+      "path": "examples/prose.tsx",
+      "content": "import { Prose } from \"@/components/site/prose\";\n\nexport function Site() {\n  return (\n    <div className=\"px-5 py-16 sm:px-0\">\n      <Prose eyebrow=\"Compliance\" title=\"Terms of Use\" meta=\"Last updated July 10, 2026\">\n        <p>\n          Welcome to the service (the “Service”). These terms govern your use of the website, the cards and the tools for agents. By using the Service you agree to them and to our{\" \"}\n          <a href=\"https://legal.raincards.xyz/legal/privacy-policy\">Privacy Policy</a>.\n        </p>\n        <h2>Eligibility</h2>\n        <p>\n          You must be at least 18 years old and able to form a binding contract. Cards are issued under the <a href=\"https://agentcard.sh/card-terms\">Cardholder Agreement</a>.\n        </p>\n        <h2>Acceptable use</h2>\n        <p>You agree not to:</p>\n        <ul>\n          <li>Use the services for any unlawful purpose.</li>\n          <li>Attempt unauthorized access to any account or system.</li>\n          <li>Interfere with or disrupt the services.</li>\n        </ul>\n        <h3>Additional definitions</h3>\n        <ol>\n          <li>The issuing bank is an express third-party beneficiary of these terms.</li>\n          <li>\n            An API key such as <code>sk_live_…</code> is yours to keep secret.\n          </li>\n        </ol>\n        <h2>Fees</h2>\n        <table>\n          <thead>\n            <tr>\n              <th colSpan={2}>Fees</th>\n            </tr>\n          </thead>\n          <tbody>\n            <tr>\n              <th>Annual fees</th>\n              <td>None</td>\n            </tr>\n            <tr>\n              <th>International transaction</th>\n              <td>1% of each transaction in U.S. dollars</td>\n            </tr>\n            <tr>\n              <th>Late payment</th>\n              <td>\n                <strong>None.</strong> Learn more at <a href=\"https://www.consumerfinance.gov\">consumerfinance.gov</a>.\n              </td>\n            </tr>\n          </tbody>\n        </table>\n        <pre>\n          <code>{`npx agent-cards setup`}</code>\n        </pre>\n      </Prose>\n    </div>\n  );\n}\n",
+      "exports": [
+        "Site"
+      ],
+      "requires": [
+        "prose"
+      ],
+      "packages": [],
+      "previews": [
+        {
+          "name": "Site",
+          "url": "https://agentcard-ds.vercel.app/preview/prose/Site"
+        }
+      ]
+    }
+  ],
+  "type": "site",
+  "title": "Prose",
+  "description": "Typography and layout for long-form content.",
+  "surface": "site",
+  "kinds": [
+    "page",
+    "column",
+    "eyebrow",
+    "hero-title",
+    "body-text",
+    "link",
+    "table",
+    "code-window"
+  ],
+  "requires": [
+    "theme",
+    "utils"
+  ],
+  "packages": [],
+  "files": [
+    {
+      "path": "components/site/prose.tsx",
+      "content": "import * as React from \"react\";\n\nimport { cn } from \"@/lib/utils\";\n\n// Long-form text, as the brand sets its legal pages (agentcard.sh/terms, /card-terms, /updates: .v7-about-sheet and\n// .v7-prose): a 680px reading column; an optional head (a blue eyebrow, the 52px title and a small caps line, over a\n// rule); then semantic HTML styled in place. Paragraphs and lists in 16px Inter at 28px and 82 percent ink, headings in\n// the display face (24px h2, 16px h3), links in blue with an underline, tables in 14px rows ruled in ink, code in the\n// display face on a sky chip. Pass markdown output or plain elements as children.\n\nconst BODY = [\n  \"text-body leading-7 text-fg\",\n  // Rhythm: 16px between blocks, more above a heading.\n  \"[&>*+*]:mt-4 [&>h2]:mt-11 [&>h3]:mt-7.5 [&>:first-child]:mt-0\",\n  // Paragraphs and lists read at 82 percent ink.\n  \"[&_p]:text-ink/82 [&_li]:text-ink/82\",\n  // Headings.\n  \"[&_h2]:font-display [&_h2]:text-h3 [&_h2]:[line-height:1.2] [&_h2]:font-medium [&_h2]:tracking-tight [&_h2]:text-fg\",\n  \"[&_h3]:font-display [&_h3]:text-body [&_h3]:leading-display [&_h3]:font-medium [&_h3]:tracking-tight [&_h3]:text-fg\",\n  \"[&_h4]:font-display [&_h4]:text-body-sm [&_h4]:font-medium [&_h4]:text-fg\",\n  // Lists.\n  \"[&_ul]:flex [&_ul]:list-disc [&_ul]:flex-col [&_ul]:gap-2 [&_ul]:pl-5.5 [&_ol]:flex [&_ol]:list-decimal [&_ol]:flex-col [&_ol]:gap-2 [&_ol]:pl-5.5 [&_li>ul]:mt-2 [&_li>ol]:mt-2 [&_li]:marker:text-fg-brand\",\n  // Links: blue with the underline, a touch thicker on hover.\n  \"[&_a]:text-fg-brand [&_a]:underline [&_a]:decoration-1 [&_a]:underline-offset-3 [&_a]:rounded-chip [&_a]:outline-none [&_a:hover]:decoration-2 [&_a:focus-visible]:outline-2 [&_a:focus-visible]:outline-offset-2 [&_a:focus-visible]:outline-focus-ring\",\n  // Emphasis stays medium: the brand is never bold.\n  \"[&_strong]:font-medium [&_strong]:text-fg [&_b]:font-medium\",\n  // Tables: 14px, every cell ruled, header cells on a faint wash.\n  \"[&_table]:my-4.5 [&_table]:w-full [&_table]:border-collapse [&_table]:text-body-sm [&_table]:leading-relaxed\",\n  \"[&_th]:border [&_th]:border-ink/18 [&_th]:bg-ink/5 [&_th]:px-3 [&_th]:py-2.5 [&_th]:text-left [&_th]:align-top [&_th]:font-medium\",\n  \"[&_td]:border [&_td]:border-ink/18 [&_td]:px-3 [&_td]:py-2.5 [&_td]:align-top\",\n  // Code: a sky chip inline, the ink window for blocks.\n  \"[&_:not(pre)>code]:rounded-sm [&_:not(pre)>code]:border [&_:not(pre)>code]:border-ring-tint [&_:not(pre)>code]:bg-sky-wash [&_:not(pre)>code]:px-1.5 [&_:not(pre)>code]:py-px [&_:not(pre)>code]:font-mono [&_:not(pre)>code]:text-body-sm [&_:not(pre)>code]:text-fg-brand [&_:not(pre)>code]:[overflow-wrap:anywhere]\",\n  \"[&_pre]:overflow-x-auto [&_pre]:rounded-control [&_pre]:bg-code [&_pre]:px-4 [&_pre]:py-3.5 [&_pre]:font-mono [&_pre]:text-caption [&_pre]:leading-4.5 [&_pre]:text-white/88 [&_pre]:shadow-code\",\n  // Quotes, rules and figures.\n  \"[&_blockquote]:border-l-2 [&_blockquote]:border-brand [&_blockquote]:pl-4 [&_blockquote]:text-ink/70\",\n  \"[&_hr]:my-11 [&_hr]:border-0 [&_hr]:border-t [&_hr]:border-ink/18\",\n  \"[&_img]:h-auto [&_img]:max-w-full [&_figcaption]:mt-2 [&_figcaption]:text-body-sm [&_figcaption]:text-fg-muted\",\n].join(\" \");\n\ntype ProseProps = React.ComponentProps<\"article\"> & {\n  /** The blue eyebrow over the title (Compliance, Changelog). */\n  eyebrow?: React.ReactNode;\n  /** The page title, 52px in the display face (34px on phones). */\n  title?: React.ReactNode;\n  /** The small caps line under the title (Last updated July 10, 2026). */\n  meta?: React.ReactNode;\n  /** Wider column (820px) for a changelog. */\n  wide?: boolean;\n  /** Classes for the body (the styled HTML). */\n  bodyClassName?: string;\n};\n\nfunction Prose({ eyebrow, title, meta, wide = false, className, bodyClassName, children, ...props }: ProseProps) {\n  const head = eyebrow || title || meta;\n  return (\n    <article data-slot=\"prose\" className={cn(\"mx-auto w-full\", wide ? \"max-w-205\" : \"max-w-(--ds-layout-text)\", className)} {...props}>\n      {head ? (\n        <header className=\"border-b border-ink/18 pb-7\">\n          {eyebrow ? <p className=\"font-display text-caption leading-body tracking-label text-fg-label\">{eyebrow}</p> : null}\n          {title ? <h1 className=\"mt-2.5 font-display text-h1 leading-heading font-medium tracking-tight\">{title}</h1> : null}\n          {meta ? <p className=\"mt-3 font-display text-caption leading-body tracking-label text-ink/62 uppercase\">{meta}</p> : null}\n        </header>\n      ) : null}\n      <div className={cn(BODY, head && \"mt-8.5\", bodyClassName)}>{children}</div>\n    </article>\n  );\n}\n\nexport { Prose };\nexport type { ProseProps };\n"
+    }
+  ]
+}

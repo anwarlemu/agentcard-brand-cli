@@ -1,0 +1,57 @@
+{
+  "schemaVersion": 1,
+  "name": "tag-filter",
+  "useFor": "Connect onAddTag and onRemoveTag to the filter state, then apply those filters to the results.",
+  "constraints": [
+    "Filters that hide which tags are on",
+    "Colored tags per category"
+  ],
+  "documentation": "",
+  "source": "Extension from agentcard-website src/app/globals.css (.v7-guide-prose code, .v7-guide-search-field, .v7-guide-search-results)",
+  "exports": [
+    "TagFilter"
+  ],
+  "client": true,
+  "docsUrl": "https://agentcard-ds.vercel.app/components/tag-filter",
+  "markdownUrl": "https://agentcard-ds.vercel.app/r/tag-filter.md",
+  "examples": [
+    {
+      "path": "examples/tag-filter.tsx",
+      "content": "\"use client\";\n\nimport { useState } from \"react\";\n\nimport { TagFilter } from \"@/components/ui/tag-filter\";\n\nexport function Site() {\n  const [tags, setTags] = useState([\"travel\", \"software\"]);\n  return (\n    <TagFilter\n      tags={tags}\n      tagOptions={[\"travel\", \"software\", \"office\", \"meals\", \"ads\"]}\n      onAddTag={(tag) => setTags((t) => [...t, tag])}\n      onRemoveTag={(tag) => setTags((t) => t.filter((x) => x !== tag))}\n    />\n  );\n}\n",
+      "exports": [
+        "Site"
+      ],
+      "requires": [
+        "tag-filter"
+      ],
+      "packages": [],
+      "previews": [
+        {
+          "name": "Site",
+          "url": "https://agentcard-ds.vercel.app/preview/tag-filter/Site"
+        }
+      ]
+    }
+  ],
+  "type": "ui",
+  "title": "Tag filter",
+  "description": "Searchable tag picker with removable selected filters.",
+  "surface": "site",
+  "kinds": [
+    "chip"
+  ],
+  "requires": [
+    "theme",
+    "popover",
+    "utils"
+  ],
+  "packages": [
+    "lucide-react"
+  ],
+  "files": [
+    {
+      "path": "components/ui/tag-filter.tsx",
+      "content": "\"use client\";\n\nimport * as React from \"react\";\nimport { Check, X } from \"lucide-react\";\n\nimport { Popover, PopoverContent, PopoverTrigger } from \"@/components/ui/popover\";\nimport { cn } from \"@/lib/utils\";\n\n// A tag filter. The picked tags are the guides' inline code chips (.v7-guide-prose code: blue text on the pale sky, a\n// faint blue edge, small corners), each clearing itself; then a small white key, Tags, opens the brand's floating panel\n// with the guides' search panel inside it in small (.v7-guide-search-field: a blue search mark, a borderless field in the\n// display face over a dotted rule; .v7-guide-search-results: rows that take the sky wash under the pointer), each row\n// ticked in blue when picked.\nfunction TagFilter({\n  tags,\n  tagOptions,\n  onAddTag,\n  onRemoveTag,\n  className,\n}: {\n  tags: string[];\n  tagOptions: string[];\n  onAddTag: (tag: string) => void;\n  onRemoveTag: (tag: string) => void;\n  className?: string;\n}) {\n  const [open, setOpen] = React.useState(false);\n  const [query, setQuery] = React.useState(\"\");\n  const options = [...new Set([...tags, ...tagOptions])].filter((tag) => tag.toLowerCase().includes(query.trim().toLowerCase()));\n  const selected = new Set(tags);\n\n  return (\n    <div data-slot=\"tag-filter\" className={cn(\"flex flex-wrap items-center gap-1.5\", className)}>\n      {tags.map((tag) => (\n        <button\n          key={tag}\n          type=\"button\"\n          onClick={() => onRemoveTag(tag)}\n          aria-label={`Clear tag filter ${tag}`}\n          className=\"flex h-8 items-center gap-1 rounded-sm border border-line-window bg-sky-wash pr-2 pl-2.5 font-display text-body-sm leading-none text-fg-brand outline-none transition-[background-color] duration-150 ease-out hover:bg-blue-10 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-solid focus-visible:outline-focus-ring motion-reduce:transition-none [&_svg]:opacity-70\"\n        >\n          {tag}\n          <X className=\"size-3\" strokeWidth={1.75} />\n        </button>\n      ))}\n      <Popover open={open} onOpenChange={setOpen}>\n        <PopoverTrigger\n          aria-label=\"Filter by tags\"\n          className=\"flex h-8 items-center gap-2 rounded-control border border-hairline bg-surface px-3 font-display text-caption whitespace-nowrap text-fg shadow-key outline-none transition-[background-color,box-shadow,translate] duration-150 ease-out hover:bg-sky-wash focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-solid focus-visible:outline-focus-ring active:translate-y-px active:shadow-pressed data-[state=open]:bg-sky-wash motion-reduce:transition-none motion-reduce:active:translate-y-0\"\n        >\n          Tags\n          <svg aria-hidden viewBox=\"0 0 10 6\" className=\"h-1.5 w-2.5 fill-current text-fg-muted\">\n            <path d=\"M0 0h10L5 6z\" />\n          </svg>\n        </PopoverTrigger>\n        <PopoverContent align=\"end\" sideOffset={6} className=\"w-64 p-0\">\n          <label className=\"flex items-center gap-2.5 border-b-2 border-dotted border-line-mid px-3.5 text-fg-brand\">\n            <svg aria-hidden viewBox=\"0 0 16 16\" className=\"size-3.75 shrink-0 fill-none stroke-current [stroke-linecap:round] [stroke-width:1.5]\">\n              <circle cx=\"7\" cy=\"7\" r=\"4.75\" />\n              <path d=\"M10.5 10.5 14 14\" />\n            </svg>\n            <input\n              autoFocus\n              type=\"search\"\n              value={query}\n              onChange={(event) => setQuery(event.target.value)}\n              placeholder=\"Search tags\"\n              aria-label=\"Search tags\"\n              className=\"h-11 min-w-0 flex-1 bg-transparent font-display text-body text-fg caret-primary outline-none placeholder:text-fg-faint [&::-webkit-search-cancel-button]:hidden\"\n            />\n          </label>\n          <ul className=\"max-h-64 overflow-y-auto p-1\">\n            {options.length === 0 && <li className=\"px-2.5 py-2 font-display text-body-sm text-fg-muted\">{tagOptions.length === 0 ? \"No tags yet\" : \"No matching tags\"}</li>}\n            {options.map((tag) => {\n              const isSelected = selected.has(tag);\n              return (\n                <li key={tag}>\n                  <button\n                    type=\"button\"\n                    aria-pressed={isSelected}\n                    onClick={() => (isSelected ? onRemoveTag(tag) : onAddTag(tag))}\n                    className={cn(\n                      \"flex h-9 w-full items-center gap-2.5 rounded-sm px-2.5 text-left font-display text-body-sm outline-none hover:bg-search-selected focus-visible:bg-search-selected\",\n                      isSelected ? \"text-fg\" : \"text-fg-secondary\",\n                    )}\n                  >\n                    <span className=\"min-w-0 flex-1 truncate\">{tag}</span>\n                    <Check className={cn(\"size-3.5 shrink-0 text-fg-brand\", !isSelected && \"invisible\")} strokeWidth={1.75} />\n                  </button>\n                </li>\n              );\n            })}\n          </ul>\n        </PopoverContent>\n      </Popover>\n    </div>\n  );\n}\n\nexport { TagFilter };\n"
+    }
+  ]
+}

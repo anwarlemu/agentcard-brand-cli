@@ -1,0 +1,75 @@
+{
+  "schemaVersion": 1,
+  "name": "sheet",
+  "useFor": "Use for item details, activity logs or longer forms. Choose right, left or bottom with side. Set modal={false} when the rest of the page must remain interactive.",
+  "constraints": [
+    "Sheets for a quick confirmation (use a dialog)",
+    "Full-screen sheets on desktop",
+    "Two sheets at once"
+  ],
+  "documentation": "",
+  "source": "Extension from agentcard-website src/app/globals.css (.v7-guide-nav, .v7-windowbar); live https://www.agentcard.sh (.v7-gate::backdrop)",
+  "exports": [
+    "Sheet",
+    "SheetBody",
+    "SheetClose",
+    "SheetContent",
+    "SheetDescription",
+    "SheetHeader",
+    "SheetTitle",
+    "SheetTrigger"
+  ],
+  "client": true,
+  "docsUrl": "https://agentcard-ds.vercel.app/components/sheet",
+  "markdownUrl": "https://agentcard-ds.vercel.app/r/sheet.md",
+  "examples": [
+    {
+      "path": "examples/sheet.tsx",
+      "content": "import { Badge } from \"@/components/ui/badge\";\nimport { Button } from \"@/components/ui/button\";\nimport { Sheet, SheetBody, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from \"@/components/ui/sheet\";\n\nconst PURCHASES = [\n  { merchant: \"Delta\", amount: \"$412.00\", status: \"Approved\" },\n  { merchant: \"Marriott\", amount: \"$238.40\", status: \"Approved\" },\n  { merchant: \"Uber\", amount: \"$31.75\", status: \"Declined\" },\n];\n\nfunction PurchaseLog({ defaultOpen }: { defaultOpen?: boolean }) {\n  return (\n    <Sheet defaultOpen={defaultOpen}>\n      <SheetTrigger asChild>\n        <Button variant=\"secondary\">Purchase log</Button>\n      </SheetTrigger>\n      <SheetContent name=\"purchase.log\">\n        <SheetHeader>\n          <SheetTitle>Travel agent</SheetTitle>\n          <SheetDescription>Every purchase this card made, newest first.</SheetDescription>\n        </SheetHeader>\n        <SheetBody>\n          <ul>\n            {PURCHASES.map((p) => (\n              <li key={p.merchant} className=\"flex items-center justify-between gap-4 border-b border-line py-3.5\">\n                <span className=\"font-display text-body-sm\">{p.merchant}</span>\n                <span className=\"flex items-center gap-3\">\n                  <span className=\"text-body-sm tabular-nums\">{p.amount}</span>\n                  <Badge variant={p.status === \"Approved\" ? \"success\" : \"destructive\"}>{p.status}</Badge>\n                </span>\n              </li>\n            ))}\n          </ul>\n        </SheetBody>\n      </SheetContent>\n    </Sheet>\n  );\n}\n\nexport function Site() {\n  return <PurchaseLog />;\n}\n\nexport function Open() {\n  return (\n    <div className=\"h-130\">\n      <PurchaseLog defaultOpen />\n    </div>\n  );\n}\n",
+      "exports": [
+        "Site",
+        "Open"
+      ],
+      "requires": [
+        "sheet",
+        "badge",
+        "button"
+      ],
+      "packages": [],
+      "previews": [
+        {
+          "name": "Site",
+          "url": "https://agentcard-ds.vercel.app/preview/sheet/Site"
+        },
+        {
+          "name": "Open",
+          "url": "https://agentcard-ds.vercel.app/preview/sheet/Open"
+        }
+      ]
+    }
+  ],
+  "type": "ui",
+  "title": "Sheet",
+  "description": "Side panel with a title, close control and focus management.",
+  "surface": "site",
+  "kinds": [
+    "window",
+    "window-bar"
+  ],
+  "requires": [
+    "theme",
+    "window",
+    "surface",
+    "utils"
+  ],
+  "packages": [
+    "@radix-ui/react-dialog",
+    "lucide-react"
+  ],
+  "files": [
+    {
+      "path": "components/ui/sheet.tsx",
+      "content": "\"use client\";\n\nimport * as React from \"react\";\nimport * as SheetPrimitive from \"@radix-ui/react-dialog\";\nimport { X } from \"lucide-react\";\n\nimport { WindowBar } from \"@/components/ui/window\";\nimport { usePortalContainer } from \"@/lib/surface\";\nimport { cn } from \"@/lib/utils\";\n\n// A side panel that is one of the brand's windows (the guides' panel, .v7-guide-nav, which closes to its bar over the page): white, a 16 percent ink hairline, 12px corners, the 32px sky title bar\n// (`name`) with a close mark where the [*] sits, floating 8px in from the screen's edge over the ink scrim, blurred 4px as behind the get-started dialog (.v7-gate::backdrop). It\n// slides in from its side as it fades (260ms ease-out, on transform); reduced motion keeps the fade. Pass\n// `modal={false}` to Sheet to keep the page behind it usable (no scrim then).\nfunction Sheet(props: React.ComponentProps<typeof SheetPrimitive.Root>) {\n  return <SheetPrimitive.Root data-slot=\"sheet\" {...props} />;\n}\n\nfunction SheetTrigger(props: React.ComponentProps<typeof SheetPrimitive.Trigger>) {\n  return <SheetPrimitive.Trigger data-slot=\"sheet-trigger\" {...props} />;\n}\n\nfunction SheetClose(props: React.ComponentProps<typeof SheetPrimitive.Close>) {\n  return <SheetPrimitive.Close data-slot=\"sheet-close\" {...props} />;\n}\n\nconst SIDES = {\n  right: \"inset-y-2 right-2 w-[min(28rem,calc(100vw-1rem))] starting:translate-x-full\",\n  left: \"inset-y-2 left-2 w-[min(28rem,calc(100vw-1rem))] starting:-translate-x-full\",\n  bottom: \"inset-x-2 bottom-2 max-h-[85dvh] starting:translate-y-full\",\n} as const;\n\nfunction SheetContent({\n  className,\n  children,\n  side = \"right\",\n  name = \"panel\",\n  tone,\n  ...props\n}: React.ComponentProps<typeof SheetPrimitive.Content> & {\n  side?: keyof typeof SIDES;\n  /** The title bar's label, file-like: `purchase.log`, `card.detail`. */\n  name?: React.ReactNode;\n  tone?: React.ComponentProps<typeof WindowBar>[\"tone\"];\n}) {\n  const container = usePortalContainer();\n  return (\n    <SheetPrimitive.Portal container={container}>\n      <SheetPrimitive.Overlay data-slot=\"sheet-overlay\" className=\"fixed inset-0 z-50 bg-scrim backdrop-blur-xs transition-opacity duration-260 ease-out starting:opacity-0\" />\n      <SheetPrimitive.Content\n        data-slot=\"sheet-content\"\n        className={cn(\n          \"fixed z-50 flex flex-col overflow-hidden rounded-card border border-hairline bg-surface text-fg shadow-code outline-none transition-[opacity,translate] duration-260 ease-out starting:opacity-0 motion-reduce:starting:translate-x-0 motion-reduce:starting:translate-y-0\",\n          SIDES[side],\n          className,\n        )}\n        {...props}\n      >\n        <WindowBar\n          name={name}\n          tone={tone}\n          actions={\n            <SheetPrimitive.Close\n              aria-label=\"Close\"\n              className=\"-mr-1.5 grid size-7 shrink-0 place-items-center rounded-sm opacity-60 outline-none transition-[opacity,background-color] duration-150 ease-out hover:bg-wash-selected hover:opacity-100 focus-visible:opacity-100 focus-visible:outline-2 focus-visible:outline-offset-0 focus-visible:outline-solid focus-visible:outline-focus-ring [&_svg]:size-3.5\"\n            >\n              <X strokeWidth={1.5} />\n            </SheetPrimitive.Close>\n          }\n        />\n        <div className=\"relative flex min-h-0 flex-1 flex-col\">{children}</div>\n      </SheetPrimitive.Content>\n    </SheetPrimitive.Portal>\n  );\n}\n\nfunction SheetHeader({ className, ...props }: React.ComponentProps<\"div\">) {\n  return <div data-slot=\"sheet-header\" className={cn(\"flex flex-col gap-2 px-6 pt-6\", className)} {...props} />;\n}\n\nfunction SheetBody({ className, ...props }: React.ComponentProps<\"div\">) {\n  return <div data-slot=\"sheet-body\" className={cn(\"min-h-0 flex-1 overflow-y-auto px-6 pt-4 pb-6 text-body text-fg\", className)} {...props} />;\n}\n\nfunction SheetTitle({ className, ...props }: React.ComponentProps<typeof SheetPrimitive.Title>) {\n  return <SheetPrimitive.Title data-slot=\"sheet-title\" className={cn(\"truncate font-display text-h3 leading-display font-medium tracking-tight text-fg\", className)} {...props} />;\n}\n\nfunction SheetDescription({ className, ...props }: React.ComponentProps<typeof SheetPrimitive.Description>) {\n  return <SheetPrimitive.Description data-slot=\"sheet-description\" className={cn(\"text-body-sm leading-relaxed text-fg-muted\", className)} {...props} />;\n}\n\nexport { Sheet, SheetBody, SheetClose, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger };\n"
+    }
+  ]
+}

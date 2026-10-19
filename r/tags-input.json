@@ -1,0 +1,59 @@
+{
+  "schemaVersion": 1,
+  "name": "tags-input",
+  "useFor": "Use inside Field for domains, emails or similar values. Enter or comma adds a value; Backspace removes the last value when the input is empty. Provide isTagInvalid for validation.",
+  "constraints": [
+    "Rounded fields",
+    "Tags without a way to remove them",
+    "Free text that should be a textarea"
+  ],
+  "documentation": "",
+  "source": "Extension from live https://www.agentcard.sh/get-started (.v7-gate-field input); src/app/globals.css (.v7-guide-prose code)",
+  "exports": [
+    "TagsInput"
+  ],
+  "client": true,
+  "docsUrl": "https://agentcard-ds.vercel.app/components/tags-input",
+  "markdownUrl": "https://agentcard-ds.vercel.app/r/tags-input.md",
+  "examples": [
+    {
+      "path": "examples/tags-input.tsx",
+      "content": "\"use client\";\n\nimport { useState } from \"react\";\n\nimport { Field } from \"@/components/ui/field\";\nimport { TagsInput } from \"@/components/ui/tags-input\";\n\nexport function Site() {\n  const [tags, setTags] = useState([\"delta.com\", \"marriott.com\", \"not a domain\"]);\n  return (\n    <div className=\"max-w-170\">\n      <Field label=\"Allowed merchants\" htmlFor=\"tags-merchants\" help=\"Press Enter or a comma after each one.\">\n        <TagsInput id=\"tags-merchants\" tags={tags} onTagsChange={setTags} placeholder=\"airline.com\" isTagInvalid={(tag) => !tag.includes(\".\") || tag.includes(\" \")} />\n      </Field>\n    </div>\n  );\n}\n",
+      "exports": [
+        "Site"
+      ],
+      "requires": [
+        "tags-input",
+        "field"
+      ],
+      "packages": [],
+      "previews": [
+        {
+          "name": "Site",
+          "url": "https://agentcard-ds.vercel.app/preview/tags-input/Site"
+        }
+      ]
+    }
+  ],
+  "type": "ui",
+  "title": "Tags input",
+  "description": "Editable list of values with add, remove and validation states.",
+  "surface": "site",
+  "kinds": [
+    "input"
+  ],
+  "requires": [
+    "theme",
+    "field",
+    "utils"
+  ],
+  "packages": [
+    "lucide-react"
+  ],
+  "files": [
+    {
+      "path": "components/ui/tags-input.tsx",
+      "content": "\"use client\";\n\nimport * as React from \"react\";\nimport { X } from \"lucide-react\";\nimport { useFieldControl } from \"@/components/ui/field\";\nimport { cn } from \"@/lib/utils\";\n\ntype TagsInputProps = Omit<React.ComponentProps<\"input\">, \"value\" | \"defaultValue\" | \"onChange\" | \"type\" | \"size\"> & {\n  tags: string[]; onTagsChange: (tags: string[]) => void;\n  isTagInvalid?: (tag: string) => boolean; bare?: boolean;\n};\n\n// Enter, comma and pasted lists commit tags. Backspace removes the last tag when the draft is empty.\nfunction TagsInput({ tags, onTagsChange, placeholder, isTagInvalid, bare = false, className, name,\n  disabled, readOnly, onKeyDown, onPaste, onBlur, ...props }: TagsInputProps) {\n  const [draft, setDraft] = React.useState(\"\");\n  const control = useFieldControl(props);\n  const invalid = tags.some((tag) => isTagInvalid?.(tag));\n  const locked = disabled || readOnly;\n  function commit(value: string) {\n    if (locked) return;\n    const additions = value.split(\",\").map((tag) => tag.trim()).filter(Boolean);\n    if (additions.length) onTagsChange(Array.from(new Set([...tags, ...additions])));\n    setDraft(\"\");\n  }\n  return (\n    <div data-slot=\"tags-input\" data-disabled={disabled || undefined} className={cn(\n      \"flex min-h-11 w-full flex-wrap items-center gap-1.5 px-2 py-1.5 data-disabled:opacity-50\",\n      !bare && \"rounded-none border border-line-strong bg-surface focus-within:outline-2 focus-within:-outline-offset-1 focus-within:outline-solid focus-within:outline-focus-ring\", className)}>\n      {name && tags.map((tag) => <input key={tag} type=\"hidden\" name={name} value={tag} disabled={disabled} />)}\n      {tags.map((tag) => <span key={tag} className={cn(\n        \"flex h-7 items-center gap-0.5 rounded-sm border pr-0.5 pl-2 font-display text-body-sm leading-none\",\n        isTagInvalid?.(tag) ? \"border-danger bg-surface text-danger\" : \"border-line-window bg-sky-wash text-fg-brand\")}>\n        {tag}\n        <button type=\"button\" disabled={locked} aria-label={`Remove ${tag}`}\n          onPointerDown={(event) => event.preventDefault()}\n          onClick={() => onTagsChange(tags.filter((existing) => existing !== tag))}\n          className=\"grid size-5.5 place-items-center rounded-[calc(var(--ds-radius-sm)/2)] opacity-70 outline-none transition-[opacity,background-color] duration-150 ease-out hover:bg-wash-selected hover:opacity-100 focus-visible:opacity-100 focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-solid focus-visible:outline-focus-ring disabled:pointer-events-none motion-reduce:transition-none\">\n          <X className=\"size-3\" strokeWidth={1.75} />\n        </button>\n      </span>)}\n      <input {...control} value={draft} disabled={disabled} readOnly={readOnly}\n        required={Boolean(control.required && !tags.length)}\n        aria-required={control.required || undefined}\n        aria-invalid={control[\"aria-invalid\"] ?? (invalid || undefined)}\n        onChange={(event) => {\n          if (event.target.value.endsWith(\",\") && !(event.nativeEvent as InputEvent).isComposing) commit(event.target.value);\n          else setDraft(event.target.value);\n        }}\n        onKeyDown={(event) => {\n          onKeyDown?.(event);\n          if (locked || event.defaultPrevented || event.nativeEvent.isComposing || event.keyCode === 229) return;\n          if (event.key === \"Enter\") { event.preventDefault(); commit(draft); }\n          if (event.key === \"Backspace\" && !draft && tags.length) onTagsChange(tags.slice(0, -1));\n        }}\n        onPaste={(event) => {\n          onPaste?.(event);\n          if (locked || event.defaultPrevented) return;\n          const pasted = event.clipboardData.getData(\"text\").split(/[,\\s]+/).filter(Boolean);\n          if (pasted.length < 2) return;\n          event.preventDefault();\n          onTagsChange(Array.from(new Set([...tags, ...pasted])));\n          setDraft(\"\");\n        }}\n        onBlur={(event) => { onBlur?.(event); if (!event.defaultPrevented && draft) commit(draft); }}\n        placeholder={tags.length ? \"\" : placeholder}\n        className=\"h-8 min-w-24 flex-1 bg-transparent px-1.5 text-h5 leading-snug text-fg outline-none placeholder:text-fg-faint\" />\n    </div>\n  );\n}\nexport { TagsInput };\n"
+    }
+  ]
+}

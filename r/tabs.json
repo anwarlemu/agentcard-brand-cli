@@ -1,0 +1,74 @@
+{
+  "schemaVersion": 1,
+  "name": "tabs",
+  "useFor": "Use for related views such as plans, FAQ topics or item details. Give each TabsTrigger a matching TabsContent. Use glide={false} when supplying a custom selected state.",
+  "constraints": [
+    "Tabs for actions",
+    "Underlined tabs",
+    "Pill-shaped tabs",
+    "More than one blue key in a track"
+  ],
+  "documentation": "",
+  "source": "live https://www.agentcard.sh/pricing (.plan-tabs, .plan-tab, .plan-tabs-thumb); src/app/globals.css (.v7-guide-tablist for size sm)",
+  "exports": [
+    "Tabs",
+    "TabsList",
+    "TabsTrigger",
+    "TabsContent",
+    "tabsTriggerVariants"
+  ],
+  "client": true,
+  "docsUrl": "https://agentcard-ds.vercel.app/components/tabs",
+  "markdownUrl": "https://agentcard-ds.vercel.app/r/tabs.md",
+  "examples": [
+    {
+      "path": "examples/tabs.tsx",
+      "content": "import { Tabs, TabsContent, TabsList, TabsTrigger } from \"@/components/ui/tabs\";\n\nconst PLANS = [\n  { value: \"vault\", label: \"Vault\", body: \"Store a card once and let your agent pay with a token. Free to start, then per purchase.\" },\n  { value: \"issuing\", label: \"Issuing\", body: \"Give each agent its own prepaid or commercial card, with limits and a log of every purchase.\" },\n  { value: \"agent\", label: \"Purchase Agent\", body: \"Hand off the whole checkout. Your agent finds the item and buys it on a card you control.\" },\n];\n\nexport function Site() {\n  return (\n    <Tabs defaultValue=\"vault\" className=\"max-w-170\">\n      <TabsList className=\"w-full\">\n        {PLANS.map((plan) => (\n          <TabsTrigger key={plan.value} value={plan.value}>\n            {plan.label}\n          </TabsTrigger>\n        ))}\n      </TabsList>\n      {PLANS.map((plan) => (\n        <TabsContent key={plan.value} value={plan.value} className=\"text-body text-fg-muted\">\n          {plan.body}\n        </TabsContent>\n      ))}\n    </Tabs>\n  );\n}\n\nexport function Topics() {\n  return (\n    <div className=\"grid gap-6\">\n      <Tabs defaultValue=\"general\">\n        <TabsList>\n          <TabsTrigger value=\"general\">General</TabsTrigger>\n          <TabsTrigger value=\"vault\">Vault</TabsTrigger>\n          <TabsTrigger value=\"issuing\">Issuing</TabsTrigger>\n        </TabsList>\n        <TabsContent value=\"general\">Choose a product to learn how agents can pay.</TabsContent>\n        <TabsContent value=\"vault\">Store and use existing cards.</TabsContent>\n        <TabsContent value=\"issuing\">Create a card for each agent.</TabsContent>\n      </Tabs>\n      <Tabs defaultValue=\"month\">\n        <TabsList size=\"sm\">\n          <TabsTrigger value=\"month\">Monthly</TabsTrigger>\n          <TabsTrigger value=\"year\">Yearly</TabsTrigger>\n        </TabsList>\n        <TabsContent value=\"month\">Billed each month.</TabsContent>\n        <TabsContent value=\"year\">Billed once a year.</TabsContent>\n      </Tabs>\n    </div>\n  );\n}\n\nexport function Plain() {\n  return (\n    <Tabs defaultValue=\"all\">\n      <TabsList variant=\"plain\">\n        <TabsTrigger value=\"all\">All purchases</TabsTrigger>\n        <TabsTrigger value=\"approved\">Approved</TabsTrigger>\n        <TabsTrigger value=\"declined\">Declined</TabsTrigger>\n      </TabsList>\n      <TabsContent value=\"all\">Delta · Approved. Uber · Declined.</TabsContent>\n      <TabsContent value=\"approved\">Delta · Approved.</TabsContent>\n      <TabsContent value=\"declined\">Uber · Declined.</TabsContent>\n    </Tabs>\n  );\n}\n",
+      "exports": [
+        "Site",
+        "Topics",
+        "Plain"
+      ],
+      "requires": [
+        "tabs"
+      ],
+      "packages": [],
+      "previews": [
+        {
+          "name": "Site",
+          "url": "https://agentcard-ds.vercel.app/preview/tabs/Site"
+        },
+        {
+          "name": "Topics",
+          "url": "https://agentcard-ds.vercel.app/preview/tabs/Topics"
+        },
+        {
+          "name": "Plain",
+          "url": "https://agentcard-ds.vercel.app/preview/tabs/Plain"
+        }
+      ]
+    }
+  ],
+  "type": "ui",
+  "title": "Tabs",
+  "description": "Tabbed views with default, small and plain treatments.",
+  "surface": "site",
+  "kinds": [
+    "tabs"
+  ],
+  "requires": [
+    "theme",
+    "use-tab-glide",
+    "utils"
+  ],
+  "packages": [
+    "@radix-ui/react-tabs",
+    "class-variance-authority"
+  ],
+  "files": [
+    {
+      "path": "components/ui/tabs.tsx",
+      "content": "\"use client\";\n\nimport * as React from \"react\";\nimport * as TabsPrimitive from \"@radix-ui/react-tabs\";\nimport { cva } from \"class-variance-authority\";\n\nimport { useTabGlide } from \"@/hooks/use-tab-glide\";\nimport { cn } from \"@/lib/utils\";\n\n// The brand's tabs (agentcard.sh, .plan-tabs on /pricing and .faq-tabs on /; `sm` is the guides' .v7-guide-tablist): a sunken track (pale, a hairline, 12px\n// corners, 4px inset, the inner shadow) of equal 40px tabs in the 14px display face, and one blue key (a darker blue\n// edge, the light line inside the top, the soft drop) that glides to the selected tab. Unselected labels are 68 percent\n// ink, turning ink with a faint wash under the pointer; the selected label turns white as the key arrives. `plain` drops\n// the track for dense rows: quiet labels with a pale wash gliding between them.\ntype Variant = \"default\" | \"plain\";\ntype Size = \"sm\" | \"md\";\n\n// The key, and the same surface on the selected trigger for the first paint before the key lands (or with no glide).\nconst KEY: Record<Variant, string> = {\n  default: \"rounded-control border border-line-brand-edge bg-primary shadow-key-brand\",\n  plain: \"rounded-sm bg-wash-pill\",\n};\nconst SELF_KEY: Record<Variant, string> = {\n  default: \"data-[state=active]:border-line-brand-edge data-[state=active]:bg-primary data-[state=active]:shadow-key-brand\",\n  plain: \"data-[state=active]:bg-wash-pill\",\n};\n\nconst tabsTriggerVariants = cva(\n  \"relative inline-flex items-center justify-center gap-1.5 border border-transparent font-display leading-none whitespace-nowrap outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-solid focus-visible:outline-focus-ring disabled:pointer-events-none disabled:opacity-50 motion-reduce:transition-none [&_svg]:size-4 [&_svg]:shrink-0\",\n  {\n    variants: {\n      variant: {\n        // Only the label and a faint wash answer the pointer, so nothing fades over the key gliding in beneath.\n        default:\n          \"rounded-control text-fg-muted transition-[background-color,color] duration-150 ease-out hover:text-fg data-[state=active]:text-on-primary data-[state=inactive]:hover:bg-wash-pill\",\n        plain: \"rounded-sm text-fg-muted transition-[color] duration-150 ease-out hover:text-fg data-[state=active]:text-fg\",\n      },\n      size: { sm: \"\", md: \"\" },\n    },\n    compoundVariants: [\n      { variant: \"default\", size: \"md\", className: \"h-10 px-4 text-body-sm leading-body\" },\n      // The guides' tab track (.v7-guide-tablist): 30px keys with 6px corners in the 12px display face.\n      { variant: \"default\", size: \"sm\", className: \"h-7.5 rounded-sm px-3 text-caption\" },\n      { variant: \"plain\", size: \"md\", className: \"h-8 px-3 text-body-sm\" },\n      { variant: \"plain\", size: \"sm\", className: \"h-7 px-2.5 text-caption\" },\n    ],\n    defaultVariants: { variant: \"default\", size: \"md\" },\n  },\n);\n\nconst ActiveValue = React.createContext<string | undefined>(undefined);\nconst ListState = React.createContext<{ variant: Variant; size: Size; isKeyPlaced: boolean }>({ variant: \"default\", size: \"md\", isKeyPlaced: false });\n\n// The active value is mirrored here so the list can move its key in the same render Radix switches tabs, whether the\n// value is controlled or not.\nfunction Tabs({ className, value, defaultValue, onValueChange, ...props }: React.ComponentProps<typeof TabsPrimitive.Root>) {\n  const [uncontrolled, setUncontrolled] = React.useState(defaultValue);\n  const active = value ?? uncontrolled;\n  return (\n    <ActiveValue.Provider value={active}>\n      <TabsPrimitive.Root\n        data-slot=\"tabs\"\n        value={active}\n        onValueChange={(next) => {\n          setUncontrolled(next);\n          onValueChange?.(next);\n        }}\n        className={cn(\"flex flex-col gap-6\", className)}\n        {...props}\n      />\n    </ActiveValue.Provider>\n  );\n}\n\nfunction TabsList({\n  className,\n  variant = \"default\",\n  size = \"md\",\n  glide = true,\n  pillClassName,\n  children,\n  ...props\n}: React.ComponentProps<typeof TabsPrimitive.List> & {\n  variant?: Variant;\n  size?: Size;\n  /** Off for lists whose triggers draw their own selected surface. */\n  glide?: boolean;\n  /** The gliding key's surface, for a list styled its own way. */\n  pillClassName?: string;\n}) {\n  const active = React.useContext(ActiveValue);\n  const keyRef = React.useRef<HTMLSpanElement>(null);\n  const isPlaced = useTabGlide(keyRef, active ?? \"\");\n\n  return (\n    <TabsPrimitive.List\n      data-slot=\"tabs-list\"\n      className={cn(\n        \"relative isolate w-fit\",\n        // Equal columns whatever the labels, as on the brand's page; add w-full to fill the row.\n        variant === \"default\" ? \"inline-grid auto-cols-fr grid-flow-col gap-1 rounded-card border border-hairline bg-subtle p-1 shadow-well\" : \"inline-flex items-center gap-0.5\",\n        // The small track's corners stay concentric with its 6px keys: 10px.\n        variant === \"default\" && size === \"sm\" && \"rounded-[calc(var(--ds-radius-sm)+var(--ds-space-1))]\",\n        className,\n      )}\n      {...props}\n    >\n      {glide && (\n        // The hook measures from the list's outer edge; -1px puts the key back inside the track's border.\n        <span ref={keyRef} aria-hidden className={cn(\"pointer-events-none absolute -z-10\", variant === \"default\" ? \"-top-px -left-px\" : \"top-0 left-0\", KEY[variant], variant === \"default\" && size === \"sm\" && \"rounded-sm\", pillClassName, !isPlaced && \"invisible\")} />\n      )}\n      <ListState.Provider value={{ variant, size, isKeyPlaced: glide && isPlaced }}>{children}</ListState.Provider>\n    </TabsPrimitive.List>\n  );\n}\n\nfunction TabsTrigger({ className, value, ...props }: React.ComponentProps<typeof TabsPrimitive.Trigger>) {\n  const { variant, size, isKeyPlaced } = React.useContext(ListState);\n  // Until the key lands (or with no key), the selected tab draws the key itself, so the first paint matches.\n  return <TabsPrimitive.Trigger data-slot=\"tabs-trigger\" data-tab-id={value} value={value} className={cn(tabsTriggerVariants({ variant, size }), !isKeyPlaced && SELF_KEY[variant], className)} {...props} />;\n}\n\nfunction TabsContent({ className, ...props }: React.ComponentProps<typeof TabsPrimitive.Content>) {\n  return <TabsPrimitive.Content data-slot=\"tabs-content\" className={cn(\"flex-1 outline-none\", className)} {...props} />;\n}\n\nexport { Tabs, TabsList, TabsTrigger, TabsContent, tabsTriggerVariants };\n"
+    }
+  ]
+}

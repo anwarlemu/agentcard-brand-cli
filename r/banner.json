@@ -1,0 +1,58 @@
+{
+  "schemaVersion": 1,
+  "name": "banner",
+  "useFor": "Use info for general notices, brand for announcements and alert for problems. Set name for the title bar and provide an action when one is needed.",
+  "constraints": [
+    "More than one banner at a time",
+    "Banners for marketing copy that belongs in a section",
+    "Bold titles",
+    "Gradients"
+  ],
+  "documentation": "",
+  "source": "Repository reference; public guide pages currently unavailable. agentcard-website src/app/globals.css (.v7-guide-note, .v7-guide-note-body, .v7-guide-cta-title, --guide-shadow); src/components/v7/guide-body.tsx (note)",
+  "exports": [
+    "Banner"
+  ],
+  "client": false,
+  "docsUrl": "https://agentcard-ds.vercel.app/components/banner",
+  "markdownUrl": "https://agentcard-ds.vercel.app/r/banner.md",
+  "examples": [
+    {
+      "path": "examples/banner.tsx",
+      "content": "\"use client\";\n\nimport { useState } from \"react\";\nimport { Banner } from \"@/components/ui/banner\";\nimport { Button } from \"@/components/ui/button\";\n\nexport function Site() {\n  const [reviewing, setReviewing] = useState(false);\n  return <div className=\"grid max-w-3xl gap-4\">\n    <Banner name=\"voice.beta\" title=\"Voice is in beta\" actions={<Button size=\"sm\" asChild><a href=\"https://cal.com/team/agentcard/agentcard-call\" target=\"_blank\" rel=\"noreferrer\">Try Voice</a></Button>}>Your agent can now place orders over the phone.</Banner>\n    <Banner tone=\"brand\" name=\"issuing.news\" title=\"Commercial cards are here\" actions={<Button size=\"sm\" asChild><a href=\"https://www.agentcard.sh/issuing\" target=\"_blank\" rel=\"noreferrer\">See Issuing</a></Button>}>Issue a card per agent with its own limits.</Banner>\n    <Banner tone=\"alert\" name=\"agent.paused\" title=\"Travel agent was paused\" actions={<Button variant=\"secondary\" size=\"sm\" aria-expanded={reviewing} onClick={() => setReviewing(!reviewing)}>{reviewing ? \"Hide details\" : \"Review\"}</Button>}>It hit its monthly limit on Oct 14.</Banner>\n    {reviewing && <p className=\"text-body-sm text-fg-muted\">Travel agent has spent $2,000 of its $2,000 monthly limit. Purchases are paused until its limit resets.</p>}\n  </div>;\n}\n",
+      "exports": [
+        "Site"
+      ],
+      "requires": [
+        "banner",
+        "button"
+      ],
+      "packages": [],
+      "previews": [
+        {
+          "name": "Site",
+          "url": "https://agentcard-ds.vercel.app/preview/banner/Site"
+        }
+      ]
+    }
+  ],
+  "type": "ui",
+  "title": "Banner",
+  "description": "Notice with a title, message and optional actions.",
+  "surface": "site",
+  "kinds": [
+    "window-bar"
+  ],
+  "requires": [
+    "theme",
+    "window",
+    "utils"
+  ],
+  "packages": [],
+  "files": [
+    {
+      "path": "components/ui/banner.tsx",
+      "content": "import * as React from \"react\";\n\nimport { WindowBar } from \"@/components/ui/window\";\nimport { cn } from \"@/lib/utils\";\n\n// A notice, drawn as the guides' note (agentcard-website src/app/globals.css .v7-guide-note): a small window with a 16\n// percent ink edge, 12px corners and the guides' light bevel, its 32px bar labeled like a file (`name`), over a sheet\n// with 14px of padding on top, 18px at the sides and 16px below. `info` is the note itself: the sky bar over a sheet\n// washed 22 percent sky. `brand` is the notice that matters: the blue bar over white. `alert` is trouble: the rose\n// window tint over white, its title in red. The title is set as the guides' card titles (.v7-guide-cta-title: 16px\n// display at 500, tracked -0.01em), the detail in 14px Inter at 68 percent ink, and actions sit at the end.\nconst GUIDE_BEVEL =\n  \"shadow-[inset_0_1px_0_var(--ds-color-white),inset_0_-1px_0_color-mix(in_srgb,var(--ds-color-ink)_5%,transparent),0_1px_2px_color-mix(in_srgb,var(--ds-color-ink)_7%,transparent),0_4px_10px_-6px_color-mix(in_srgb,var(--ds-color-ink)_14%,transparent)]\";\n\nconst TONES = {\n  info: { bar: \"sky\", sheet: \"bg-[color-mix(in_srgb,var(--ds-color-sky)_22%,var(--ds-color-white))]\", title: \"text-fg\", name: \"note\" },\n  brand: { bar: \"blue\", sheet: \"bg-surface\", title: \"text-fg\", name: \"news\" },\n  alert: { bar: \"rose\", sheet: \"bg-surface\", title: \"text-danger\", name: \"alert\" },\n} as const;\n\nfunction Banner({\n  tone = \"info\",\n  title,\n  name,\n  actions,\n  role,\n  className,\n  children,\n  ...props\n}: Omit<React.ComponentProps<\"div\">, \"title\"> & {\n  tone?: keyof typeof TONES;\n  title: React.ReactNode;\n  /** The bar's label, file-like: `voice.beta`, `card.paused`. Defaults to note, news or alert. */\n  name?: React.ReactNode;\n  actions?: React.ReactNode;\n  role?: \"status\" | \"alert\";\n}) {\n  const t = TONES[tone];\n  return (\n    <div\n      role={role ?? (tone === \"alert\" ? \"alert\" : \"status\")}\n      data-slot=\"banner\"\n      data-tone={tone}\n      className={cn(\"flex flex-col overflow-hidden rounded-card border border-hairline text-fg\", GUIDE_BEVEL, t.sheet, className)}\n      {...props}\n    >\n      <WindowBar aria-hidden name={name ?? t.name} tone={t.bar} className=\"[&>span:nth-child(2)]:mr-auto\" />\n      <div className=\"flex flex-col gap-3 px-4.5 pt-3.5 pb-4 sm:flex-row sm:items-center sm:justify-between sm:gap-6\">\n        <div className=\"min-w-0\">\n          <p className={cn(\"font-display text-body leading-snug font-medium [letter-spacing:-0.01em]\", t.title)}>{title}</p>\n          {children && (\n            <div data-slot=\"banner-detail\" className=\"mt-1 text-body-sm [line-height:1.65] text-fg-muted\">\n              {children}\n            </div>\n          )}\n        </div>\n        {actions && <div className=\"flex shrink-0 flex-wrap gap-2\">{actions}</div>}\n      </div>\n    </div>\n  );\n}\n\nexport { Banner };\n"
+    }
+  ]
+}

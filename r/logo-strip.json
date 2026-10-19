@@ -1,0 +1,65 @@
+{
+  "schemaVersion": 1,
+  "name": "logo-strip",
+  "useFor": "Pass customer names and logos. Use the optional tone for the title bar. The layout adapts to the number of customers and screen width.",
+  "constraints": [
+    "Colored logos (marks are ink)",
+    "Bars in colors other than the five tints and sky",
+    "Links or buttons inside the windows"
+  ],
+  "documentation": "",
+  "source": "agentcard-website src/components/v7/products-showcase.tsx (Customers); agentcard.sh / (.v7-customers, .v7-customer, computed)",
+  "exports": [
+    "LogoStrip",
+    "Customer"
+  ],
+  "client": true,
+  "docsUrl": "https://agentcard-ds.vercel.app/components/logo-strip",
+  "markdownUrl": "https://agentcard-ds.vercel.app/r/logo-strip.md",
+  "examples": [
+    {
+      "path": "examples/logo-strip.tsx",
+      "content": "import { LogoStrip } from \"@/components/site/logo-strip\";\n\nconst Dot = () => (\n  <svg viewBox=\"0 0 24 24\" className=\"fill-current\">\n    <circle cx=\"12\" cy=\"12\" r=\"9\" />\n  </svg>\n);\nconst Square = () => (\n  <svg viewBox=\"0 0 24 24\" className=\"fill-current\">\n    <rect x=\"4\" y=\"4\" width=\"16\" height=\"16\" rx=\"3\" />\n  </svg>\n);\nconst Ring = () => (\n  <svg viewBox=\"0 0 24 24\" className=\"fill-none stroke-current [stroke-width:2.5]\">\n    <circle cx=\"12\" cy=\"12\" r=\"8\" />\n  </svg>\n);\n\nconst NAMES = [\"Orchid\", \"Pally\", \"Almanac\", \"Endstack\", \"Pickle\", \"Persona\", \"Ego\", \"Orgo\", \"Laso Finance\", \"Bezalel\", \"Runable\", \"Paper Instruments\"];\nconst LOGOS = [<Dot key=\"d\" />, <Ring key=\"r\" />, <Square key=\"s\" />];\n\nfunction Heading({ title, line }: { title: string; line: string }) {\n  return (\n    <div className=\"mx-auto max-w-(--ds-layout-heading) text-center\">\n      <h2 className=\"font-display text-h2 leading-heading font-medium tracking-tighter\">{title}</h2>\n      <p className=\"mt-3.5 text-body-lg leading-6.5 tracking-tight opacity-70\">{line}</p>\n    </div>\n  );\n}\n\nexport function Site() {\n  return (\n    <section className=\"mx-auto w-full max-w-(--ds-frame-column) py-20\">\n      <Heading title=\"Working with Agentcard\" line=\"Personal assistant companies use Agentcard as their payment infrastructure.\" />\n      <LogoStrip customers={NAMES.map((name, i) => ({ name, logo: name === \"Ego\" ? undefined : LOGOS[i % LOGOS.length] }))} />\n    </section>\n  );\n}\n\nexport function Few() {\n  return (\n    <section className=\"mx-auto w-full max-w-(--ds-frame-column) py-20\">\n      <Heading title=\"Working with Agentcard\" line=\"A few of the teams that run their agents’ purchases on it.\" />\n      <LogoStrip customers={NAMES.slice(0, 3).map((name, i) => ({ name, logo: LOGOS[i] }))} />\n    </section>\n  );\n}\n",
+      "exports": [
+        "Site",
+        "Few"
+      ],
+      "requires": [
+        "logo-strip"
+      ],
+      "packages": [],
+      "previews": [
+        {
+          "name": "Site",
+          "url": "https://agentcard-ds.vercel.app/preview/logo-strip/Site"
+        },
+        {
+          "name": "Few",
+          "url": "https://agentcard-ds.vercel.app/preview/logo-strip/Few"
+        }
+      ]
+    }
+  ],
+  "type": "site",
+  "title": "Logo strip",
+  "description": "Customer logos in a responsive grid of small windows.",
+  "surface": "site",
+  "kinds": [
+    "logo-strip",
+    "window",
+    "window-bar"
+  ],
+  "requires": [
+    "theme",
+    "window",
+    "use-trail",
+    "utils"
+  ],
+  "packages": [],
+  "files": [
+    {
+      "path": "components/site/logo-strip.tsx",
+      "content": "\"use client\";\n\nimport * as React from \"react\";\n\nimport { WindowMark } from \"@/components/ui/window\";\nimport { TRAIL_REST, useTrail } from \"@/hooks/use-trail\";\nimport { cn } from \"@/lib/utils\";\n\n// Who runs on the product (agentcard.sh home, \"Working with Agentcard\"; .v7-customer): each customer in a small window,\n// its 26px bar in one pale tint (sage, sky, rose, teal, peach, butter in turn) brightening to white in the middle, the\n// company's mark and name centred in the body. On wide screens the windows hang on the trail, four to a row, at their\n// own heights and tilts, one thread snaking through every row. Four or fewer make one row at the same size, centred. On\n// a phone they stand still, two to a row, with no line.\n\ntype Tone = \"sage\" | \"sky\" | \"rose\" | \"teal\" | \"peach\" | \"butter\";\n\ntype Customer = {\n  name: string;\n  /** The company's mark, about 24px (decorative: the name is beside it). */\n  logo?: React.ReactNode;\n  /** The bar's tint; by default the tints take turns. */\n  tone?: Tone;\n};\n\nconst TONES: Tone[] = [\"sage\", \"sky\", \"rose\", \"teal\", \"peach\", \"butter\"];\nconst TINT: Record<Tone, string> = {\n  sage: \"var(--ds-color-tint-sage)\",\n  sky: \"var(--ds-color-sky)\",\n  rose: \"var(--ds-color-tint-rose)\",\n  teal: \"var(--ds-color-tint-teal)\",\n  peach: \"var(--ds-color-tint-peach)\",\n  butter: \"var(--ds-color-tint-butter)\",\n};\n\nfunction CustomerWindow({ customer, index }: { customer: Customer; index: number }) {\n  const rest = TRAIL_REST[index % TRAIL_REST.length];\n  const tone = customer.tone ?? TONES[index % TONES.length];\n  return (\n    <li\n      data-trail-card=\"\"\n      style={{ \"--trail-y\": `${rest.y}px`, \"--trail-rot\": `${rest.rot}deg`, \"--tint\": TINT[tone] } as React.CSSProperties}\n      className=\"relative z-10 flex flex-col overflow-hidden rounded-[calc(var(--ds-radius-card)-0.125rem)] border border-line-mid bg-surface text-fg shadow-tile lg:[transform:translateY(var(--trail-y))_rotate(var(--trail-rot))]\"\n    >\n      <div\n        aria-hidden\n        className=\"flex h-6.5 shrink-0 items-center justify-between border-b border-line bg-[linear-gradient(90deg,var(--tint),color-mix(in_srgb,var(--tint)_55%,var(--ds-color-white))_50%,var(--tint))] px-2.5 font-display text-micro leading-none text-fg\"\n      >\n        <span className=\"tracking-mark opacity-45\">↳</span>\n        <WindowMark className=\"opacity-45\" />\n      </div>\n      <div className=\"flex h-16 items-center justify-center gap-2.5 px-4 text-body-sm font-medium tracking-tight md:h-21 md:text-body\">\n        {customer.logo && (\n          <span aria-hidden className=\"flex size-6 flex-none items-center justify-center [&>img]:size-full [&>svg]:size-full\">\n            {customer.logo}\n          </span>\n        )}\n        <span className=\"min-w-0 text-center leading-snug\">{customer.name}</span>\n      </div>\n    </li>\n  );\n}\n\n/** The customers' windows: on the trail in rows of four on wide screens, two to a row on a phone. */\nfunction LogoStrip({ customers, className, ...props }: React.ComponentProps<\"div\"> & { customers: Customer[] }) {\n  const root = React.useRef<HTMLDivElement>(null);\n  const path = React.useRef<SVGPathElement>(null);\n  useTrail(root, path, customers.length);\n  // Four or fewer: one row, each window the width it has in a row of four.\n  const cols = Math.min(4, customers.length);\n  return (\n    <div\n      ref={root}\n      data-slot=\"logo-strip\"\n      style={{ \"--cols\": cols } as React.CSSProperties}\n      className={cn(\"relative lg:pt-10 lg:pb-9\", className)}\n      {...props}\n    >\n      <svg aria-hidden preserveAspectRatio=\"none\" className=\"pointer-events-none absolute inset-0 hidden size-full overflow-visible lg:block\">\n        <path ref={path} className=\"fill-none stroke-fg [stroke-linecap:round] [stroke-width:1.5] [vector-effect:non-scaling-stroke]\" />\n      </svg>\n      <ul className=\"mx-auto mt-6 grid grid-cols-2 gap-x-4 gap-y-3.5 lg:max-w-[calc(var(--cols)*16.5rem+(var(--cols)-1)*3rem)] lg:grid-cols-[repeat(var(--cols),minmax(0,1fr))] lg:gap-x-12 lg:gap-y-25\">\n        {customers.map((customer, i) => (\n          <CustomerWindow key={customer.name} customer={customer} index={i} />\n        ))}\n      </ul>\n    </div>\n  );\n}\n\nexport { LogoStrip, type Customer };\n"
+    }
+  ]
+}

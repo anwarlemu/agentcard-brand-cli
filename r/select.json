@@ -1,0 +1,85 @@
+{
+  "schemaVersion": 1,
+  "name": "select",
+  "useFor": "Use the field appearance inside Field for forms. Use compact in dense rows and ghost or chip for filters. Field required is inherited by Select. Give Select a name for FormData; keep value and onValueChange on the root. Use compact on SelectContent for compact fields and toolbar menus.",
+  "constraints": [
+    "Rounded field triggers",
+    "Empty string item values",
+    "Long lists without a search (use a command)"
+  ],
+  "documentation": "The field keeps the reference form's square border, 18px Inter and filled arrow. Its menu uses the same type size, fits the trigger and viewport, and wraps long option labels. Toolbar menus use `compact` for 14px display text.\n\nFor controlled forms, reset `value` from the form's `onReset` handler. `Field` displays your current error; validation and submitting to a backend belong to the form. A disabled item cannot be chosen. Prefer a segmented control when a small set of choices should remain visible.",
+  "source": "https://agentcard.com/get-started (native field); Radix menu extends repository guide styles",
+  "exports": [
+    "Select",
+    "SelectContent",
+    "SelectGroup",
+    "SelectItem",
+    "SelectLabel",
+    "SelectSeparator",
+    "SelectTrigger",
+    "SelectValue"
+  ],
+  "client": true,
+  "docsUrl": "https://agentcard-ds.vercel.app/components/select",
+  "markdownUrl": "https://agentcard-ds.vercel.app/r/select.md",
+  "examples": [
+    {
+      "path": "examples/select.tsx",
+      "content": "\"use client\";\n\nimport * as React from \"react\";\n\nimport { Button } from \"@/components/ui/button\";\nimport { Field } from \"@/components/ui/field\";\nimport { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from \"@/components/ui/select\";\n\nexport function Site() {\n  return (\n    <div className=\"grid max-w-170 gap-4 sm:grid-cols-2\">\n      <Field label=\"Stage\" htmlFor=\"select-stage\">\n        <Select>\n          <SelectTrigger id=\"select-stage\">\n            <SelectValue placeholder=\"Choose one\" />\n          </SelectTrigger>\n          <SelectContent>\n            <SelectItem value=\"pre\">Pre-launch</SelectItem>\n            <SelectItem value=\"launched\">Launched</SelectItem>\n          </SelectContent>\n        </Select>\n      </Field>\n      <Field label=\"Money raised\" htmlFor=\"select-raised\">\n        <Select defaultValue=\"seed\">\n          <SelectTrigger id=\"select-raised\">\n            <SelectValue placeholder=\"Choose one\" />\n          </SelectTrigger>\n          <SelectContent>\n            <SelectItem value=\"none\">Bootstrapped</SelectItem>\n            <SelectItem value=\"seed\">Under $1M</SelectItem>\n            <SelectItem value=\"a\">$1M to $5M</SelectItem>\n            <SelectItem value=\"b\">$5M to $20M</SelectItem>\n            <SelectItem value=\"c\">More than $20M</SelectItem>\n          </SelectContent>\n        </Select>\n      </Field>\n    </div>\n  );\n}\n\nexport function Controlled() {\n  const [value, setValue] = React.useState(\"a\");\n  return (\n    <div className=\"h-80 max-w-83\">\n      <Field label=\"Money raised\" htmlFor=\"select-open\">\n        <Select value={value} onValueChange={setValue}>\n          <SelectTrigger id=\"select-open\">\n            <SelectValue />\n          </SelectTrigger>\n          <SelectContent>\n            <SelectItem value=\"none\">Bootstrapped</SelectItem>\n            <SelectItem value=\"seed\">Under $1M</SelectItem>\n            <SelectItem value=\"a\">$1M to $5M</SelectItem>\n            <SelectItem value=\"b\">$5M to $20M</SelectItem>\n          </SelectContent>\n        </Select>\n      </Field>\n    </div>\n  );\n}\n\nexport function Toolbar() {\n  return (\n    <div className=\"flex flex-wrap items-center gap-3\">\n      <Select defaultValue=\"30\">\n        <SelectTrigger appearance=\"ghost\" aria-label=\"Period\">\n          <SelectValue />\n        </SelectTrigger>\n        <SelectContent compact>\n          <SelectItem value=\"7\">Last 7 days</SelectItem>\n          <SelectItem value=\"30\">Last 30 days</SelectItem>\n          <SelectItem value=\"90\">Last 90 days</SelectItem>\n        </SelectContent>\n      </Select>\n      <Select defaultValue=\"all\">\n        <SelectTrigger appearance=\"chip\" aria-label=\"Card\">\n          <SelectValue />\n        </SelectTrigger>\n        <SelectContent compact>\n          <SelectItem value=\"all\">All cards</SelectItem>\n          <SelectItem value=\"travel\">Travel agent</SelectItem>\n          <SelectItem value=\"ops\">Ops agent</SelectItem>\n        </SelectContent>\n      </Select>\n      <div className=\"w-56\">\n        <Select defaultValue=\"usd\">\n          <SelectTrigger compact aria-label=\"Currency\">\n            <SelectValue />\n          </SelectTrigger>\n          <SelectContent compact>\n            <SelectItem value=\"usd\">US dollar</SelectItem>\n            <SelectItem value=\"eur\">Euro</SelectItem>\n          </SelectContent>\n        </Select>\n      </div>\n    </div>\n  );\n}\n\nexport function Form() {\n  const [value, setValue] = React.useState(\"\");\n  const [error, setError] = React.useState(\"\");\n  const [result, setResult] = React.useState(\"\");\n  return (\n    <form className=\"grid min-w-0 max-w-83 gap-5\" noValidate onSubmit={event => {\n      event.preventDefault();\n      if (!value) { setError(\"Choose a card before continuing.\"); setResult(\"\"); return; }\n      setError(\"\");\n      setResult(`Selected: ${new FormData(event.currentTarget).get(\"card\")}.`);\n    }} onReset={() => { setValue(\"\"); setError(\"\"); setResult(\"\"); }}>\n      <Field label=\"Card\" required error={error} help=\"Choose the card this agent can use.\">\n        <Select name=\"card\" value={value} onValueChange={next => { setValue(next); setError(\"\"); setResult(\"\"); }}>\n          <SelectTrigger><SelectValue placeholder=\"Choose a card\" /></SelectTrigger>\n          <SelectContent>\n            <SelectItem value=\"travel\" description=\"Flights and hotels\">Travel agent</SelectItem>\n            <SelectItem value=\"operations\">Operations and recurring software subscriptions</SelectItem>\n            <SelectItem value=\"archived\" disabled>Archived card (unavailable)</SelectItem>\n          </SelectContent>\n        </Select>\n      </Field>\n      <Field label=\"Billing currency\" help=\"The currency is set when the card is created.\">\n        <Select defaultValue=\"usd\" disabled>\n          <SelectTrigger><SelectValue /></SelectTrigger>\n          <SelectContent><SelectItem value=\"usd\">US dollar</SelectItem></SelectContent>\n        </Select>\n      </Field>\n      <div className=\"flex gap-3\"><Button type=\"submit\">Continue</Button><Button type=\"reset\" variant=\"secondary\">Reset</Button></div>\n      <p role=\"status\" className=\"text-body-sm text-fg-muted empty:hidden\">{result}</p>\n    </form>\n  );\n}\n",
+      "exports": [
+        "Site",
+        "Controlled",
+        "Toolbar",
+        "Form"
+      ],
+      "requires": [
+        "select",
+        "button",
+        "field"
+      ],
+      "packages": [],
+      "previews": [
+        {
+          "name": "Site",
+          "url": "https://agentcard-ds.vercel.app/preview/select/Site"
+        },
+        {
+          "name": "Controlled",
+          "url": "https://agentcard-ds.vercel.app/preview/select/Controlled"
+        },
+        {
+          "name": "Toolbar",
+          "url": "https://agentcard-ds.vercel.app/preview/select/Toolbar"
+        },
+        {
+          "name": "Form",
+          "url": "https://agentcard-ds.vercel.app/preview/select/Form"
+        }
+      ]
+    }
+  ],
+  "type": "ui",
+  "title": "Select",
+  "description": "Single-choice select with field, compact, ghost and chip treatments.",
+  "surface": "site",
+  "kinds": [
+    "input"
+  ],
+  "requires": [
+    "theme",
+    "surface",
+    "field",
+    "utils"
+  ],
+  "packages": [
+    "@radix-ui/react-select",
+    "lucide-react",
+    "class-variance-authority"
+  ],
+  "files": [
+    {
+      "path": "components/ui/select.tsx",
+      "content": "\"use client\";\n\nimport * as React from \"react\";\nimport * as SelectPrimitive from \"@radix-ui/react-select\";\nimport { Check, ChevronDown, ChevronUp } from \"lucide-react\";\nimport { cva, type VariantProps } from \"class-variance-authority\";\n\nimport { usePortalContainer } from \"@/lib/surface\";\nimport { useFieldControl } from \"@/components/ui/field\";\nimport { cn } from \"@/lib/utils\";\n\n// A single choice. `field` is the brand's select (the get-started form, .v7-gate-field select): the input's square box,\n// 35 percent ink border and 18px Inter, 10px by 12px of padding, with a small ink triangle (10 by 5px) 13px in from the\n// right; focus is the form's 2px blue outline laid over the border. `compact` shortens it to 14px for dense rows. `ghost`\n// is the white key for a toolbar, `chip` a quiet label on a wash. The list is the brand's floating panel (white, a\n// hairline, 8px corners) growing from its trigger in a quick ease-out; the row under the pointer or the keys takes the\n// guides' search results' sky wash (.v7-guide-search-results [aria-selected]), the chosen one a blue tick.\nconst triggerVariants = cva(\n  \"flex min-w-0 max-w-full items-center gap-2 whitespace-nowrap outline-none transition-[background-color,border-color,box-shadow,color,translate] duration-150 ease-out disabled:pointer-events-none disabled:opacity-50 motion-reduce:transition-none [&_svg]:shrink-0 [&>[data-slot=select-value]]:min-w-0 [&>[data-slot=select-value]]:truncate [&>[data-slot=select-value]]:text-left\",\n  {\n    variants: {\n      appearance: {\n        field:\n          \"w-full gap-3.25 rounded-none border border-line-strong bg-surface font-sans text-fg focus-visible:outline-2 focus-visible:-outline-offset-1 focus-visible:outline-solid focus-visible:outline-focus-ring data-[state=open]:outline-2 data-[state=open]:-outline-offset-1 data-[state=open]:outline-solid data-[state=open]:outline-focus-ring data-placeholder:text-fg aria-invalid:border-danger [&>span]:flex-1 [&>span]:truncate [&>span]:text-left\",\n        ghost:\n          \"h-8 rounded-control border border-hairline bg-surface px-3 font-display text-caption text-fg shadow-key hover:bg-sky-wash focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-solid focus-visible:outline-focus-ring active:translate-y-px active:shadow-pressed data-[state=open]:bg-sky-wash motion-reduce:active:translate-y-0\",\n        chip: \"h-7 rounded-sm bg-wash-pill px-2.5 font-display text-caption text-fg-secondary hover:text-fg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-solid focus-visible:outline-focus-ring data-[state=open]:text-fg\",\n      },\n      // A shorter field, for dense rows.\n      compact: { true: \"\", false: \"\" },\n    },\n    compoundVariants: [\n      { appearance: \"field\", compact: false, className: \"min-h-11 py-2.5 pr-3.25 pl-3 text-h5 leading-snug\" },\n      { appearance: \"field\", compact: true, className: \"h-9 pr-3.25 pl-2.5 text-body-sm\" },\n    ],\n    defaultVariants: { appearance: \"field\", compact: false },\n  },\n);\n\n/** The brand's select mark: a small filled triangle, 10 by 5px, pointing down. */\nfunction SelectMark({ className }: { className?: string }) {\n  return (\n    <svg aria-hidden viewBox=\"0 0 10 5\" className={cn(\"h-1.25 w-2.5 fill-current\", className)}>\n      <path d=\"M0 0h10L5 5z\" />\n    </svg>\n  );\n}\n\nfunction Select(props: React.ComponentProps<typeof SelectPrimitive.Root>) {\n  const { required } = useFieldControl({ required: props.required });\n  return <SelectPrimitive.Root data-slot=\"select\" {...props} required={required} />;\n}\n\nfunction SelectGroup(props: React.ComponentProps<typeof SelectPrimitive.Group>) {\n  return <SelectPrimitive.Group data-slot=\"select-group\" {...props} />;\n}\n\nfunction SelectValue(props: React.ComponentProps<typeof SelectPrimitive.Value>) {\n  return <SelectPrimitive.Value data-slot=\"select-value\" {...props} />;\n}\n\nfunction SelectTrigger({ className, appearance, compact, children, ...props }: React.ComponentProps<typeof SelectPrimitive.Trigger> & VariantProps<typeof triggerVariants>) {\n  const { required, ...control } = useFieldControl(props);\n  return (\n    <SelectPrimitive.Trigger data-slot=\"select-trigger\" className={cn(triggerVariants({ appearance, compact }), className)} aria-required={required || undefined} {...control}>\n      {children}\n      <SelectPrimitive.Icon asChild>\n        <SelectMark className={appearance === \"field\" || appearance == null ? \"ml-auto text-fg\" : \"text-fg-muted\"} />\n      </SelectPrimitive.Icon>\n    </SelectPrimitive.Trigger>\n  );\n}\n\nfunction SelectContent({ className, children, compact = false, position = \"popper\", collisionPadding = 8, ...props }: React.ComponentProps<typeof SelectPrimitive.Content> & { compact?: boolean }) {\n  return (\n    <SelectPrimitive.Portal container={usePortalContainer()}>\n      <SelectPrimitive.Content\n        data-slot=\"select-content\"\n        position={position}\n        collisionPadding={collisionPadding}\n        sideOffset={4}\n        align=\"start\"\n        className={cn(\n          \"relative z-50 max-h-[min(20rem,var(--radix-select-content-available-height))] min-w-0 max-w-(--radix-select-content-available-width) origin-(--radix-select-content-transform-origin) animate-pop-in motion-reduce:animate-none overflow-hidden rounded-control border border-hairline bg-surface p-1 leading-snug text-fg shadow-tooltip\",\n          position === \"popper\" && \"w-[max(11rem,var(--radix-select-trigger-width))]\",\n          compact ? \"font-display text-body-sm\" : \"font-sans text-h5\",\n          className,\n        )}\n        {...props}\n      >\n        <SelectPrimitive.ScrollUpButton className=\"flex h-6 items-center justify-center text-fg-muted\">\n          <ChevronUp className=\"size-3.5\" strokeWidth={1.5} />\n        </SelectPrimitive.ScrollUpButton>\n        <SelectPrimitive.Viewport className=\"flex w-full flex-col gap-0.5\">{children}</SelectPrimitive.Viewport>\n        <SelectPrimitive.ScrollDownButton className=\"flex h-6 items-center justify-center text-fg-muted\">\n          <ChevronDown className=\"size-3.5\" strokeWidth={1.5} />\n        </SelectPrimitive.ScrollDownButton>\n      </SelectPrimitive.Content>\n    </SelectPrimitive.Portal>\n  );\n}\n\nfunction SelectLabel({ className, ...props }: React.ComponentProps<typeof SelectPrimitive.Label>) {\n  return <SelectPrimitive.Label data-slot=\"select-label\" className={cn(\"px-2.5 pt-1.5 pb-1 font-display text-caption text-fg-muted\", className)} {...props} />;\n}\n\nfunction SelectItem({ className, children, description, ...props }: React.ComponentProps<typeof SelectPrimitive.Item> & { description?: React.ReactNode }) {\n  return (\n    <SelectPrimitive.Item\n      data-slot=\"select-item\"\n      className={cn(\n        \"relative flex w-full cursor-default items-start gap-2 rounded-sm py-2 pr-8 pl-2.5 break-words text-fg-secondary outline-none select-none data-[disabled]:pointer-events-none data-[disabled]:opacity-40 data-[highlighted]:bg-search-selected data-[highlighted]:text-fg data-[state=checked]:text-fg\",\n        className,\n      )}\n      {...props}\n    >\n      <span className=\"min-w-0 flex-1\">\n        <SelectPrimitive.ItemText>{children}</SelectPrimitive.ItemText>\n        {description && <span className=\"mt-0.5 block font-sans text-caption text-fg-muted\">{description}</span>}\n      </span>\n      <SelectPrimitive.ItemIndicator className=\"absolute top-1/2 right-2.5 -translate-y-1/2 text-fg-brand\">\n        <Check className=\"size-3.5\" strokeWidth={1.75} />\n      </SelectPrimitive.ItemIndicator>\n    </SelectPrimitive.Item>\n  );\n}\n\nfunction SelectSeparator({ className, ...props }: React.ComponentProps<typeof SelectPrimitive.Separator>) {\n  return <SelectPrimitive.Separator data-slot=\"select-separator\" className={cn(\"-mx-1 my-1 h-px bg-line\", className)} {...props} />;\n}\n\nexport { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectSeparator, SelectTrigger, SelectValue };\n"
+    }
+  ]
+}

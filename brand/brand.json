@@ -1,0 +1,43 @@
+{
+	"name": "Agentcard",
+	"bin": "agentcard-ds",
+	"source": "github:anwarlemu/agentcard-brand-cli#release",
+	"reviewModel": "claude-opus-5-5",
+	"reviewThreshold": 7,
+	"registryUrl": "https://agentcard-ds.vercel.app",
+	"site": "https://www.agentcard.sh",
+	"surfaces": [
+		"site"
+	],
+	"fonts": {
+		"css": "https://fonts.googleapis.com/css2?family=Inter:wght@400..600&display=swap",
+		"next": [
+			{
+				"import": "Inter",
+				"variable": "--font-inter",
+				"options": {
+					"display": "swap"
+				}
+			}
+		],
+		"native": "Add Inter (text) to the app as a font and set it on its text styles; headings, labels and buttons use Helvetica Neue (the system's on Apple platforms)"
+	},
+	"touches": {
+		"hero": {
+			"attribute": "data-ds-hero",
+			"does": "the blue ground, white type and the stepped bands into the page below; a header that sits over the hero takes data-ds-ground=\"blue\" so its marks turn white"
+		}
+	},
+	"type": {
+		"caps": true
+	},
+	"variants": {
+		"site": {
+			"filled": "primary",
+			"outlined": "secondary",
+			"quiet": "ghost",
+			"onBrand": "on-brand",
+			"card": "default"
+		}
+	}
+}

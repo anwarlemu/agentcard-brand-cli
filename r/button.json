@@ -1,0 +1,64 @@
+{
+  "schemaVersion": 1,
+  "name": "button",
+  "useFor": "Use one primary action per section. Use secondary for other actions, on-brand on blue backgrounds and ghost in toolbars. Wire an onClick handler, use type=\"submit\" for forms, or use asChild with a link for navigation.",
+  "constraints": [
+    "Rounded pill buttons",
+    "Bold labels",
+    "Two blue keys side by side for equal actions",
+    "A gradient or glow on a key"
+  ],
+  "documentation": "",
+  "source": "agentcard-website src/app/globals.css:4159 (V7 buttons and tabs, one bevel)",
+  "exports": [
+    "Button",
+    "buttonVariants"
+  ],
+  "client": false,
+  "docsUrl": "https://agentcard-ds.vercel.app/components/button",
+  "markdownUrl": "https://agentcard-ds.vercel.app/r/button.md",
+  "examples": [
+    {
+      "path": "examples/button.tsx",
+      "content": "import { Button } from \"@/components/ui/button\";\nimport { Surface } from \"@/lib/surface\";\n\nexport function Site() {\n  return (\n    <div className=\"grid gap-6\">\n      <div className=\"flex flex-wrap items-center gap-3\">\n        <Button asChild><a href=\"https://app.agentcard.sh/\" target=\"_blank\" rel=\"noreferrer\">Start free</a></Button>\n        <Button variant=\"secondary\" asChild><a href=\"https://www.agentcard.sh/pricing\" target=\"_blank\" rel=\"noreferrer\">See pricing</a></Button>\n        <Button variant=\"ghost\" asChild><a href=\"https://docs.agentcard.sh\" target=\"_blank\" rel=\"noreferrer\">Read the docs</a></Button>\n        <Button size=\"sm\" asChild><a href=\"https://www.agentcard.sh/vault\" target=\"_blank\" rel=\"noreferrer\">Explore Vault</a></Button>\n      </div>\n      <Surface ground=\"blue\" className=\"flex flex-wrap items-center gap-3 rounded-panel p-8\">\n        <Button variant=\"on-brand\" asChild><a href=\"https://app.agentcard.sh/\" target=\"_blank\" rel=\"noreferrer\">Get started</a></Button>\n        <Button variant=\"on-brand\" size=\"sm\" asChild><a href=\"https://cal.com/team/agentcard/agentcard-call\" target=\"_blank\" rel=\"noreferrer\">Talk to us</a></Button>\n      </Surface>\n    </div>\n  );\n}\n",
+      "exports": [
+        "Site"
+      ],
+      "requires": [
+        "button",
+        "surface"
+      ],
+      "packages": [],
+      "previews": [
+        {
+          "name": "Site",
+          "url": "https://agentcard-ds.vercel.app/preview/button/Site"
+        }
+      ]
+    }
+  ],
+  "type": "ui",
+  "title": "Button",
+  "description": "Buttons for primary, secondary, toolbar and on-blue actions.",
+  "surface": "site",
+  "kinds": [
+    "button-primary",
+    "button-secondary",
+    "button-on-brand",
+    "header-action"
+  ],
+  "requires": [
+    "theme",
+    "utils"
+  ],
+  "packages": [
+    "@radix-ui/react-slot",
+    "class-variance-authority"
+  ],
+  "files": [
+    {
+      "path": "components/ui/button.tsx",
+      "content": "import * as React from \"react\";\nimport { Slot } from \"@radix-ui/react-slot\";\nimport { cva, type VariantProps } from \"class-variance-authority\";\n\nimport { cn } from \"@/lib/utils\";\n\n// Every button is a raised key (agentcard.sh, the v7 bevel): 8px corners, a border a shade darker than its fill, a\n// light line inside the top, a darker one inside the bottom and a soft drop. Hover brightens a shade; a press sinks it\n// a pixel and swaps the drop for the pressed well. `primary` is the blue key on white, `on-brand` the white key with\n// blue text on the blue ground, `secondary` the white key with ink text on white, `ghost` a bare label that washes on\n// hover.\nconst buttonVariants = cva(\n  \"inline-flex shrink-0 items-center justify-center gap-2.5 whitespace-nowrap rounded-control border font-display font-normal leading-none outline-none select-none transition-[background-color,color,box-shadow,translate] duration-150 ease-out focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-solid focus-visible:outline-focus-ring active:translate-y-px disabled:pointer-events-none disabled:opacity-50 motion-reduce:transition-none motion-reduce:active:translate-y-0 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-3.5\",\n  {\n    variants: {\n      variant: {\n        primary: \"border-line-brand-edge bg-primary text-on-primary shadow-key-brand hover:bg-primary-hover active:shadow-pressed\",\n        secondary: \"border-hairline bg-surface text-fg shadow-key hover:bg-sky-wash active:shadow-pressed\",\n        \"on-brand\": \"border-hairline bg-white text-fg-brand shadow-key hover:bg-sky-wash active:shadow-pressed\",\n        ghost: \"border-transparent text-fg-muted hover:bg-wash-hover hover:text-fg data-[state=open]:bg-wash-hover data-[state=open]:text-fg\",\n      },\n      size: {\n        // The site's key: 40px, 22px of padding, 14px display face.\n        md: \"h-10 px-5.5 text-body-sm leading-body\",\n        sm: \"h-8 px-3.5 text-caption\",\n        // The header's Get started and the pricing actions are md; a full-width action adds w-full.\n        icon: \"size-8 px-0 [&_svg:not([class*='size-'])]:size-4\",\n      },\n    },\n    defaultVariants: { variant: \"primary\", size: \"md\" },\n  },\n);\n\ntype ButtonProps = React.ComponentProps<\"button\"> & VariantProps<typeof buttonVariants> & { asChild?: boolean };\n\nfunction Button({ className, variant, size, asChild = false, type, ...props }: ButtonProps) {\n  const Comp = asChild ? Slot : \"button\";\n  return <Comp data-slot=\"button\" type={asChild ? type : (type ?? \"button\")} className={cn(buttonVariants({ variant, size, className }))} {...props} />;\n}\n\nexport { Button, buttonVariants };\n"
+    }
+  ]
+}

@@ -1,0 +1,58 @@
+{
+  "schemaVersion": 1,
+  "name": "label",
+  "useFor": "Use the default form label above an input. Use variant=control for the larger label beside a checkbox, switch or radio. Connect htmlFor to the control id, or use Field to connect it automatically.",
+  "constraints": [
+    "Bold labels",
+    "Caps labels",
+    "Labels without a control to point at"
+  ],
+  "documentation": "",
+  "source": "https://agentcard.com/get-started (.v7-gate-field > span); control variant is an extension",
+  "exports": [
+    "Label"
+  ],
+  "client": true,
+  "docsUrl": "https://agentcard-ds.vercel.app/components/label",
+  "markdownUrl": "https://agentcard-ds.vercel.app/r/label.md",
+  "examples": [
+    {
+      "path": "examples/label.tsx",
+      "content": "import { Checkbox } from \"@/components/ui/checkbox\";\nimport { Input } from \"@/components/ui/input\";\nimport { Label } from \"@/components/ui/label\";\nimport { Switch } from \"@/components/ui/switch\";\n\nexport function Site() {\n  return <div className=\"grid max-w-sm gap-4\">\n    <div className=\"grid gap-1.5\">\n      <Label htmlFor=\"label-company\">Company</Label>\n      <Input id=\"label-company\" name=\"company\" placeholder=\"Acme\" />\n    </div>\n    <Label variant=\"control\"><Checkbox defaultChecked />Email me a receipt for every purchase</Label>\n    <div className=\"flex items-center justify-between gap-4\">\n      <Label variant=\"control\" htmlFor=\"label-switch\">Pause this card</Label>\n      <Switch id=\"label-switch\" />\n    </div>\n  </div>;\n}\n",
+      "exports": [
+        "Site"
+      ],
+      "requires": [
+        "label",
+        "checkbox",
+        "input",
+        "switch"
+      ],
+      "packages": [],
+      "previews": [
+        {
+          "name": "Site",
+          "url": "https://agentcard-ds.vercel.app/preview/label/Site"
+        }
+      ]
+    }
+  ],
+  "type": "ui",
+  "title": "Label",
+  "description": "Accessible label for a form control.",
+  "surface": "site",
+  "kinds": [],
+  "requires": [
+    "theme",
+    "utils"
+  ],
+  "packages": [
+    "@radix-ui/react-label"
+  ],
+  "files": [
+    {
+      "path": "components/ui/label.tsx",
+      "content": "\"use client\";\n\nimport * as React from \"react\";\nimport * as LabelPrimitive from \"@radix-ui/react-label\";\nimport { cn } from \"@/lib/utils\";\n\n// Form labels follow .v7-gate-field > span: 12px display type on an 18px line.\n// The control variant pairs a body-size label with an inline checkbox or switch.\nfunction Label({ className, variant = \"form\", ...props }: React.ComponentProps<typeof LabelPrimitive.Root> & { variant?: \"form\" | \"control\" }) {\n  return <LabelPrimitive.Root data-slot=\"label\" className={cn(\n    \"flex items-center gap-2 select-none peer-disabled:opacity-50 group-data-[disabled=true]:opacity-50 font-display text-caption leading-normal text-fg-muted\",\n    variant === \"control\" && \"font-sans text-body leading-snug text-fg\",\n    className,\n  )} {...props} />;\n}\n\nexport { Label };\n"
+    }
+  ]
+}

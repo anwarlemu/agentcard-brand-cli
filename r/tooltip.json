@@ -1,0 +1,69 @@
+{
+  "schemaVersion": 1,
+  "name": "tooltip",
+  "useFor": "Use to explain an icon control or add brief context. Keep a separate accessible name on the control; do not put essential instructions only in the tooltip.",
+  "constraints": [
+    "Tooltips for anything needed to finish a task",
+    "Long text (use a popover)",
+    "Dark tooltips"
+  ],
+  "documentation": "Wrap adjacent tooltips in `TooltipProvider` to share the hover delay. A standalone `Tooltip` supplies its own provider.",
+  "source": "Extension from agentcard-website src/app/globals.css (.v7-dock-card)",
+  "exports": [
+    "Tooltip",
+    "TooltipTrigger",
+    "TooltipContent",
+    "TooltipProvider"
+  ],
+  "client": true,
+  "docsUrl": "https://agentcard-ds.vercel.app/components/tooltip",
+  "markdownUrl": "https://agentcard-ds.vercel.app/r/tooltip.md",
+  "examples": [
+    {
+      "path": "examples/tooltip.tsx",
+      "content": "\"use client\";\n\nimport { useState } from \"react\";\nimport { Field } from \"@/components/ui/field\";\nimport { Input } from \"@/components/ui/input\";\nimport { Pause, Plus, Settings } from \"lucide-react\";\n\nimport { Button } from \"@/components/ui/button\";\nimport { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from \"@/components/ui/tooltip\";\n\nconst ACTIONS = [\n  { label: \"New card\", icon: Plus },\n  { label: \"Pause card\", icon: Pause },\n  { label: \"Card settings\", icon: Settings },\n];\n\nexport function Site() {\n  const [nickname, setNickname] = useState(\"Travel agent\");\n  const [cards, setCards] = useState(1);\n  const [paused, setPaused] = useState(false);\n  const [settings, setSettings] = useState(false);\n  return (\n    <TooltipProvider>\n    <div className=\"flex gap-2 pt-10\">\n      {ACTIONS.map(({ label, icon: Icon }) => (\n        <Tooltip key={label}>\n          <TooltipTrigger asChild>\n            <Button variant=\"secondary\" size=\"icon\" aria-label={label === \"Pause card\" && paused ? \"Resume card\" : label} onClick={() => { if (label === \"New card\") setCards(cards + 1); else if (label === \"Pause card\") setPaused(!paused); else setSettings(!settings); }}>\n              <Icon strokeWidth={1.5} />\n            </Button>\n          </TooltipTrigger>\n          <TooltipContent>{label === \"Pause card\" && paused ? \"Resume card\" : label}</TooltipContent>\n        </Tooltip>\n      ))}\n    </div>\n    <p role=\"status\" className=\"mt-3 text-body-sm text-fg-muted\">{cards} {cards === 1 ? \"card\" : \"cards\"}. {nickname || \"Unnamed card\"} {paused ? \"paused\" : \"active\"}.</p>\n    {settings && <Field label=\"Card nickname\"><Input value={nickname} onChange={(event) => setNickname(event.target.value)} /></Field>}\n    </TooltipProvider>\n  );\n}\n\nexport function Open() {\n  const [paused, setPaused] = useState(false);\n  return (\n    <div className=\"flex gap-2 pt-10\">\n      <Tooltip defaultOpen>\n        <TooltipTrigger asChild>\n          <Button variant=\"secondary\" size=\"icon\" aria-label={paused ? \"Resume card\" : \"Pause card\"} onClick={() => setPaused(!paused)}>\n            <Pause strokeWidth={1.5} />\n          </Button>\n        </TooltipTrigger>\n        <TooltipContent>{paused ? \"Resume card\" : \"Pause card\"}</TooltipContent>\n      </Tooltip>\n      <p role=\"status\" className=\"text-body-sm text-fg-muted\">{paused ? \"Card paused.\" : \"Card active.\"}</p>\n    </div>\n  );\n}\n",
+      "exports": [
+        "Site",
+        "Open"
+      ],
+      "requires": [
+        "tooltip",
+        "field",
+        "input",
+        "button"
+      ],
+      "packages": [
+        "lucide-react"
+      ],
+      "previews": [
+        {
+          "name": "Site",
+          "url": "https://agentcard-ds.vercel.app/preview/tooltip/Site"
+        },
+        {
+          "name": "Open",
+          "url": "https://agentcard-ds.vercel.app/preview/tooltip/Open"
+        }
+      ]
+    }
+  ],
+  "type": "ui",
+  "title": "Tooltip",
+  "description": "Short contextual label shown on hover or keyboard focus.",
+  "surface": "site",
+  "kinds": [],
+  "requires": [
+    "theme",
+    "surface",
+    "utils"
+  ],
+  "packages": [
+    "@radix-ui/react-tooltip"
+  ],
+  "files": [
+    {
+      "path": "components/ui/tooltip.tsx",
+      "content": "\"use client\";\n\nimport * as React from \"react\";\nimport * as TooltipPrimitive from \"@radix-ui/react-tooltip\";\n\nimport { usePortalContainer } from \"@/lib/surface\";\nimport { cn } from \"@/lib/utils\";\n\nconst HasTooltipProvider = React.createContext(false);\n\n// Hovering waits a beat before the label appears, so passing over a control doesn't flash it; once one is showing,\n// the next one within the warm window appears at once (Radix's skip delay), so sweeping a row of keys doesn't wait.\nfunction TooltipProvider({ delayDuration = 600, skipDelayDuration = 300, ...props }: React.ComponentProps<typeof TooltipPrimitive.Provider>) {\n  return <HasTooltipProvider.Provider value={true}><TooltipPrimitive.Provider data-slot=\"tooltip-provider\" delayDuration={delayDuration} skipDelayDuration={skipDelayDuration} {...props} /></HasTooltipProvider.Provider>;\n}\n\nfunction Tooltip(props: React.ComponentProps<typeof TooltipPrimitive.Root>) {\n  const provided = React.useContext(HasTooltipProvider);\n  if (provided) return <TooltipPrimitive.Root data-slot=\"tooltip\" {...props} />;\n  return (\n    <TooltipProvider>\n      <TooltipPrimitive.Root data-slot=\"tooltip\" {...props} />\n    </TooltipProvider>\n  );\n}\n\nfunction TooltipTrigger(props: React.ComponentProps<typeof TooltipPrimitive.Trigger>) {\n  return <TooltipPrimitive.Trigger data-slot=\"tooltip-trigger\" {...props} />;\n}\n\n// The brand's floating label: white, a 16 percent ink hairline, 8px corners and the tooltip shadow, in the 12px display\n// face, on one line unless `wrap`. The first one hovered grows from its trigger (scale 0.97 and a fade, 160ms ease-out);\n// the next ones in the warm window (Radix's instant open) appear at once. Reduced motion keeps only the fade.\nfunction TooltipContent({ className, side, sideOffset, collisionPadding = 8, wrap = false, children, ...props }: React.ComponentProps<typeof TooltipPrimitive.Content> & { wrap?: boolean }) {\n  return (\n    <TooltipPrimitive.Portal container={usePortalContainer()}>\n      <TooltipPrimitive.Content\n        data-slot=\"tooltip-content\"\n        side={side}\n        collisionPadding={collisionPadding}\n        sideOffset={sideOffset ?? (side === \"left\" || side === \"right\" ? 8 : 6)}\n        className={cn(\n          \"z-50 origin-(--radix-tooltip-content-transform-origin) rounded-control border border-hairline bg-surface px-2 py-1.5 font-display text-caption leading-snug text-fg shadow-tooltip motion-safe:data-[state=delayed-open]:animate-pop-in motion-reduce:animate-none\",\n          wrap ? \"w-max max-w-[min(16rem,var(--radix-tooltip-content-available-width))] text-pretty\" : \"w-max max-w-(--radix-tooltip-content-available-width) break-words\",\n          className,\n        )}\n        {...props}\n      >\n        {children}\n      </TooltipPrimitive.Content>\n    </TooltipPrimitive.Portal>\n  );\n}\n\nexport { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider };\n"
+    }
+  ]
+}

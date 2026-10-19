@@ -1,0 +1,62 @@
+{
+  "schemaVersion": 1,
+  "name": "window",
+  "useFor": "Use for plans, directories, code examples and other grouped content that needs a title. Use at most one blue title bar per group.",
+  "constraints": [
+    "A window bar on every card of a page",
+    "Colored bars other than sky blue and the five tints",
+    "Rounded corners above 12px"
+  ],
+  "documentation": "",
+  "source": "agentcard.sh /pricing (.v7-offer-card .v7-windowbar) and / (.v7-customer), computed; agentcard-website src/components/v7/window-mark.tsx",
+  "exports": [
+    "Window",
+    "WindowBar",
+    "WindowMark",
+    "windowBarVariants"
+  ],
+  "client": false,
+  "docsUrl": "https://agentcard-ds.vercel.app/components/window",
+  "markdownUrl": "https://agentcard-ds.vercel.app/r/window.md",
+  "examples": [
+    {
+      "path": "examples/window.tsx",
+      "content": "import { Window } from \"@/components/ui/window\";\n\nexport function Site() {\n  return (\n    <div className=\"grid gap-6 sm:grid-cols-2\">\n      <Window name=\"vault-free.plan\" bodyClassName=\"grid gap-2 p-7\">\n        <h3 className=\"font-display text-h3 leading-display font-medium tracking-tight\">Vault Free</h3>\n        <p className=\"text-body-sm text-fg-muted\">Store customers' cards and buy with an agent</p>\n      </Window>\n      <Window name=\"vault-enterprise.plan\" tone=\"blue\" raised bodyClassName=\"grid gap-2 p-7\">\n        <h3 className=\"font-display text-h3 leading-display font-medium tracking-tight\">Vault Enterprise</h3>\n        <p className=\"text-body-sm text-fg-muted\">Store customers' cards and buy with an agent</p>\n      </Window>\n      <div className=\"grid grid-cols-3 gap-4 sm:col-span-2\">\n        {(\n          [\n            [\"sage\", \"Orchid\"],\n            [\"rose\", \"Fieldwork\"],\n            [\"teal\", \"Northwind\"],\n          ] as const\n        ).map(([tone, customer]) => (\n          <Window key={tone} name=\"\" tone={tone} bodyClassName=\"flex min-h-21 items-center justify-center font-display text-h4 tracking-tight\">\n            {customer}\n          </Window>\n        ))}\n      </div>\n    </div>\n  );\n}\n",
+      "exports": [
+        "Site"
+      ],
+      "requires": [
+        "window"
+      ],
+      "packages": [],
+      "previews": [
+        {
+          "name": "Site",
+          "url": "https://agentcard-ds.vercel.app/preview/window/Site"
+        }
+      ]
+    }
+  ],
+  "type": "ui",
+  "title": "Window",
+  "description": "Content container with a title bar and optional controls.",
+  "surface": "site",
+  "kinds": [
+    "window",
+    "window-bar",
+    "card"
+  ],
+  "requires": [
+    "theme",
+    "utils"
+  ],
+  "packages": [
+    "class-variance-authority"
+  ],
+  "files": [
+    {
+      "path": "components/ui/window.tsx",
+      "content": "import * as React from \"react\";\nimport { cva, type VariantProps } from \"class-variance-authority\";\n\nimport { cn } from \"@/lib/utils\";\n\n// A card with a title bar, as the brand draws its plans, cases, directories and FAQ (agentcard.sh, .v7-windowbar):\n// a 32px bar with an arrow, a file-like name and the [*] mark, over a white body with 12px corners and the soft drop.\n// The bar is sky with blue marks; `blue` is the featured window's bar, white marks on the blue. The tints are the\n// customer windows on the home page (.v7-customer): a shorter 26px bar in one pale hue, lit across its middle, over a 14\n// percent ink rule, ink marks at 45 percent; the window itself 10px corners, a 22 percent ink edge and the tile's soft\n// drop.\nconst windowBarVariants = cva(\n  \"flex h-8 shrink-0 items-center justify-between gap-3 border-b px-2.5 font-display text-micro leading-body\",\n  {\n    variants: {\n      tone: {\n        sky: \"border-line-window bg-window-bar text-window-bar-fg\",\n        blue: \"border-line-brand-edge bg-brand text-on-brand\",\n        sage: \"h-6.5 border-line bg-linear-to-r from-tint-sage via-[color-mix(in_srgb,var(--ds-color-tint-sage)_55%,var(--ds-color-white))] to-tint-sage text-fg\",\n        rose: \"h-6.5 border-line bg-linear-to-r from-tint-rose via-[color-mix(in_srgb,var(--ds-color-tint-rose)_55%,var(--ds-color-white))] to-tint-rose text-fg\",\n        teal: \"h-6.5 border-line bg-linear-to-r from-tint-teal via-[color-mix(in_srgb,var(--ds-color-tint-teal)_55%,var(--ds-color-white))] to-tint-teal text-fg\",\n        peach: \"h-6.5 border-line bg-linear-to-r from-tint-peach via-[color-mix(in_srgb,var(--ds-color-tint-peach)_55%,var(--ds-color-white))] to-tint-peach text-fg\",\n        butter: \"h-6.5 border-line bg-linear-to-r from-tint-butter via-[color-mix(in_srgb,var(--ds-color-tint-butter)_55%,var(--ds-color-white))] to-tint-butter text-fg\",\n      },\n    },\n    defaultVariants: { tone: \"sky\" },\n  },\n);\n\ntype Tone = NonNullable<VariantProps<typeof windowBarVariants>[\"tone\"]>;\nconst TINTS: Tone[] = [\"sage\", \"rose\", \"teal\", \"peach\", \"butter\"];\n\n/** The [*] mark at the right of a window bar: an asterisk drawn in three strokes between brackets. */\nfunction WindowMark({ className }: { className?: string }) {\n  return (\n    <span aria-hidden className={cn(\"inline-flex items-center gap-px leading-none\", className)}>\n      [\n      <svg viewBox=\"0 0 12 12\" className=\"size-[0.8em] fill-none stroke-current [stroke-linecap:square] [stroke-width:1.6]\">\n        <path d=\"M6 .5v11M1.24 3.25l9.52 5.5M1.24 8.75l9.52-5.5\" />\n      </svg>\n      ]\n    </span>\n  );\n}\n\nfunction WindowBar({ name, tone, actions, className, ...props }: Omit<React.ComponentProps<\"div\">, \"children\"> & { name: React.ReactNode; tone?: Tone; actions?: React.ReactNode }) {\n  return (\n    <div data-slot=\"window-bar\" className={cn(windowBarVariants({ tone }), className)} {...props}>\n      <span aria-hidden className=\"tracking-mark opacity-45\">\n        ↳\n      </span>\n      <span className=\"min-w-0 truncate\">{name}</span>\n      {actions ?? <WindowMark className={tone && TINTS.includes(tone) ? \"opacity-45\" : undefined} />}\n    </div>\n  );\n}\n\n/**\n * A window: the bar, then its body. `name` is the bar's label (pricing.plan, team.dir); `tone` its color. `raised`\n * adds the plan window's hard offset shadow (6px at 22 percent ink, as on /pricing and /about).\n */\nfunction Window({ name, tone, actions, raised = false, className, bodyClassName, children, ...props }: React.ComponentProps<\"div\"> & { name: React.ReactNode; tone?: Tone; actions?: React.ReactNode; raised?: boolean; bodyClassName?: string }) {\n  return (\n    <div\n      data-slot=\"window\"\n      className={cn(\n        \"flex flex-col overflow-hidden rounded-card border border-hairline bg-surface text-fg\",\n        raised ? \"shadow-plan\" : \"shadow-card\",\n        tone && TINTS.includes(tone) && \"rounded-[calc(var(--ds-radius-sm)+var(--ds-space-1))] border-line-mid\",\n        tone && TINTS.includes(tone) && !raised && \"shadow-tile\",\n        className,\n      )}\n      {...props}\n    >\n      <WindowBar name={name} tone={tone} actions={actions} />\n      <div className={cn(\"min-h-0 flex-1\", bodyClassName)}>{children}</div>\n    </div>\n  );\n}\n\nexport { Window, WindowBar, WindowMark, windowBarVariants };\n"
+    }
+  ]
+}
