@@ -25,17 +25,17 @@ The same guide is installed at `.ds/agent-guide.md`. Agents that do not auto-loa
 
 ## Add components
 
-In a React and Tailwind 4 project, add the components the page needs. For example:
+Run `add` from the target app root. Components require React 19.2+, Tailwind CSS 4, and the `@/*` source alias. For other frameworks, run the bare CLI command to apply the brand instead. In a React and Tailwind 4 app, add the components the page needs:
 
 ```sh
-npx agentcard-ds add button card field input
+npx agentcard-ds add button card field input --surface product
 ```
 
 The CLI copies component source, installs dependencies and adds the theme. It uses the project’s `src` folder and
 `@` alias when configured. Read each component’s examples and usage notes before changing it.
 
 ```sh
-npx agentcard-ds add hero section site-header site-footer
+npx agentcard-ds add hero section site-header site-footer --surface site
 npx agentcard-ds list --json
 npx agentcard-ds show select --json
 npx agentcard-ds tokens border

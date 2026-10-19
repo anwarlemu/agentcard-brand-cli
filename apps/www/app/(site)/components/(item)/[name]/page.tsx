@@ -49,6 +49,7 @@ export default async function ComponentPage({ params }: { params: Promise<{ name
   const demos = Object.entries(examples[item.name] ?? {}).sort(([a], [b]) => (MAIN.includes(a) ? MAIN.indexOf(a) : 9) - (MAIN.includes(b) ? MAIN.indexOf(b) : 9));
   // Isolate demos that focus, lock scrolling, or open overlays from the surrounding docs.
   const framed = needsPreviewFrame(item);
+  const surfaceFlag = item.surface === "site" || item.surface === "product" ? ` --surface ${item.surface}` : "";
   const sections = [
     ...(demos.length ? [{ id: "preview", label: "Preview" }] : []),
     { id: "usage", label: "Usage" },
@@ -73,7 +74,8 @@ export default async function ComponentPage({ params }: { params: Promise<{ name
             <a href={`/r/${item.name}.md`} className="underline underline-offset-4">Text reference</a>
             <a href={`/r/${item.name}.json`} className="underline underline-offset-4">Source and examples as JSON</a>
           </p>
-          <Command command={`${CLI_COMMAND} add ${item.name}`} className="mt-7 max-w-none" />
+          <Command command={`${CLI_COMMAND} add ${item.name}${surfaceFlag}`} className="mt-7 max-w-none" />
+          <p className="mt-2 text-caption text-fg-muted">Run from the target React 19.2+ app root with Tailwind CSS 4 and the <code>@/*</code> source alias.</p>
         </header>
 
         {demos.length > 0 && (
@@ -105,7 +107,7 @@ export default async function ComponentPage({ params }: { params: Promise<{ name
       </article>
       <div className="sticky top-6 hidden flex-col gap-6 xl:flex">
         <Contents sections={sections} />
-        <CtaCard command={`${CLI_COMMAND} add ${item.name}`} />
+        <CtaCard command={`${CLI_COMMAND} add ${item.name}${surfaceFlag}`} />
       </div>
     </div>
   );
