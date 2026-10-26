@@ -4,6 +4,32 @@ Components, design tokens and a CLI for building Agentcard pages and interfaces.
 
 Reference: https://agentcard-ds.vercel.app
 
+## Consistent CLI workflow
+
+```sh
+npx agentcard-ds info --json
+npx agentcard-ds search button --json
+npx agentcard-ds view button --json
+npx agentcard-ds add button card --dry-run --json
+npx agentcard-ds add button card --json
+npx agentcard-ds add button --diff
+```
+
+For a new app: `npx -y github:anwarlemu/agentcard-brand-cli#release create --template vite --name my-app`.
+For an existing app: `init` sets up the theme; `apply --dry-run` previews a requested restyle.
+`add` also installs agent instructions and portable Claude/Codex skills, so a separate init is optional.
+Use `--cwd <app>` for a different directory. Existing components.json aliases, TS/JS output, local helpers, unrelated registries and local component edits are preserved.
+
+The standard registry works with shadcn 4.22.1:
+
+```sh
+npx agentcard-ds init
+npx agentcard-ds shadcn add @agentcard-ds/theme @agentcard-ds/button
+npx agentcard-ds mcp init --client claude
+```
+
+Include `theme` explicitly when using upstream shadcn to update existing theme aliases. Native `add` handles it automatically. Shared workspace installation, presets, migrations, registry authoring and MCP use the pinned upstream implementation via `shadcn <args...>`. Bundled component discovery works offline; installation needs network access for missing dependencies. Agent hosts must load their MCP configuration before it is available in a session.
+
 ## Install the CLI
 
 Run once from the project root:
@@ -25,14 +51,14 @@ The same guide is installed at `.ds/agent-guide.md`. Agents that do not auto-loa
 
 ## Add components
 
-Run `add` from the target app root. Components require React 19.2+, Tailwind CSS 4, and the `@/*` source alias. For other frameworks, run the bare CLI command to apply the brand instead. In a React and Tailwind 4 app, add the components the page needs:
+Run `add` from the target app root. Components require React 19.2+, Tailwind CSS 4, and valid project configuration. For other frameworks, run the bare CLI command to apply the brand instead. In a React and Tailwind 4 app, add the components the page needs:
 
 ```sh
 npx agentcard-ds add button card field input --surface product
 ```
 
 The CLI copies component source, installs dependencies and adds the theme. It uses the project’s `src` folder and
-`@` alias when configured. Read each component’s examples and usage notes before changing it.
+configured aliases and components.json paths. Read each component’s examples and usage notes before changing it.
 
 ```sh
 npx agentcard-ds add hero section site-header site-footer --surface site
@@ -89,13 +115,13 @@ Run these commands with `npx agentcard-ds` after installing the CLI.
 
 ## Update an existing interface
 
-Running the CLI without a subcommand applies the design system to existing code. It can replace matching React
+The `apply` command restyles existing code, with color changes scoped to recognized components. It can replace matching React
 components, convert style values, install styles and fonts, and add agent rules and checks. Review the diff before
 continuing. This conversion preserves existing copy and behavior.
 
 ```sh
-npx agentcard-ds --dry-run
-npx agentcard-ds
+npx agentcard-ds apply --dry-run
+npx agentcard-ds apply
 ```
 
 Subsequent runs report the next screen to review. `--redo` repeats conversion after an update. Component decisions
@@ -126,3 +152,5 @@ the complete file. `guide`, `list`, `show`, `look`, `tokens` and `check` without
 
 Run `npm run ci` for the CLI tests and registry checks, `npm run build --workspace www` for the docs build,
 and `DOCS_URL=http://localhost:3000 npm run test:docs` for the browser checks against a running production build.
+
+The explicit `apply` command scopes color conversion to recognized components and preserves unrelated artwork and shared palette data. The legacy bare-command conversion remains for compatibility; use `apply` for new restyling tasks.

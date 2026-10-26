@@ -1,3 +1,4 @@
+import { brand } from '../src/lib/brand.js';
 import { spawnSync } from 'node:child_process';
 import { chmodSync, existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
@@ -84,7 +85,7 @@ describe('portable agent workflow', () => {
     const added = run(root, ['add', 'select', '--json']);
     expect(added.status).toBe(0);
     const source = (await loadItem('select')).files!.find(f => f.path.endsWith('/select.tsx'))!.content;
-    expect(readFileSync(join(root, 'src/components/ui/select.tsx'), 'utf8')).toBe(source);
+    expect(readFileSync(join(root, 'src/components/ui/select.tsx'), 'utf8')).toBe(source.replaceAll('@/lib/utils', `@/lib/${brand().bin}-utils`));
     const repeated = run(root, ['add', 'select', '--json']);
     expect(repeated.data.kept).toContain('src/components/ui/select.tsx');
   });
@@ -100,5 +101,6 @@ describe('portable agent workflow', () => {
     expect(result.data).toMatchObject({ ok: false, error: expect.stringContaining('Could not install the packages') });
     expect(result.stderr).toContain('Installing');
     expect(existsSync(join(root, '.ds/installed.json'))).toBe(false);
+    expect(existsSync(join(root, 'src/components/ui/select.tsx'))).toBe(false);
   });
 });

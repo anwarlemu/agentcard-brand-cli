@@ -1,28 +1,36 @@
 import { readFileSync } from 'node:fs';
-import { join } from 'node:path';
 import { installAgents } from '../install/agents.js';
 import { Writer } from '../install/files.js';
 import { installStyles } from '../install/styles.js';
-import { brand, cli } from '../lib/brand.js';
+import { brand, cli, hasProduct } from '../lib/brand.js';
+import { configureRegistry } from '../install/config.js';
+import { profile } from '../project/surface.js';
 import { emit } from '../lib/output.js';
 import { findProjectRoot } from '../lib/paths.js';
-import { detectProject, MARKUP, STYLES, styledFiles } from '../project/detect.js';
+import { MARKUP, STYLES, detectProject, styledFiles } from '../project/detect.js';
 import { selfInstall, type RunOptions } from './run.js';
 
-/** Prepare a project for new work without rewriting its screens or creating conversion tasks. */
+/** Set up a design-system workspace without converting the application's existing styles or creating a restyle queue. */
 export function init(opts: RunOptions) {
+	if (opts.surface && !['site', 'product'].includes(opts.surface)) throw new Error('--surface is site or product.');
 	const root = findProjectRoot();
 	selfInstall(root, opts);
 	const project = detectProject(root);
 	const w = new Writer(root, opts.dryRun);
-	const styleText = styledFiles(root).filter(f => STYLES.test(f) || MARKUP.test(f)).map(f => readFileSync(join(root, f), 'utf8')).join('\n');
-	const styles = project.framework === 'native' ? undefined : installStyles(w, project, 'site', styleText);
+	const files = styledFiles(root);
+	const surface = (opts.surface ?? w.json('.ds/config.json')?.surface ?? (hasProduct() ? profile(root, files).surface : 'site')) as 'site' | 'product';
+	configureRegistry(w, project, surface);
+	const text = files.filter(f => STYLES.test(f) || MARKUP.test(f)).map(f => readFileSync(root + '/' + f, 'utf8')).join('\n');
+	const styles = project.framework === 'native' ? undefined : installStyles(w, project, surface, text);
+	w.write('.ds/config.json', JSON.stringify({ ...w.json('.ds/config.json'), schemaVersion: 1, brand: brand().bin, surface }, null, 2) + '\n');
 	installAgents(w);
-	const warnings = [...(styles?.notes ?? []), ...(!project.hasAlias ? ['Before adding React components, configure the @/* alias to point to the source root.'] : [])];
-	emit(opts, { ok: true, dryRun: Boolean(opts.dryRun), framework: project.framework, changes: w.changes, styles, warnings }, () => [
-		`${brand().name} ${opts.dryRun ? 'setup preview' : 'styles and agent instructions installed'}.`,
-		...w.changes.map(change => `  ${change.action}: ${change.file}`),
-		...warnings.map(note => `  Note: ${note}`),
-		`Next: ${cli()} guide, then ${cli()} show <component> and ${cli()} add <components...>.`,
+	const componentsSupported = ['next', 'react', 'vite', 'astro'].includes(project.framework) && (project.tailwindMajor ?? 0) >= 4;
+	const next = componentsSupported ? [`${cli()} list --surface ${surface} --json`, `${cli()} inspect <name> --json`, `${cli()} add <name> --surface ${surface} --json`] : [`${cli()} guide`, `${cli()} tokens --json`, `${cli()} check --changed --json`];
+	emit(opts, { schemaVersion: 1, mode: 'build', dryRun: !!opts.dryRun, surface, framework: project.framework, changes: w.changes, styles, guide: '.ds/agent-guide.md', componentsSupported, next }, () => [
+		`${opts.dryRun ? 'Would initialize' : 'Initialized'} the ${surface} design system. Existing component styles were not converted.`,
+		...w.changes.map(c => `  ${c.action}: ${c.file}`),
+		...(styles?.notes ?? []),
+		`Read .ds/agent-guide.md. Next: ${next.join('; ')}.`,
+		...(!componentsSupported ? ['React components need React and Tailwind 4. Use tokens with the existing stack, or set up those requirements before add.'] : []),
 	].join('\n'));
 }

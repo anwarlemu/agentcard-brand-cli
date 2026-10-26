@@ -24,6 +24,16 @@ export default function Home() {
         <Block title="Add components" description="Components need React 19.2 or later, Tailwind CSS 4 and the @/* source alias. The CLI copies the source and installs what each one needs.">
           <Command command={`${CLI_COMMAND} add button card field input`} />
         </Block>
+        <Block title="CLI and agent workflow" description="Respect existing project paths and JavaScript or TypeScript conventions. Inspect APIs, preview changes, then install components with their theme and agent skills.">
+          <div className="grid grid-cols-[minmax(0,1fr)] gap-2">
+            <Command command="npx agentcard-ds info --json" />
+            <Command command="npx agentcard-ds search button --json" />
+            <Command command="npx agentcard-ds view button --json" />
+            <Command command="npx agentcard-ds add button --diff" />
+            <Command command="npx agentcard-ds shadcn add @agentcard-ds/theme @agentcard-ds/button" />
+            <Command command="npx agentcard-ds mcp init --client claude" />
+          </div>
+        </Block>
         {GROUPS.map((g) => {
           const list = items.filter((i) => i.type === g.type).sort((a, b) => a.title.localeCompare(b.title));
           if (!list.length) return null;
