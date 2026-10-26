@@ -11,7 +11,7 @@ export async function checkInteractions(page, base) {
       return content;
     }
     const label = example === 'Site' ? 'Preview' : example.replace(/([a-z])([A-Z])/g, '$1 $2').toLowerCase().replace(/^./, c => c.toUpperCase());
-    const preview = page.locator('article figure').filter({ has: page.locator('figcaption', { hasText: new RegExp(`^${label}$`) }) });
+    const preview = page.locator('main figure').filter({ has: page.locator('figcaption', { hasText: new RegExp(`^${label}$`) }) });
     await preview.waitFor();
     return preview;
   };

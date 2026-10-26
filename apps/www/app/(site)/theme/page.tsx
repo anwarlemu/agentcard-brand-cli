@@ -2,7 +2,7 @@ import { readFileSync } from "node:fs";
 import path from "node:path";
 
 import { Window } from "@/components/ui/window";
-import { Block, Command, Page, PageIntro } from "@www/components/chrome";
+import { Block, Command, PageBody, PageHead } from "@www/components/chrome";
 import { Code } from "@www/components/code";
 import { CLI_COMMAND } from "@www/lib/registry";
 
@@ -42,12 +42,12 @@ function Swatch({ name, value }: { name: string; value: string }) {
 
 export default function ThemePage() {
   return (
-    <Page>
-      <PageIntro title="Design tokens" lead="Use these tokens for colors, typography, spacing, corners, shadows and motion. Components already use them; use the same tokens for custom layouts.">
+    <>
+      <PageHead eyebrow="Docs" title="Theme" description="Use these tokens for colors, typography, spacing, corners, shadows and motion. Components already use them; use the same tokens for custom layouts." />
+      <PageBody className="max-w-300">
         <Command command={`${CLI_COMMAND} add theme`} />
-      </PageIntro>
 
-      <Block title="Colour" description="Choose tokens by their role: surface, text, border, action or status.">
+      <Block title="Color" description="Choose tokens by their role: surface, text, border, action or status.">
         <div className="grid gap-6">
           {GROUPS.map((g) => {
             const list = colors.filter(([k]) => g.test.test(k) && !GROUPS.slice(0, GROUPS.indexOf(g)).some((p) => p.test.test(k)));
@@ -109,6 +109,7 @@ export default function ThemePage() {
 @import "./_agentcard-ds/theme.css";`}
         />
       </Block>
-    </Page>
+      </PageBody>
+    </>
   );
 }

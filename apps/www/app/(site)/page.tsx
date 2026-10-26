@@ -1,79 +1,47 @@
 import Link from "next/link";
-import { ArrowUpRight } from "lucide-react";
 
-import { Hero } from "@/components/site/hero";
-import { Button } from "@/components/ui/button";
-import { Window } from "@/components/ui/window";
-import { Block, Command, Page } from "@www/components/chrome";
-import { Prose } from "@www/components/prose";
-import { Thumb } from "@www/components/thumb";
-import { examples } from "@www/lib/examples.generated";
-import { CLI_COMMAND, findItem, registryName } from "@www/lib/registry";
+import { Block, Command, PageBody, PageHead } from "@www/components/chrome";
+import { CLI_COMMAND, GROUPS, INSTALL_COMMAND, items, registryName } from "@www/lib/registry";
 
-// A few pieces that carry the look, each drawn live.
-const SHOWCASE: { item: string; example: string; scale: number; align?: "start" }[] = [
-  { item: "pricing", example: "Site", scale: 0.34, align: "start" },
-  { item: "testimonials", example: "Site", scale: 0.34, align: "start" },
-  { item: "faq", example: "Site", scale: 0.34, align: "start" },
-  { item: "button", example: "Site", scale: 0.62 },
-  { item: "tabs", example: "Site", scale: 0.62 },
-  { item: "window", example: "Site", scale: 0.48 },
-];
+const KEY =
+  "flex h-full min-h-11 items-center rounded-control border border-hairline bg-surface px-4 py-2.5 font-display text-body-sm leading-snug font-medium text-fg shadow-key outline-none transition-[background-color] duration-150 ease-out hover:bg-sky-wash focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus-ring motion-reduce:transition-none";
 
 export default function Home() {
   return (
     <>
-      <Hero
-        fullScreen={false}
-        className="pt-40 pb-28 max-md:pt-32"
+      <PageHead
+        eyebrow="Design system"
         title={`${registryName} design system`}
-        titleClassName="max-w-none text-nowrap text-[length:min(var(--ds-text-hero),7vw)]"
-        actions={
-          <div className="grid w-[calc(100vw-2*var(--ds-layout-gutter))] max-w-2xl justify-items-center gap-4">
-            <p className="text-body-sm text-fg-on-brand-muted">Install and apply the design system to an existing project.</p>
-            <Command command={CLI_COMMAND} wrap />
-            <div className="flex flex-wrap justify-center gap-3">
-              <Button asChild variant="on-brand"><Link href="/components">Browse components</Link></Button>
-            </div>
-          </div>
-        }
+        description={`Components, page sections, tokens and a CLI for building ${registryName} pages, drawn from agentcard.sh. ${items.length} items, each with live examples, usage notes and source.`}
       />
-      <Page className="pt-24 md:pt-28">
-        <Block title="Components and page sections" description="Preview the components, read the usage notes and copy the source into the project.">
-          <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {SHOWCASE.map((s) => {
-              const item = findItem(s.item);
-              const Example = examples[s.item]?.[s.example];
-              if (!item || !Example) return null;
-              return (
-                <li key={s.item} className="group/card relative">
-                  <Window name={`${s.item}.tsx`} className="h-full transition-[border-color] duration-150 ease-out group-hover/card:border-line-brand">
-                    <Thumb example={Example} scale={s.scale} align={s.align} />
-                    <div className="grid gap-1 border-t border-line-subtle p-5">
-                      <Link
-                        href={`/components/${s.item}`}
-                        className="rounded-sm font-display text-body font-medium outline-none after:absolute after:inset-0 after:rounded-card focus-visible:after:outline-2 focus-visible:after:outline-offset-4 focus-visible:after:outline-focus-ring"
-                      >
-                        {item.title}
-                      </Link>
-                      <span className="line-clamp-2 text-body-sm text-fg-muted">
-                        <Prose text={item.description} />
-                      </span>
-                    </div>
-                  </Window>
-                </li>
-              );
-            })}
-          </ul>
-          <div className="mt-10 flex justify-center">
-            <Button asChild variant="secondary">
-              <Link href="/components">
-                View all components <ArrowUpRight />
-              </Link>
-            </Button>
+      <PageBody className="max-w-240">
+        <Block title="Install the CLI" description="Run once from the project root. It adds the brand stylesheet, the fonts and the agent instructions.">
+          <div className="grid grid-cols-[minmax(0,1fr)] gap-2">
+            <Command command={INSTALL_COMMAND} />
+            <Command command="npx agentcard-ds init" />
           </div>
         </Block>
-      </Page>
+        <Block title="Add components" description="Components need React 19.2 or later, Tailwind CSS 4 and the @/* source alias. The CLI copies the source and installs what each one needs.">
+          <Command command={`${CLI_COMMAND} add button card field input`} />
+        </Block>
+        {GROUPS.map((g) => {
+          const list = items.filter((i) => i.type === g.type).sort((a, b) => a.title.localeCompare(b.title));
+          if (!list.length) return null;
+          return (
+            <Block key={g.type} id={g.id} title={g.label} description={g.blurb}>
+              <ul className="grid grid-cols-[repeat(auto-fill,minmax(12rem,1fr))] gap-3">
+                {list.map((i) => (
+                  <li key={i.name}>
+                    <Link href={`/components/${i.name}`} className={KEY}>
+                      {i.title}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </Block>
+          );
+        })}
+      </PageBody>
     </>
   );
 }
