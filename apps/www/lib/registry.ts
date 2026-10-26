@@ -45,5 +45,5 @@ export const sourceOf = (rel: string) => readFileSync(path.join(root, rel), "utf
 export const exampleSource = (name: string) => sourceOf(`examples/${name}.tsx`);
 
 // These demos open overlays or focus/scroll their content on mount. Keep those effects inside a frame.
-const FRAMED_COMPONENTS = new Set(["command", "dialog", "dropdown-menu", "popover", "select", "sheet", "tooltip"]);
+const FRAMED_COMPONENTS = new Set(["alert-dialog", "combobox", "command", "context-menu", "date-picker", "dialog", "drawer", "dropdown-menu", "hover-card", "menubar", "navigation-menu", "popover", "select", "sheet", "sidebar", "toast", "tooltip"]);
 export const needsPreviewFrame = (item: Pick<Item, "type" | "name">) => item.type === "site" || item.type === "block" || FRAMED_COMPONENTS.has(item.name);

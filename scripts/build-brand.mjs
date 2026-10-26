@@ -57,6 +57,8 @@ const motion = `@theme {
 	--animate-pop-in: ds-pop-in var(--ds-duration-fast) var(--ds-easing-out);
 	--animate-fade-in: ds-fade-in var(--ds-duration-fast) var(--ds-easing-out);
 	--animate-content-in: ds-content-in var(--ds-duration-base) var(--ds-easing-out);
+	--animate-caret-blink: ds-caret-blink 1.1s steps(1) infinite;
+	--animate-pulse-soft: ds-pulse-soft 1.6s var(--ds-easing-in-out) infinite;
 	--animate-shimmer: ds-shimmer 1.6s var(--ds-easing-in-out) infinite;
 	--animate-spin-slow: spin 0.8s linear infinite;
 	--animate-accordion-down: ds-accordion-down var(--ds-duration-base) var(--ds-easing-out);
@@ -134,6 +136,18 @@ const motion = `@theme {
 	@keyframes ds-chart-bar {
 		from {
 			transform: scaleY(0.04);
+		}
+	}
+
+	@keyframes ds-caret-blink {
+		50% {
+			opacity: 0;
+		}
+	}
+
+	@keyframes ds-pulse-soft {
+		50% {
+			opacity: 0.55;
 		}
 	}
 
