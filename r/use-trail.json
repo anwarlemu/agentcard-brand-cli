@@ -1,0 +1,34 @@
+{
+  "schemaVersion": 1,
+  "name": "use-trail",
+  "useFor": "Use with Testimonials or LogoStrip layouts. Mark cards with data-trail-card and apply the matching TRAIL_REST position.",
+  "constraints": [
+    "A trail through a single card",
+    "Animating the cards on scroll"
+  ],
+  "documentation": "",
+  "source": "agentcard-website src/components/v7/product-trail.tsx",
+  "exports": [
+    "TRAIL_REST",
+    "useTrail"
+  ],
+  "client": true,
+  "docsUrl": "https://agentcard-ds.vercel.app/r/use-trail.md",
+  "markdownUrl": "https://agentcard-ds.vercel.app/r/use-trail.md",
+  "examples": [],
+  "type": "hook",
+  "title": "useTrail",
+  "description": "Draws a responsive connecting line through a set of cards.",
+  "surface": "site",
+  "kinds": [],
+  "requires": [
+    "theme"
+  ],
+  "packages": [],
+  "files": [
+    {
+      "path": "hooks/use-trail.ts",
+      "content": "\"use client\";\n\nimport { type RefObject, useLayoutEffect } from \"react\";\n\n// The brand's trail (agentcard.sh, product-trail.tsx): cards hung at their own heights and tilts with one thin line\n// threaded through their centres. Cards laid out in rows are strung on one thread that snakes through them: along the\n// first row, down at its end to the end of the next, back along that row, and so on. The tilts and drops are drawn by\n// the component (each card's rest); this hook draws the line, a Catmull-Rom spline through the cards' true centres, and\n// redraws it whenever the layout changes. Nothing here moves on its own, so there is nothing to still for reduced motion.\n\ntype Point = { x: number; y: number };\n\n/** Where each card rests, cycling: how far down (px) and how far tilted (deg), as on the brand's page. */\nexport const TRAIL_REST = [\n  { y: 22, rot: -2.4 },\n  { y: -34, rot: 1.6 },\n  { y: 8, rot: -1.8 },\n] as const;\n\nfunction centres(root: HTMLElement, cards: HTMLElement[]): Point[] {\n  const r = root.getBoundingClientRect();\n  const scale = root.offsetWidth ? r.width / root.offsetWidth : 1;\n  return cards.map((card) => {\n    const b = card.getBoundingClientRect();\n    return { x: (b.left - r.left + b.width / 2) / scale, y: (b.top - r.top + b.height / 2) / scale };\n  });\n}\n\n// Rows by where the grid puts each card (offsetTop ignores transforms), so a tilted card stays on its own row.\nfunction rowsOf(cards: HTMLElement[]): number[][] {\n  const rows: number[][] = [[0]];\n  const half = cards[0].offsetHeight / 2;\n  for (let i = 1; i < cards.length; i++) {\n    if (cards[i].offsetTop - cards[i - 1].offsetTop > half) rows.push([i]);\n    else rows[rows.length - 1].push(i);\n  }\n  return rows;\n}\n\nfunction linePath(points: Point[], rows: number[][]): string {\n  let d = \"\";\n  let prevEnd = points[0];\n  rows.forEach((line, r) => {\n    const row = (r % 2 ? [...line].reverse() : line).map((i) => points[i]);\n    if (!d) d = `M ${row[0].x} ${row[0].y}`;\n    else {\n      // The drop from the last row's end to this row's start, leaving and arriving straight down.\n      const [a, b] = [prevEnd, row[0]];\n      const dy = (b.y - a.y) / 2;\n      d += ` C ${a.x} ${a.y + dy}, ${b.x} ${b.y - dy}, ${b.x} ${b.y}`;\n    }\n    prevEnd = row[row.length - 1];\n    for (let i = 0; i < row.length - 1; i++) {\n      const p0 = row[i - 1] ?? row[i];\n      const p1 = row[i];\n      const p2 = row[i + 1];\n      const p3 = row[i + 2] ?? p2;\n      d += ` C ${p1.x + (p2.x - p0.x) / 6} ${p1.y + (p2.y - p0.y) / 6}, ${p2.x - (p3.x - p1.x) / 6} ${p2.y - (p3.y - p1.y) / 6}, ${p2.x} ${p2.y}`;\n    }\n  });\n  return d;\n}\n\n/**\n * Draws the trail's line into `pathRef` through every `[data-trail-card]` inside `rootRef`, and keeps it there as the\n * layout changes. A list whose cards stack into one column (a phone) still gets its line, straight down through them;\n * hide the svg where the component wants no line. Pass `version` (the cards' count, say) to redraw when they change.\n */\nexport function useTrail(rootRef: RefObject<HTMLElement | null>, pathRef: RefObject<SVGPathElement | null>, version?: unknown) {\n  useLayoutEffect(() => {\n    const root = rootRef.current;\n    const path = pathRef.current;\n    if (!root || !path) return;\n    const svg = path.ownerSVGElement;\n    let frame = 0;\n    const draw = () => {\n      frame = 0;\n      const cards = [...root.querySelectorAll<HTMLElement>(\"[data-trail-card]\")];\n      if (cards.length < 2) {\n        path.setAttribute(\"d\", \"\");\n        return;\n      }\n      svg?.setAttribute(\"viewBox\", `0 0 ${root.clientWidth} ${root.clientHeight}`);\n      path.setAttribute(\"d\", linePath(centres(root, cards), rowsOf(cards)));\n    };\n    const schedule = () => {\n      if (!frame) frame = requestAnimationFrame(draw);\n    };\n    draw();\n    const observer = new ResizeObserver(schedule);\n    observer.observe(root);\n    for (const card of root.querySelectorAll<HTMLElement>(\"[data-trail-card]\")) observer.observe(card);\n    return () => {\n      observer.disconnect();\n      cancelAnimationFrame(frame);\n    };\n  }, [rootRef, pathRef, version]);\n}\n"
+    }
+  ]
+}

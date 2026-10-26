@@ -1,0 +1,70 @@
+{
+  "schemaVersion": 1,
+  "name": "form",
+  "useFor": "Use for a form with validation managed by react-hook-form: wrap it in Form, render each field with FormField, and place FormLabel, FormControl (around one control), FormDescription and FormMessage inside a FormItem. For a single field without react-hook-form, use Field.",
+  "constraints": [
+    "Red labels on invalid fields",
+    "Placeholders instead of labels",
+    "Validating on every keystroke before the first submit"
+  ],
+  "documentation": "",
+  "source": "agentcard.com/get-started (.v7-gate-field, computed)",
+  "exports": [
+    "Form",
+    "FormControl",
+    "FormDescription",
+    "FormField",
+    "FormItem",
+    "FormLabel",
+    "FormMessage",
+    "useFormField"
+  ],
+  "client": true,
+  "docsUrl": "https://agentcard-ds.vercel.app/components/form",
+  "markdownUrl": "https://agentcard-ds.vercel.app/r/form.md",
+  "examples": [
+    {
+      "path": "examples/form.tsx",
+      "content": "\"use client\";\n\nimport * as React from \"react\";\nimport { useForm } from \"react-hook-form\";\n\nimport { Button } from \"@/components/ui/button\";\nimport { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from \"@/components/ui/form\";\nimport { Input } from \"@/components/ui/input\";\nimport { RadioGroup, RadioGroupItem } from \"@/components/ui/radio-group\";\nimport { Label } from \"@/components/ui/label\";\n\ntype Values = { label: string; limit: string; period: string };\n\nexport function Site() {\n  const form = useForm<Values>({ defaultValues: { label: \"\", limit: \"\", period: \"day\" } });\n  const [saved, setSaved] = React.useState<string>();\n  return (\n    <Form {...form}>\n      <form noValidate onSubmit={form.handleSubmit((v) => setSaved(`${v.label}: $${v.limit} per ${v.period}`))} className=\"grid w-full max-w-100 gap-4\">\n        <FormField\n          control={form.control}\n          name=\"label\"\n          rules={{ required: \"Name the card so you can find it later.\" }}\n          render={({ field }) => (\n            <FormItem>\n              <FormLabel>Card name</FormLabel>\n              <FormControl>\n                <Input placeholder=\"Travel card\" {...field} />\n              </FormControl>\n              <FormMessage />\n            </FormItem>\n          )}\n        />\n        <FormField\n          control={form.control}\n          name=\"limit\"\n          rules={{ required: \"Set a limit.\", validate: (v) => (Number(v) > 0 && Number(v) <= 5000) || \"Use an amount between $1 and $5,000.\" }}\n          render={({ field }) => (\n            <FormItem>\n              <FormLabel>Spending limit (USD)</FormLabel>\n              <FormControl>\n                <Input inputMode=\"decimal\" placeholder=\"250\" {...field} />\n              </FormControl>\n              <FormDescription>The agent cannot spend more than this.</FormDescription>\n              <FormMessage />\n            </FormItem>\n          )}\n        />\n        <FormField\n          control={form.control}\n          name=\"period\"\n          render={({ field }) => (\n            <FormItem>\n              <FormLabel>Applies</FormLabel>\n              <FormControl>\n                <RadioGroup value={field.value} onValueChange={field.onChange} className=\"flex flex-wrap gap-5\">\n                  {[\"purchase\", \"day\", \"month\"].map((p) => (\n                    <Label variant=\"control\" key={p} htmlFor={`form-${p}`}>\n                      <RadioGroupItem value={p} id={`form-${p}`} />\n                      Per {p}\n                    </Label>\n                  ))}\n                </RadioGroup>\n              </FormControl>\n            </FormItem>\n          )}\n        />\n        <div className=\"flex items-center gap-3 pt-1\">\n          <Button type=\"submit\">Create card</Button>\n          <p aria-live=\"polite\" className=\"text-body-sm text-fg-muted\">\n            {saved ? `Created ${saved}.` : \"\"}\n          </p>\n        </div>\n      </form>\n    </Form>\n  );\n}\n",
+      "exports": [
+        "Site"
+      ],
+      "requires": [
+        "form",
+        "button",
+        "input",
+        "radio-group",
+        "label"
+      ],
+      "packages": [
+        "react-hook-form"
+      ],
+      "previews": [
+        {
+          "name": "Site",
+          "url": "https://agentcard-ds.vercel.app/preview/form/Site"
+        }
+      ]
+    }
+  ],
+  "type": "ui",
+  "title": "Form",
+  "description": "react-hook-form fields laid out as the brand's get-started form: display labels, square fields, red messages.",
+  "surface": "site",
+  "kinds": [],
+  "requires": [
+    "theme",
+    "label",
+    "utils"
+  ],
+  "packages": [
+    "@radix-ui/react-slot",
+    "react-hook-form"
+  ],
+  "files": [
+    {
+      "path": "components/ui/form.tsx",
+      "content": "\"use client\";\n\nimport * as React from \"react\";\nimport { Slot } from \"@radix-ui/react-slot\";\nimport { Controller, FormProvider, useFormContext, useFormState, type ControllerProps, type FieldPath, type FieldValues } from \"react-hook-form\";\n\nimport { Label } from \"@/components/ui/label\";\nimport { cn } from \"@/lib/utils\";\n\n// A react-hook-form form laid out as the brand's get-started form (agentcard.com/get-started, .v7-gate-field): each\n// FormItem is a field, its label in the 12px display face at 68 percent ink 6px above the control; fields sit 16px apart\n// in the form. A FormDescription is the 14px muted line under the control; a FormMessage is the same line in red, read\n// out as it appears. A field that fails keeps its label muted: only the control (aria-invalid, the red border) and the\n// message turn red. Field is the simpler one-control wrapper; Form is for a whole react-hook-form form.\nconst Form = FormProvider;\n\ntype FormFieldContextValue<TFieldValues extends FieldValues = FieldValues, TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>> = { name: TName };\n\nconst FormFieldContext = React.createContext<FormFieldContextValue | null>(null);\n\nfunction FormField<TFieldValues extends FieldValues = FieldValues, TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>>(props: ControllerProps<TFieldValues, TName>) {\n  return (\n    <FormFieldContext.Provider value={{ name: props.name }}>\n      <Controller {...props} />\n    </FormFieldContext.Provider>\n  );\n}\n\ntype FormItemContextValue = { id: string };\n\nconst FormItemContext = React.createContext<FormItemContextValue | null>(null);\n\n/** The state of the field around it: its ids for labels and messages, and react-hook-form's error, dirty and touched state. */\nfunction useFormField() {\n  const fieldContext = React.useContext(FormFieldContext);\n  const itemContext = React.useContext(FormItemContext);\n  const { getFieldState } = useFormContext();\n  if (!fieldContext) throw new Error(\"useFormField should be used within <FormField>\");\n  if (!itemContext) throw new Error(\"useFormField should be used within <FormItem>\");\n  const formState = useFormState({ name: fieldContext.name });\n  const fieldState = getFieldState(fieldContext.name, formState);\n  const { id } = itemContext;\n  return { id, name: fieldContext.name, formItemId: `${id}-form-item`, formDescriptionId: `${id}-form-item-description`, formMessageId: `${id}-form-item-message`, ...fieldState };\n}\n\nfunction FormItem({ className, ...props }: React.ComponentProps<\"div\">) {\n  const id = React.useId();\n  return (\n    <FormItemContext.Provider value={{ id }}>\n      <div data-slot=\"form-item\" className={cn(\"flex min-w-0 flex-col gap-1.5\", className)} {...props} />\n    </FormItemContext.Provider>\n  );\n}\n\nfunction FormLabel({ className, ...props }: React.ComponentProps<typeof Label>) {\n  const { error, formItemId } = useFormField();\n  return <Label data-slot=\"form-label\" data-error={!!error} htmlFor={formItemId} className={cn(\"w-fit\", className)} {...props} />;\n}\n\n/** Hands the field's id, its description and message ids and aria-invalid to the one control inside it. */\nfunction FormControl(props: React.ComponentProps<typeof Slot>) {\n  const { error, formItemId, formDescriptionId, formMessageId } = useFormField();\n  return <Slot data-slot=\"form-control\" id={formItemId} aria-describedby={!error ? formDescriptionId : `${formDescriptionId} ${formMessageId}`} aria-invalid={!!error} {...props} />;\n}\n\nfunction FormDescription({ className, ...props }: React.ComponentProps<\"p\">) {\n  const { formDescriptionId } = useFormField();\n  return <p data-slot=\"form-description\" id={formDescriptionId} className={cn(\"m-0 text-body-sm leading-snug text-fg-muted\", className)} {...props} />;\n}\n\nfunction FormMessage({ className, children, ...props }: React.ComponentProps<\"p\">) {\n  const { error, formMessageId } = useFormField();\n  const body = error ? String(error.message ?? \"\") : children;\n  if (!body) return null;\n  return (\n    <p data-slot=\"form-message\" id={formMessageId} role={error ? \"alert\" : undefined} className={cn(\"m-0 text-body-sm leading-snug text-danger\", className)} {...props}>\n      {body}\n    </p>\n  );\n}\n\nexport { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage, useFormField };\n"
+    }
+  ]
+}

@@ -1,0 +1,71 @@
+{
+  "schemaVersion": 1,
+  "name": "typography",
+  "useFor": "Use for long-form text (guides, updates, legal pages) where a component would be too much: headings H1 to H4, P for paragraphs, Lead under a page title, Muted for secondary lines, Small for captions, InlineCode for names and values, Table for a small table in text. Use Table (the component) for data.",
+  "constraints": [
+    "Bold headings",
+    "All caps headings",
+    "Body text under 14px",
+    "A heading set in Inter"
+  ],
+  "documentation": "",
+  "source": "Agentcard type scale: agentcard-website src/app/globals.css (h1 to h5, .v7-guide-prose, .v7-guide-prose code); agentcard.sh (computed)",
+  "exports": [
+    "TypographyBlockquote",
+    "TypographyH1",
+    "TypographyH2",
+    "TypographyH3",
+    "TypographyH4",
+    "TypographyInlineCode",
+    "TypographyLarge",
+    "TypographyLead",
+    "TypographyList",
+    "TypographyMuted",
+    "TypographyP",
+    "TypographySmall",
+    "TypographyTable"
+  ],
+  "client": false,
+  "docsUrl": "https://agentcard-ds.vercel.app/components/typography",
+  "markdownUrl": "https://agentcard-ds.vercel.app/r/typography.md",
+  "examples": [
+    {
+      "path": "examples/typography.tsx",
+      "content": "import { TypographyBlockquote, TypographyH1, TypographyH2, TypographyH3, TypographyH4, TypographyInlineCode, TypographyLarge, TypographyLead, TypographyList, TypographyMuted, TypographyP, TypographySmall, TypographyTable } from \"@/components/ui/typography\";\n\nexport function Site() {\n  return (\n    <article className=\"w-full max-w-2xl\">\n      <TypographyH2>Give your agent a card</TypographyH2>\n      <TypographyLead>Each card has its own limit and a list of places it can buy.</TypographyLead>\n      <TypographyP>\n        Create a card with <TypographyInlineCode>agentcard.cards.create</TypographyInlineCode>, then hand its number to your agent. Purchases it makes show up in the dashboard as they happen.\n      </TypographyP>\n      <TypographyBlockquote>“Our Slack agent buys office supplies without anyone sharing a company card.”</TypographyBlockquote>\n      <TypographyList>\n        <li>Set a monthly or single-use limit.</li>\n        <li>Choose the merchants it can pay.</li>\n        <li>Pause it at any time.</li>\n      </TypographyList>\n      <TypographyTable>\n        <thead>\n          <tr>\n            <th>Card</th>\n            <th>Limit</th>\n          </tr>\n        </thead>\n        <tbody>\n          <tr>\n            <td>Travel agent</td>\n            <td>$2,000 a month</td>\n          </tr>\n          <tr>\n            <td>Office supplies</td>\n            <td>$250 once</td>\n          </tr>\n        </tbody>\n      </TypographyTable>\n    </article>\n  );\n}\n\nexport function Scale() {\n  return (\n    <div className=\"grid w-full max-w-2xl gap-3\">\n      <TypographyH1>Let agents buy anything online</TypographyH1>\n      <TypographyH2>Explore our products</TypographyH2>\n      <TypographyH3>Vault</TypographyH3>\n      <TypographyH4>Purchase Agent</TypographyH4>\n      <TypographyLarge>Commercial cards</TypographyLarge>\n      <TypographyP>Store customers’ cards and make purchases with agents safely.</TypographyP>\n      <TypographyMuted>Consumer apps, B2B companies and crypto teams run their agents’ purchases on Agentcard.</TypographyMuted>\n      <TypographySmall>Updated Oct 14</TypographySmall>\n      <TypographyList ordered>\n        <li>Create a card.</li>\n        <li>Give it to your agent.</li>\n      </TypographyList>\n    </div>\n  );\n}\n",
+      "exports": [
+        "Site",
+        "Scale"
+      ],
+      "requires": [
+        "typography"
+      ],
+      "packages": [],
+      "previews": [
+        {
+          "name": "Site",
+          "url": "https://agentcard-ds.vercel.app/preview/typography/Site"
+        },
+        {
+          "name": "Scale",
+          "url": "https://agentcard-ds.vercel.app/preview/typography/Scale"
+        }
+      ]
+    }
+  ],
+  "type": "ui",
+  "title": "Typography",
+  "description": "The brand's type as components: display-face headings at 500 tracked tight, Inter body copy, a muted lead, a blue-ruled quote and the sky inline code chip.",
+  "surface": "site",
+  "kinds": [],
+  "requires": [
+    "theme",
+    "utils"
+  ],
+  "packages": [],
+  "files": [
+    {
+      "path": "components/ui/typography.tsx",
+      "content": "import * as React from \"react\";\n\nimport { cn } from \"@/lib/utils\";\n\n// The brand's type as components (agentcard.sh). Headings are Neue Haas Grotesk Display (Helvetica Neue where it is not\n// installed) at 500, tracked tight: -0.035em at the 36px H2, -0.02em below; never bold, never caps. Body copy is Inter at\n// 16px on a 1.6 line in ink; a lead is 19px at 68 percent ink; Small is the 12px display face; Muted the 14px line at 68\n// percent ink. A quote hangs behind a blue rule; inline code is the guides' sky chip.\nfunction TypographyH1({ className, ...props }: React.ComponentProps<\"h1\">) {\n  return <h1 data-slot=\"typography-h1\" className={cn(\"font-display text-h1 leading-heading font-medium tracking-tight text-balance text-fg\", className)} {...props} />;\n}\n\nfunction TypographyH2({ className, ...props }: React.ComponentProps<\"h2\">) {\n  return <h2 data-slot=\"typography-h2\" className={cn(\"font-display text-h2 leading-display font-medium tracking-tighter text-balance text-fg\", className)} {...props} />;\n}\n\nfunction TypographyH3({ className, ...props }: React.ComponentProps<\"h3\">) {\n  return <h3 data-slot=\"typography-h3\" className={cn(\"font-display text-h3 leading-display font-medium tracking-tight text-fg\", className)} {...props} />;\n}\n\nfunction TypographyH4({ className, ...props }: React.ComponentProps<\"h4\">) {\n  return <h4 data-slot=\"typography-h4\" className={cn(\"font-display text-h4 leading-snug font-medium tracking-tight text-fg\", className)} {...props} />;\n}\n\nfunction TypographyP({ className, ...props }: React.ComponentProps<\"p\">) {\n  return <p data-slot=\"typography-p\" className={cn(\"font-sans text-body leading-body text-pretty text-fg [&:not(:first-child)]:mt-5\", className)} {...props} />;\n}\n\nfunction TypographyLead({ className, ...props }: React.ComponentProps<\"p\">) {\n  return <p data-slot=\"typography-lead\" className={cn(\"font-sans text-body-lg leading-snug tracking-tight text-pretty text-fg-muted [&:not(:first-child)]:mt-3.5\", className)} {...props} />;\n}\n\nfunction TypographyLarge({ className, ...props }: React.ComponentProps<\"div\">) {\n  return <div data-slot=\"typography-large\" className={cn(\"font-display text-h5 leading-snug font-medium tracking-tight text-fg\", className)} {...props} />;\n}\n\nfunction TypographySmall({ className, ...props }: React.ComponentProps<\"small\">) {\n  return <small data-slot=\"typography-small\" className={cn(\"font-display text-caption leading-snug text-fg\", className)} {...props} />;\n}\n\nfunction TypographyMuted({ className, ...props }: React.ComponentProps<\"p\">) {\n  return <p data-slot=\"typography-muted\" className={cn(\"font-sans text-body-sm leading-relaxed text-fg-muted\", className)} {...props} />;\n}\n\n/** A quote: indented behind a 2px blue rule, at 68 percent ink. */\nfunction TypographyBlockquote({ className, ...props }: React.ComponentProps<\"blockquote\">) {\n  return <blockquote data-slot=\"typography-blockquote\" className={cn(\"mt-5 border-l-2 border-line-brand pl-5 font-sans text-body leading-body text-fg-secondary\", className)} {...props} />;\n}\n\nfunction TypographyList({ className, ordered = false, ...props }: Omit<React.ComponentProps<\"ul\">, \"ref\"> & { ordered?: boolean }) {\n  const classes = cn(\"my-5 ml-5 grid gap-2.5 font-sans text-body leading-body text-fg marker:text-fg-brand\", ordered ? \"list-decimal\" : \"list-disc\", className);\n  return ordered ? <ol data-slot=\"typography-list\" className={classes} {...props} /> : <ul data-slot=\"typography-list\" className={classes} {...props} />;\n}\n\n/** A name or a value inside text: the guides' sky chip, blue in the system monospace with a faint blue edge. */\nfunction TypographyInlineCode({ className, ...props }: React.ComponentProps<\"code\">) {\n  return (\n    <code\n      data-slot=\"typography-inline-code\"\n      className={cn(\"rounded-sm border border-[color-mix(in_srgb,var(--ds-color-brand)_14%,transparent)] bg-sky-wash px-1.5 py-px font-code text-body-sm text-fg-brand [box-decoration-break:clone] [overflow-wrap:anywhere]\", className)}\n      {...props}\n    />\n  );\n}\n\n/** A plain table in running text: the sky head with blue labels in the display face, ink rules between rows. For data, use Table. */\nfunction TypographyTable({ className, ...props }: React.ComponentProps<\"table\">) {\n  return (\n    <div data-slot=\"typography-table\" className=\"my-5 w-full overflow-x-auto rounded-card border border-hairline\">\n      <table\n        className={cn(\n          \"w-full border-collapse font-sans text-body-sm leading-normal text-fg [&_td]:border-t [&_td]:border-line [&_td]:px-3.5 [&_td]:py-2.5 [&_th]:bg-sky [&_th]:px-3.5 [&_th]:py-2.5 [&_th]:text-left [&_th]:font-display [&_th]:text-caption [&_th]:font-normal [&_th]:text-fg-brand\",\n          className,\n        )}\n        {...props}\n      />\n    </div>\n  );\n}\n\nexport { TypographyBlockquote, TypographyH1, TypographyH2, TypographyH3, TypographyH4, TypographyInlineCode, TypographyLarge, TypographyLead, TypographyList, TypographyMuted, TypographyP, TypographySmall, TypographyTable };\n"
+    }
+  ]
+}

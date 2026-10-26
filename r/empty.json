@@ -1,0 +1,76 @@
+{
+  "schemaVersion": 1,
+  "name": "empty",
+  "useFor": "Use when a list, a search or a view has nothing to show: say what is missing and give the one next action (New card, Clear search). Name the bar like a file (cards.list, search.results) or pass name={null}. It is shadcn's Empty API in the EmptyState look; use EmptyMedia variant icon for a lucide glyph.",
+  "constraints": [
+    "Illustrations that shout",
+    "More than one action",
+    "Empty states that blame the reader",
+    "A drop shadow"
+  ],
+  "documentation": "",
+  "source": "Extrapolated from Agentcard: the EmptyState (agentcard-website src/app/globals.css .v7-windowbar) and the white key (.v7-btn)",
+  "exports": [
+    "Empty",
+    "EmptyContent",
+    "EmptyDescription",
+    "EmptyHeader",
+    "EmptyMedia",
+    "EmptyTitle"
+  ],
+  "client": false,
+  "docsUrl": "https://agentcard-ds.vercel.app/components/empty",
+  "markdownUrl": "https://agentcard-ds.vercel.app/r/empty.md",
+  "examples": [
+    {
+      "path": "examples/empty.tsx",
+      "content": "\"use client\";\n\nimport * as React from \"react\";\nimport { CreditCard, Plus, Search } from \"lucide-react\";\n\nimport { Button } from \"@/components/ui/button\";\nimport { Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from \"@/components/ui/empty\";\nimport { Input } from \"@/components/ui/input\";\n\nexport function Site() {\n  const [created, setCreated] = React.useState(false);\n  return (\n    <Empty name=\"cards.list\" className=\"max-w-2xl\">\n      <EmptyHeader>\n        <EmptyMedia variant=\"icon\">\n          <CreditCard strokeWidth={1.5} />\n        </EmptyMedia>\n        <EmptyTitle>{created ? \"Travel agent card created\" : \"No cards yet\"}</EmptyTitle>\n        <EmptyDescription>{created ? \"It is ready to use, with a $500 limit.\" : \"Give your first agent a card, with a limit and a list of places it can buy.\"}</EmptyDescription>\n      </EmptyHeader>\n      <EmptyContent>\n        {created ? (\n          <Button variant=\"secondary\" onClick={() => setCreated(false)}>\n            Reset demo\n          </Button>\n        ) : (\n          <Button onClick={() => setCreated(true)}>\n            <Plus />\n            New card\n          </Button>\n        )}\n      </EmptyContent>\n    </Empty>\n  );\n}\n\nexport function NoResults() {\n  const [query, setQuery] = React.useState(\"Hotel booking\");\n  const cards = [\"Travel agent\", \"Office supplies\"].filter((name) => name.toLowerCase().includes(query.toLowerCase().trim()));\n  return (\n    <div className=\"grid max-w-2xl gap-4\">\n      <Input variant=\"search\" aria-label=\"Search cards\" value={query} onChange={(event) => setQuery(event.target.value)} />\n      {cards.length ? (\n        <ul aria-live=\"polite\">\n          {cards.map((name) => (\n            <li key={name} className=\"border-b border-line py-3 text-body-sm\">\n              {name}\n            </li>\n          ))}\n        </ul>\n      ) : (\n        <Empty name=\"search.results\">\n          <EmptyHeader>\n            <EmptyMedia variant=\"icon\">\n              <Search strokeWidth={1.5} />\n            </EmptyMedia>\n            <EmptyTitle>Nothing matches</EmptyTitle>\n            <EmptyDescription>Try a merchant’s name or a card’s nickname.</EmptyDescription>\n          </EmptyHeader>\n          <EmptyContent>\n            <Button variant=\"secondary\" onClick={() => setQuery(\"\")}>\n              Clear search\n            </Button>\n          </EmptyContent>\n        </Empty>\n      )}\n    </div>\n  );\n}\n\nexport function Bare() {\n  return (\n    <Empty name={null} className=\"max-w-md\">\n      <EmptyHeader>\n        <EmptyTitle>No purchases this week</EmptyTitle>\n        <EmptyDescription>Purchases your agents make appear here as they happen.</EmptyDescription>\n      </EmptyHeader>\n    </Empty>\n  );\n}\n",
+      "exports": [
+        "Site",
+        "NoResults",
+        "Bare"
+      ],
+      "requires": [
+        "empty",
+        "button",
+        "input"
+      ],
+      "packages": [
+        "lucide-react"
+      ],
+      "previews": [
+        {
+          "name": "Site",
+          "url": "https://agentcard-ds.vercel.app/preview/empty/Site"
+        },
+        {
+          "name": "NoResults",
+          "url": "https://agentcard-ds.vercel.app/preview/empty/NoResults"
+        },
+        {
+          "name": "Bare",
+          "url": "https://agentcard-ds.vercel.app/preview/empty/Bare"
+        }
+      ]
+    }
+  ],
+  "type": "ui",
+  "title": "Empty",
+  "description": "An empty list as a quiet window: the sky bar, a centered key glyph, a display title, one muted line and one action on the pale ground.",
+  "surface": "site",
+  "kinds": [],
+  "requires": [
+    "theme",
+    "window",
+    "utils"
+  ],
+  "packages": [
+    "class-variance-authority"
+  ],
+  "files": [
+    {
+      "path": "components/ui/empty.tsx",
+      "content": "import * as React from \"react\";\nimport { cva, type VariantProps } from \"class-variance-authority\";\n\nimport { WindowBar } from \"@/components/ui/window\";\nimport { cn } from \"@/lib/utils\";\n\n// shadcn's Empty in the look of the brand's empty state: a quiet window with a 16 percent ink hairline, 12px corners and\n// no drop, the 32px sky bar labeled like a file (`name`: cards.list, search.results; null drops it), over a centered\n// body on the pale ground. The media is a small white key (`icon`: 40px, the key's bevel, a blue glyph); the title the\n// 20px display face at 500, tracked tight; the description 14px Inter at 68 percent ink; then at most one action.\n// Nothing moves.\nfunction Empty({ className, name = \"empty\", tone, children, ...props }: React.ComponentProps<\"div\"> & { name?: React.ReactNode | null; tone?: React.ComponentProps<typeof WindowBar>[\"tone\"] }) {\n  return (\n    <div data-slot=\"empty\" className={cn(\"flex min-w-0 flex-col overflow-hidden rounded-card border border-hairline bg-surface text-fg\", className)} {...props}>\n      {name !== null && <WindowBar name={name} tone={tone} />}\n      <div data-slot=\"empty-body\" className=\"flex flex-1 flex-col items-center justify-center gap-5 bg-subtle px-6 py-12 text-center text-balance md:py-16\">\n        {children}\n      </div>\n    </div>\n  );\n}\n\nfunction EmptyHeader({ className, ...props }: React.ComponentProps<\"div\">) {\n  return <div data-slot=\"empty-header\" className={cn(\"flex max-w-sm flex-col items-center gap-3\", className)} {...props} />;\n}\n\nconst emptyMediaVariants = cva(\"flex shrink-0 items-center justify-center [&_svg]:pointer-events-none [&_svg]:shrink-0\", {\n  variants: {\n    variant: {\n      default: \"bg-transparent\",\n      icon: \"mb-1 size-10 rounded-control border border-hairline bg-surface text-fg-brand shadow-key [&_svg:not([class*='size-'])]:size-4.5\",\n    },\n  },\n  defaultVariants: { variant: \"default\" },\n});\n\nfunction EmptyMedia({ className, variant = \"default\", ...props }: React.ComponentProps<\"div\"> & VariantProps<typeof emptyMediaVariants>) {\n  return <div data-slot=\"empty-media\" data-variant={variant} aria-hidden={variant === \"icon\" || undefined} className={cn(emptyMediaVariants({ variant }), className)} {...props} />;\n}\n\nfunction EmptyTitle({ className, ...props }: React.ComponentProps<\"div\">) {\n  return <div data-slot=\"empty-title\" className={cn(\"font-display text-h4 leading-snug font-medium tracking-tight text-fg\", className)} {...props} />;\n}\n\nfunction EmptyDescription({ className, ...props }: React.ComponentProps<\"p\">) {\n  return <p data-slot=\"empty-description\" className={cn(\"max-w-sm text-body-sm leading-relaxed text-pretty text-fg-muted [&>a]:text-fg-brand [&>a]:underline [&>a]:underline-offset-4\", className)} {...props} />;\n}\n\nfunction EmptyContent({ className, ...props }: React.ComponentProps<\"div\">) {\n  return <div data-slot=\"empty-content\" className={cn(\"flex w-full max-w-sm min-w-0 flex-col items-center gap-3 text-body-sm text-balance\", className)} {...props} />;\n}\n\nexport { Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle };\n"
+    }
+  ]
+}

@@ -1,0 +1,34 @@
+{
+  "schemaVersion": 1,
+  "name": "surface",
+  "useFor": "Wrap an area with the required white, paper or blue ground so content and overlays use matching colors.",
+  "constraints": [
+    "Blue grounds stacked one after another",
+    "A blue ground behind long text"
+  ],
+  "documentation": "",
+  "source": "agentcard-website src/app/globals.css (.on-paper, .on-blue)",
+  "exports": [
+    "Surface",
+    "usePortalContainer"
+  ],
+  "client": true,
+  "docsUrl": "https://agentcard-ds.vercel.app/r/surface.md",
+  "markdownUrl": "https://agentcard-ds.vercel.app/r/surface.md",
+  "examples": [],
+  "type": "lib",
+  "title": "Surface",
+  "description": "Background and text context shared by a section and its overlays.",
+  "surface": "site",
+  "kinds": [],
+  "requires": [
+    "utils"
+  ],
+  "packages": [],
+  "files": [
+    {
+      "path": "lib/surface.tsx",
+      "content": "\"use client\";\n\nimport * as React from \"react\";\n\nimport { cn } from \"@/lib/utils\";\n\n// A ground: white (the default page), paper (the warm page behind white sections) or blue (the hero, a panel, the\n// footer). Blue sets white text and sky labels for everything inside, and dialogs, menus and tooltips opened inside a\n// Surface render inside it too, so they keep its ground.\nconst PortalContainer = React.createContext<HTMLElement | null>(null);\n\nconst GROUNDS = {\n  white: \"bg-surface text-fg\",\n  paper: \"bg-paper text-fg\",\n  blue: \"bg-brand text-on-brand\",\n} as const;\n\nexport function Surface({ ground = \"white\", className, children, ...props }: React.ComponentProps<\"div\"> & { ground?: keyof typeof GROUNDS }) {\n  const [element, setElement] = React.useState<HTMLDivElement | null>(null);\n  return (\n    <div ref={setElement} data-ground={ground} className={cn(GROUNDS[ground], className)} {...props}>\n      <PortalContainer.Provider value={element}>{children}</PortalContainer.Provider>\n    </div>\n  );\n}\n\n/** Where overlays render: the nearest Surface, else the page body. */\nexport function usePortalContainer() {\n  return React.useContext(PortalContainer) ?? undefined;\n}\n"
+    }
+  ]
+}

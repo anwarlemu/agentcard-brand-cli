@@ -1,0 +1,71 @@
+{
+  "schemaVersion": 1,
+  "name": "site-header",
+  "useFor": "Use at the top of a page. Pair with NavDock for navigation. Hide the header on phones when the dock already provides the mobile header.",
+  "constraints": [
+    "A filled or sticky header bar",
+    "More than one key",
+    "A blue key in the header",
+    "Many links in the header"
+  ],
+  "documentation": "`SiteHeader` props: `logo` (ReactNode, default the lockup), `href` (default \"/\"), `logoLabel` (default \"Agentcard,\nhome\"), `action` ({ label, href }), `links` ({ label, href, current }[]), `ground` (\"blue\" | \"white\", default blue),\n`overlay` (default true: absolute over its positioned parent), plus header props.",
+  "source": "agentcard-website src/components/v7/space-header.tsx; src/app/globals.css:4102 (.v7-space-header, .v7-get-started-face); agentcard.sh / and /pricing (computed)",
+  "exports": [
+    "SiteHeader",
+    "HeaderLink"
+  ],
+  "client": false,
+  "docsUrl": "https://agentcard-ds.vercel.app/components/site-header",
+  "markdownUrl": "https://agentcard-ds.vercel.app/r/site-header.md",
+  "examples": [
+    {
+      "path": "examples/site-header.tsx",
+      "content": "import { SiteHeader } from \"@/components/site/site-header\";\n\nexport function Site() {\n  return (\n    <div className=\"relative h-50 bg-brand\">\n      <SiteHeader href=\"https://www.agentcard.sh/\" ground=\"blue\" action={{ label: \"Get started\", href: \"https://app.agentcard.sh/\" }} />\n    </div>\n  );\n}\n\nexport function White() {\n  return (\n    <div className=\"relative h-50 bg-surface\">\n      <SiteHeader href=\"https://www.agentcard.sh/\" ground=\"white\" action={{ label: \"Get started\", href: \"https://app.agentcard.sh/\" }} />\n    </div>\n  );\n}\n\nexport function WithLinks() {\n  return (\n    <div className=\"relative h-50 bg-surface\">\n      <SiteHeader href=\"https://www.agentcard.sh/\"\n        ground=\"white\"\n        links={[\n          { label: \"Vault\", href: \"https://www.agentcard.sh/vault\" },\n          { label: \"Issuing\", href: \"https://www.agentcard.sh/issuing\" },\n          { label: \"Pricing\", href: \"https://www.agentcard.sh/pricing\", current: true },\n        ]}\n        action={{ label: \"Get started\", href: \"https://app.agentcard.sh/\" }}\n      />\n    </div>\n  );\n}\n",
+      "exports": [
+        "Site",
+        "White",
+        "WithLinks"
+      ],
+      "requires": [
+        "site-header"
+      ],
+      "packages": [],
+      "previews": [
+        {
+          "name": "Site",
+          "url": "https://agentcard-ds.vercel.app/preview/site-header/Site"
+        },
+        {
+          "name": "White",
+          "url": "https://agentcard-ds.vercel.app/preview/site-header/White"
+        },
+        {
+          "name": "WithLinks",
+          "url": "https://agentcard-ds.vercel.app/preview/site-header/WithLinks"
+        }
+      ]
+    }
+  ],
+  "type": "site",
+  "title": "Site header",
+  "description": "Page header with the Agentcard logo and a primary link.",
+  "surface": "site",
+  "kinds": [
+    "header",
+    "header-action",
+    "nav-link"
+  ],
+  "requires": [
+    "theme",
+    "button",
+    "logo",
+    "utils"
+  ],
+  "packages": [],
+  "files": [
+    {
+      "path": "components/site/site-header.tsx",
+      "content": "import * as React from \"react\";\n\nimport { Button } from \"@/components/ui/button\";\nimport { Lockup } from \"@/components/ui/logo\";\nimport { cn } from \"@/lib/utils\";\n\n// The bare header (agentcard.sh, .v7-space-header): the lockup at the left linking home, one Get started key at the\n// right, laid over the top of whatever opens the page, 20px from the top and 30px from the sides (18px on phones). Over\n// the blue hero the lockup is white; on a white page it is ink, as on /pricing and /about. The key is the white key with\n// blue text on both. Navigation lives in the floating dock, so links here are optional and leave on phones; the lockup\n// and the key stay.\ntype HeaderLink = { label: React.ReactNode; href: string; current?: boolean };\n\nconst GROUNDS = {\n  blue: \"text-on-brand\",\n  white: \"text-fg\",\n} as const;\n\nfunction SiteHeader({\n  logo,\n  href = \"/\",\n  logoLabel = \"Agentcard, home\",\n  action,\n  links,\n  ground = \"blue\",\n  overlay = true,\n  className,\n  ...props\n}: React.ComponentProps<\"header\"> & {\n  /** The logo. Defaults to the lockup, in the ground's color. */\n  logo?: React.ReactNode;\n  /** Where the logo leads. */\n  href?: string;\n  /** The logo link's accessible name. */\n  logoLabel?: string;\n  /** The one key at the right. */\n  action?: { label: React.ReactNode; href: string };\n  /** Optional links between the logo and the key (hidden on phones). */\n  links?: HeaderLink[];\n  /** blue over the hero, white on other pages. */\n  ground?: keyof typeof GROUNDS;\n  /** Lay the header over the top of its positioned parent (the hero, the page's first section), as the site does. */\n  overlay?: boolean;\n}) {\n  return (\n    <header\n      data-slot=\"site-header\"\n      className={cn(\n        \"z-20 flex h-10 items-center gap-8.75 font-display text-caption\",\n        overlay ? \"absolute inset-x-4.5 top-5 md:inset-x-7.5\" : \"relative mx-4.5 mt-5 md:mx-7.5\",\n        GROUNDS[ground],\n        className,\n      )}\n      {...props}\n    >\n      <a href={href} aria-label={logoLabel} className=\"shrink-0 rounded-chip\">\n        {logo ?? <Lockup label={null} className=\"w-21.5 md:w-40\" />}\n      </a>\n      {links && links.length > 0 && (\n        <nav aria-label=\"Main\" className=\"flex items-center gap-1 max-md:hidden\">\n          {links.map((link) => (\n            <a\n              key={link.href}\n              href={link.href}\n              aria-current={link.current ? \"page\" : undefined}\n              className={cn(\n                \"rounded-sm px-3.5 py-2 text-body-sm leading-none transition-[background-color,color] duration-150 ease-out\",\n                ground === \"blue\" ? \"hover:bg-wash-on-brand\" : \"hover:bg-wash-hover\",\n                link.current && (ground === \"blue\" ? \"bg-wash-on-brand\" : \"bg-wash-pill\"),\n              )}\n            >\n              {link.label}\n            </a>\n          ))}\n        </nav>\n      )}\n      {action && (\n        <Button asChild variant=\"on-brand\" className=\"ml-auto px-5.5 font-medium leading-tight\">\n          <a href={action.href}>{action.label}</a>\n        </Button>\n      )}\n    </header>\n  );\n}\n\nexport { SiteHeader };\nexport type { HeaderLink };\n"
+    }
+  ]
+}

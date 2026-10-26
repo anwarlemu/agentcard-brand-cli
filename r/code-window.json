@@ -1,0 +1,64 @@
+{
+  "schemaVersion": 1,
+  "name": "code-window",
+  "useFor": "Use for commands, integration examples and API requests. Pass code as a string for highlighting and copying, or pass rendered children.",
+  "constraints": [
+    "A full syntax theme with many colors",
+    "A light code window",
+    "Rounded corners above 8px",
+    "Code set in a monospace other than the display face"
+  ],
+  "documentation": "`CodeWindow` props: `title` (the file name in the bar), `code` (string) or `children`, `language` (only picks the comment\nmarker for highlighting: `ts`, `sh`, `py`, `sql`, `text`...), `copy` (adds the copy key; needs `code`), `preClassName`\n(a fixed height or the home stage's 60px of bottom room, `pb-15`). It also exports `tokenize(code, language)`.\n\nOn the brand's page the window sits at 88 percent of a blue panel (`bg-brand`, 12px corners, 32px padding). The site\nhas no separate terminal style live (the guides are not published), so there is no `Terminal` export: use a code window\ntitled `Terminal` with `language=\"sh\"`.",
+  "source": "agentcard-website src/components/v7/integrations.tsx (CodePane), src/app/globals.css:3341 (.v7-intg-code); agentcard.sh / (computed: .v7-intg-stage [class*=code])",
+  "exports": [
+    "CodeWindow",
+    "tokenize",
+    "CodeWindowProps"
+  ],
+  "client": false,
+  "docsUrl": "https://agentcard-ds.vercel.app/components/code-window",
+  "markdownUrl": "https://agentcard-ds.vercel.app/r/code-window.md",
+  "examples": [
+    {
+      "path": "examples/code-window.tsx",
+      "content": "import { CodeWindow } from \"@/components/ui/code-window\";\n\nconst KERNEL = `// One card item per purchase, in the\n// user's KERNEL vault\nawait kernel.vaults.items.upsert('order', {\n  type: 'card',\n  spec: { provider: 'agentcard',\n    merchant: 'amazon.com',\n    amount: 2306, currency: 'usd' },\n});\nconst browser = await kernel.browsers.create({\n  vaults: [{ id: vault.id }],\n});`;\n\nconst LINQ = `POST api.linqapp.com/…/v3/payments\n\n{ \"handle\": \"+1 415 555 0134\",\n  \"amount\": 2306,\n  \"merchant\": \"amazon.com\" }`;\n\n// On the blue panel, as on the home page's integrations stage.\nexport function Site() {\n  return (\n    <div className=\"mx-auto flex min-h-105 max-w-162 items-center rounded-panel bg-brand p-[clamp(var(--ds-space-4),2.4vw,var(--ds-space-8))]\">\n      <CodeWindow title=\"kernel.ts\" language=\"ts\" code={KERNEL} copy className=\"w-full sm:w-[88%]\" preClassName=\"pb-15\" />\n    </div>\n  );\n}\n\n// On white, with a copy key and a request instead of code.\nexport function Request() {\n  return <CodeWindow title=\"payments.http\" language=\"http\" code={LINQ} copy className=\"max-w-xl\" />;\n}\n",
+      "exports": [
+        "Site",
+        "Request"
+      ],
+      "requires": [
+        "code-window"
+      ],
+      "packages": [],
+      "previews": [
+        {
+          "name": "Site",
+          "url": "https://agentcard-ds.vercel.app/preview/code-window/Site"
+        },
+        {
+          "name": "Request",
+          "url": "https://agentcard-ds.vercel.app/preview/code-window/Request"
+        }
+      ]
+    }
+  ],
+  "type": "ui",
+  "title": "Code window",
+  "description": "Code block with a filename, highlighting and optional copy action.",
+  "surface": "site",
+  "kinds": [
+    "code-window"
+  ],
+  "requires": [
+    "theme",
+    "copy-button",
+    "utils"
+  ],
+  "packages": [],
+  "files": [
+    {
+      "path": "components/ui/code-window.tsx",
+      "content": "import * as React from \"react\";\n\nimport { CopyButton } from \"@/components/ui/copy-button\";\nimport { cn } from \"@/lib/utils\";\n\n// Code on the ink ground, as the home page's integrations stage shows it (agentcard.sh, .v7-intg-code): 8px corners,\n// a 30px bar with three small squares and the file name, the code in the 12px display face at 88 percent white, and\n// the deep drop that lifts it off the blue panel it usually sits on. Highlighting is light on purpose: comments fade,\n// strings turn sky, everything else stays one color.\n\ntype Token = { text: string; kind: \"plain\" | \"comment\" | \"string\" };\n\nconst COMMENT: Record<string, RegExp> = {\n  hash: /#[^\\n]*/y,\n  slash: /\\/\\/[^\\n]*|\\/\\*[\\s\\S]*?\\*\\//y,\n  dash: /--[^\\n]*/y,\n};\nconst STRING = /\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|`(?:[^`\\\\]|\\\\.)*`/y;\n\nfunction commentStyle(language?: string) {\n  const lang = (language ?? \"\").toLowerCase();\n  if ([\"sh\", \"bash\", \"shell\", \"zsh\", \"py\", \"python\", \"rb\", \"ruby\", \"yaml\", \"yml\", \"toml\"].includes(lang)) return COMMENT.hash;\n  if ([\"sql\", \"lua\"].includes(lang)) return COMMENT.dash;\n  if ([\"text\", \"txt\", \"plain\", \"http\"].includes(lang)) return undefined;\n  return COMMENT.slash;\n}\n\n/** Splits code into plain runs, comments and strings. Language only picks the comment marker. */\nfunction tokenize(code: string, language?: string): Token[] {\n  const comment = commentStyle(language);\n  const tokens: Token[] = [];\n  let plain = \"\";\n  let i = 0;\n  const flush = () => {\n    if (plain) tokens.push({ text: plain, kind: \"plain\" });\n    plain = \"\";\n  };\n  while (i < code.length) {\n    let match: RegExpExecArray | null = null;\n    let kind: Token[\"kind\"] = \"plain\";\n    if (comment) {\n      comment.lastIndex = i;\n      match = comment.exec(code);\n      kind = \"comment\";\n    }\n    if (!match) {\n      STRING.lastIndex = i;\n      match = STRING.exec(code);\n      kind = \"string\";\n    }\n    if (match && match[0].length > 0) {\n      flush();\n      tokens.push({ text: match[0], kind });\n      i += match[0].length;\n    } else {\n      plain += code[i];\n      i += 1;\n    }\n  }\n  flush();\n  return tokens;\n}\n\nfunction Highlighted({ code, language }: { code: string; language?: string }) {\n  const tokens = React.useMemo(() => tokenize(code, language), [code, language]);\n  return (\n    <>\n      {tokens.map((t, i) =>\n        t.kind === \"plain\" ? (\n          <React.Fragment key={i}>{t.text}</React.Fragment>\n        ) : (\n          <span key={i} className={t.kind === \"comment\" ? \"text-white/45\" : \"text-sky\"}>\n            {t.text}\n          </span>\n        ),\n      )}\n    </>\n  );\n}\n\ntype CodeWindowProps = Omit<React.ComponentProps<\"figure\">, \"children\" | \"title\"> & {\n  /** The file name in the bar (kernel.ts). */\n  title?: React.ReactNode;\n  /** The code as a string; highlighted lightly and copyable. */\n  code?: string;\n  /** Pre-rendered code instead of `code` (shown as is, not highlighted). */\n  children?: React.ReactNode;\n  /** Only picks the comment marker for highlighting (ts, sh, py, sql, text...). */\n  language?: string;\n  /** Adds a copy key at the right of the bar (needs `code`). */\n  copy?: boolean;\n  /** Classes for the pre (a fixed height, more bottom room). */\n  preClassName?: string;\n};\n\nfunction CodeWindow({ title, code, children, language, copy = false, className, preClassName, ...props }: CodeWindowProps) {\n  return (\n    <figure data-slot=\"code-window\" className={cn(\"m-0 flex min-w-0 flex-col overflow-hidden rounded-control bg-code text-white/88 shadow-code\", className)} {...props}>\n      <div className=\"flex h-7.5 shrink-0 items-center gap-1.5 border-b border-white/10 px-3 font-sans text-micro leading-4 text-white/55\">\n        <span aria-hidden className=\"size-2 rounded-[var(--ds-space-px)] bg-current opacity-45\" />\n        <span aria-hidden className=\"size-2 rounded-[var(--ds-space-px)] bg-current opacity-45\" />\n        <span aria-hidden className=\"size-2 rounded-[var(--ds-space-px)] bg-current opacity-45\" />\n        {title ? <figcaption className=\"ml-2 min-w-0 truncate\">{title}</figcaption> : null}\n        {copy && code ? <CopyButton value={code} label=\"Copy code\" className=\"-mr-2 ml-auto size-6 border-transparent bg-transparent text-white/55 shadow-none hover:bg-white/10 hover:text-white data-copied:border-transparent data-copied:bg-white/10 data-copied:text-white data-copied:shadow-none\" /> : null}\n      </div>\n      <pre\n        tabIndex={0}\n        className={cn(\n          \"m-0 min-h-0 flex-1 overflow-auto px-4 pt-3.5 pb-4 font-mono text-micro [line-height:1.55] md:text-caption whitespace-pre outline-none [scrollbar-width:thin] focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-sky\",\n          preClassName,\n        )}\n      >\n        <code className=\"font-[inherit]\">{code !== undefined ? <Highlighted code={code} language={language} /> : children}</code>\n      </pre>\n    </figure>\n  );\n}\n\nexport { CodeWindow, tokenize };\nexport type { CodeWindowProps };\n"
+    }
+  ]
+}

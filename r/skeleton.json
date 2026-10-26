@@ -1,0 +1,53 @@
+{
+  "schemaVersion": 1,
+  "name": "skeleton",
+  "useFor": "Match the expected content dimensions and replace it when loading completes.",
+  "constraints": [
+    "Skeletons for content that loads at once",
+    "Gray blocks that do not match the final layout",
+    "Colored sheens"
+  ],
+  "documentation": "",
+  "source": "Extension from agentcard-website src/app/globals.css (--palette-ink 7 percent)",
+  "exports": [
+    "Skeleton"
+  ],
+  "client": false,
+  "docsUrl": "https://agentcard-ds.vercel.app/components/skeleton",
+  "markdownUrl": "https://agentcard-ds.vercel.app/r/skeleton.md",
+  "examples": [
+    {
+      "path": "examples/skeleton.tsx",
+      "content": "import { Skeleton } from \"@/components/ui/skeleton\";\n\nexport function Site() {\n  return (\n    <div className=\"grid max-w-md gap-4 rounded-card border border-hairline bg-surface p-6 shadow-card\">\n      <Skeleton className=\"h-6 w-1/2\" />\n      <Skeleton className=\"h-4 w-full\" />\n      <Skeleton className=\"h-4 w-4/5\" />\n      <Skeleton className=\"mt-2 h-10 w-32 rounded-control\" />\n    </div>\n  );\n}\n",
+      "exports": [
+        "Site"
+      ],
+      "requires": [
+        "skeleton"
+      ],
+      "packages": [],
+      "previews": [
+        {
+          "name": "Site",
+          "url": "https://agentcard-ds.vercel.app/preview/skeleton/Site"
+        }
+      ]
+    }
+  ],
+  "type": "ui",
+  "title": "Skeleton",
+  "description": "Placeholder that reserves space while content loads.",
+  "surface": "site",
+  "kinds": [],
+  "requires": [
+    "theme",
+    "utils"
+  ],
+  "packages": [],
+  "files": [
+    {
+      "path": "components/ui/skeleton.tsx",
+      "content": "import * as React from \"react\";\n\nimport { cn } from \"@/lib/utils\";\n\n// A pale block holding a place while content loads, with a white sheen sliding across it on transform (constant motion,\n// so linear); with reduced motion, the block alone.\nfunction Skeleton({ className, ...props }: React.ComponentProps<\"div\">) {\n  return (\n    <div\n      aria-hidden\n      data-slot=\"skeleton\"\n      className={cn(\n        \"relative overflow-hidden rounded-sm bg-subtle after:absolute after:inset-0 after:animate-shimmer after:bg-linear-to-r after:from-transparent after:via-surface after:to-transparent after:[animation-duration:1.4s] after:[animation-timing-function:linear] motion-reduce:after:hidden\",\n        className,\n      )}\n      {...props}\n    />\n  );\n}\n\nexport { Skeleton };\n"
+    }
+  ]
+}

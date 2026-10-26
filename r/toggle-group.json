@@ -1,0 +1,70 @@
+{
+  "schemaVersion": 1,
+  "name": "toggle-group",
+  "useFor": "Use type=\"single\" for one view choice or type=\"multiple\" for filters that can combine (Airlines, Hotels, Software). The default sits in the tab track; use variant=\"outline\" for toolbar keys, with spacing={0} to join them. Use SegmentedControl for a single choice whose blue key should glide.",
+  "constraints": [
+    "Mixing the track and outline styles in one group",
+    "More than six choices in a track",
+    "A gliding key in a multiple group"
+  ],
+  "documentation": "",
+  "source": "Extrapolated from agentcard.com/pricing (.plan-tabs) and the brand's keys",
+  "exports": [
+    "ToggleGroup",
+    "ToggleGroupItem"
+  ],
+  "client": true,
+  "docsUrl": "https://agentcard-ds.vercel.app/components/toggle-group",
+  "markdownUrl": "https://agentcard-ds.vercel.app/r/toggle-group.md",
+  "examples": [
+    {
+      "path": "examples/toggle-group.tsx",
+      "content": "\"use client\";\n\nimport * as React from \"react\";\nimport { LayoutGrid, List, Rows3 } from \"lucide-react\";\n\nimport { ToggleGroup, ToggleGroupItem } from \"@/components/ui/toggle-group\";\n\nexport function Site() {\n  const [merchants, setMerchants] = React.useState([\"airlines\", \"hotels\"]);\n  return (\n    <div className=\"grid gap-3\">\n      <p id=\"merchant-label\" className=\"font-display text-caption text-fg-muted\">\n        This card can buy from\n      </p>\n      <ToggleGroup type=\"multiple\" aria-labelledby=\"merchant-label\" value={merchants} onValueChange={setMerchants}>\n        <ToggleGroupItem value=\"airlines\">Airlines</ToggleGroupItem>\n        <ToggleGroupItem value=\"hotels\">Hotels</ToggleGroupItem>\n        <ToggleGroupItem value=\"software\">Software</ToggleGroupItem>\n        <ToggleGroupItem value=\"groceries\">Groceries</ToggleGroupItem>\n      </ToggleGroup>\n    </div>\n  );\n}\n\nexport function Outline() {\n  return (\n    <div className=\"grid gap-4\">\n      <ToggleGroup type=\"single\" variant=\"outline\" defaultValue=\"grid\" aria-label=\"View\">\n        <ToggleGroupItem value=\"grid\" aria-label=\"Grid\">\n          <LayoutGrid />\n        </ToggleGroupItem>\n        <ToggleGroupItem value=\"list\" aria-label=\"List\">\n          <List />\n        </ToggleGroupItem>\n        <ToggleGroupItem value=\"rows\" aria-label=\"Rows\">\n          <Rows3 />\n        </ToggleGroupItem>\n      </ToggleGroup>\n      <ToggleGroup type=\"single\" variant=\"outline\" spacing={0} defaultValue=\"week\" aria-label=\"Period\">\n        <ToggleGroupItem value=\"day\">Day</ToggleGroupItem>\n        <ToggleGroupItem value=\"week\">Week</ToggleGroupItem>\n        <ToggleGroupItem value=\"month\">Month</ToggleGroupItem>\n      </ToggleGroup>\n    </div>\n  );\n}\n\nexport function Sizes() {\n  return (\n    <div className=\"grid gap-4\">\n      <ToggleGroup type=\"single\" size=\"sm\" defaultValue=\"all\" aria-label=\"Status\">\n        <ToggleGroupItem value=\"all\">All</ToggleGroupItem>\n        <ToggleGroupItem value=\"approved\">Approved</ToggleGroupItem>\n        <ToggleGroupItem value=\"declined\">Declined</ToggleGroupItem>\n      </ToggleGroup>\n      <ToggleGroup type=\"single\" defaultValue=\"monthly\" aria-label=\"Billing\">\n        <ToggleGroupItem value=\"monthly\">Monthly</ToggleGroupItem>\n        <ToggleGroupItem value=\"yearly\">Yearly</ToggleGroupItem>\n        <ToggleGroupItem value=\"custom\" disabled>\n          Custom\n        </ToggleGroupItem>\n      </ToggleGroup>\n    </div>\n  );\n}\n",
+      "exports": [
+        "Site",
+        "Outline",
+        "Sizes"
+      ],
+      "requires": [
+        "toggle-group"
+      ],
+      "packages": [
+        "lucide-react"
+      ],
+      "previews": [
+        {
+          "name": "Site",
+          "url": "https://agentcard-ds.vercel.app/preview/toggle-group/Site"
+        },
+        {
+          "name": "Outline",
+          "url": "https://agentcard-ds.vercel.app/preview/toggle-group/Outline"
+        },
+        {
+          "name": "Sizes",
+          "url": "https://agentcard-ds.vercel.app/preview/toggle-group/Sizes"
+        }
+      ]
+    }
+  ],
+  "type": "ui",
+  "title": "Toggle Group",
+  "description": "Keys in the sunken tab track, the chosen ones blue; or separate white keys that stay pressed.",
+  "surface": "site",
+  "kinds": [],
+  "requires": [
+    "theme",
+    "toggle",
+    "utils"
+  ],
+  "packages": [
+    "@radix-ui/react-toggle-group",
+    "class-variance-authority"
+  ],
+  "files": [
+    {
+      "path": "components/ui/toggle-group.tsx",
+      "content": "\"use client\";\n\nimport * as React from \"react\";\nimport * as ToggleGroupPrimitive from \"@radix-ui/react-toggle-group\";\nimport { type VariantProps } from \"class-variance-authority\";\n\nimport { toggleVariants } from \"@/components/ui/toggle\";\nimport { cn } from \"@/lib/utils\";\n\n// The brand's tab track holding several keys (.plan-tabs on /pricing): a sunken track (the pale wash, a hairline, the\n// inner shadow) with 12px corners and 4px inside, its choices 40px display labels with 8px corners; a chosen one is the\n// blue key (a darker blue edge, the bevel). Unlike SegmentedControl nothing glides: a group may hold several chosen keys,\n// and a choice made often must feel immediate. `variant=\"outline\"` drops the track: separate white keys that stay pressed\n// when on. `spacing={0}` joins outline keys into one bar.\nconst ToggleGroupContext = React.createContext<VariantProps<typeof toggleVariants> & { spacing?: number; orientation?: \"horizontal\" | \"vertical\" }>({\n  size: \"default\",\n  variant: \"default\",\n  spacing: 1,\n  orientation: \"horizontal\",\n});\n\nfunction ToggleGroup({\n  className,\n  variant = \"default\",\n  size = \"default\",\n  spacing = 1,\n  orientation = \"horizontal\",\n  children,\n  ...props\n}: React.ComponentProps<typeof ToggleGroupPrimitive.Root> & VariantProps<typeof toggleVariants> & { spacing?: number; orientation?: \"horizontal\" | \"vertical\" }) {\n  return (\n    <ToggleGroupPrimitive.Root\n      data-slot=\"toggle-group\"\n      data-variant={variant}\n      data-size={size}\n      data-spacing={spacing}\n      data-orientation={orientation}\n      orientation={orientation}\n      style={{ \"--gap\": spacing } as React.CSSProperties}\n      className={cn(\n        \"group/toggle-group flex w-fit max-w-full items-center gap-[calc(var(--spacing)*var(--gap))] data-[orientation=vertical]:flex-col data-[orientation=vertical]:items-stretch\",\n        variant === \"default\" && \"overflow-x-auto rounded-card border border-hairline bg-subtle p-1 shadow-well [scrollbar-width:none]\",\n        variant === \"outline\" && spacing === 0 && \"*:data-[slot=toggle-group-item]:not-first:-ml-px *:data-[slot=toggle-group-item]:not-first:rounded-l-none *:data-[slot=toggle-group-item]:not-last:rounded-r-none\",\n        className,\n      )}\n      {...props}\n    >\n      <ToggleGroupContext.Provider value={{ variant, size, spacing, orientation }}>{children}</ToggleGroupContext.Provider>\n    </ToggleGroupPrimitive.Root>\n  );\n}\n\nfunction ToggleGroupItem({ className, children, variant, size, ...props }: React.ComponentProps<typeof ToggleGroupPrimitive.Item> & VariantProps<typeof toggleVariants>) {\n  const context = React.useContext(ToggleGroupContext);\n  const v = context.variant || variant || \"default\";\n  return (\n    <ToggleGroupPrimitive.Item\n      data-slot=\"toggle-group-item\"\n      data-variant={v}\n      data-size={context.size || size}\n      data-spacing={context.spacing}\n      className={cn(\n        toggleVariants({ variant: v, size: context.size || size }),\n        // In the track the chosen choice is the blue key, as in the plan tabs.\n        v === \"default\" && \"hover:bg-wash-pill data-[state=on]:border-line-brand-edge data-[state=on]:bg-primary data-[state=on]:text-on-primary data-[state=on]:shadow-key-brand data-[state=on]:hover:bg-primary-hover\",\n        \"focus-visible:z-10\",\n        className,\n      )}\n      {...props}\n    >\n      {children}\n    </ToggleGroupPrimitive.Item>\n  );\n}\n\nexport { ToggleGroup, ToggleGroupItem };\n"
+    }
+  ]
+}

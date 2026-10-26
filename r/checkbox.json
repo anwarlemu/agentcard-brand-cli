@@ -1,0 +1,57 @@
+{
+  "schemaVersion": 1,
+  "name": "checkbox",
+  "useFor": "Use for multiple selections or a single agreement. Pair it with Label. When passing checked, update it through onCheckedChange.",
+  "constraints": [
+    "Round checkboxes",
+    "Colors other than blue for checked",
+    "A checkbox for an action that happens at once (use a switch)"
+  ],
+  "documentation": "",
+  "source": "Extension from agentcard-website src/app/globals.css (--bevel-blue, --bevel-muted)",
+  "exports": [
+    "Checkbox"
+  ],
+  "client": true,
+  "docsUrl": "https://agentcard-ds.vercel.app/components/checkbox",
+  "markdownUrl": "https://agentcard-ds.vercel.app/r/checkbox.md",
+  "examples": [
+    {
+      "path": "examples/checkbox.tsx",
+      "content": "\"use client\";\n\nimport { useState } from \"react\";\nimport { Checkbox } from \"@/components/ui/checkbox\";\nimport { Label } from \"@/components/ui/label\";\n\nconst MERCHANTS = [\n  { id: \"airlines\", label: \"Airlines\", checked: true },\n  { id: \"hotels\", label: \"Hotels\", checked: true },\n  { id: \"software\", label: \"Software subscriptions\", checked: false },\n];\n\nexport function Site() {\n  const [selected, setSelected] = useState(MERCHANTS.filter((merchant) => merchant.checked).map((merchant) => merchant.id));\n  return (\n    <fieldset className=\"grid gap-3\">\n      <legend className=\"mb-3 font-display text-caption text-fg-muted\">What this card can buy</legend>\n      {MERCHANTS.map((merchant) => (\n        <Label variant=\"control\" key={merchant.id} htmlFor={`checkbox-${merchant.id}`}>\n          <Checkbox id={`checkbox-${merchant.id}`} checked={selected.includes(merchant.id)} onCheckedChange={(checked) => setSelected((current) => checked ? [...current, merchant.id] : current.filter((id) => id !== merchant.id))} />\n          {merchant.label}\n        </Label>\n      ))}\n      <Label variant=\"control\" htmlFor=\"checkbox-all\" className=\"mt-2\">\n        <Checkbox id=\"checkbox-all\" checked={selected.length === MERCHANTS.length ? true : selected.length ? \"indeterminate\" : false} onCheckedChange={(checked) => setSelected(checked ? MERCHANTS.map((merchant) => merchant.id) : [])} />\n        All categories\n      </Label>\n      <Label variant=\"control\" htmlFor=\"checkbox-disabled\">\n        <Checkbox id=\"checkbox-disabled\" disabled />\n        Cash withdrawals (never allowed)\n      </Label>\n    </fieldset>\n  );\n}\n",
+      "exports": [
+        "Site"
+      ],
+      "requires": [
+        "checkbox",
+        "label"
+      ],
+      "packages": [],
+      "previews": [
+        {
+          "name": "Site",
+          "url": "https://agentcard-ds.vercel.app/preview/checkbox/Site"
+        }
+      ]
+    }
+  ],
+  "type": "ui",
+  "title": "Checkbox",
+  "description": "Checkbox with checked, unchecked, indeterminate and disabled states.",
+  "surface": "site",
+  "kinds": [],
+  "requires": [
+    "theme",
+    "utils"
+  ],
+  "packages": [
+    "@radix-ui/react-checkbox",
+    "lucide-react"
+  ],
+  "files": [
+    {
+      "path": "components/ui/checkbox.tsx",
+      "content": "\"use client\";\n\nimport * as React from \"react\";\nimport * as CheckboxPrimitive from \"@radix-ui/react-checkbox\";\nimport { Check, Minus } from \"lucide-react\";\n\nimport { cn } from \"@/lib/utils\";\n\n// A small key: a 20px white box on a 35 percent ink edge with the pale key's bevel; checked, it becomes the blue key\n// (a darker blue edge, the light line inside the top) with a white check. The fill changes in 150ms ease-out.\nfunction Checkbox({ className, ...props }: React.ComponentProps<typeof CheckboxPrimitive.Root>) {\n  return (\n    <CheckboxPrimitive.Root\n      data-slot=\"checkbox\"\n      className={cn(\n        \"peer grid size-5 shrink-0 place-items-center rounded-sm border border-line-strong bg-surface text-on-primary shadow-key-muted outline-none transition-[background-color,border-color,box-shadow] duration-150 ease-out focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-solid focus-visible:outline-focus-ring disabled:cursor-not-allowed disabled:opacity-50 aria-invalid:border-danger data-[state=checked]:border-line-brand-edge data-[state=checked]:bg-primary data-[state=checked]:shadow-key-brand data-[state=indeterminate]:border-line-brand-edge data-[state=indeterminate]:bg-primary data-[state=indeterminate]:shadow-key-brand motion-reduce:transition-none\",\n        className,\n      )}\n      {...props}\n    >\n      <CheckboxPrimitive.Indicator data-slot=\"checkbox-indicator\" className=\"grid place-items-center [&_svg]:size-3.5\">\n        {props.checked === \"indeterminate\" ? <Minus strokeWidth={2.25} /> : <Check strokeWidth={2.25} />}\n      </CheckboxPrimitive.Indicator>\n    </CheckboxPrimitive.Root>\n  );\n}\n\nexport { Checkbox };\n"
+    }
+  ]
+}

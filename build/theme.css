@@ -1,0 +1,311 @@
+/* Written by agentcard-ds from its brand files. Do not edit; run the CLI again to update. */
+@theme inline {
+	--color-brand: var(--ds-color-brand);
+	--color-black: var(--ds-color-black);
+	--color-white: var(--ds-color-white);
+	--color-primary: var(--ds-color-action-primary);
+	--color-primary-hover: var(--ds-color-action-primary-hover);
+	--color-on-primary: var(--ds-color-action-primary-fg);
+	--color-focus-ring: var(--ds-color-focus-ring);
+	--color-surface: var(--ds-color-bg-default);
+	--color-subtle: var(--ds-color-bg-subtle);
+	--color-frame: var(--ds-color-bg-frame);
+	--color-canvas: var(--ds-color-bg-canvas);
+	--color-tint: var(--ds-color-bg-tint);
+	--color-inverse: var(--ds-color-bg-inverse);
+	--color-dark: var(--ds-color-bg-dark);
+	--color-code: var(--ds-color-bg-code);
+	--color-scrim: var(--ds-color-bg-scrim);
+	--color-fg: var(--ds-color-text-default);
+	--color-fg-secondary: var(--ds-color-text-secondary);
+	--color-fg-muted: var(--ds-color-text-muted);
+	--color-fg-subtle: var(--ds-color-text-subtle);
+	--color-fg-faint: var(--ds-color-text-faint);
+	--color-fg-nav: var(--ds-color-text-nav);
+	--color-fg-inverse: var(--ds-color-text-inverse);
+	--color-fg-brand: var(--ds-color-text-brand);
+	--color-on-brand: var(--ds-color-text-on-brand);
+	--color-line: var(--ds-color-border-default);
+	--color-line-subtle: var(--ds-color-border-subtle);
+	--color-line-strong: var(--ds-color-border-strong);
+	--color-hairline: var(--ds-color-border-hairline);
+	--color-success: var(--ds-color-status-success);
+	--color-warning: var(--ds-color-status-warning);
+	--color-danger: var(--ds-color-status-danger);
+	--color-ink: var(--ds-color-ink);
+	--color-paper: var(--ds-color-paper);
+	--color-sky: var(--ds-color-sky);
+	--color-blue-edge: var(--ds-color-blue-edge);
+	--color-blue-hover: var(--ds-color-blue-hover);
+	--color-blue-5: var(--ds-color-blue-5);
+	--color-blue-10: var(--ds-color-blue-10);
+	--color-blue-mid: var(--ds-color-blue-mid);
+	--color-blue-mist: var(--ds-color-blue-mist);
+	--color-sky-wash: var(--ds-color-sky-wash);
+	--color-search-selected: var(--ds-color-bg-search-selected);
+	--color-heart: var(--ds-color-heart);
+	--color-tint-sage: var(--ds-color-tint-sage);
+	--color-tint-rose: var(--ds-color-tint-rose);
+	--color-tint-teal: var(--ds-color-tint-teal);
+	--color-tint-peach: var(--ds-color-tint-peach);
+	--color-tint-butter: var(--ds-color-tint-butter);
+	--color-page: var(--ds-color-bg-page);
+	--color-glass: var(--ds-color-bg-glass);
+	--color-note: var(--ds-color-bg-note);
+	--color-code-soft: var(--ds-color-bg-code-soft);
+	--color-raised-on-brand: var(--ds-color-bg-raised-on-brand);
+	--color-fg-on-brand-muted: var(--ds-color-text-on-brand-muted);
+	--color-fg-label: var(--ds-color-text-label);
+	--color-fg-on-brand-label: var(--ds-color-text-on-brand-label);
+	--color-line-mid: var(--ds-color-border-mid);
+	--color-line-rule: var(--ds-color-border-rule);
+	--color-line-field: var(--ds-color-border-field);
+	--color-line-field-hover: var(--ds-color-border-field-hover);
+	--color-line-key: var(--ds-color-border-key);
+	--color-line-brand: var(--ds-color-border-brand);
+	--color-line-brand-edge: var(--ds-color-border-brand-edge);
+	--color-line-on-brand: var(--ds-color-border-on-brand);
+	--color-line-on-brand-strong: var(--ds-color-border-on-brand-strong);
+	--color-line-window: var(--ds-color-border-window);
+	--color-wash-hover: var(--ds-color-wash-hover);
+	--color-wash-pill: var(--ds-color-wash-pill);
+	--color-wash-selected: var(--ds-color-wash-selected);
+	--color-wash-on-brand: var(--ds-color-wash-on-brand);
+	--color-wash-glass-hover: var(--ds-color-wash-glass-hover);
+	--color-ring-tint: var(--ds-color-ring-tint);
+	--color-series-1: var(--ds-color-chart-series-1);
+	--color-series-2: var(--ds-color-chart-series-2);
+	--color-series-3: var(--ds-color-chart-series-3);
+	--color-series-4: var(--ds-color-chart-series-4);
+	--color-window-bar: var(--ds-color-window-bar);
+	--color-window-bar-fg: var(--ds-color-window-bar-fg);
+	--font-sans: var(--ds-font-sans);
+	--font-display: var(--ds-font-display);
+	--font-mono: var(--ds-font-mono);
+	--font-code: var(--ds-font-code);
+	--text-display: var(--ds-text-display);
+	--text-hero: var(--ds-text-hero);
+	--text-h1: var(--ds-text-h1);
+	--text-h2: var(--ds-text-h2);
+	--text-h3: var(--ds-text-h3);
+	--text-h4: var(--ds-text-h4);
+	--text-h5: var(--ds-text-h5);
+	--text-body-lg: var(--ds-text-body-lg);
+	--text-body: var(--ds-text-body);
+	--text-body-sm: var(--ds-text-body-sm);
+	--text-caption: var(--ds-text-caption);
+	--text-micro: var(--ds-text-micro);
+	--leading-tight: var(--ds-leading-tight);
+	--leading-heading: var(--ds-leading-heading);
+	--leading-display: var(--ds-leading-display);
+	--leading-snug: var(--ds-leading-snug);
+	--leading-body: var(--ds-leading-body);
+	--leading-relaxed: var(--ds-leading-relaxed);
+	--leading-code: var(--ds-leading-code);
+	--tracking-display: var(--ds-tracking-display);
+	--tracking-tighter: var(--ds-tracking-tighter);
+	--tracking-tight: var(--ds-tracking-tight);
+	--tracking-normal: var(--ds-tracking-normal);
+	--tracking-label: var(--ds-tracking-label);
+	--tracking-caps: var(--ds-tracking-caps);
+	--tracking-mark: var(--ds-tracking-mark);
+	--radius-chip: var(--ds-radius-chip);
+	--radius-sm: var(--ds-radius-sm);
+	--radius-menu: var(--ds-radius-menu);
+	--radius-control: var(--ds-radius-control);
+	--radius-card: var(--ds-radius-card);
+	--radius-panel: var(--ds-radius-panel);
+	--radius-shell: var(--ds-radius-shell);
+	--radius-pill: var(--ds-radius-pill);
+	--shadow-key: var(--ds-shadow-key);
+	--shadow-key-brand: var(--ds-shadow-key-brand);
+	--shadow-key-muted: var(--ds-shadow-key-muted);
+	--shadow-pressed: var(--ds-shadow-pressed);
+	--shadow-well: var(--ds-shadow-well);
+	--shadow-guide: var(--ds-shadow-guide);
+	--shadow-inset: var(--ds-shadow-inset);
+	--shadow-card: var(--ds-shadow-card);
+	--shadow-raised: var(--ds-shadow-raised);
+	--shadow-code: var(--ds-shadow-code);
+	--shadow-plan: var(--ds-shadow-plan);
+	--shadow-tile: var(--ds-shadow-tile);
+	--shadow-floating: var(--ds-shadow-floating);
+	--shadow-glass-hover: var(--ds-shadow-glass-hover);
+	--shadow-tooltip: var(--ds-shadow-tooltip);
+	--shadow-ring-hover: var(--ds-shadow-ring-hover);
+	--ease-out: var(--ds-easing-out);
+	--ease-in-out: var(--ds-easing-in-out);
+	--color-bg-brand: var(--ds-color-bg-brand);
+	--font-weight-normal: var(--ds-font-weight-regular);
+	--font-weight-medium: var(--ds-font-weight-medium);
+	--font-weight-heading: var(--ds-font-weight-heading);
+	--spacing-0: var(--ds-space-0);
+	--spacing-px: var(--ds-space-px);
+	--spacing-0\.5: var(--ds-space-0-5);
+	--spacing-1: var(--ds-space-1);
+	--spacing-1\.5: var(--ds-space-1-5);
+	--spacing-2: var(--ds-space-2);
+	--spacing-2\.5: var(--ds-space-2-5);
+	--spacing-3: var(--ds-space-3);
+	--spacing-3\.5: var(--ds-space-3-5);
+	--spacing-4: var(--ds-space-4);
+	--spacing-5: var(--ds-space-5);
+	--spacing-6: var(--ds-space-6);
+	--spacing-7: var(--ds-space-7);
+	--spacing-8: var(--ds-space-8);
+	--spacing-9: var(--ds-space-9);
+	--spacing-10: var(--ds-space-10);
+	--spacing-12: var(--ds-space-12);
+	--spacing-14: var(--ds-space-14);
+	--spacing-16: var(--ds-space-16);
+	--spacing-20: var(--ds-space-20);
+	--spacing-24: var(--ds-space-24);
+	--spacing-28: var(--ds-space-28);
+	--spacing-32: var(--ds-space-32);
+	--spacing-layout-column: var(--ds-layout-column);
+	--spacing-layout-gutter: var(--ds-layout-gutter);
+	--spacing-layout-text: var(--ds-layout-text);
+	--spacing-layout-heading: var(--ds-layout-heading);
+	--spacing-layout-header: var(--ds-layout-header);
+	--container-frame-column: var(--ds-frame-column);
+	--background-image-glass-sheen: var(--ds-glass-sheen);
+	--blur-glass: var(--ds-glass-blur);
+	--transition-duration-fast: var(--ds-duration-fast);
+	--transition-duration-base: var(--ds-duration-base);
+	--transition-duration-moderate: var(--ds-duration-moderate);
+	--transition-duration-slow: var(--ds-duration-slow);
+}
+
+@theme {
+	--animate-pop-in: ds-pop-in var(--ds-duration-fast) var(--ds-easing-out);
+	--animate-fade-in: ds-fade-in var(--ds-duration-fast) var(--ds-easing-out);
+	--animate-content-in: ds-content-in var(--ds-duration-base) var(--ds-easing-out);
+	--animate-caret-blink: ds-caret-blink 1.1s steps(1) infinite;
+	--animate-pulse-soft: ds-pulse-soft 1.6s var(--ds-easing-in-out) infinite;
+	--animate-shimmer: ds-shimmer 1.6s var(--ds-easing-in-out) infinite;
+	--animate-spin-slow: spin 0.8s linear infinite;
+	--animate-accordion-down: ds-accordion-down var(--ds-duration-base) var(--ds-easing-out);
+	--animate-accordion-up: ds-accordion-up var(--ds-duration-fast) var(--ds-easing-out);
+	--animate-chart-line: ds-chart-line 900ms var(--ds-easing-out) backwards;
+	--animate-chart-area: ds-fade-in 600ms var(--ds-easing-out) 250ms backwards;
+	--animate-chart-tip: ds-chart-tip 360ms var(--ds-easing-out) backwards;
+	--animate-chart-bar: ds-chart-bar 420ms var(--ds-easing-out) backwards;
+
+	@keyframes ds-pop-in {
+		from {
+			opacity: 0;
+			transform: scale(0.97);
+		}
+	}
+
+	@keyframes ds-fade-in {
+		from {
+			opacity: 0;
+		}
+	}
+
+	@keyframes ds-content-in {
+		from {
+			opacity: 0;
+			transform: translateY(4px);
+		}
+	}
+
+	@keyframes ds-sheet-right {
+		from {
+			opacity: 0;
+			transform: translateX(12px);
+		}
+	}
+
+	@keyframes ds-sheet-left {
+		from {
+			opacity: 0;
+			transform: translateX(-12px);
+		}
+	}
+
+	@keyframes ds-accordion-down {
+		from {
+			height: 0;
+		}
+		to {
+			height: var(--radix-accordion-content-height);
+		}
+	}
+
+	@keyframes ds-accordion-up {
+		from {
+			height: var(--radix-accordion-content-height);
+		}
+		to {
+			height: 0;
+		}
+	}
+
+	@keyframes ds-chart-line {
+		from {
+			stroke-dashoffset: 1;
+		}
+	}
+
+	@keyframes ds-chart-tip {
+		from {
+			opacity: 0;
+			transform: scale(0.4);
+		}
+	}
+
+	@keyframes ds-chart-bar {
+		from {
+			transform: scaleY(0.04);
+		}
+	}
+
+	@keyframes ds-caret-blink {
+		50% {
+			opacity: 0;
+		}
+	}
+
+	@keyframes ds-pulse-soft {
+		50% {
+			opacity: 0.55;
+		}
+	}
+
+	@keyframes ds-shimmer {
+		from {
+			transform: translateX(-100%);
+		}
+		to {
+			transform: translateX(100%);
+		}
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	@keyframes ds-pop-in {
+		from {
+			opacity: 0;
+		}
+	}
+
+	@keyframes ds-content-in {
+		from {
+			opacity: 0;
+		}
+	}
+
+	@keyframes ds-sheet-right {
+		from {
+			opacity: 0;
+		}
+	}
+
+	@keyframes ds-sheet-left {
+		from {
+			opacity: 0;
+		}
+	}
+}

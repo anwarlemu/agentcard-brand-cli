@@ -1,0 +1,66 @@
+{
+  "schemaVersion": 1,
+  "name": "slider",
+  "useFor": "Use to set an amount within a range where the exact figure matters less than its size (a daily limit, a share of a budget). Show the current value beside it, give it an aria-label or a Label, and pass two values for a range.",
+  "constraints": [
+    "A slider for an exact amount someone must type (use a field)",
+    "Animating the key's position",
+    "A round blue knob"
+  ],
+  "documentation": "",
+  "source": "Extrapolated from the brand's switch and tab track (agentcard-website src/app/globals.css .plan-tabs, --bevel)",
+  "exports": [
+    "Slider"
+  ],
+  "client": true,
+  "docsUrl": "https://agentcard-ds.vercel.app/components/slider",
+  "markdownUrl": "https://agentcard-ds.vercel.app/r/slider.md",
+  "examples": [
+    {
+      "path": "examples/slider.tsx",
+      "content": "\"use client\";\n\nimport * as React from \"react\";\n\nimport { Label } from \"@/components/ui/label\";\nimport { Slider } from \"@/components/ui/slider\";\n\nexport function Site() {\n  const [limit, setLimit] = React.useState([250]);\n  return (\n    <div className=\"grid w-full max-w-100 gap-3\">\n      <div className=\"flex items-baseline justify-between\">\n        <Label id=\"limit-label\">Daily spending limit</Label>\n        <span className=\"font-display text-body-sm text-fg tabular-nums\">${limit[0]}</span>\n      </div>\n      <Slider aria-labelledby=\"limit-label\" value={limit} onValueChange={setLimit} max={1000} step={25} />\n    </div>\n  );\n}\n\nexport function Range() {\n  const [range, setRange] = React.useState([20, 400]);\n  return (\n    <div className=\"grid w-full max-w-100 gap-3\">\n      <div className=\"flex items-baseline justify-between\">\n        <Label id=\"range-label\">Allowed purchase size</Label>\n        <span className=\"font-display text-body-sm text-fg tabular-nums\">\n          ${range[0]} to ${range[1]}\n        </span>\n      </div>\n      <Slider aria-labelledby=\"range-label\" value={range} onValueChange={setRange} max={1000} step={10} minStepsBetweenThumbs={1} />\n    </div>\n  );\n}\n\nexport function States() {\n  return (\n    <div className=\"grid w-full max-w-100 gap-6\">\n      <Slider aria-label=\"Disabled limit\" defaultValue={[60]} disabled />\n      <div className=\"flex h-40 gap-8\">\n        <Slider aria-label=\"Vertical limit\" defaultValue={[40]} orientation=\"vertical\" />\n      </div>\n    </div>\n  );\n}\n",
+      "exports": [
+        "Site",
+        "Range",
+        "States"
+      ],
+      "requires": [
+        "slider",
+        "label"
+      ],
+      "packages": [],
+      "previews": [
+        {
+          "name": "Site",
+          "url": "https://agentcard-ds.vercel.app/preview/slider/Site"
+        },
+        {
+          "name": "Range",
+          "url": "https://agentcard-ds.vercel.app/preview/slider/Range"
+        },
+        {
+          "name": "States",
+          "url": "https://agentcard-ds.vercel.app/preview/slider/States"
+        }
+      ]
+    }
+  ],
+  "type": "ui",
+  "title": "Slider",
+  "description": "A sunken track filled with the blue key up to the value, with the switch's white key riding on it.",
+  "surface": "site",
+  "kinds": [],
+  "requires": [
+    "theme",
+    "utils"
+  ],
+  "packages": [
+    "@radix-ui/react-slider"
+  ],
+  "files": [
+    {
+      "path": "components/ui/slider.tsx",
+      "content": "\"use client\";\n\nimport * as React from \"react\";\nimport * as SliderPrimitive from \"@radix-ui/react-slider\";\n\nimport { cn } from \"@/lib/utils\";\n\n// The switch's track and key drawn long (extrapolated from the brand's switch and tab track): a 10px sunken track (the\n// pale wash, a hairline, the inner shadow) with 8px corners, filled with the blue key up to the value, and the switch's\n// 18px white key with its bevel riding on it. Under focus the key takes the 2px blue outline. The key never animates its\n// position: it follows the pointer and the arrow keys exactly. Pass two values for a range.\nfunction Slider({ className, defaultValue, value, min = 0, max = 100, ...props }: React.ComponentProps<typeof SliderPrimitive.Root>) {\n  const values = React.useMemo(() => (Array.isArray(value) ? value : Array.isArray(defaultValue) ? defaultValue : [min, max]), [value, defaultValue, min, max]);\n  return (\n    <SliderPrimitive.Root\n      data-slot=\"slider\"\n      defaultValue={defaultValue}\n      value={value}\n      min={min}\n      max={max}\n      className={cn(\n        \"relative flex w-full touch-none items-center select-none data-disabled:opacity-50 data-[orientation=vertical]:h-full data-[orientation=vertical]:min-h-40 data-[orientation=vertical]:w-auto data-[orientation=vertical]:flex-col\",\n        className,\n      )}\n      {...props}\n    >\n      <SliderPrimitive.Track\n        data-slot=\"slider-track\"\n        className=\"relative grow overflow-hidden rounded-control border border-hairline bg-subtle shadow-well data-[orientation=horizontal]:h-2.5 data-[orientation=horizontal]:w-full data-[orientation=vertical]:h-full data-[orientation=vertical]:w-2.5\"\n      >\n        <SliderPrimitive.Range data-slot=\"slider-range\" className=\"absolute bg-primary shadow-key-brand data-[orientation=horizontal]:h-full data-[orientation=vertical]:w-full\" />\n      </SliderPrimitive.Track>\n      {Array.from({ length: values.length }, (_, index) => (\n        <SliderPrimitive.Thumb\n          data-slot=\"slider-thumb\"\n          key={index}\n          aria-label={props[\"aria-label\"] ? undefined : values.length > 1 ? (index === 0 ? \"Minimum\" : \"Maximum\") : undefined}\n          className=\"block size-4.5 shrink-0 cursor-grab rounded-sm border border-hairline bg-white shadow-key outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-solid focus-visible:outline-focus-ring active:cursor-grabbing disabled:pointer-events-none\"\n        />\n      ))}\n    </SliderPrimitive.Root>\n  );\n}\n\nexport { Slider };\n"
+    }
+  ]
+}

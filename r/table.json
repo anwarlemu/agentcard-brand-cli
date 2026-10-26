@@ -1,0 +1,69 @@
+{
+  "schemaVersion": 1,
+  "name": "table",
+  "useFor": "Use for purchases, cards, plans or other comparable records. Give each TableCell after the first a label for the mobile layout. Use Badge for statuses.",
+  "constraints": [
+    "Zebra stripes",
+    "Bold headers",
+    "Caps headers",
+    "Tables nested in a card or window (the table is its own frame)"
+  ],
+  "documentation": "",
+  "source": "Repository reference; public guide pages currently unavailable. agentcard-website src/app/globals.css (.v7-guide-table)",
+  "exports": [
+    "Table",
+    "TableBody",
+    "TableCaption",
+    "TableCell",
+    "TableFooter",
+    "TableHead",
+    "TableHeader",
+    "TableRow"
+  ],
+  "client": false,
+  "docsUrl": "https://agentcard-ds.vercel.app/components/table",
+  "markdownUrl": "https://agentcard-ds.vercel.app/r/table.md",
+  "examples": [
+    {
+      "path": "examples/table.tsx",
+      "content": "import { Badge } from \"@/components/ui/badge\";\nimport { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from \"@/components/ui/table\";\n\nconst ROWS = [\n  { merchant: \"Delta\", card: \"Travel agent\", date: \"Oct 14\", amount: \"$412.00\", status: \"Approved\" },\n  { merchant: \"Notion\", card: \"Ops agent\", date: \"Oct 13\", amount: \"$96.00\", status: \"Approved\" },\n  { merchant: \"Uber\", card: \"Travel agent\", date: \"Oct 12\", amount: \"$31.75\", status: \"Declined\" },\n] as const;\n\nexport function Site() {\n  return (\n    <Table label=\"Recent purchases\">\n      <TableHeader>\n        <TableRow>\n          <TableHead>Merchant</TableHead>\n          <TableHead>Card</TableHead>\n          <TableHead>Date</TableHead>\n          <TableHead className=\"text-right\">Amount</TableHead>\n          <TableHead>Status</TableHead>\n        </TableRow>\n      </TableHeader>\n      <TableBody>\n        {ROWS.map((row) => (\n          <TableRow key={row.merchant}>\n            <TableCell>{row.merchant}</TableCell>\n            <TableCell label=\"Card\" className=\"text-fg-muted\">\n              {row.card}\n            </TableCell>\n            <TableCell label=\"Date\" className=\"text-fg-muted\">\n              {row.date}\n            </TableCell>\n            <TableCell label=\"Amount\" className=\"text-right\">\n              {row.amount}\n            </TableCell>\n            <TableCell label=\"Status\">\n              <Badge variant={row.status === \"Approved\" ? \"success\" : \"destructive\"}>{row.status}</Badge>\n            </TableCell>\n          </TableRow>\n        ))}\n      </TableBody>\n    </Table>\n  );\n}\n\n// As in the guides: a comparison, the row names in the first column.\nexport function Compare() {\n  const rows = [\n    [\"Use when\", \"Your user pays with their own card (credit, debit or prepaid).\", \"Your agent needs a new card to finish a payment.\"],\n    [\"Chargebacks\", \"Handled by the issuer.\", \"Handled by Agentcard.\"],\n    [\"KYC\", \"No\", \"Yes\"],\n  ];\n  return (\n    <Table label=\"Vault and Issuing compared\">\n      <TableHeader>\n        <TableRow>\n          <TableHead>\n            <span className=\"sr-only\">Topic</span>\n          </TableHead>\n          <TableHead>Vault</TableHead>\n          <TableHead>Issuing</TableHead>\n        </TableRow>\n      </TableHeader>\n      <TableBody>\n        {rows.map(([topic, vault, issuing]) => (\n          <TableRow key={topic}>\n            <TableCell className=\"font-medium\">{topic}</TableCell>\n            <TableCell label=\"Vault\">{vault}</TableCell>\n            <TableCell label=\"Issuing\">{issuing}</TableCell>\n          </TableRow>\n        ))}\n      </TableBody>\n    </Table>\n  );\n}\n",
+      "exports": [
+        "Site",
+        "Compare"
+      ],
+      "requires": [
+        "table",
+        "badge"
+      ],
+      "packages": [],
+      "previews": [
+        {
+          "name": "Site",
+          "url": "https://agentcard-ds.vercel.app/preview/table/Site"
+        },
+        {
+          "name": "Compare",
+          "url": "https://agentcard-ds.vercel.app/preview/table/Compare"
+        }
+      ]
+    }
+  ],
+  "type": "ui",
+  "title": "Table",
+  "description": "Responsive table that stacks row content on phones.",
+  "surface": "site",
+  "kinds": [
+    "table"
+  ],
+  "requires": [
+    "theme",
+    "utils"
+  ],
+  "packages": [],
+  "files": [
+    {
+      "path": "components/ui/table.tsx",
+      "content": "import * as React from \"react\";\n\nimport { cn } from \"@/lib/utils\";\n\n// The brand's table (agentcard-website globals.css, .v7-guide-table: the guides' ruled tables). A white frame with a 16\n// percent ink hairline and 12px corners; the head on sky, its labels in the 12px display face in blue; 14px Inter rows,\n// each with a 14 percent ink rule above it and a rule between columns. It scrolls sideways inside its frame when too\n// wide, never the page. On a phone (below 640px) each row stacks: the first cell as its title, then each other cell\n// under its column's name in blue (pass `label` to TableCell), the head kept for screen readers.\nfunction Table({ className, label = \"Table\", ...props }: React.ComponentProps<\"table\"> & { label?: string }) {\n  return (\n    <div\n      data-slot=\"table-container\"\n      role=\"region\"\n      aria-label={label}\n      tabIndex={0}\n      className=\"relative w-full overflow-x-auto rounded-card border border-hairline bg-surface shadow-guide outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-solid focus-visible:outline-focus-ring\"\n    >\n      <table data-slot=\"table\" className={cn(\"w-full caption-bottom border-collapse text-left text-body-sm leading-normal text-fg max-sm:block\", className)} {...props} />\n    </div>\n  );\n}\n\nfunction TableHeader({ className, ...props }: React.ComponentProps<\"thead\">) {\n  return <thead data-slot=\"table-header\" className={cn(\"max-sm:sr-only\", className)} {...props} />;\n}\n\nfunction TableBody({ className, ...props }: React.ComponentProps<\"tbody\">) {\n  return <tbody data-slot=\"table-body\" className={cn(\"max-sm:block\", className)} {...props} />;\n}\n\nfunction TableFooter({ className, ...props }: React.ComponentProps<\"tfoot\">) {\n  return <tfoot data-slot=\"table-footer\" className={cn(\"font-display max-sm:block\", className)} {...props} />;\n}\n\nfunction TableRow({ className, ...props }: React.ComponentProps<\"tr\">) {\n  return <tr data-slot=\"table-row\" className={cn(\"data-[state=selected]:bg-wash-selected max-sm:block max-sm:py-3 max-sm:[&+&]:border-t max-sm:[&+&]:border-line\", className)} {...props} />;\n}\n\nfunction TableHead({ className, ...props }: React.ComponentProps<\"th\">) {\n  return (\n    <th\n      data-slot=\"table-head\"\n      className={cn(\"bg-sky px-3.5 py-2.5 align-bottom font-display text-caption font-normal whitespace-nowrap text-fg-brand [&+&]:border-l [&+&]:border-line\", className)}\n      {...props}\n    />\n  );\n}\n\nfunction TableCell({ className, label, ...props }: React.ComponentProps<\"td\"> & { label?: string }) {\n  return (\n    <td\n      data-slot=\"table-cell\"\n      data-label={label}\n      className={cn(\n        \"min-w-35 border-t border-line px-3.5 py-3 align-top text-body-sm leading-normal text-fg tabular-nums [&+&]:border-l\",\n        // A phone's stacked row: no rules inside it, the first cell its title, the others under their column's name.\n        \"max-sm:block max-sm:min-w-0 max-sm:border-0 max-sm:px-3.5 max-sm:py-1 max-sm:text-left max-sm:first:font-medium max-sm:[&+&]:border-l-0\",\n        \"max-sm:data-label:not-first:before:mb-0.5 max-sm:data-label:not-first:before:block max-sm:data-label:not-first:before:font-display max-sm:data-label:not-first:before:text-caption max-sm:data-label:not-first:before:text-fg-brand max-sm:data-label:not-first:before:content-[attr(data-label)]\",\n        className,\n      )}\n      {...props}\n    />\n  );\n}\n\nfunction TableCaption({ className, ...props }: React.ComponentProps<\"caption\">) {\n  return <caption data-slot=\"table-caption\" className={cn(\"px-3.5 py-3 text-left text-body-sm text-fg-muted\", className)} {...props} />;\n}\n\nexport { Table, TableBody, TableCaption, TableCell, TableFooter, TableHead, TableHeader, TableRow };\n"
+    }
+  ]
+}

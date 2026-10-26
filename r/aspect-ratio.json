@@ -1,0 +1,53 @@
+{
+  "schemaVersion": 1,
+  "name": "aspect-ratio",
+  "useFor": "Use for product shots, screens inside windows and media previews so the layout does not jump while they load. Round and frame the media inside with the brand's 12px corners and hairline, or put it in a window.",
+  "constraints": [
+    "Stretching media to fill",
+    "Styling the frame itself"
+  ],
+  "documentation": "",
+  "source": "Radix AspectRatio; framing from the brand's windows",
+  "exports": [
+    "AspectRatio"
+  ],
+  "client": true,
+  "docsUrl": "https://agentcard-ds.vercel.app/components/aspect-ratio",
+  "markdownUrl": "https://agentcard-ds.vercel.app/r/aspect-ratio.md",
+  "examples": [
+    {
+      "path": "examples/aspect-ratio.tsx",
+      "content": "import { AspectRatio } from \"@/components/ui/aspect-ratio\";\n\nexport function Site() {\n  return (\n    <div className=\"grid w-full max-w-120 items-start gap-4 sm:grid-cols-2\">\n      <AspectRatio ratio={16 / 9} className=\"overflow-hidden rounded-card border border-hairline bg-sky-wash\">\n        <div className=\"flex size-full items-end p-4 font-display text-body-sm text-fg-brand\">16 by 9: a product screen</div>\n      </AspectRatio>\n      <AspectRatio ratio={1} className=\"overflow-hidden rounded-card border border-hairline bg-paper\">\n        <div className=\"flex size-full items-end p-4 font-display text-body-sm text-fg\">1 by 1: a card image</div>\n      </AspectRatio>\n    </div>\n  );\n}\n",
+      "exports": [
+        "Site"
+      ],
+      "requires": [
+        "aspect-ratio"
+      ],
+      "packages": [],
+      "previews": [
+        {
+          "name": "Site",
+          "url": "https://agentcard-ds.vercel.app/preview/aspect-ratio/Site"
+        }
+      ]
+    }
+  ],
+  "type": "ui",
+  "title": "Aspect Ratio",
+  "description": "Holds an image or screen at a fixed shape while the width changes.",
+  "surface": "site",
+  "kinds": [],
+  "requires": [
+    "theme"
+  ],
+  "packages": [
+    "@radix-ui/react-aspect-ratio"
+  ],
+  "files": [
+    {
+      "path": "components/ui/aspect-ratio.tsx",
+      "content": "\"use client\";\n\nimport * as React from \"react\";\nimport * as AspectRatioPrimitive from \"@radix-ui/react-aspect-ratio\";\n\n// Holds media at a fixed shape (a product shot, a screen inside a window). The frame takes no style of its own; round\n// and clip the media inside it as the brand frames images: 12px corners and a 16 percent ink hairline, or a window.\nfunction AspectRatio(props: React.ComponentProps<typeof AspectRatioPrimitive.Root>) {\n  return <AspectRatioPrimitive.Root data-slot=\"aspect-ratio\" {...props} />;\n}\n\nexport { AspectRatio };\n"
+    }
+  ]
+}

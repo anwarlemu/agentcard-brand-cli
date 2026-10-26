@@ -1,0 +1,61 @@
+{
+  "schemaVersion": 1,
+  "name": "segmented-control",
+  "useFor": "Use for a small set of options such as billing period or card type. Connect value and onValueChange. Use size=\"sm\" in compact layouts and variant=\"plain\" in toolbars.",
+  "constraints": [
+    "Switching between pages or panels (use tabs)",
+    "More than four options",
+    "Pill-shaped tracks"
+  ],
+  "documentation": "",
+  "source": "live https://www.agentcard.sh/pricing (.plan-tabs, .plan-tabs-thumb); src/app/globals.css (.v7-guide-tablist for size sm)",
+  "exports": [
+    "SegmentedControl"
+  ],
+  "client": true,
+  "docsUrl": "https://agentcard-ds.vercel.app/components/segmented-control",
+  "markdownUrl": "https://agentcard-ds.vercel.app/r/segmented-control.md",
+  "examples": [
+    {
+      "path": "examples/segmented-control.tsx",
+      "content": "\"use client\";\n\nimport * as React from \"react\";\n\nimport { SegmentedControl } from \"@/components/ui/segmented-control\";\n\nexport function Site() {\n  const [period, setPeriod] = React.useState<\"month\" | \"year\">(\"month\");\n  const [kind, setKind] = React.useState<\"prepaid\" | \"commercial\" | \"virtual\">(\"prepaid\");\n  return (\n    <div className=\"grid gap-6\">\n      <SegmentedControl\n        label=\"Billing\"\n        value={period}\n        onValueChange={setPeriod}\n        options={[\n          { value: \"month\", label: \"Monthly\" },\n          { value: \"year\", label: \"Yearly\" },\n        ]}\n      />\n      <SegmentedControl\n        label=\"Card type\"\n        size=\"sm\"\n        value={kind}\n        onValueChange={setKind}\n        options={[\n          { value: \"prepaid\", label: \"Prepaid\", count: 4 },\n          { value: \"commercial\", label: \"Commercial\", count: 2 },\n          { value: \"virtual\", label: \"Single use\", count: 9 },\n        ]}\n      />\n    </div>\n  );\n}\n\nexport function Plain() {\n  const [range, setRange] = React.useState<\"day\" | \"week\" | \"month\">(\"week\");\n  return (\n    <SegmentedControl\n      label=\"Range\"\n      variant=\"plain\"\n      value={range}\n      onValueChange={setRange}\n      options={[\n        { value: \"day\", label: \"Day\" },\n        { value: \"week\", label: \"Week\" },\n        { value: \"month\", label: \"Month\" },\n      ]}\n    />\n  );\n}\n",
+      "exports": [
+        "Site",
+        "Plain"
+      ],
+      "requires": [
+        "segmented-control"
+      ],
+      "packages": [],
+      "previews": [
+        {
+          "name": "Site",
+          "url": "https://agentcard-ds.vercel.app/preview/segmented-control/Site"
+        },
+        {
+          "name": "Plain",
+          "url": "https://agentcard-ds.vercel.app/preview/segmented-control/Plain"
+        }
+      ]
+    }
+  ],
+  "type": "ui",
+  "title": "Segmented control",
+  "description": "Single-value selector with radio semantics and arrow-key navigation.",
+  "surface": "site",
+  "kinds": [
+    "tabs"
+  ],
+  "requires": [
+    "theme",
+    "use-tab-glide",
+    "utils"
+  ],
+  "packages": [],
+  "files": [
+    {
+      "path": "components/ui/segmented-control.tsx",
+      "content": "\"use client\";\n\nimport * as React from \"react\";\n\nimport { useTabGlide } from \"@/hooks/use-tab-glide\";\nimport { cn } from \"@/lib/utils\";\n\n// The brand's tab track (.plan-tabs on /pricing; `sm` is the guides' .v7-guide-tablist) used as a value picker (a billing period, a card type): the sunken track and the gliding blue key\n// of Tabs, each option sized to its label, with radio semantics. `plain` drops the track for dense rows: quiet labels with\n// a pale wash gliding between them.\ntype Option<T extends string> = { value: T; label: React.ReactNode; count?: number; disabled?: boolean };\ntype Variant = \"default\" | \"plain\";\n\nconst KEY: Record<Variant, string> = {\n  default: \"rounded-control border border-line-brand-edge bg-primary shadow-key-brand\",\n  plain: \"rounded-sm bg-wash-pill\",\n};\n\nfunction SegmentedControl<T extends string>({\n  value,\n  onValueChange,\n  options,\n  label,\n  size = \"md\",\n  variant = \"default\",\n  className,\n}: {\n  value: T;\n  onValueChange: (value: T) => void;\n  options: Option<T>[];\n  label: string;\n  size?: \"sm\" | \"md\";\n  variant?: Variant;\n  className?: string;\n}) {\n  const keyRef = React.useRef<HTMLSpanElement>(null);\n  const isPlaced = useTabGlide(keyRef, value);\n  const enabled = options.filter((option) => !option.disabled);\n  const tabStop = enabled.find((option) => option.value === value)?.value ?? enabled[0]?.value;\n  const track = variant === \"default\";\n\n  return (\n    <div\n      role=\"radiogroup\"\n      aria-label={label}\n      data-slot=\"segmented-control\"\n      className={cn(\"relative isolate inline-flex w-fit items-center\", track ? \"gap-1 rounded-card border border-hairline bg-subtle p-1 shadow-well\" : \"gap-0.5\",\n        // The small track (the guides' .v7-guide-tablist): 10px corners round 6px keys.\n        track && size === \"sm\" && \"rounded-[calc(var(--ds-radius-sm)+var(--ds-space-1))]\", className)}\n    >\n      {/* The hook measures from the outer edge; -1px puts the key back inside the track's border. */}\n      <span ref={keyRef} aria-hidden className={cn(\"pointer-events-none absolute -z-10\", track ? \"-top-px -left-px\" : \"top-0 left-0\", KEY[variant], track && size === \"sm\" && \"rounded-sm\", !isPlaced && \"invisible\")} />\n      {options.map((o) => {\n        const selected = o.value === value;\n        return (\n          <button\n            key={o.value}\n            type=\"button\"\n            role=\"radio\"\n            aria-checked={selected}\n            data-tab-id={o.value}\n            disabled={o.disabled}\n            tabIndex={o.value === tabStop ? 0 : -1}\n            onClick={() => onValueChange(o.value)}\n            onKeyDown={(event) => {\n              if (![\"ArrowLeft\", \"ArrowRight\", \"ArrowUp\", \"ArrowDown\", \"Home\", \"End\"].includes(event.key) || !enabled.length) return;\n              event.preventDefault();\n              const rtl = getComputedStyle(event.currentTarget).direction === \"rtl\";\n              const forward = event.key === \"ArrowDown\" || event.key === (rtl ? \"ArrowLeft\" : \"ArrowRight\");\n              const index = enabled.findIndex((option) => option.value === o.value);\n              const next = event.key === \"Home\" ? 0 : event.key === \"End\" ? enabled.length - 1 : (index + (forward ? 1 : -1) + enabled.length) % enabled.length;\n              const target = enabled[next].value;\n              onValueChange(target);\n              const buttons = event.currentTarget.parentElement?.querySelectorAll<HTMLButtonElement>('button[role=\"radio\"]');\n              Array.from(buttons ?? []).find((button) => button.dataset.tabId === target)?.focus();\n            }}\n            className={cn(\n              \"disabled:opacity-50 disabled:pointer-events-none flex items-center justify-center gap-1.5 border border-transparent font-display leading-none whitespace-nowrap outline-none transition-[background-color,color] duration-150 ease-out focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-solid focus-visible:outline-focus-ring motion-reduce:transition-none\",\n              track && size === \"md\" ? \"rounded-control\" : \"rounded-sm\",\n              size === \"sm\" ? (track ? \"h-7.5 px-3 text-caption\" : \"h-7 px-2.5 text-caption\") : track ? \"h-10 px-4 text-body-sm leading-body\" : \"h-8 px-3 text-body-sm\",\n              // Only the label and a faint wash answer the pointer, so nothing fades over the key gliding in beneath.\n              selected ? (track ? \"text-on-primary\" : \"text-fg\") : cn(\"text-fg-muted hover:text-fg\", track && \"hover:bg-wash-pill\"),\n              // Until the key lands, the selected option draws it itself so the first paint matches.\n              selected && !isPlaced && cn(KEY[variant], track && size === \"sm\" && \"rounded-sm\"),\n            )}\n          >\n            {o.label}\n            {o.count !== undefined && <span className={cn(\"tabular-nums\", selected && track ? \"text-fg-on-brand-muted\" : \"text-fg-subtle\")}>{o.count}</span>}\n          </button>\n        );\n      })}\n    </div>\n  );\n}\n\nexport { SegmentedControl };\n"
+    }
+  ]
+}

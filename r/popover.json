@@ -1,0 +1,73 @@
+{
+  "schemaVersion": 1,
+  "name": "popover",
+  "useFor": "Use for explanations, filters or small controls. Use variant=\"glass\" over blue backgrounds or imagery. Keep longer tasks in Dialog or Sheet.",
+  "constraints": [
+    "Forms longer than a few fields (use a dialog)",
+    "Popovers that open on hover (use a tooltip)",
+    "Gray panels"
+  ],
+  "documentation": "",
+  "source": "Extension from agentcard-website src/app/globals.css (.v7-dock-card)",
+  "exports": [
+    "Popover",
+    "PopoverAnchor",
+    "PopoverContent",
+    "PopoverTrigger"
+  ],
+  "client": true,
+  "docsUrl": "https://agentcard-ds.vercel.app/components/popover",
+  "markdownUrl": "https://agentcard-ds.vercel.app/r/popover.md",
+  "examples": [
+    {
+      "path": "examples/popover.tsx",
+      "content": "import { Button } from \"@/components/ui/button\";\nimport { Popover, PopoverContent, PopoverTrigger } from \"@/components/ui/popover\";\nimport { Surface } from \"@/lib/surface\";\n\nfunction Limits({ defaultOpen }: { defaultOpen?: boolean }) {\n  return (\n    <Popover defaultOpen={defaultOpen}>\n      <PopoverTrigger asChild>\n        <Button variant=\"secondary\">What are limits?</Button>\n      </PopoverTrigger>\n      <PopoverContent className=\"grid gap-2\">\n        <p className=\"font-display text-body-sm font-medium text-fg\">Spending limits</p>\n        <p className=\"text-body-sm leading-relaxed text-fg-muted\">Each card stops at its per purchase and monthly limits, whatever the agent tries to buy.</p>\n      </PopoverContent>\n    </Popover>\n  );\n}\n\nexport function Site() {\n  return <Limits />;\n}\n\nexport function Open() {\n  return (\n    <div className=\"h-48\">\n      <Limits defaultOpen />\n    </div>\n  );\n}\n\nexport function Glass() {\n  return (\n    <Surface ground=\"blue\" className=\"h-60 rounded-panel p-8\">\n      <Popover defaultOpen>\n        <PopoverTrigger asChild>\n          <Button variant=\"on-brand\">About the dock</Button>\n        </PopoverTrigger>\n        <PopoverContent variant=\"glass\" className=\"grid gap-1.5\">\n          <p className=\"font-display text-body-sm\">Always in reach</p>\n          <p className=\"text-body-sm leading-relaxed text-fg-on-brand-muted\">The dock floats over every page, so the next step is one tap away.</p>\n        </PopoverContent>\n      </Popover>\n    </Surface>\n  );\n}\n",
+      "exports": [
+        "Site",
+        "Open",
+        "Glass"
+      ],
+      "requires": [
+        "popover",
+        "button",
+        "surface"
+      ],
+      "packages": [],
+      "previews": [
+        {
+          "name": "Site",
+          "url": "https://agentcard-ds.vercel.app/preview/popover/Site"
+        },
+        {
+          "name": "Open",
+          "url": "https://agentcard-ds.vercel.app/preview/popover/Open"
+        },
+        {
+          "name": "Glass",
+          "url": "https://agentcard-ds.vercel.app/preview/popover/Glass"
+        }
+      ]
+    }
+  ],
+  "type": "ui",
+  "title": "Popover",
+  "description": "Anchored panel for contextual details or controls.",
+  "surface": "site",
+  "kinds": [
+    "popover-panel"
+  ],
+  "requires": [
+    "theme",
+    "surface",
+    "utils"
+  ],
+  "packages": [
+    "@radix-ui/react-popover"
+  ],
+  "files": [
+    {
+      "path": "components/ui/popover.tsx",
+      "content": "\"use client\";\n\nimport * as React from \"react\";\nimport * as PopoverPrimitive from \"@radix-ui/react-popover\";\n\nimport { usePortalContainer } from \"@/lib/surface\";\nimport { cn } from \"@/lib/utils\";\n\n// The brand's floating panel: white, a 16 percent ink hairline, 8px corners and the tooltip shadow, 6px off its trigger,\n// growing out of the side nearest the trigger (scale 0.97 and a fade, 160ms ease-out). `glass` is the dock's panel: ink\n// at 42 percent under a light sheen and a blur, a white hairline, white text. Reduced motion keeps only the fade.\nconst VARIANTS = {\n  default: \"border-hairline bg-surface text-fg shadow-tooltip\",\n  glass: \"border-line-on-brand bg-glass bg-(image:--ds-glass-sheen) text-on-brand shadow-floating [backdrop-filter:var(--ds-glass-blur)]\",\n} as const;\n\nfunction Popover(props: React.ComponentProps<typeof PopoverPrimitive.Root>) {\n  return <PopoverPrimitive.Root data-slot=\"popover\" {...props} />;\n}\n\nfunction PopoverTrigger(props: React.ComponentProps<typeof PopoverPrimitive.Trigger>) {\n  return <PopoverPrimitive.Trigger data-slot=\"popover-trigger\" {...props} />;\n}\n\nfunction PopoverContent({ className, align = \"start\", sideOffset = 6, collisionPadding = 8, variant = \"default\", ...props }: React.ComponentProps<typeof PopoverPrimitive.Content> & { variant?: keyof typeof VARIANTS }) {\n  return (\n    <PopoverPrimitive.Portal container={usePortalContainer()}>\n      <PopoverPrimitive.Content\n        data-slot=\"popover-content\"\n        data-variant={variant}\n        align={align}\n        sideOffset={sideOffset}\n        collisionPadding={collisionPadding}\n        className={cn(\"z-50 w-72 max-w-(--radix-popover-content-available-width) max-h-(--radix-popover-content-available-height) overflow-y-auto overscroll-contain origin-(--radix-popover-content-transform-origin) animate-pop-in motion-reduce:animate-none rounded-control border p-4 text-body-sm outline-none\", VARIANTS[variant], className)}\n        {...props}\n      />\n    </PopoverPrimitive.Portal>\n  );\n}\n\nfunction PopoverAnchor(props: React.ComponentProps<typeof PopoverPrimitive.Anchor>) {\n  return <PopoverPrimitive.Anchor data-slot=\"popover-anchor\" {...props} />;\n}\n\nexport { Popover, PopoverAnchor, PopoverContent, PopoverTrigger };\n"
+    }
+  ]
+}

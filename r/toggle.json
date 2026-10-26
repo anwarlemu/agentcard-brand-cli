@@ -1,0 +1,64 @@
+{
+  "schemaVersion": 1,
+  "name": "toggle",
+  "useFor": "Use for a two-state formatting or view option in a toolbar (Pin, Show receipts). Give icon-only toggles an aria-label. Use a switch for a setting that takes effect at once and a checkbox in forms.",
+  "constraints": [
+    "A blue fill for the on state (that is the chosen tab)",
+    "A toggle that triggers an action",
+    "Icon-only toggles without a name"
+  ],
+  "documentation": "",
+  "source": "Extrapolated from the brand's keys (agentcard-website src/app/globals.css --bevel, --pressed)",
+  "exports": [
+    "Toggle",
+    "toggleVariants"
+  ],
+  "client": true,
+  "docsUrl": "https://agentcard-ds.vercel.app/components/toggle",
+  "markdownUrl": "https://agentcard-ds.vercel.app/r/toggle.md",
+  "examples": [
+    {
+      "path": "examples/toggle.tsx",
+      "content": "\"use client\";\n\nimport { Bold, Italic, Pin, Receipt } from \"lucide-react\";\n\nimport { Toggle } from \"@/components/ui/toggle\";\n\nexport function Site() {\n  return (\n    <div className=\"flex flex-wrap items-center gap-2\">\n      <Toggle aria-label=\"Pin this card\" defaultPressed>\n        <Pin />\n      </Toggle>\n      <Toggle>\n        <Receipt />\n        Show receipts\n      </Toggle>\n    </div>\n  );\n}\n\nexport function Variants() {\n  return (\n    <div className=\"grid gap-4\">\n      <div className=\"flex flex-wrap items-center gap-2\">\n        <Toggle variant=\"outline\" aria-label=\"Bold\">\n          <Bold />\n        </Toggle>\n        <Toggle variant=\"outline\" aria-label=\"Italic\" defaultPressed>\n          <Italic />\n        </Toggle>\n        <Toggle variant=\"outline\">Declined only</Toggle>\n      </div>\n      <div className=\"flex flex-wrap items-center gap-2\">\n        <Toggle size=\"sm\">Small</Toggle>\n        <Toggle size=\"lg\">Large</Toggle>\n        <Toggle disabled>Disabled</Toggle>\n      </div>\n    </div>\n  );\n}\n",
+      "exports": [
+        "Site",
+        "Variants"
+      ],
+      "requires": [
+        "toggle"
+      ],
+      "packages": [
+        "lucide-react"
+      ],
+      "previews": [
+        {
+          "name": "Site",
+          "url": "https://agentcard-ds.vercel.app/preview/toggle/Site"
+        },
+        {
+          "name": "Variants",
+          "url": "https://agentcard-ds.vercel.app/preview/toggle/Variants"
+        }
+      ]
+    }
+  ],
+  "type": "ui",
+  "title": "Toggle",
+  "description": "A key that stays down: a ghost or white key that sinks into the pressed well when on.",
+  "surface": "site",
+  "kinds": [],
+  "requires": [
+    "theme",
+    "utils"
+  ],
+  "packages": [
+    "@radix-ui/react-toggle",
+    "class-variance-authority"
+  ],
+  "files": [
+    {
+      "path": "components/ui/toggle.tsx",
+      "content": "\"use client\";\n\nimport * as React from \"react\";\nimport * as TogglePrimitive from \"@radix-ui/react-toggle\";\nimport { cva, type VariantProps } from \"class-variance-authority\";\n\nimport { cn } from \"@/lib/utils\";\n\n// A key that stays down (extrapolated from the brand's keys, the v7 bevel). `default` is the ghost key: a bare display\n// label that washes on hover; on, it sinks into the pressed well (the pale wash, a hairline, the pressed shadow). `outline`\n// is the white key with its bevel; on, it is pressed the same way. 8px corners, the 14px display face, a 14px glyph.\n// Pressing nudges it down a pixel like every key; the state change itself is a color and shadow change only.\nconst toggleVariants = cva(\n  \"inline-flex shrink-0 items-center justify-center gap-2 rounded-control border font-display font-normal leading-none whitespace-nowrap outline-none select-none transition-[background-color,color,box-shadow,translate] duration-150 ease-out active:translate-y-px focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-solid focus-visible:outline-focus-ring disabled:pointer-events-none disabled:opacity-50 aria-invalid:text-danger motion-reduce:transition-none motion-reduce:active:translate-y-0 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-3.5\",\n  {\n    variants: {\n      variant: {\n        default: \"border-transparent text-fg-muted hover:bg-wash-hover hover:text-fg data-[state=on]:border-hairline data-[state=on]:bg-subtle data-[state=on]:text-fg data-[state=on]:shadow-pressed\",\n        outline: \"border-hairline bg-surface text-fg shadow-key hover:bg-sky-wash data-[state=on]:bg-subtle data-[state=on]:shadow-pressed\",\n      },\n      size: {\n        default: \"h-10 min-w-10 px-3.5 text-body-sm\",\n        sm: \"h-8 min-w-8 px-2.5 text-caption\",\n        lg: \"h-11 min-w-11 px-4.5 text-body-sm\",\n      },\n    },\n    defaultVariants: { variant: \"default\", size: \"default\" },\n  },\n);\n\nfunction Toggle({ className, variant, size, ...props }: React.ComponentProps<typeof TogglePrimitive.Root> & VariantProps<typeof toggleVariants>) {\n  return <TogglePrimitive.Root data-slot=\"toggle\" className={cn(toggleVariants({ variant, size, className }))} {...props} />;\n}\n\nexport { Toggle, toggleVariants };\n"
+    }
+  ]
+}

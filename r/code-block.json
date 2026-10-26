@@ -1,0 +1,73 @@
+{
+  "schemaVersion": 1,
+  "name": "code-block",
+  "useFor": "Use for code a person reads or copies: SDK calls, curl commands, API responses. Give it a CodeBlockHeader with CodeBlockTitle (the file name, or Terminal) and a CodeBlockCopyButton, then CodeBlockContent with the code. Pass wrap for long values and a max-h class for long files. It is shadcn's CodeBlock API in the CodeWindow look; on a page it sits on a blue panel as on the home page.",
+  "constraints": [
+    "A light code block",
+    "A full syntax theme with many colors",
+    "Rounded corners above 8px",
+    "Code in Inter"
+  ],
+  "documentation": "",
+  "source": "Agentcard code window: agentcard-website src/components/v7/integrations.tsx (CodePane), src/app/globals.css (.v7-intg-code); agentcard.sh / (computed)",
+  "exports": [
+    "CodeBlock",
+    "CodeBlockActions",
+    "CodeBlockContent",
+    "CodeBlockCopyButton",
+    "CodeBlockHeader",
+    "CodeBlockTitle"
+  ],
+  "client": true,
+  "docsUrl": "https://agentcard-ds.vercel.app/components/code-block",
+  "markdownUrl": "https://agentcard-ds.vercel.app/r/code-block.md",
+  "examples": [
+    {
+      "path": "examples/code-block.tsx",
+      "content": "import { CodeBlock, CodeBlockActions, CodeBlockContent, CodeBlockCopyButton, CodeBlockHeader, CodeBlockTitle } from \"@/components/ui/code-block\";\n\nconst CREATE = `import { Agentcard } from \"@agentcard/sdk\";\n\n// Give the travel agent its own card.\nconst agentcard = new Agentcard({ apiKey: process.env.AGENTCARD_KEY });\nconst card = await agentcard.cards.create({\n  name: \"Travel agent\",\n  limit: { amount: 200000, interval: \"month\" },\n  merchants: [\"flights\", \"hotels\"],\n});`;\n\nconst CURL = `# Pause a card\ncurl -X POST https://api.agentcard.sh/v1/cards/card_7718/pause \\\\\n  -H \"Authorization: Bearer $AGENTCARD_KEY\"`;\n\nconst RESPONSE = `{\n  \"id\": \"card_7718\",\n  \"status\": \"active\",\n  \"limit\": { \"amount\": 200000, \"interval\": \"month\" },\n  \"last4\": \"7718\",\n  \"note\": \"A long value wraps onto the next line instead of scrolling when wrap is set on the block.\"\n}`;\n\nexport function Site() {\n  return (\n    <div className=\"rounded-panel bg-brand p-8\">\n      <CodeBlock>\n        <CodeBlockHeader>\n          <CodeBlockTitle>cards.ts</CodeBlockTitle>\n          <CodeBlockActions>\n            <CodeBlockCopyButton value={CREATE} />\n          </CodeBlockActions>\n        </CodeBlockHeader>\n        <CodeBlockContent code={CREATE} language=\"ts\" />\n      </CodeBlock>\n    </div>\n  );\n}\n\nexport function Terminal() {\n  return (\n    <CodeBlock>\n      <CodeBlockHeader>\n        <CodeBlockTitle>Terminal</CodeBlockTitle>\n        <CodeBlockActions>\n          <CodeBlockCopyButton value={CURL} label=\"Copy command\" />\n        </CodeBlockActions>\n      </CodeBlockHeader>\n      <CodeBlockContent code={CURL} language=\"sh\" lineNumbers={false} />\n    </CodeBlock>\n  );\n}\n\nexport function Wrapped() {\n  return (\n    <CodeBlock className=\"max-w-xl\">\n      <CodeBlockHeader>\n        <CodeBlockTitle>response.json</CodeBlockTitle>\n      </CodeBlockHeader>\n      <CodeBlockContent code={RESPONSE} language=\"json\" wrap className=\"max-h-60\" />\n    </CodeBlock>\n  );\n}\n",
+      "exports": [
+        "Site",
+        "Terminal",
+        "Wrapped"
+      ],
+      "requires": [
+        "code-block"
+      ],
+      "packages": [
+        "@agentcard/sdk"
+      ],
+      "previews": [
+        {
+          "name": "Site",
+          "url": "https://agentcard-ds.vercel.app/preview/code-block/Site"
+        },
+        {
+          "name": "Terminal",
+          "url": "https://agentcard-ds.vercel.app/preview/code-block/Terminal"
+        },
+        {
+          "name": "Wrapped",
+          "url": "https://agentcard-ds.vercel.app/preview/code-block/Wrapped"
+        }
+      ]
+    }
+  ],
+  "type": "ui",
+  "title": "Code Block",
+  "description": "Code on the ink ground, as the code window draws it: a bar with three squares, a file name and a copy key, then light highlighting and line numbers.",
+  "surface": "site",
+  "kinds": [],
+  "requires": [
+    "theme",
+    "code-window",
+    "copy-button",
+    "utils"
+  ],
+  "packages": [],
+  "files": [
+    {
+      "path": "components/ui/code-block.tsx",
+      "content": "\"use client\";\n\nimport * as React from \"react\";\n\nimport { tokenize } from \"@/components/ui/code-window\";\nimport { CopyButton } from \"@/components/ui/copy-button\";\nimport { cn } from \"@/lib/utils\";\n\n// shadcn's CodeBlock in the look of the brand's code window (agentcard.sh, the integrations stage, .v7-intg-code): the\n// ink ground with 8px corners and the deep drop, a 30px bar with three small squares, the file name and a copy key, then\n// the code in the 12px display face at 88 percent white on a 1.55 line. Highlighting is light on purpose, as on the\n// window: comments fade to 45 percent, strings turn sky, everything else stays one color. Line numbers sit at 30\n// percent white. Long lines scroll, or wrap with `wrap`; `maxHeight` classes scroll a long file inside the block.\nfunction CodeBlock({ className, ...props }: React.ComponentProps<\"figure\">) {\n  return <figure data-slot=\"code-block\" className={cn(\"group/code-block m-0 flex w-full min-w-0 flex-col overflow-hidden rounded-control bg-code text-white/88 shadow-code\", className)} {...props} />;\n}\n\n/** The bar: three small squares at the left, then the title and the actions. */\nfunction CodeBlockHeader({ className, children, ...props }: React.ComponentProps<\"div\">) {\n  return (\n    <div data-slot=\"code-block-header\" className={cn(\"flex h-7.5 min-w-0 shrink-0 items-center gap-1.5 border-b border-white/10 px-3 font-sans text-micro leading-4 text-white/55\", className)} {...props}>\n      <span aria-hidden className=\"size-2 shrink-0 rounded-[var(--ds-space-px)] bg-current opacity-45\" />\n      <span aria-hidden className=\"size-2 shrink-0 rounded-[var(--ds-space-px)] bg-current opacity-45\" />\n      <span aria-hidden className=\"size-2 shrink-0 rounded-[var(--ds-space-px)] bg-current opacity-45\" />\n      {children}\n    </div>\n  );\n}\n\nfunction CodeBlockTitle({ className, ...props }: React.ComponentProps<\"figcaption\">) {\n  return <figcaption data-slot=\"code-block-title\" className={cn(\"ml-2 min-w-0 truncate\", className)} {...props} />;\n}\n\nfunction CodeBlockActions({ className, ...props }: React.ComponentProps<\"div\">) {\n  return <div data-slot=\"code-block-actions\" className={cn(\"-mr-2 ml-auto flex shrink-0 items-center gap-1\", className)} {...props} />;\n}\n\n/** The window's copy key, quiet on the ink: no edge or fill until the pointer is on it. */\nfunction CodeBlockCopyButton({ value, label = \"Copy code\", className }: { value: string; label?: string; className?: string }) {\n  return (\n    <CopyButton\n      value={value}\n      label={label}\n      className={cn(\"size-6 border-transparent bg-transparent text-white/55 shadow-none hover:bg-white/10 hover:text-white data-copied:border-transparent data-copied:bg-white/10 data-copied:text-white data-copied:shadow-none\", className)}\n    />\n  );\n}\n\n/**\n * The code itself. Pass the text as `code` and its `language` (it only picks the comment marker: ts, sh, py, sql...);\n * line numbers show by default. `wrap` breaks long lines instead of scrolling.\n */\nfunction CodeBlockContent({ code, language, lineNumbers = true, wrap = false, className, ...props }: Omit<React.ComponentProps<\"pre\">, \"children\"> & { code: string; language?: string; lineNumbers?: boolean; wrap?: boolean }) {\n  const lines = React.useMemo(() => {\n    const rows: { kind: \"plain\" | \"comment\" | \"string\"; text: string }[][] = [[]];\n    for (const token of tokenize(code.replace(/\\n$/, \"\"), language)) {\n      token.text.split(\"\\n\").forEach((part, i) => {\n        if (i > 0) rows.push([]);\n        if (part) rows[rows.length - 1].push({ kind: token.kind, text: part });\n      });\n    }\n    return rows;\n  }, [code, language]);\n  return (\n    <pre\n      data-slot=\"code-block-content\"\n      tabIndex={0}\n      className={cn(\n        \"m-0 min-h-0 flex-1 overflow-auto pt-3.5 pb-4 font-mono text-micro [line-height:1.55] outline-none [scrollbar-width:thin] [tab-size:2] focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-sky md:text-caption\",\n        className,\n      )}\n      {...props}\n    >\n      <code className={cn(\"grid font-[inherit]\", wrap ? \"grid-cols-[minmax(0,1fr)]\" : \"min-w-max\")}>\n        {lines.map((line, i) => (\n          <span key={i} className={cn(\"grid\", lineNumbers ? \"grid-cols-[2.75rem_minmax(0,1fr)]\" : \"grid-cols-[minmax(0,1fr)] pl-4\")}>\n            {lineNumbers && (\n              <span aria-hidden className=\"pr-3.5 text-right text-white/30 select-none\">\n                {i + 1}\n              </span>\n            )}\n            <span className={cn(\"pr-4\", wrap ? \"whitespace-pre-wrap [overflow-wrap:anywhere]\" : \"whitespace-pre\")}>\n              {line.length\n                ? line.map((t, j) =>\n                    t.kind === \"plain\" ? (\n                      <React.Fragment key={j}>{t.text}</React.Fragment>\n                    ) : (\n                      <span key={j} className={t.kind === \"comment\" ? \"text-white/45\" : \"text-sky\"}>\n                        {t.text}\n                      </span>\n                    ),\n                  )\n                : \"​\"}\n            </span>\n          </span>\n        ))}\n      </code>\n    </pre>\n  );\n}\n\nexport { CodeBlock, CodeBlockActions, CodeBlockContent, CodeBlockCopyButton, CodeBlockHeader, CodeBlockTitle };\n"
+    }
+  ]
+}

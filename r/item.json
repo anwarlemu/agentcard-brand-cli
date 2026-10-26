@@ -1,0 +1,81 @@
+{
+  "schemaVersion": 1,
+  "name": "item",
+  "useFor": "Use for rows in a list a person scans or picks from: cards, agents, merchants, updates. Set aria-current or data-selected on the current row (it turns pale sky with a blue title). Use outline for a row that stands alone as a card, muted for a row on the gray ground, size sm or xs for dense lists, and ItemHeader or ItemFooter for a date or a tag.",
+  "constraints": [
+    "Bold titles",
+    "More than two lines of description",
+    "Rows that move on hover",
+    "Rounded photos"
+  ],
+  "documentation": "",
+  "source": "Extrapolated from Agentcard: the guides' nav rows (agentcard-website .v7-guide-nav), the updates feed (/updates), the white key (.v7-btn) and the team page's photos (/about)",
+  "exports": [
+    "Item",
+    "ItemActions",
+    "ItemContent",
+    "ItemDescription",
+    "ItemFooter",
+    "ItemGroup",
+    "ItemHeader",
+    "ItemMedia",
+    "ItemSeparator",
+    "ItemTitle"
+  ],
+  "client": false,
+  "docsUrl": "https://agentcard-ds.vercel.app/components/item",
+  "markdownUrl": "https://agentcard-ds.vercel.app/r/item.md",
+  "examples": [
+    {
+      "path": "examples/item.tsx",
+      "content": "\"use client\";\n\nimport * as React from \"react\";\nimport { ArrowUpRight, CreditCard, Plane, ShoppingBag } from \"lucide-react\";\n\nimport { Badge } from \"@/components/ui/badge\";\nimport { Button } from \"@/components/ui/button\";\nimport { Item, ItemActions, ItemContent, ItemDescription, ItemFooter, ItemGroup, ItemHeader, ItemMedia, ItemSeparator, ItemTitle } from \"@/components/ui/item\";\n\nconst CARDS = [\n  { name: \"Travel agent\", detail: \"Multi-use, $2,000 a month. Flights and hotels only.\", icon: Plane, status: \"Active\" },\n  { name: \"Office supplies\", detail: \"Single-use, $250. Staples and Amazon.\", icon: ShoppingBag, status: \"Active\" },\n  { name: \"Gift cards\", detail: \"Closed after one purchase on Oct 12.\", icon: CreditCard, status: \"Closed\" },\n];\n\nexport function Site() {\n  const [current, setCurrent] = React.useState(CARDS[0].name);\n  return (\n    <ItemGroup className=\"w-full max-w-md\">\n      {CARDS.map((card) => (\n        <Item key={card.name} asChild aria-current={current === card.name ? \"true\" : undefined}>\n          <button type=\"button\" className=\"w-full text-left\" onClick={() => setCurrent(card.name)}>\n            <ItemMedia variant=\"icon\">\n              <card.icon strokeWidth={1.5} />\n            </ItemMedia>\n            <ItemContent>\n              <ItemTitle>{card.name}</ItemTitle>\n              <ItemDescription>{card.detail}</ItemDescription>\n            </ItemContent>\n            <ItemActions>\n              <Badge variant={card.status === \"Active\" ? \"success\" : \"default\"}>{card.status}</Badge>\n            </ItemActions>\n          </button>\n        </Item>\n      ))}\n    </ItemGroup>\n  );\n}\n\nexport function Variants() {\n  return (\n    <div className=\"grid w-full max-w-md gap-4\">\n      <Item variant=\"outline\">\n        <ItemContent>\n          <ItemTitle>Vault</ItemTitle>\n          <ItemDescription>Store customers’ cards and let agents use them safely.</ItemDescription>\n        </ItemContent>\n        <ItemActions>\n          <Button variant=\"secondary\" size=\"sm\">\n            Open\n          </Button>\n        </ItemActions>\n      </Item>\n      <Item variant=\"muted\" size=\"sm\">\n        <ItemContent>\n          <ItemTitle>Purchase Agent</ItemTitle>\n          <ItemDescription>Buys from Amazon, DoorDash and other stores for your agent.</ItemDescription>\n        </ItemContent>\n      </Item>\n      <Item asChild size=\"xs\">\n        <a href=\"https://www.agentcard.sh/updates\" target=\"_blank\" rel=\"noreferrer\">\n          <ItemContent>\n            <ItemTitle>Read the updates</ItemTitle>\n          </ItemContent>\n          <ArrowUpRight aria-hidden className=\"size-3.5 text-fg-muted\" />\n        </a>\n      </Item>\n    </div>\n  );\n}\n\nexport function Feed() {\n  const entries = [\n    { when: \"Oct 14\", tag: \"New\", title: \"Voice orders\", body: \"Agents can now place orders over the phone with their card.\" },\n    { when: \"Oct 2\", tag: \"Fix\", title: \"Card limits reset on time\", body: \"Monthly limits now reset at midnight in the card’s time zone.\" },\n  ];\n  return (\n    <ItemGroup className=\"w-full max-w-lg\">\n      {entries.map((entry, i) => (\n        <React.Fragment key={entry.title}>\n          {i > 0 && <ItemSeparator />}\n          <Item size=\"sm\">\n            <ItemHeader>\n              <span>{entry.when}</span>\n              <Badge variant={entry.tag === \"New\" ? \"tag\" : \"tag-heart\"}>{entry.tag}</Badge>\n            </ItemHeader>\n            <ItemContent>\n              <ItemTitle>{entry.title}</ItemTitle>\n              <ItemDescription>{entry.body}</ItemDescription>\n            </ItemContent>\n            <ItemFooter>\n              <span>agentcard.sh/updates</span>\n            </ItemFooter>\n          </Item>\n        </React.Fragment>\n      ))}\n    </ItemGroup>\n  );\n}\n",
+      "exports": [
+        "Site",
+        "Variants",
+        "Feed"
+      ],
+      "requires": [
+        "item",
+        "badge",
+        "button"
+      ],
+      "packages": [
+        "lucide-react"
+      ],
+      "previews": [
+        {
+          "name": "Site",
+          "url": "https://agentcard-ds.vercel.app/preview/item/Site"
+        },
+        {
+          "name": "Variants",
+          "url": "https://agentcard-ds.vercel.app/preview/item/Variants"
+        },
+        {
+          "name": "Feed",
+          "url": "https://agentcard-ds.vercel.app/preview/item/Feed"
+        }
+      ]
+    }
+  ],
+  "type": "ui",
+  "title": "Item",
+  "description": "A list row: a blue glyph in a small key or a square photo, a display-face title over a muted line, and actions at the right.",
+  "surface": "site",
+  "kinds": [],
+  "requires": [
+    "theme",
+    "separator",
+    "utils"
+  ],
+  "packages": [
+    "@radix-ui/react-slot",
+    "class-variance-authority"
+  ],
+  "files": [
+    {
+      "path": "components/ui/item.tsx",
+      "content": "import * as React from \"react\";\nimport { Slot } from \"@radix-ui/react-slot\";\nimport { cva, type VariantProps } from \"class-variance-authority\";\n\nimport { Separator } from \"@/components/ui/separator\";\nimport { cn } from \"@/lib/utils\";\n\n// A row of content in the brand's lists (agentcard.sh: the guides' nav rows, the updates feed, the card list in the\n// issuing window): a title in the display face at 500, tracked tight, over a 14px Inter line at 68 percent ink, with a\n// glyph or a picture at the left and actions at the right. `default` is bare and washes 4 percent ink under the pointer;\n// the current item (aria-current or data-selected) is the pale sky row with blue text, as the guides mark the page you\n// are on. `outline` is a white card on the hairline with 12px corners and the guides' light bevel; `muted` sits on the\n// pale gray. Hover and selection change color only, in 150ms ease-out.\nfunction ItemGroup({ className, ...props }: React.ComponentProps<\"div\">) {\n  return <div role=\"list\" data-slot=\"item-group\" className={cn(\"group/item-group flex flex-col gap-1\", className)} {...props} />;\n}\n\nfunction ItemSeparator({ className, ...props }: React.ComponentProps<typeof Separator>) {\n  return <Separator data-slot=\"item-separator\" orientation=\"horizontal\" className={cn(\"my-1\", className)} {...props} />;\n}\n\nconst itemVariants = cva(\n  \"group/item flex flex-wrap items-center rounded-control border border-transparent text-fg outline-none transition-[background-color,color] duration-150 ease-out focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-solid focus-visible:outline-focus-ring aria-[current=page]:bg-sky-wash aria-[current=true]:bg-sky-wash data-[selected=true]:bg-sky-wash motion-reduce:transition-none [a]:hover:bg-wash-hover [button]:hover:bg-wash-hover [&[aria-current]_[data-slot=item-title]]:text-fg-brand [&[data-selected=true]_[data-slot=item-title]]:text-fg-brand\",\n  {\n    variants: {\n      variant: {\n        default: \"bg-transparent\",\n        outline: \"rounded-card border-hairline bg-surface shadow-guide\",\n        muted: \"border-hairline bg-subtle\",\n      },\n      size: {\n        default: \"gap-3.5 p-4\",\n        sm: \"gap-2.5 px-3 py-2.5\",\n        xs: \"gap-2 px-2.5 py-1.5\",\n      },\n    },\n    defaultVariants: { variant: \"default\", size: \"default\" },\n  },\n);\n\nfunction Item({ className, variant = \"default\", size = \"default\", asChild = false, ...props }: React.ComponentProps<\"div\"> & VariantProps<typeof itemVariants> & { asChild?: boolean }) {\n  const Comp = asChild ? Slot : \"div\";\n  return <Comp data-slot=\"item\" data-variant={variant} data-size={size} className={cn(itemVariants({ variant, size, className }))} {...props} />;\n}\n\n// A glyph is blue, as the brand's marks are; a picture is the team page's square, grayscale photo.\nconst itemMediaVariants = cva(\"flex shrink-0 items-center justify-center gap-2 group-has-data-[slot=item-description]/item:self-start [&_svg]:pointer-events-none\", {\n  variants: {\n    variant: {\n      default: \"bg-transparent\",\n      icon: \"size-8 rounded-sm border border-hairline bg-surface text-fg-brand shadow-key-muted [&_svg:not([class*='size-'])]:size-4\",\n      image: \"size-10 overflow-hidden [&_img]:size-full [&_img]:object-cover [&_img]:grayscale\",\n    },\n  },\n  defaultVariants: { variant: \"default\" },\n});\n\nfunction ItemMedia({ className, variant = \"default\", ...props }: React.ComponentProps<\"div\"> & VariantProps<typeof itemMediaVariants>) {\n  return <div data-slot=\"item-media\" data-variant={variant} className={cn(itemMediaVariants({ variant, className }))} {...props} />;\n}\n\nfunction ItemContent({ className, ...props }: React.ComponentProps<\"div\">) {\n  return <div data-slot=\"item-content\" className={cn(\"flex min-w-0 flex-1 flex-col gap-1 [&+[data-slot=item-content]]:flex-none\", className)} {...props} />;\n}\n\nfunction ItemTitle({ className, ...props }: React.ComponentProps<\"div\">) {\n  return <div data-slot=\"item-title\" className={cn(\"flex w-fit min-w-0 items-center gap-2 font-display text-body leading-snug font-medium tracking-tight text-fg transition-colors duration-150 ease-out motion-reduce:transition-none\", className)} {...props} />;\n}\n\n/** The line under a title, in 14px Inter at 68 percent ink, clamped to two lines. */\nfunction ItemDescription({ className, ...props }: React.ComponentProps<\"p\">) {\n  return <p data-slot=\"item-description\" className={cn(\"line-clamp-2 text-body-sm leading-relaxed font-normal text-balance text-fg-muted [&>a]:text-fg-brand [&>a]:underline [&>a]:underline-offset-4\", className)} {...props} />;\n}\n\nfunction ItemActions({ className, ...props }: React.ComponentProps<\"div\">) {\n  return <div data-slot=\"item-actions\" className={cn(\"flex items-center gap-2\", className)} {...props} />;\n}\n\n/** The top line of an item: what it is at the left, when or where at the right, in the 12px display face. */\nfunction ItemHeader({ className, ...props }: React.ComponentProps<\"div\">) {\n  return <div data-slot=\"item-header\" className={cn(\"flex basis-full items-center justify-between gap-2 font-display text-caption leading-snug text-fg-muted\", className)} {...props} />;\n}\n\nfunction ItemFooter({ className, ...props }: React.ComponentProps<\"div\">) {\n  return <div data-slot=\"item-footer\" className={cn(\"flex basis-full items-center justify-between gap-2 font-display text-caption leading-snug text-fg-muted\", className)} {...props} />;\n}\n\nexport { Item, ItemActions, ItemContent, ItemDescription, ItemFooter, ItemGroup, ItemHeader, ItemMedia, ItemSeparator, ItemTitle };\n"
+    }
+  ]
+}

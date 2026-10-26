@@ -1,0 +1,75 @@
+{
+  "schemaVersion": 1,
+  "name": "breadcrumb",
+  "useFor": "Use above a page title in deep sections (Agents, Travel agent, Cards). Keep the trail short; collapse the middle with BreadcrumbEllipsis.",
+  "constraints": [
+    "A breadcrumb on top-level pages",
+    "Links in the brand blue",
+    "Separators other than the chevron or a slash"
+  ],
+  "documentation": "",
+  "source": "Extrapolated from Agentcard (the guides' 12px display labels)",
+  "exports": [
+    "Breadcrumb",
+    "BreadcrumbEllipsis",
+    "BreadcrumbItem",
+    "BreadcrumbLink",
+    "BreadcrumbList",
+    "BreadcrumbPage",
+    "BreadcrumbSeparator"
+  ],
+  "client": false,
+  "docsUrl": "https://agentcard-ds.vercel.app/components/breadcrumb",
+  "markdownUrl": "https://agentcard-ds.vercel.app/r/breadcrumb.md",
+  "examples": [
+    {
+      "path": "examples/breadcrumb.tsx",
+      "content": "\"use client\";\n\nimport { Slash } from \"lucide-react\";\n\nimport { Breadcrumb, BreadcrumbEllipsis, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from \"@/components/ui/breadcrumb\";\nimport { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from \"@/components/ui/dropdown-menu\";\n\nexport function Site() {\n  return (\n    <Breadcrumb>\n      <BreadcrumbList>\n        <BreadcrumbItem>\n          <BreadcrumbLink href=\"#agents\">Agents</BreadcrumbLink>\n        </BreadcrumbItem>\n        <BreadcrumbSeparator />\n        <BreadcrumbItem>\n          <BreadcrumbLink href=\"#travel-agent\">Travel agent</BreadcrumbLink>\n        </BreadcrumbItem>\n        <BreadcrumbSeparator />\n        <BreadcrumbItem>\n          <BreadcrumbPage>Cards</BreadcrumbPage>\n        </BreadcrumbItem>\n      </BreadcrumbList>\n    </Breadcrumb>\n  );\n}\n\nexport function Collapsed() {\n  return (\n    <Breadcrumb>\n      <BreadcrumbList>\n        <BreadcrumbItem>\n          <BreadcrumbLink href=\"#workspace\">Workspace</BreadcrumbLink>\n        </BreadcrumbItem>\n        <BreadcrumbSeparator />\n        <BreadcrumbItem>\n          <DropdownMenu>\n            <DropdownMenuTrigger className=\"rounded-chip outline-none focus-visible:outline-2 focus-visible:outline-solid focus-visible:outline-focus-ring\" aria-label=\"Show more of the path\">\n              <BreadcrumbEllipsis />\n            </DropdownMenuTrigger>\n            <DropdownMenuContent align=\"start\">\n              <DropdownMenuItem>Agents</DropdownMenuItem>\n              <DropdownMenuItem>Travel agent</DropdownMenuItem>\n            </DropdownMenuContent>\n          </DropdownMenu>\n        </BreadcrumbItem>\n        <BreadcrumbSeparator />\n        <BreadcrumbItem>\n          <BreadcrumbLink href=\"#cards\">Cards</BreadcrumbLink>\n        </BreadcrumbItem>\n        <BreadcrumbSeparator />\n        <BreadcrumbItem>\n          <BreadcrumbPage>Card ending 4242</BreadcrumbPage>\n        </BreadcrumbItem>\n      </BreadcrumbList>\n    </Breadcrumb>\n  );\n}\n\nexport function CustomSeparator() {\n  return (\n    <Breadcrumb>\n      <BreadcrumbList>\n        <BreadcrumbItem>\n          <BreadcrumbLink href=\"#docs\">Docs</BreadcrumbLink>\n        </BreadcrumbItem>\n        <BreadcrumbSeparator>\n          <Slash strokeWidth={1.5} />\n        </BreadcrumbSeparator>\n        <BreadcrumbItem>\n          <BreadcrumbPage>Spending limits</BreadcrumbPage>\n        </BreadcrumbItem>\n      </BreadcrumbList>\n    </Breadcrumb>\n  );\n}\n",
+      "exports": [
+        "Site",
+        "Collapsed",
+        "CustomSeparator"
+      ],
+      "requires": [
+        "breadcrumb",
+        "dropdown-menu"
+      ],
+      "packages": [
+        "lucide-react"
+      ],
+      "previews": [
+        {
+          "name": "Site",
+          "url": "https://agentcard-ds.vercel.app/preview/breadcrumb/Site"
+        },
+        {
+          "name": "Collapsed",
+          "url": "https://agentcard-ds.vercel.app/preview/breadcrumb/Collapsed"
+        },
+        {
+          "name": "CustomSeparator",
+          "url": "https://agentcard-ds.vercel.app/preview/breadcrumb/CustomSeparator"
+        }
+      ]
+    }
+  ],
+  "type": "ui",
+  "title": "Breadcrumb",
+  "description": "A trail in the 12px display face: muted links, faint chevrons, the current page in ink.",
+  "surface": "site",
+  "kinds": [],
+  "requires": [
+    "theme",
+    "utils"
+  ],
+  "packages": [
+    "@radix-ui/react-slot",
+    "lucide-react"
+  ],
+  "files": [
+    {
+      "path": "components/ui/breadcrumb.tsx",
+      "content": "import * as React from \"react\";\nimport { Slot } from \"@radix-ui/react-slot\";\nimport { ChevronRight, MoreHorizontal } from \"lucide-react\";\n\nimport { cn } from \"@/lib/utils\";\n\n// Where a page sits, as the guides set their trail above a title: the 12px display face, links in 68 percent ink that\n// turn ink under the pointer (color only, 150ms ease-out), a faint chevron between them, the current page in ink. It\n// wraps on a phone rather than scrolling.\nfunction Breadcrumb(props: React.ComponentProps<\"nav\">) {\n  return <nav aria-label=\"Breadcrumb\" data-slot=\"breadcrumb\" {...props} />;\n}\n\nfunction BreadcrumbList({ className, ...props }: React.ComponentProps<\"ol\">) {\n  return <ol data-slot=\"breadcrumb-list\" className={cn(\"flex flex-wrap items-center gap-1.5 font-display text-caption leading-snug break-words text-fg-muted sm:gap-2\", className)} {...props} />;\n}\n\nfunction BreadcrumbItem({ className, ...props }: React.ComponentProps<\"li\">) {\n  return <li data-slot=\"breadcrumb-item\" className={cn(\"inline-flex items-center gap-1.5\", className)} {...props} />;\n}\n\nfunction BreadcrumbLink({ asChild, className, ...props }: React.ComponentProps<\"a\"> & { asChild?: boolean }) {\n  const Comp = asChild ? Slot : \"a\";\n  return (\n    <Comp\n      data-slot=\"breadcrumb-link\"\n      className={cn(\"rounded-chip outline-none transition-colors duration-150 ease-out hover:text-fg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-solid focus-visible:outline-focus-ring motion-reduce:transition-none\", className)}\n      {...props}\n    />\n  );\n}\n\nfunction BreadcrumbPage({ className, ...props }: React.ComponentProps<\"span\">) {\n  return <span data-slot=\"breadcrumb-page\" role=\"link\" aria-disabled=\"true\" aria-current=\"page\" className={cn(\"text-fg\", className)} {...props} />;\n}\n\nfunction BreadcrumbSeparator({ children, className, ...props }: React.ComponentProps<\"li\">) {\n  return (\n    <li data-slot=\"breadcrumb-separator\" role=\"presentation\" aria-hidden=\"true\" className={cn(\"text-fg-faint [&>svg]:size-3\", className)} {...props}>\n      {children ?? <ChevronRight strokeWidth={1.75} />}\n    </li>\n  );\n}\n\nfunction BreadcrumbEllipsis({ className, ...props }: React.ComponentProps<\"span\">) {\n  return (\n    <span data-slot=\"breadcrumb-ellipsis\" role=\"presentation\" aria-hidden=\"true\" className={cn(\"flex size-6 items-center justify-center [&>svg]:size-3.5\", className)} {...props}>\n      <MoreHorizontal strokeWidth={1.5} />\n      <span className=\"sr-only\">More</span>\n    </span>\n  );\n}\n\nexport { Breadcrumb, BreadcrumbEllipsis, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator };\n"
+    }
+  ]
+}

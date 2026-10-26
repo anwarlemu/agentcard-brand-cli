@@ -1,0 +1,55 @@
+{
+  "schemaVersion": 1,
+  "name": "spinner",
+  "useFor": "Use during a pending operation. Pair it with a label, prevent duplicate submissions when needed and restore the control when the operation finishes.",
+  "constraints": [
+    "Spinners for whole pages (use skeletons)",
+    "Colored spinners that ignore their text"
+  ],
+  "documentation": "",
+  "source": "Extension using the site text colors and reduced-motion behavior; no standalone spinner found on the current public site",
+  "exports": [
+    "Spinner"
+  ],
+  "client": false,
+  "docsUrl": "https://agentcard-ds.vercel.app/components/spinner",
+  "markdownUrl": "https://agentcard-ds.vercel.app/r/spinner.md",
+  "examples": [
+    {
+      "path": "examples/spinner.tsx",
+      "content": "\"use client\";\n\nimport { useEffect, useRef, useState } from \"react\";\nimport { Button } from \"@/components/ui/button\";\nimport { Spinner } from \"@/components/ui/spinner\";\n\nexport function Site() {\n  const [pending, setPending] = useState(false);\n  const [created, setCreated] = useState(false);\n  const timeout = useRef<ReturnType<typeof setTimeout>>(undefined);\n  useEffect(() => () => clearTimeout(timeout.current), []);\n  return <div className=\"grid justify-items-start gap-3\">\n    <Button disabled={pending} aria-busy={pending} onClick={() => {\n      setPending(true);\n      setCreated(false);\n      timeout.current = setTimeout(() => { setPending(false); setCreated(true); }, 800);\n    }}>{pending && <Spinner />}{pending ? \"Creating card\" : \"Create card\"}</Button>\n    <p role=\"status\" className=\"text-body-sm text-fg-muted\">{created ? \"Demo card created.\" : pending ? \"Creating your demo card…\" : \"Create a demo card to see the loading state.\"}</p>\n  </div>;\n}\n",
+      "exports": [
+        "Site"
+      ],
+      "requires": [
+        "spinner",
+        "button"
+      ],
+      "packages": [],
+      "previews": [
+        {
+          "name": "Site",
+          "url": "https://agentcard-ds.vercel.app/preview/spinner/Site"
+        }
+      ]
+    }
+  ],
+  "type": "ui",
+  "title": "Spinner",
+  "description": "Loading indicator that inherits the surrounding text color.",
+  "surface": "site",
+  "kinds": [],
+  "requires": [
+    "theme",
+    "utils"
+  ],
+  "packages": [
+    "lucide-react"
+  ],
+  "files": [
+    {
+      "path": "components/ui/spinner.tsx",
+      "content": "import * as React from \"react\";\nimport { Loader2 } from \"lucide-react\";\n\nimport { cn } from \"@/lib/utils\";\n\n// A thin ring turning once a second, in the color of the text around it (white inside the blue key, blue on white).\nfunction Spinner({ className, ...props }: React.ComponentProps<\"svg\">) {\n  return <Loader2 role=\"status\" aria-label=\"Loading\" data-slot=\"spinner\" className={cn(\"size-4 animate-spin motion-reduce:animate-none\", className)} strokeWidth={1.75} {...props} />;\n}\n\nexport { Spinner };\n"
+    }
+  ]
+}

@@ -1,0 +1,58 @@
+{
+  "schemaVersion": 1,
+  "name": "sticker-field",
+  "useFor": "Use with Agentcard illustrations in section margins. Keep content and controls unobstructed. Motion stops for reduced-motion preferences.",
+  "constraints": [
+    "Stickers over text or controls",
+    "Fast or bouncy motion",
+    "Stickers on phones over the column",
+    "More than eight in one section"
+  ],
+  "documentation": "`StickerField` props: `stickers` (`{ src, x, y, size?, rotate? }[]`: `src` is an image URL or a node; `x` and `y` are a\npercent of the field or any CSS length; `size` is the width in px, default 200; `rotate` the resting tilt in degrees),\n`from` (`lg` | `xl` | `wide`: the width the stickers show from, default `wide` (1440px), where the brand's rails show),\n`layerClassName`, and children (the section).\n\nOn the brand's page the stickers are a WebGL scene that can be picked up and dragged, and they travel in with the scroll.\nThis version keeps them still apart from the drift: each moves a few pixels and a degree or two over 9 to 15 seconds,\ntransform only, with its own pace so neighbors never move together. The layer is hidden from readers and takes no\npointer.",
+  "source": "agentcard-website src/components/v7/sticker-rails.tsx, src/components/faq-stickers.tsx; src/app/globals.css:899 (.faq-sticker), 1605 (.v7-sticker-rails); agentcard.sh / and /pricing (computed)",
+  "exports": [
+    "StickerField",
+    "Sticker",
+    "StickerFieldProps"
+  ],
+  "client": false,
+  "docsUrl": "https://agentcard-ds.vercel.app/components/sticker-field",
+  "markdownUrl": "https://agentcard-ds.vercel.app/r/sticker-field.md",
+  "examples": [
+    {
+      "path": "examples/sticker-field.tsx",
+      "content": "import { StickerField, type Sticker } from \"@/components/visuals/sticker-field\";\n\n// Neutral stand-ins for the brand's 3D objects: small token-colored shapes (a card, a coin, a tag, a parcel).\nconst card = (bg: string) => <div className={`aspect-[1.6] w-full rounded-card border border-ink/12 ${bg} shadow-key`} />;\nconst coin = <div className=\"size-full rounded-pill border-4 border-white bg-tint-butter shadow-key\" />;\nconst parcel = <div className=\"size-full rounded-control border border-ink/12 bg-tint-peach shadow-key\" />;\nconst tag = <div className=\"size-full rounded-shell bg-heart shadow-key-brand\" />;\n\nconst STICKERS: Sticker[] = [\n  { src: card(\"bg-brand\"), x: 4, y: 8, size: 170, rotate: -12 },\n  { src: coin, x: 9, y: 46, size: 110, rotate: 8 },\n  { src: parcel, x: 3, y: 76, size: 140, rotate: -6 },\n  { src: card(\"bg-sky\"), x: \"calc(100% - 15rem)\", y: 10, size: 160, rotate: 10 },\n  { src: tag, x: \"calc(100% - 12rem)\", y: 44, size: 104, rotate: -16 },\n  { src: card(\"bg-tint-sage\"), x: \"calc(100% - 14rem)\", y: 74, size: 150, rotate: 6 },\n];\n\nexport function Site() {\n  return (\n    <StickerField stickers={STICKERS} from=\"xl\" className=\"bg-paper\">\n      <div className=\"mx-auto max-w-(--ds-layout-text) px-5 py-44 text-center\">\n        <h2 className=\"font-display text-h2 leading-heading font-medium tracking-tighter\">Frequently asked questions</h2>\n        <p className=\"mt-3.5 text-body-lg text-ink/70\">The stickers drift in the margins and never cover the column. They hide where the margins are too narrow.</p>\n        <div className=\"mt-10 rounded-card border border-hairline bg-surface p-7 text-left shadow-card\">\n          <p className=\"font-display text-h5 font-medium tracking-tight\">What does an agent need to buy something?</p>\n          <p className=\"mt-2 text-body text-fg-muted\">A card it can use, and your approval when the amount is over your limit.</p>\n        </div>\n      </div>\n    </StickerField>\n  );\n}\n",
+      "exports": [
+        "Site"
+      ],
+      "requires": [
+        "sticker-field"
+      ],
+      "packages": [],
+      "previews": [
+        {
+          "name": "Site",
+          "url": "https://agentcard-ds.vercel.app/preview/sticker-field/Site"
+        }
+      ]
+    }
+  ],
+  "type": "visual",
+  "title": "Sticker field",
+  "description": "Decorative floating objects positioned around section content.",
+  "surface": "site",
+  "kinds": [
+    "section"
+  ],
+  "requires": [
+    "theme",
+    "utils"
+  ],
+  "packages": [],
+  "files": [
+    {
+      "path": "components/visuals/sticker-field.tsx",
+      "content": "import * as React from \"react\";\n\nimport { cn } from \"@/lib/utils\";\n\n// The 3D stickers that float in a section's margins (agentcard.sh, .v7-sticker-rails beside the products and\n// .faq-stickers around the FAQ): cut-out objects, each tilted a little and dropping a soft shadow, sitting under the\n// content. On the brand's page they are a WebGL scene you can pick up; here each one drifts very slowly on a long,\n// gentle loop (a few pixels and a degree or two, 9 to 15 seconds), so the section breathes without pulling the eye.\n// Reduced motion stills them. They are decorative (hidden from readers, take no pointer) and only show from a width\n// where the margins can hold them, so they never cover the column.\n\ntype Sticker = {\n  /** An image URL (a transparent cut-out) or any node (an <img>, an SVG, a shape). */\n  src: string | React.ReactNode;\n  /** Left edge, as a percent of the field's width (0 to 100) or any CSS length (calc(50% + 640px)). */\n  x: number | string;\n  /** Top edge, as a percent of the field's height or any CSS length. */\n  y: number | string;\n  /** Width in px (height follows; nodes get a square box). */\n  size?: number;\n  /** Resting tilt in degrees. */\n  rotate?: number;\n};\n\nconst FROM = {\n  lg: \"hidden lg:block\",\n  xl: \"hidden xl:block\",\n  wide: \"hidden min-[90rem]:block\",\n} as const;\n\nconst pos = (v: number | string) => (typeof v === \"number\" ? `${v}%` : v);\n\n// One keyframe for every sticker; each sets its own reach and pace through custom properties, so neighbors never move\n// in step. Transform only, so it stays on the compositor.\nconst KEYFRAMES = `@keyframes ds-sticker-drift {\n  0% { transform: translate3d(0, 0, 0) rotate(var(--ds-sticker-r)); }\n  50% { transform: translate3d(var(--ds-sticker-dx), var(--ds-sticker-dy), 0) rotate(calc(var(--ds-sticker-r) + var(--ds-sticker-dr))); }\n  100% { transform: translate3d(0, 0, 0) rotate(var(--ds-sticker-r)); }\n}`;\n\ntype StickerFieldProps = React.ComponentProps<\"div\"> & {\n  stickers: Sticker[];\n  /** The width the stickers appear from: lg (1024px), xl (1280px) or wide (1440px, the brand's rails). Default wide. */\n  from?: keyof typeof FROM;\n  /** Classes for the sticker layer (to clip it differently). */\n  layerClassName?: string;\n};\n\nfunction StickerField({ stickers, from = \"wide\", className, layerClassName, children, ...props }: StickerFieldProps) {\n  return (\n    <div data-slot=\"sticker-field\" className={cn(\"relative isolate\", className)} {...props}>\n      <style>{KEYFRAMES}</style>\n      <div aria-hidden className={cn(\"pointer-events-none absolute inset-0 -z-10 overflow-x-clip\", FROM[from], layerClassName)}>\n        {stickers.map((s, i) => {\n          const size = s.size ?? 200;\n          // A small, deterministic spread per sticker: reach 4 to 9px, tilt 1 to 2.5 degrees, 9 to 15 seconds, and a\n          // negative delay so they start mid-loop rather than together.\n          const dx = ((i * 37) % 11) - 5;\n          const dy = -4 - ((i * 53) % 6);\n          const dr = (i % 2 ? 1 : -1) * (1 + ((i * 29) % 4) * 0.5);\n          const duration = 9 + ((i * 41) % 7);\n          const style = {\n            left: pos(s.x),\n            top: pos(s.y),\n            width: size,\n            height: typeof s.src === \"string\" ? undefined : size,\n            \"--ds-sticker-r\": `${s.rotate ?? 0}deg`,\n            \"--ds-sticker-dx\": `${dx}px`,\n            \"--ds-sticker-dy\": `${dy}px`,\n            \"--ds-sticker-dr\": `${dr}deg`,\n            transform: `rotate(${s.rotate ?? 0}deg)`,\n            animationDuration: `${duration}s`,\n            animationDelay: `-${(i * 2.3) % duration}s`,\n          } as React.CSSProperties;\n          return (\n            <div\n              key={i}\n              className=\"absolute [animation-name:ds-sticker-drift] [animation-iteration-count:infinite] [animation-timing-function:var(--ds-easing-in-out)] [filter:drop-shadow(0_10px_14px_color-mix(in_srgb,var(--ds-color-ink)_22%,transparent))] will-change-transform motion-reduce:[animation-name:none]\"\n              style={style}\n            >\n              {typeof s.src === \"string\" ? <img src={s.src} alt=\"\" draggable={false} className=\"block h-auto w-full object-contain select-none\" /> : s.src}\n            </div>\n          );\n        })}\n      </div>\n      {children}\n    </div>\n  );\n}\n\nexport { StickerField };\nexport type { Sticker, StickerFieldProps };\n"
+    }
+  ]
+}

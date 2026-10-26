@@ -1,0 +1,73 @@
+{
+  "schemaVersion": 1,
+  "name": "card",
+  "useFor": "Use default for features, plans or quotes. Use raised for product content with a preview. Use Window when the container needs a title bar.",
+  "constraints": [
+    "Gray card backgrounds",
+    "Heavy blurred shadows",
+    "Cards inside cards",
+    "Corners other than 12px or 20px"
+  ],
+  "documentation": "",
+  "source": "agentcard-website src/app/globals.css (.v7-trail li, .v7-sol); live https://www.agentcard.sh/",
+  "exports": [
+    "Card",
+    "CardHeader",
+    "CardFooter",
+    "CardTitle",
+    "CardAction",
+    "CardDescription",
+    "CardContent",
+    "cardVariants"
+  ],
+  "client": false,
+  "docsUrl": "https://agentcard-ds.vercel.app/components/card",
+  "markdownUrl": "https://agentcard-ds.vercel.app/r/card.md",
+  "examples": [
+    {
+      "path": "examples/card.tsx",
+      "content": "import { Button } from \"@/components/ui/button\";\nimport { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from \"@/components/ui/card\";\n\nexport function Site() {\n  return (\n    <div className=\"grid gap-8 md:grid-cols-2\">\n      <Card>\n        <CardHeader>\n          <CardTitle>Vault</CardTitle>\n          <CardDescription>Store a card once. Your agent pays with a token that never leaves the vault.</CardDescription>\n        </CardHeader>\n        <CardFooter>\n          <Button variant=\"secondary\" asChild><a href=\"https://www.agentcard.sh/vault\" target=\"_blank\" rel=\"noreferrer\">Explore Vault</a></Button>\n        </CardFooter>\n      </Card>\n      <Card>\n        <CardHeader>\n          <CardTitle>Issuing</CardTitle>\n          <CardDescription>Give each agent its own card, with a limit, a list of merchants and a log of every purchase.</CardDescription>\n        </CardHeader>\n        <CardFooter>\n          <Button variant=\"secondary\" asChild><a href=\"https://www.agentcard.sh/issuing\" target=\"_blank\" rel=\"noreferrer\">Explore Issuing</a></Button>\n        </CardFooter>\n      </Card>\n    </div>\n  );\n}\n\nexport function Raised() {\n  return (\n    <Card variant=\"raised\" className=\"mr-2 mb-2 grid gap-6 md:grid-cols-2 md:gap-12\">\n      {/* The product's screen or object goes here; a tinted block holds its place. */}\n      <div aria-hidden className=\"aspect-[4/3] rounded-card bg-brand\" />\n      <CardContent className=\"flex flex-col justify-center gap-4 p-3 md:p-6\">\n        <CardTitle className=\"text-h2 font-normal tracking-tighter\">Prepaid cards for every agent</CardTitle>\n        <CardDescription className=\"text-body-lg\">Fund a card, choose what it can buy, and hand it to your agent.</CardDescription>\n        <div>\n          <Button asChild><a href=\"https://app.agentcard.sh/\" target=\"_blank\" rel=\"noreferrer\">Start free</a></Button>\n        </div>\n      </CardContent>\n    </Card>\n  );\n}\n",
+      "exports": [
+        "Site",
+        "Raised"
+      ],
+      "requires": [
+        "card",
+        "button"
+      ],
+      "packages": [],
+      "previews": [
+        {
+          "name": "Site",
+          "url": "https://agentcard-ds.vercel.app/preview/card/Site"
+        },
+        {
+          "name": "Raised",
+          "url": "https://agentcard-ds.vercel.app/preview/card/Raised"
+        }
+      ]
+    }
+  ],
+  "type": "ui",
+  "title": "Card",
+  "description": "Container for related content, with default and raised variants.",
+  "surface": "site",
+  "kinds": [
+    "card",
+    "card-raised",
+    "card-title"
+  ],
+  "requires": [
+    "theme",
+    "utils"
+  ],
+  "packages": [
+    "class-variance-authority"
+  ],
+  "files": [
+    {
+      "path": "components/ui/card.tsx",
+      "content": "import * as React from \"react\";\nimport { cva, type VariantProps } from \"class-variance-authority\";\n\nimport { cn } from \"@/lib/utils\";\n\n// The brand's cards (agentcard.sh). `default` is the white card of the quotes and features (.v7-trail li): a 16 percent\n// ink hairline, 12px corners, a light line inside the top and the soft drop. `raised` is the large product card\n// (.v7-sol): 20px corners, a 12px inset frame around its media, and the hard 7px offset shadow at 10 percent ink.\nconst cardVariants = cva(\"flex flex-col border border-hairline bg-surface text-fg\", {\n  variants: {\n    variant: {\n      default: \"gap-3 rounded-card p-6 shadow-card\",\n      raised: \"gap-3 rounded-shell p-3 shadow-raised\",\n    },\n  },\n  defaultVariants: { variant: \"default\" },\n});\n\nfunction Card({ className, variant, ...props }: React.ComponentProps<\"div\"> & VariantProps<typeof cardVariants>) {\n  return <div data-slot=\"card\" className={cn(cardVariants({ variant }), className)} {...props} />;\n}\n\nfunction CardHeader({ className, ...props }: React.ComponentProps<\"div\">) {\n  return <div data-slot=\"card-header\" className={cn(\"grid auto-rows-min grid-rows-[auto_auto] items-start gap-2 has-data-[slot=card-action]:grid-cols-[1fr_auto]\", className)} {...props} />;\n}\n\n// 24px display at 500, tracked tight.\nfunction CardTitle({ className, ...props }: React.ComponentProps<\"div\">) {\n  return <div data-slot=\"card-title\" className={cn(\"font-display text-h3 leading-display font-medium tracking-tight text-fg\", className)} {...props} />;\n}\n\n// 14px Inter at 68 percent ink.\nfunction CardDescription({ className, ...props }: React.ComponentProps<\"div\">) {\n  return <div data-slot=\"card-description\" className={cn(\"text-body-sm leading-relaxed text-fg-muted\", className)} {...props} />;\n}\n\nfunction CardAction({ className, ...props }: React.ComponentProps<\"div\">) {\n  return <div data-slot=\"card-action\" className={cn(\"col-start-2 row-span-2 row-start-1 self-start justify-self-end\", className)} {...props} />;\n}\n\nfunction CardContent({ className, ...props }: React.ComponentProps<\"div\">) {\n  return <div data-slot=\"card-content\" className={cn(\"text-body-sm text-fg\", className)} {...props} />;\n}\n\nfunction CardFooter({ className, ...props }: React.ComponentProps<\"div\">) {\n  return <div data-slot=\"card-footer\" className={cn(\"mt-auto flex items-center gap-3 pt-3\", className)} {...props} />;\n}\n\nexport { Card, CardHeader, CardFooter, CardTitle, CardAction, CardDescription, CardContent, cardVariants };\n"
+    }
+  ]
+}

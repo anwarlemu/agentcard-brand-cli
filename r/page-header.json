@@ -1,0 +1,63 @@
+{
+  "schemaVersion": 1,
+  "name": "page-header",
+  "useFor": "Place below SiteHeader on company, form, legal or update pages. Put supporting title content in children.",
+  "constraints": [
+    "A blue ground behind it",
+    "Centered",
+    "A second title under it",
+    "More than one per page"
+  ],
+  "documentation": "`PageHeader` props: `eyebrow`, `title`, `lead`, `rule` (default true), `children` (inside the head, under the title).\nThe live /about sets its lead at 24px (18px on phones), not 19px; the component follows the live page.",
+  "source": "agentcard-website src/app/globals.css:1808 (.v7-about, .v7-about-head); agentcard.sh /about and /get-started (computed)",
+  "exports": [
+    "PageHeader"
+  ],
+  "client": false,
+  "docsUrl": "https://agentcard-ds.vercel.app/components/page-header",
+  "markdownUrl": "https://agentcard-ds.vercel.app/r/page-header.md",
+  "examples": [
+    {
+      "path": "examples/page-header.tsx",
+      "content": "import { PageHeader } from \"@/components/site/page-header\";\nimport { SiteHeader } from \"@/components/site/site-header\";\n\nexport function Site() {\n  return (\n    <div className=\"relative bg-surface pb-24\">\n      <SiteHeader href=\"https://www.agentcard.sh/\" ground=\"white\" action={{ label: \"Get started\", href: \"https://app.agentcard.sh/\" }} />\n      <PageHeader\n        eyebrow=\"The company\"\n        title=\"About\"\n        lead=\"We are building Agentcard because we believe agents should have full autonomy to pay for things online. We want to give agents the freedom to operate in the world as it is today, not someday.\"\n      />\n    </div>\n  );\n}\n\nexport function Short() {\n  return (\n    <div className=\"relative bg-surface pb-24\">\n      <SiteHeader href=\"https://www.agentcard.sh/\" ground=\"white\" action={{ label: \"Get started\", href: \"https://app.agentcard.sh/\" }} />\n      <PageHeader eyebrow=\"Get started\" title=\"Let your agent buy\">\n        <p className=\"mt-3 font-display text-caption text-fg-muted\">A few answers, then a call</p>\n      </PageHeader>\n    </div>\n  );\n}\n",
+      "exports": [
+        "Site",
+        "Short"
+      ],
+      "requires": [
+        "page-header",
+        "site-header"
+      ],
+      "packages": [],
+      "previews": [
+        {
+          "name": "Site",
+          "url": "https://agentcard-ds.vercel.app/preview/page-header/Site"
+        },
+        {
+          "name": "Short",
+          "url": "https://agentcard-ds.vercel.app/preview/page-header/Short"
+        }
+      ]
+    }
+  ],
+  "type": "site",
+  "title": "Page header",
+  "description": "Title, optional label and introduction for an inner page.",
+  "surface": "site",
+  "kinds": [
+    "eyebrow"
+  ],
+  "requires": [
+    "theme",
+    "section",
+    "utils"
+  ],
+  "packages": [],
+  "files": [
+    {
+      "path": "components/site/page-header.tsx",
+      "content": "import * as React from \"react\";\n\nimport { Eyebrow } from \"@/components/site/section\";\nimport { cn } from \"@/lib/utils\";\n\n// An inner page's opening (agentcard.sh /about and /get-started, .v7-about-head): on the 680px reading column, left\n// aligned, 150px from the top of the page (140px on phones) so it clears the bare header: the blue eyebrow, the 52px\n// title 10px under it (34px on phones), anything short that belongs to the title (`children`), then a hairline 28px\n// below. The lead, when given, opens the page 32px under the rule in 24px text (18px on phones), as /about does.\nfunction PageHeader({\n  eyebrow,\n  title,\n  lead,\n  rule = true,\n  className,\n  children,\n  ...props\n}: Omit<React.ComponentProps<\"div\">, \"title\"> & {\n  eyebrow?: React.ReactNode;\n  title: React.ReactNode;\n  lead?: React.ReactNode;\n  /** The hairline under the title. */\n  rule?: boolean;\n}) {\n  return (\n    <div data-slot=\"page-header\" className={cn(\"mx-auto w-(--ds-frame-column) max-w-(--ds-layout-text) pt-35 md:pt-37.5\", className)} {...props}>\n      <header className={cn(rule && \"border-b border-hairline pb-7\")}>\n        {eyebrow && <Eyebrow>{eyebrow}</Eyebrow>}\n        <h1 className={cn(\"font-display text-h1 leading-heading font-medium tracking-tight text-balance\", eyebrow && \"mt-2.5\")}>{title}</h1>\n        {children}\n      </header>\n      {lead && <p className=\"mt-8 text-h5 leading-6.75 text-pretty md:text-h3 md:leading-9\">{lead}</p>}\n    </div>\n  );\n}\n\nexport { PageHeader };\n"
+    }
+  ]
+}

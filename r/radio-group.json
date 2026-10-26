@@ -1,0 +1,67 @@
+{
+  "schemaVersion": 1,
+  "name": "radio-group",
+  "useFor": "Use for one choice among two to five options that should all stay visible (a card type, a spending period). Pair each item with a Label variant=\"control\". Give the root a name to submit with FormData; use a select for longer lists and a segmented control for a compact toolbar choice.",
+  "constraints": [
+    "Square radios (that is a checkbox)",
+    "A radio for an action that happens at once",
+    "Colors other than blue for the chosen state"
+  ],
+  "documentation": "",
+  "source": "Extrapolated from agentcard-website src/app/globals.css (the checkbox's --bevel-muted and --bevel-blue keys)",
+  "exports": [
+    "RadioGroup",
+    "RadioGroupItem"
+  ],
+  "client": true,
+  "docsUrl": "https://agentcard-ds.vercel.app/components/radio-group",
+  "markdownUrl": "https://agentcard-ds.vercel.app/r/radio-group.md",
+  "examples": [
+    {
+      "path": "examples/radio-group.tsx",
+      "content": "\"use client\";\n\nimport * as React from \"react\";\n\nimport { Label } from \"@/components/ui/label\";\nimport { RadioGroup, RadioGroupItem } from \"@/components/ui/radio-group\";\n\nconst PERIODS = [\n  { value: \"purchase\", label: \"Per purchase\" },\n  { value: \"day\", label: \"Per day\" },\n  { value: \"month\", label: \"Per month\" },\n];\n\nexport function Site() {\n  const [period, setPeriod] = React.useState(\"day\");\n  return (\n    <fieldset className=\"grid gap-3\">\n      <legend className=\"mb-3 font-display text-caption text-fg-muted\">Spending limit applies</legend>\n      <RadioGroup name=\"period\" value={period} onValueChange={setPeriod}>\n        {PERIODS.map((p) => (\n          <Label variant=\"control\" key={p.value} htmlFor={`period-${p.value}`}>\n            <RadioGroupItem value={p.value} id={`period-${p.value}`} />\n            {p.label}\n          </Label>\n        ))}\n      </RadioGroup>\n    </fieldset>\n  );\n}\n\nexport function States() {\n  return (\n    <RadioGroup defaultValue=\"virtual\" className=\"grid gap-3\">\n      <Label variant=\"control\" htmlFor=\"card-virtual\">\n        <RadioGroupItem value=\"virtual\" id=\"card-virtual\" />\n        Virtual card\n      </Label>\n      <Label variant=\"control\" htmlFor=\"card-physical\">\n        <RadioGroupItem value=\"physical\" id=\"card-physical\" disabled />\n        Physical card (coming soon)\n      </Label>\n      <Label variant=\"control\" htmlFor=\"card-invalid\">\n        <RadioGroupItem value=\"none\" id=\"card-invalid\" aria-invalid />\n        No card (choose one)\n      </Label>\n    </RadioGroup>\n  );\n}\n\nexport function Horizontal() {\n  return (\n    <RadioGroup defaultValue=\"usd\" aria-label=\"Currency\" className=\"flex flex-wrap gap-6\">\n      {[\"usd\", \"eur\", \"gbp\"].map((c) => (\n        <Label variant=\"control\" key={c} htmlFor={`cur-${c}`}>\n          <RadioGroupItem value={c} id={`cur-${c}`} />\n          {c.toUpperCase()}\n        </Label>\n      ))}\n    </RadioGroup>\n  );\n}\n",
+      "exports": [
+        "Site",
+        "States",
+        "Horizontal"
+      ],
+      "requires": [
+        "radio-group",
+        "label"
+      ],
+      "packages": [],
+      "previews": [
+        {
+          "name": "Site",
+          "url": "https://agentcard-ds.vercel.app/preview/radio-group/Site"
+        },
+        {
+          "name": "States",
+          "url": "https://agentcard-ds.vercel.app/preview/radio-group/States"
+        },
+        {
+          "name": "Horizontal",
+          "url": "https://agentcard-ds.vercel.app/preview/radio-group/Horizontal"
+        }
+      ]
+    }
+  ],
+  "type": "ui",
+  "title": "Radio Group",
+  "description": "Round small keys for one choice from a short list; the chosen one is the blue key with a white dot.",
+  "surface": "site",
+  "kinds": [],
+  "requires": [
+    "theme",
+    "utils"
+  ],
+  "packages": [
+    "@radix-ui/react-radio-group"
+  ],
+  "files": [
+    {
+      "path": "components/ui/radio-group.tsx",
+      "content": "\"use client\";\n\nimport * as React from \"react\";\nimport * as RadioGroupPrimitive from \"@radix-ui/react-radio-group\";\n\nimport { cn } from \"@/lib/utils\";\n\n// The checkbox's small key made round (extrapolated from the brand's checkbox and its --bevel-blue): a 20px white circle\n// on a 35 percent ink edge with the pale key's bevel; chosen, it becomes the blue key (a darker blue edge, the light line\n// inside the top) with a white 8px dot. The fill changes in 150ms ease-out. Options stack 12px apart; pair each with a\n// Label variant=\"control\".\nfunction RadioGroup({ className, ...props }: React.ComponentProps<typeof RadioGroupPrimitive.Root>) {\n  return <RadioGroupPrimitive.Root data-slot=\"radio-group\" className={cn(\"grid gap-3\", className)} {...props} />;\n}\n\nfunction RadioGroupItem({ className, ...props }: React.ComponentProps<typeof RadioGroupPrimitive.Item>) {\n  return (\n    <RadioGroupPrimitive.Item\n      data-slot=\"radio-group-item\"\n      className={cn(\n        \"peer grid size-5 shrink-0 place-items-center rounded-pill border border-line-strong bg-surface shadow-key-muted outline-none transition-[background-color,border-color,box-shadow] duration-150 ease-out focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-solid focus-visible:outline-focus-ring disabled:cursor-not-allowed disabled:opacity-50 aria-invalid:border-danger data-[state=checked]:border-line-brand-edge data-[state=checked]:bg-primary data-[state=checked]:shadow-key-brand motion-reduce:transition-none\",\n        className,\n      )}\n      {...props}\n    >\n      <RadioGroupPrimitive.Indicator data-slot=\"radio-group-indicator\" className=\"size-2 rounded-pill bg-white\" />\n    </RadioGroupPrimitive.Item>\n  );\n}\n\nexport { RadioGroup, RadioGroupItem };\n"
+    }
+  ]
+}

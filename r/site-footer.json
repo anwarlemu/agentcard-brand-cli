@@ -1,0 +1,66 @@
+{
+  "schemaVersion": 1,
+  "name": "site-footer",
+  "useFor": "Provide link groups, description and optional backing content. Check that every link resolves. Add an id when NavDock uses hideAt.",
+  "constraints": [
+    "A white footer",
+    "Icons beside every link",
+    "More than six columns",
+    "Bold headings",
+    "A second wordmark"
+  ],
+  "documentation": "`SiteFooter` props: `groups` ({ title, links: { label, href, external }[] }[]), `merchants` (string[]),\n`merchantsLabel`, `backing` (ReactNode: the sky line, with a small logo inside), `backingLabel`, `logo` (default the\nwhite lockup), `logoHref`, `logoLabel`, `description`, `wordmark` (string or null, default \"AGENTCARD\"), `bandFrom` (the\nground above, default white; null for none), plus footer props. Give it an `id` to let the nav dock step aside.",
+  "source": "agentcard-website src/components/v7/site-footer.tsx; src/app/globals.css:5049 (.v7-foot); agentcard.sh / (computed)",
+  "exports": [
+    "SiteFooter",
+    "FooterGroup",
+    "FooterLink",
+    "SiteFooterProps"
+  ],
+  "client": false,
+  "docsUrl": "https://agentcard-ds.vercel.app/components/site-footer",
+  "markdownUrl": "https://agentcard-ds.vercel.app/r/site-footer.md",
+  "examples": [
+    {
+      "path": "examples/site-footer.tsx",
+      "content": "import { SiteFooter } from \"@/components/site/site-footer\";\n\nconst DOCS = \"https://docs.agentcard.sh\";\n\nconst GROUPS = [\n  {\n    title: \"Product\",\n    links: [\n      { label: \"Vault\", href: \"https://www.agentcard.sh/vault\" },\n      { label: \"Issuing\", href: \"https://www.agentcard.sh/issuing\" },\n      { label: \"Voice\", href: \"https://cal.com/team/agentcard/agentcard-call\" },\n      { label: \"Purchase Agent\", href: \"https://www.agentcard.sh/purchase-agent\" },\n      { label: \"Pricing\", href: \"https://www.agentcard.sh/pricing\" },\n      { label: \"FAQ\", href: \"https://www.agentcard.sh/#faq\" },\n    ],\n  },\n  {\n    title: \"Developers\",\n    links: [\n      { label: \"Documentation\", href: DOCS },\n      { label: \"API reference\", href: `${DOCS}/companies/api/reference` },\n    ],\n  },\n  {\n    title: \"Company\",\n    links: [\n      { label: \"About\", href: \"https://www.agentcard.sh/about\" },\n      { label: \"Changelog\", href: \"https://www.agentcard.sh/updates\" },\n      { label: \"Trust Center\", href: \"https://app.vanta.com/agentcard.sh/trust/8t52k9fqhneqwt4y2jpvmn\" },\n    ],\n  },\n  {\n    title: \"Legal\",\n    links: [\n      { label: \"Privacy Policy\", href: \"https://legal.raincards.xyz/legal/privacy-policy\" },\n      { label: \"Terms of Service\", href: \"https://www.agentcard.sh/terms\" },\n      { label: \"Card Terms\", href: \"https://www.agentcard.sh/card-terms\" },\n      { label: \"Card Terms (International)\", href: \"https://www.agentcard.sh/card-terms-international\" },\n      { label: \"E-Sign Consent\", href: \"https://legal.raincards.xyz/legal/electronic-communications-notice\" },\n      { label: \"Prohibited Uses\", href: \"https://legal.raincards.xyz/legal/prohibitions\" },\n    ],\n  },\n  {\n    title: \"Social\",\n    links: [\n      { label: \"X / Twitter\", href: \"https://x.com/agentcardhq\" },\n      { label: \"Instagram\", href: \"https://www.instagram.com/agentcardhq/\" },\n      { label: \"TikTok\", href: \"https://www.tiktok.com/@agentcardhq\" },\n    ],\n  },\n];\n\nconst MERCHANTS = [\"Amazon\", \"Walmart\", \"Target\", \"Best Buy\", \"Home Depot\", \"Lowe’s\", \"Macy’s\", \"Wayfair\", \"Staples\", \"Kohl’s\", \"B&H Photo\", \"DoorDash\", \"Good Eggs\", \"Locale\", \"Flights\"];\n\n// A stand-in for the backer's logo: a small square in the backer's place, drawn from brand tokens.\nfunction BackerMark() {\n  return <span aria-hidden className=\"inline-block size-[1.05em] rounded-chip bg-sky\" />;\n}\n\nexport function Site() {\n  return (\n    <div className=\"bg-surface pt-24\">\n      <SiteFooter\n        bandFrom=\"white\"\n        groups={GROUPS}\n        merchants={MERCHANTS}\n        merchantsLabel=\"Agents buy at Amazon, Walmart, Target, Best Buy and more.\"\n        backing={\n          <>\n            <span aria-hidden>Backed by</span>\n            <BackerMark />\n            <span aria-hidden>Combinator</span>\n          </>\n        }\n        backingLabel=\"Backed by Y Combinator\"\n        description={\n          <>\n            We want agents to buy anything online\n            <br />\n            that you can buy as a human.\n          </>\n        }\n      />\n    </div>\n  );\n}\n",
+      "exports": [
+        "Site"
+      ],
+      "requires": [
+        "site-footer"
+      ],
+      "packages": [],
+      "previews": [
+        {
+          "name": "Site",
+          "url": "https://agentcard-ds.vercel.app/preview/site-footer/Site"
+        }
+      ]
+    }
+  ],
+  "type": "site",
+  "title": "Site footer",
+  "description": "Footer with navigation groups, logos and optional merchant list.",
+  "surface": "site",
+  "kinds": [
+    "footer",
+    "logo-strip",
+    "link"
+  ],
+  "requires": [
+    "theme",
+    "logo",
+    "band-divider",
+    "marquee",
+    "striped-wordmark",
+    "utils"
+  ],
+  "packages": [],
+  "files": [
+    {
+      "path": "components/site/site-footer.tsx",
+      "content": "import * as React from \"react\";\n\nimport { Lockup } from \"@/components/ui/logo\";\nimport { BandDivider, Scan, type BandGround } from \"@/components/visuals/band-divider\";\nimport { Marquee } from \"@/components/visuals/marquee\";\nimport { StripedWordmark } from \"@/components/visuals/striped-wordmark\";\nimport { cn } from \"@/lib/utils\";\n\n// The blue footer (agentcard.sh, footer.v7-foot): the stepped band in from the ground above, then on the blue the brand\n// block at the top left (the backing line in sky, the lockup in white, a two-line description in 14px) and the sitemap\n// at the top right (columns in the 12px display face, sky headings, white links 8px apart), the running line of\n// merchants between two rules, and the striped wordmark across the full width, standing on the bottom edge. A sheet of\n// scanlines and a vignette lies over all of it. Under 900px the brand block and the sitemap stack.\ntype FooterLink = { label: React.ReactNode; href: string; external?: boolean };\ntype FooterGroup = { title: React.ReactNode; links: FooterLink[] };\n\ntype SiteFooterProps = Omit<React.ComponentProps<\"footer\">, \"children\"> & {\n  /** The sitemap's columns. */\n  groups: FooterGroup[];\n  /** Names on the running line (merchants, customers). Omit for no line. */\n  merchants?: string[];\n  /** What a screen reader hears for the running line. */\n  merchantsLabel?: string;\n  /** The backing line over the lockup, e.g. <>Backed by <img alt=\"\" className=\"size-[1.05em]\" src={yc} /> Combinator</>. */\n  backing?: React.ReactNode;\n  /** The backing line's accessible text, when it holds a logo (e.g. \"Backed by Y Combinator\"). */\n  backingLabel?: string;\n  /** The logo, white. Defaults to the lockup. */\n  logo?: React.ReactNode;\n  logoHref?: string;\n  logoLabel?: string;\n  /** The line under the lockup (two short lines; break it with <br />). */\n  description?: React.ReactNode;\n  /** The giant striped word at the foot. null for none. */\n  wordmark?: string | null;\n  /** The ground above the footer, for the stepped band in. null for no band. */\n  bandFrom?: BandGround | null;\n};\n\nfunction SiteFooter({\n  groups,\n  merchants,\n  merchantsLabel,\n  backing,\n  backingLabel,\n  logo,\n  logoHref = \"/\",\n  logoLabel = \"Agentcard, home\",\n  description,\n  wordmark = \"AGENTCARD\",\n  bandFrom = \"white\",\n  className,\n  ...props\n}: SiteFooterProps) {\n  return (\n    <>\n      {bandFrom && <BandDivider from={bandFrom} to=\"blue\" />}\n      <footer data-slot=\"site-footer\" data-ground=\"blue\" className={cn(\"relative isolate overflow-clip bg-brand text-on-brand\", className)} {...props}>\n        <div className=\"relative z-1 flex items-start justify-between gap-10 px-[clamp(--spacing(7.5),5vw,--spacing(24))] pt-18 pb-52 max-[56.25rem]:flex-col max-[56.25rem]:gap-8 max-[56.25rem]:px-4.5 max-[56.25rem]:pt-10 max-[56.25rem]:pb-11\">\n          <div className=\"flex flex-col items-start gap-2.5 font-display text-caption leading-code max-[56.25rem]:self-stretch\">\n            {backing && (\n              <div className=\"flex items-center gap-1.5 text-fg-on-brand-label [&_img]:size-[1.05em] [&_svg]:size-[1.05em]\" aria-label={backingLabel} role={backingLabel ? \"img\" : undefined}>\n                {backing}\n              </div>\n            )}\n            <a href={logoHref} aria-label={logoLabel} className=\"rounded-chip\">\n              {logo ?? <Lockup label={null} tone=\"white\" />}\n            </a>\n            {description && <p className=\"text-body-sm leading-body\">{description}</p>}\n          </div>\n          <div className=\"grid w-[min(51.25rem,58vw)] auto-cols-[minmax(0,1fr)] grid-flow-col gap-x-[clamp(--spacing(5),2.2vw,--spacing(9))] gap-y-7 font-display text-caption leading-body max-[56.25rem]:mb-3 max-[56.25rem]:w-auto max-[56.25rem]:grid-flow-row max-[56.25rem]:grid-cols-[repeat(auto-fill,minmax(--spacing(37.5),1fr))] max-[56.25rem]:gap-x-6 max-[56.25rem]:self-stretch\">\n            {groups.map((group, i) => (\n              <nav key={i} aria-label={typeof group.title === \"string\" ? group.title : undefined} className=\"flex flex-col items-start gap-2\">\n                <p className=\"mb-1 text-fg-on-brand-label\">{group.title}</p>\n                {group.links.map((link) => {\n                  const external = link.external ?? /^https?:/.test(link.href);\n                  return (\n                    <a\n                      key={link.href + String(link.label)}\n                      href={link.href}\n                      {...(external ? { target: \"_blank\", rel: \"noreferrer\" } : {})}\n                      className=\"rounded-chip underline-offset-3 hover:underline\"\n                    >\n                      {link.label}\n                    </a>\n                  );\n                })}\n              </nav>\n            ))}\n          </div>\n        </div>\n        {merchants && merchants.length > 0 && <Marquee items={merchants} label={merchantsLabel} className=\"relative z-1\" />}\n        {wordmark && <StripedWordmark text={wordmark} className=\"relative z-1\" />}\n        <Scan sides={false} className=\"z-5\" />\n      </footer>\n    </>\n  );\n}\n\nexport { SiteFooter };\nexport type { FooterGroup, FooterLink, SiteFooterProps };\n"
+    }
+  ]
+}

@@ -1,0 +1,57 @@
+{
+  "schemaVersion": 1,
+  "name": "docs-link",
+  "useFor": "Use to link to a guide or reference in a new tab. Provide the destination URL and a descriptive label.",
+  "constraints": [
+    "Links styled as buttons",
+    "Arrows on links that stay on the site",
+    "Underlines in ink"
+  ],
+  "documentation": "",
+  "source": "Extension from agentcard-website src/app/globals.css (links); live https://www.agentcard.sh/",
+  "exports": [
+    "DocsLink"
+  ],
+  "client": false,
+  "docsUrl": "https://agentcard-ds.vercel.app/components/docs-link",
+  "markdownUrl": "https://agentcard-ds.vercel.app/r/docs-link.md",
+  "examples": [
+    {
+      "path": "examples/docs-link.tsx",
+      "content": "import { DocsLink } from \"@/components/ui/docs-link\";\n\nexport function Site() {\n  return (\n    <div className=\"flex flex-wrap items-center gap-6\">\n      <DocsLink href=\"https://www.agentcard.sh\">Read the docs</DocsLink>\n      <DocsLink href=\"https://www.agentcard.sh\">Give an agent its first card</DocsLink>\n    </div>\n  );\n}\n",
+      "exports": [
+        "Site"
+      ],
+      "requires": [
+        "docs-link"
+      ],
+      "packages": [],
+      "previews": [
+        {
+          "name": "Site",
+          "url": "https://agentcard-ds.vercel.app/preview/docs-link/Site"
+        }
+      ]
+    }
+  ],
+  "type": "ui",
+  "title": "Docs link",
+  "description": "External documentation link with an arrow.",
+  "surface": "site",
+  "kinds": [
+    "link"
+  ],
+  "requires": [
+    "theme",
+    "utils"
+  ],
+  "packages": [
+    "lucide-react"
+  ],
+  "files": [
+    {
+      "path": "components/ui/docs-link.tsx",
+      "content": "import * as React from \"react\";\nimport { ArrowUpRight } from \"lucide-react\";\n\nimport { cn } from \"@/lib/utils\";\n\n// A link out to the docs or a guide, as the brand sets links: ink text on a blue underline that turns blue on hover, in\n// the 14px display face, and an arrow pointing out that leans a step toward where it goes (150ms ease-out). Opens in a\n// new tab.\nfunction DocsLink({ className, children = \"Read the docs\", ...props }: React.ComponentProps<\"a\">) {\n  return (\n    <a\n      target=\"_blank\"\n      rel=\"noopener noreferrer\"\n      data-slot=\"docs-link\"\n      className={cn(\n        \"group inline-flex w-fit shrink-0 items-center gap-1 font-display text-body-sm whitespace-nowrap text-fg underline decoration-line-brand decoration-1 underline-offset-4 transition-colors duration-150 ease-out outline-none hover:text-fg-brand focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-solid focus-visible:outline-focus-ring\",\n        className,\n      )}\n      {...props}\n    >\n      {children}\n      <ArrowUpRight\n        className=\"size-3.5 shrink-0 transition-[translate] duration-150 ease-out group-hover:translate-x-px group-hover:-translate-y-px motion-reduce:transition-none\"\n        strokeWidth={1.75}\n        aria-hidden\n      />\n    </a>\n  );\n}\n\nexport { DocsLink };\n"
+    }
+  ]
+}

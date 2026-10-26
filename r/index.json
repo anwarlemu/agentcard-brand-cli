@@ -1,0 +1,4025 @@
+{
+  "schemaVersion": 1,
+  "name": "Agentcard",
+  "homepage": "https://agentcard-ds.vercel.app",
+  "guide": "https://agentcard-ds.vercel.app/agents.md",
+  "items": [
+    {
+      "schemaVersion": 1,
+      "name": "theme",
+      "type": "theme",
+      "title": "Agentcard theme",
+      "description": "The Agentcard tokens and the Tailwind names that read them.",
+      "surface": "site",
+      "kinds": [],
+      "requires": [],
+      "packages": [],
+      "tokens": {
+        "site": {
+          "--ds-color-brand": "#0000FF",
+          "--ds-color-black": "#000000",
+          "--ds-color-white": "#FFFFFF",
+          "--ds-color-ink": "#171818",
+          "--ds-color-paper": "#F2F1EC",
+          "--ds-color-sky": "#CCDBFF",
+          "--ds-color-blue-edge": "#0607BE",
+          "--ds-color-blue-hover": "#1F1FFF",
+          "--ds-color-blue-5": "#EDEDFF",
+          "--ds-color-blue-10": "#E5E5FF",
+          "--ds-color-blue-mid": "#4B50F4",
+          "--ds-color-blue-mist": "#ECEAF7",
+          "--ds-color-sky-wash": "color-mix(in srgb, var(--ds-color-sky) 45%, var(--ds-color-white))",
+          "--ds-color-bg-search-selected": "color-mix(in srgb, var(--ds-color-sky) 55%, var(--ds-color-white))",
+          "--ds-color-heart": "#F24656",
+          "--ds-color-tint-sage": "#CFE3C9",
+          "--ds-color-tint-rose": "#EFCFD3",
+          "--ds-color-tint-teal": "#C6DFE2",
+          "--ds-color-tint-peach": "#F1D8C6",
+          "--ds-color-tint-butter": "#ECE3C0",
+          "--ds-color-bg-default": "#FFFFFF",
+          "--ds-color-bg-page": "#F2F1EC",
+          "--ds-color-bg-subtle": "#F3F3F3",
+          "--ds-color-bg-frame": "#F2F1EC",
+          "--ds-color-bg-canvas": "#F2F1EC",
+          "--ds-color-bg-tint": "#EDEDFF",
+          "--ds-color-bg-brand": "#0000FF",
+          "--ds-color-bg-inverse": "#171818",
+          "--ds-color-bg-dark": "#171818",
+          "--ds-color-bg-code": "#171818",
+          "--ds-color-bg-scrim": "rgb(23 24 24 / 0.4)",
+          "--ds-color-bg-glass": "rgb(23 24 24 / 0.42)",
+          "--ds-color-bg-note": "#F4F7FF",
+          "--ds-color-bg-code-soft": "#252626",
+          "--ds-color-bg-raised-on-brand": "rgb(255 255 255 / 0.07)",
+          "--ds-color-text-default": "#171818",
+          "--ds-color-text-secondary": "#454646",
+          "--ds-color-text-muted": "#616262",
+          "--ds-color-text-subtle": "#747575",
+          "--ds-color-text-nav": "#171818",
+          "--ds-color-text-faint": "#979898",
+          "--ds-color-text-inverse": "#FFFFFF",
+          "--ds-color-text-brand": "#0000FF",
+          "--ds-color-text-on-brand": "#FFFFFF",
+          "--ds-color-text-on-brand-muted": "rgb(255 255 255 / 0.72)",
+          "--ds-color-text-label": "#0000FF",
+          "--ds-color-text-on-brand-label": "#CCDBFF",
+          "--ds-color-border-default": "rgb(23 24 24 / 0.14)",
+          "--ds-color-border-subtle": "rgb(23 24 24 / 0.08)",
+          "--ds-color-border-strong": "rgb(23 24 24 / 0.35)",
+          "--ds-color-border-mid": "rgb(23 24 24 / 0.22)",
+          "--ds-color-border-rule": "rgb(23 24 24 / 0.18)",
+          "--ds-color-border-field": "rgb(23 24 24 / 0.12)",
+          "--ds-color-border-field-hover": "rgb(23 24 24 / 0.24)",
+          "--ds-color-border-hairline": "rgb(23 24 24 / 0.16)",
+          "--ds-color-border-key": "rgb(23 24 24 / 0.16)",
+          "--ds-color-border-brand": "#0000FF",
+          "--ds-color-border-brand-edge": "#0607BE",
+          "--ds-color-border-on-brand": "rgb(255 255 255 / 0.22)",
+          "--ds-color-border-on-brand-strong": "rgb(255 255 255 / 0.45)",
+          "--ds-color-border-window": "rgb(0 0 255 / 0.25)",
+          "--ds-color-wash-hover": "rgb(23 24 24 / 0.04)",
+          "--ds-color-wash-pill": "rgb(23 24 24 / 0.07)",
+          "--ds-color-wash-selected": "rgb(0 0 255 / 0.07)",
+          "--ds-color-wash-on-brand": "rgb(255 255 255 / 0.14)",
+          "--ds-color-wash-glass-hover": "rgb(255 255 255 / 0.17)",
+          "--ds-color-ring-tint": "rgb(0 0 255 / 0.2)",
+          "--ds-color-action-primary": "#0000FF",
+          "--ds-color-action-primary-hover": "#1F1FFF",
+          "--ds-color-action-primary-fg": "#FFFFFF",
+          "--ds-color-status-success": "#15803D",
+          "--ds-color-status-warning": "#B45309",
+          "--ds-color-status-danger": "#D92D3F",
+          "--ds-color-focus-ring": "#0000FF",
+          "--ds-color-chart-series-1": "#0000FF",
+          "--ds-color-chart-series-2": "#4B50F4",
+          "--ds-color-chart-series-3": "#4DB8FF",
+          "--ds-color-chart-series-4": "#F24656",
+          "--ds-color-window-bar": "#CCDBFF",
+          "--ds-color-window-bar-fg": "#0000FF",
+          "--ds-font-sans": "var(--font-inter, \"Inter\"), ui-sans-serif, system-ui, sans-serif",
+          "--ds-font-display": "\"Neue Haas Grotesk Display Pro\", \"Neue Haas Grotesk Display\", \"Helvetica Neue\", Helvetica, Arial, sans-serif",
+          "--ds-font-mono": "\"Neue Haas Grotesk Display Pro\", \"Neue Haas Grotesk Display\", \"Helvetica Neue\", Helvetica, Arial, sans-serif",
+          "--ds-font-code": "ui-monospace, SFMono-Regular, Menlo, monospace",
+          "--ds-font-weight-regular": "400",
+          "--ds-font-weight-medium": "500",
+          "--ds-font-weight-heading": "500",
+          "--ds-text-display": "7rem",
+          "--ds-text-hero": "4.5rem",
+          "--ds-text-h1": "3.25rem",
+          "--ds-text-h2": "2.25rem",
+          "--ds-text-h3": "1.5rem",
+          "--ds-text-h4": "1.25rem",
+          "--ds-text-h5": "1.125rem",
+          "--ds-text-body-lg": "1.1875rem",
+          "--ds-text-body": "1rem",
+          "--ds-text-body-sm": "0.875rem",
+          "--ds-text-caption": "0.75rem",
+          "--ds-text-micro": "0.625rem",
+          "--ds-leading-tight": "1",
+          "--ds-leading-heading": "1.05",
+          "--ds-leading-display": "1.1",
+          "--ds-leading-snug": "1.3",
+          "--ds-leading-body": "1.6",
+          "--ds-leading-relaxed": "1.6",
+          "--ds-leading-code": "1.7",
+          "--ds-tracking-display": "-0.055em",
+          "--ds-tracking-tighter": "-0.035em",
+          "--ds-tracking-tight": "-0.02em",
+          "--ds-tracking-normal": "0",
+          "--ds-tracking-label": "0.02em",
+          "--ds-tracking-caps": "0.14em",
+          "--ds-tracking-mark": "0.3em",
+          "--ds-space-0": "0",
+          "--ds-space-px": "1px",
+          "--ds-space-0-5": "0.125rem",
+          "--ds-space-1": "0.25rem",
+          "--ds-space-1-5": "0.375rem",
+          "--ds-space-2": "0.5rem",
+          "--ds-space-2-5": "0.625rem",
+          "--ds-space-3": "0.75rem",
+          "--ds-space-3-5": "0.875rem",
+          "--ds-space-4": "1rem",
+          "--ds-space-5": "1.25rem",
+          "--ds-space-6": "1.5rem",
+          "--ds-space-7": "1.75rem",
+          "--ds-space-8": "2rem",
+          "--ds-space-9": "2.25rem",
+          "--ds-space-10": "2.5rem",
+          "--ds-space-12": "3rem",
+          "--ds-space-14": "3.5rem",
+          "--ds-space-16": "4rem",
+          "--ds-space-20": "5rem",
+          "--ds-space-24": "6rem",
+          "--ds-space-28": "7rem",
+          "--ds-space-32": "8rem",
+          "--ds-layout-column": "75rem",
+          "--ds-layout-gutter": "2.5rem",
+          "--ds-layout-text": "42.5rem",
+          "--ds-layout-heading": "42rem",
+          "--ds-layout-header": "4rem",
+          "--ds-frame-column": "min(100% - 2 * var(--ds-layout-gutter), var(--ds-layout-column))",
+          "--ds-radius-chip": "2px",
+          "--ds-radius-sm": "0.375rem",
+          "--ds-radius-menu": "0.3125rem",
+          "--ds-radius-control": "0.5rem",
+          "--ds-radius-card": "0.75rem",
+          "--ds-radius-panel": "0.75rem",
+          "--ds-radius-shell": "1.25rem",
+          "--ds-radius-pill": "9999px",
+          "--ds-shadow-key": "inset 0 1px 0 #FFFFFF, inset 0 -2px 0 rgb(23 24 24 / 0.08), 0 1px 2px rgb(23 24 24 / 0.22), 0 3px 8px rgb(23 24 24 / 0.1)",
+          "--ds-shadow-key-brand": "inset 0 1px 0 rgb(255 255 255 / 0.34), inset 0 -2px 0 rgb(23 24 24 / 0.16), 0 1px 2px rgb(23 24 24 / 0.24), 0 3px 8px rgb(0 0 255 / 0.18)",
+          "--ds-shadow-key-muted": "inset 0 1px 0 rgb(255 255 255 / 0.8), inset 0 -1px 0 rgb(23 24 24 / 0.06)",
+          "--ds-shadow-pressed": "inset 0 2px 3px rgb(23 24 24 / 0.22), inset 0 -1px 0 rgb(255 255 255 / 0.18)",
+          "--ds-shadow-well": "inset 0 1px 2px rgb(23 24 24 / 0.08), inset 0 -1px 0 #FFFFFF",
+          "--ds-shadow-guide": "inset 0 1px 0 #FFFFFF, inset 0 -1px 0 rgb(23 24 24 / 0.05), 0 1px 2px rgb(23 24 24 / 0.07), 0 4px 10px -6px rgb(23 24 24 / 0.14)",
+          "--ds-shadow-inset": "inset 0 1px 2px rgb(23 24 24 / 0.06)",
+          "--ds-shadow-card": "inset 0 1px 0 #FFFFFF, inset 0 -2px 0 rgb(23 24 24 / 0.06), 0 1px 2px rgb(23 24 24 / 0.14), 0 12px 32px -18px rgb(23 24 24 / 0.4)",
+          "--ds-shadow-raised": "inset 0 1px 0 #FFFFFF, inset 0 -2px 0 rgb(23 24 24 / 0.06), 7px 7px 0 rgb(23 24 24 / 0.1)",
+          "--ds-shadow-code": "0 16px 36px -14px rgb(23 24 24 / 0.6)",
+          "--ds-shadow-plan": "inset 0 1px 0 #FFFFFF, inset 0 -2px 0 rgb(23 24 24 / 0.06), 6px 6px 0 rgb(23 24 24 / 0.22)",
+          "--ds-shadow-tile": "0 1px 2px rgb(23 24 24 / 0.08), 0 6px 16px rgb(23 24 24 / 0.06)",
+          "--ds-shadow-floating": "inset 0 1px 0 rgb(255 255 255 / 0.32), 0 8px 24px rgb(23 24 24 / 0.2)",
+          "--ds-shadow-glass-hover": "inset 0 1px 0 rgb(255 255 255 / 0.42), inset 0 0 0 1px rgb(255 255 255 / 0.16), 0 1px 2px rgb(23 24 24 / 0.24)",
+          "--ds-shadow-tooltip": "0 1px 2px rgb(23 24 24 / 0.14), 0 8px 24px rgb(23 24 24 / 0.16)",
+          "--ds-shadow-ring-hover": "0 0 0 3px rgb(0 0 255 / 0.2)",
+          "--ds-glass-sheen": "linear-gradient(180deg, rgb(255 255 255 / 0.14), transparent 60%)",
+          "--ds-glass-blur": "blur(12px) saturate(1.4)",
+          "--ds-band-step": "9px",
+          "--ds-band-mix-1": "24%",
+          "--ds-band-mix-2": "48%",
+          "--ds-band-mix-3": "70%",
+          "--ds-band-mix-4": "88%",
+          "--ds-duration-fast": "160ms",
+          "--ds-duration-base": "200ms",
+          "--ds-duration-moderate": "260ms",
+          "--ds-duration-slow": "300ms",
+          "--ds-easing-out": "cubic-bezier(0.22, 1, 0.36, 1)",
+          "--ds-easing-in-out": "cubic-bezier(0.77, 0, 0.175, 1)"
+        }
+      }
+    },
+    {
+      "schemaVersion": 1,
+      "name": "about-page",
+      "useFor": "Use as a starting point for Agentcard company pages. Replace sample people, links and content.",
+      "constraints": [
+        "Photos in color beside gray ones",
+        "More than one blue-bar directory per page"
+      ],
+      "source": "agentcard-website src/app/about; agentcard.sh /about (computed)",
+      "exports": [
+        "AboutPage"
+      ],
+      "client": false,
+      "docsUrl": "https://agentcard-ds.vercel.app/components/about-page",
+      "markdownUrl": "https://agentcard-ds.vercel.app/r/about-page.md",
+      "type": "block",
+      "title": "About page",
+      "description": "About page template with a header, team directory, footer and navigation.",
+      "surface": "site",
+      "kinds": [],
+      "requires": [
+        "theme",
+        "nav-dock",
+        "page-header",
+        "section",
+        "site-footer",
+        "site-header",
+        "team-directory"
+      ],
+      "packages": []
+    },
+    {
+      "schemaVersion": 1,
+      "name": "accordion",
+      "useFor": "Use for FAQs or details that can stay collapsed. The InWindow example adds topic tabs and a containing window.",
+      "constraints": [
+        "Chevrons or typed plus signs",
+        "Bold questions",
+        "Cards around each question",
+        "More than one list open by default"
+      ],
+      "source": "agentcard-website src/app/globals.css (.faq-list, .v7-page summary, .v7-page details > p); live https://www.agentcard.sh/ (#faq .faq-list, computed)",
+      "exports": [
+        "Accordion",
+        "AccordionContent",
+        "AccordionItem",
+        "AccordionMark",
+        "AccordionTrigger"
+      ],
+      "client": true,
+      "docsUrl": "https://agentcard-ds.vercel.app/components/accordion",
+      "markdownUrl": "https://agentcard-ds.vercel.app/r/accordion.md",
+      "type": "ui",
+      "title": "Accordion",
+      "description": "Expandable questions or sections with keyboard navigation.",
+      "surface": "site",
+      "kinds": [
+        "faq"
+      ],
+      "requires": [
+        "theme",
+        "utils"
+      ],
+      "packages": [
+        "@radix-ui/react-accordion"
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "name": "alert-dialog",
+      "useFor": "Use to confirm an action that cannot be undone or costs money (freezing a card, removing an agent). Give it a title that names the action and a description of the result. Put AlertDialogCancel first and AlertDialogAction last; use variant destructive on the action for removals. Pass name for the title bar and size sm for a short question.",
+      "constraints": [
+        "A red-filled key",
+        "Closing on an outside click",
+        "More than two actions",
+        "Long forms (use a dialog)"
+      ],
+      "source": "Extension from agentcard-website src/app/globals.css (.v7-windowbar), as the dialog",
+      "exports": [
+        "AlertDialog",
+        "AlertDialogAction",
+        "AlertDialogCancel",
+        "AlertDialogContent",
+        "AlertDialogDescription",
+        "AlertDialogFooter",
+        "AlertDialogHeader",
+        "AlertDialogMedia",
+        "AlertDialogOverlay",
+        "AlertDialogPortal",
+        "AlertDialogTitle",
+        "AlertDialogTrigger"
+      ],
+      "client": true,
+      "docsUrl": "https://agentcard-ds.vercel.app/components/alert-dialog",
+      "markdownUrl": "https://agentcard-ds.vercel.app/r/alert-dialog.md",
+      "type": "ui",
+      "title": "Alert Dialog",
+      "description": "A confirmation in the brand's window: the sky title bar, a 24px display title, then Cancel and the action over a rule.",
+      "surface": "site",
+      "kinds": [],
+      "requires": [
+        "theme",
+        "button",
+        "window",
+        "surface",
+        "utils"
+      ],
+      "packages": [
+        "@radix-ui/react-alert-dialog"
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "name": "alert",
+      "useFor": "Use default for a note (a new feature, a fact about a card), brand for an announcement that matters, destructive for a problem the person must act on. Give the bar a file-like name (voice.beta, agent.paused) or pass name={null} for a bare sheet. Lead with a lucide glyph; put one small key in AlertAction. It is shadcn's Alert API in the Banner's look.",
+      "constraints": [
+        "More than one alert at a time",
+        "Marketing copy in an alert",
+        "Bold titles",
+        "A filled red or blue sheet"
+      ],
+      "source": "Extrapolated from Agentcard: the Banner (agentcard-website src/app/globals.css .v7-guide-note, .v7-guide-cta-title) and the window bar (.v7-windowbar)",
+      "exports": [
+        "Alert",
+        "AlertAction",
+        "AlertDescription",
+        "AlertTitle",
+        "alertVariants"
+      ],
+      "client": false,
+      "docsUrl": "https://agentcard-ds.vercel.app/components/alert",
+      "markdownUrl": "https://agentcard-ds.vercel.app/r/alert.md",
+      "type": "ui",
+      "title": "Alert",
+      "description": "A note window: the sky, blue or rose bar labeled like a file over a sheet with a glyph, a display title, a muted line and an optional key.",
+      "surface": "site",
+      "kinds": [],
+      "requires": [
+        "theme",
+        "window",
+        "utils"
+      ],
+      "packages": [
+        "class-variance-authority"
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "name": "aspect-ratio",
+      "useFor": "Use for product shots, screens inside windows and media previews so the layout does not jump while they load. Round and frame the media inside with the brand's 12px corners and hairline, or put it in a window.",
+      "constraints": [
+        "Stretching media to fill",
+        "Styling the frame itself"
+      ],
+      "source": "Radix AspectRatio; framing from the brand's windows",
+      "exports": [
+        "AspectRatio"
+      ],
+      "client": true,
+      "docsUrl": "https://agentcard-ds.vercel.app/components/aspect-ratio",
+      "markdownUrl": "https://agentcard-ds.vercel.app/r/aspect-ratio.md",
+      "type": "ui",
+      "title": "Aspect Ratio",
+      "description": "Holds an image or screen at a fixed shape while the width changes.",
+      "surface": "site",
+      "kinds": [],
+      "requires": [
+        "theme"
+      ],
+      "packages": [
+        "@radix-ui/react-aspect-ratio"
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "name": "attachment",
+      "useFor": "Use for files attached to a message, a purchase or a form: receipts, invoices, exports. Set state (idle, uploading, processing, error, done) and say what is happening in AttachmentDescription. Add AttachmentTrigger to open the file, AttachmentAction for remove, retry or download, and AttachmentGroup for a row that scrolls.",
+      "constraints": [
+        "Colored file tiles per type",
+        "Progress shown by color alone",
+        "Rounded photos",
+        "More than two actions on one file"
+      ],
+      "source": "Extrapolated from Agentcard: the white key (agentcard-website .v7-btn), the window bar's sky and blue (.v7-windowbar) and the guides' light bevel",
+      "exports": [
+        "Attachment",
+        "AttachmentAction",
+        "AttachmentActions",
+        "AttachmentContent",
+        "AttachmentDescription",
+        "AttachmentGroup",
+        "AttachmentMedia",
+        "AttachmentTitle",
+        "AttachmentTrigger"
+      ],
+      "client": false,
+      "docsUrl": "https://agentcard-ds.vercel.app/components/attachment",
+      "markdownUrl": "https://agentcard-ds.vercel.app/r/attachment.md",
+      "type": "ui",
+      "title": "Attachment",
+      "description": "A file on a small white key: a sky tile with a blue glyph, the name in the display face and its size or status below; dashed while waiting, red when it failed.",
+      "surface": "site",
+      "kinds": [],
+      "requires": [
+        "theme",
+        "button",
+        "utils"
+      ],
+      "packages": [
+        "@radix-ui/react-slot",
+        "class-variance-authority"
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "name": "avatar",
+      "useFor": "Use beside a person’s name or role. Provide alt text on AvatarImage. Use size=\"lg\" for larger profiles.",
+      "constraints": [
+        "Round avatars",
+        "A ring or border around the photo",
+        "Color photos beside grayscale ones",
+        "Overlapping avatar stacks",
+        "Colored rings for status"
+      ],
+      "source": "agentcard-website src/components/v7/company-page.tsx (PersonCard), src/app/globals.css (.v7-about-cell img, .is-founders .v7-about-cell img); live https://www.agentcard.sh/about",
+      "exports": [
+        "Avatar",
+        "AvatarFallback",
+        "AvatarImage"
+      ],
+      "client": true,
+      "docsUrl": "https://agentcard-ds.vercel.app/components/avatar",
+      "markdownUrl": "https://agentcard-ds.vercel.app/r/avatar.md",
+      "type": "ui",
+      "title": "Avatar",
+      "description": "Square grayscale photo with an initials fallback.",
+      "surface": "site",
+      "kinds": [],
+      "requires": [
+        "theme",
+        "utils"
+      ],
+      "packages": [
+        "@radix-ui/react-avatar"
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "name": "badge",
+      "useFor": "Use tag, tag-ink and tag-heart for added, improved and fixed updates. Use status variants for state and chip for counts or filters.",
+      "constraints": [
+        "Badges as buttons",
+        "Caps on anything but the tag",
+        "Filled color badges",
+        "More than one tone per row"
+      ],
+      "source": "agentcard-website src/app/globals.css (.v7-upd-tag, .is-added, .is-improved, .is-fixed; .v7-guide-prose code for the chip); live https://www.agentcard.sh/updates",
+      "exports": [
+        "Badge",
+        "badgeVariants"
+      ],
+      "client": false,
+      "docsUrl": "https://agentcard-ds.vercel.app/components/badge",
+      "markdownUrl": "https://agentcard-ds.vercel.app/r/badge.md",
+      "type": "ui",
+      "title": "Badge",
+      "description": "Labels for status, categories and counts.",
+      "surface": "site",
+      "kinds": [
+        "chip"
+      ],
+      "requires": [
+        "theme",
+        "utils"
+      ],
+      "packages": [
+        "@radix-ui/react-slot",
+        "class-variance-authority"
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "name": "band-divider",
+      "useFor": "Use where blue sections meet white or paper. Hero, SiteFooter and Cta already include their dividers.",
+      "constraints": [
+        "A smooth gradient between grounds",
+        "A divider between two sections on the same ground",
+        "Steps of other heights",
+        "Grain anywhere else on the page"
+      ],
+      "source": "agentcard-website src/components/band-divider.tsx; src/app/globals.css:527 (.band-divider, .band-step); agentcard.sh / (computed)",
+      "exports": [
+        "BandDivider",
+        "Scan",
+        "BandGround"
+      ],
+      "client": true,
+      "docsUrl": "https://agentcard-ds.vercel.app/components/band-divider",
+      "markdownUrl": "https://agentcard-ds.vercel.app/r/band-divider.md",
+      "type": "visual",
+      "title": "Band divider",
+      "description": "Stepped divider between page backgrounds.",
+      "surface": "site",
+      "kinds": [],
+      "requires": [
+        "theme",
+        "utils"
+      ],
+      "packages": []
+    },
+    {
+      "schemaVersion": 1,
+      "name": "banner",
+      "useFor": "Use info for general notices, brand for announcements and alert for problems. Set name for the title bar and provide an action when one is needed.",
+      "constraints": [
+        "More than one banner at a time",
+        "Banners for marketing copy that belongs in a section",
+        "Bold titles",
+        "Gradients"
+      ],
+      "source": "Repository reference; public guide pages currently unavailable. agentcard-website src/app/globals.css (.v7-guide-note, .v7-guide-note-body, .v7-guide-cta-title, --guide-shadow); src/components/v7/guide-body.tsx (note)",
+      "exports": [
+        "Banner"
+      ],
+      "client": false,
+      "docsUrl": "https://agentcard-ds.vercel.app/components/banner",
+      "markdownUrl": "https://agentcard-ds.vercel.app/r/banner.md",
+      "type": "ui",
+      "title": "Banner",
+      "description": "Notice with a title, message and optional actions.",
+      "surface": "site",
+      "kinds": [
+        "window-bar"
+      ],
+      "requires": [
+        "theme",
+        "window",
+        "utils"
+      ],
+      "packages": []
+    },
+    {
+      "schemaVersion": 1,
+      "name": "breadcrumb",
+      "useFor": "Use above a page title in deep sections (Agents, Travel agent, Cards). Keep the trail short; collapse the middle with BreadcrumbEllipsis.",
+      "constraints": [
+        "A breadcrumb on top-level pages",
+        "Links in the brand blue",
+        "Separators other than the chevron or a slash"
+      ],
+      "source": "Extrapolated from Agentcard (the guides' 12px display labels)",
+      "exports": [
+        "Breadcrumb",
+        "BreadcrumbEllipsis",
+        "BreadcrumbItem",
+        "BreadcrumbLink",
+        "BreadcrumbList",
+        "BreadcrumbPage",
+        "BreadcrumbSeparator"
+      ],
+      "client": false,
+      "docsUrl": "https://agentcard-ds.vercel.app/components/breadcrumb",
+      "markdownUrl": "https://agentcard-ds.vercel.app/r/breadcrumb.md",
+      "type": "ui",
+      "title": "Breadcrumb",
+      "description": "A trail in the 12px display face: muted links, faint chevrons, the current page in ink.",
+      "surface": "site",
+      "kinds": [],
+      "requires": [
+        "theme",
+        "utils"
+      ],
+      "packages": [
+        "@radix-ui/react-slot",
+        "lucide-react"
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "name": "bubble",
+      "useFor": "Use inside Message for a conversation with an agent: default (blue, align end) for what the person sends, secondary for the agent's replies, tinted for another agent, muted for a system note, outline for a quote, destructive for a message that failed, ghost for long output without a box. Group consecutive bubbles with BubbleGroup so only the last keeps its tail.",
+      "constraints": [
+        "Bubbles that animate in",
+        "Gradients or glows",
+        "More than two bubble colors in one thread",
+        "Fully rounded pill bubbles"
+      ],
+      "source": "Extrapolated from Agentcard: the blue key (agentcard-website .v7-btn-primary), the quiet gray and paper grounds and the cards' 12px corners",
+      "exports": [
+        "Bubble",
+        "BubbleContent",
+        "BubbleGroup",
+        "BubbleReactions",
+        "bubbleVariants"
+      ],
+      "client": false,
+      "docsUrl": "https://agentcard-ds.vercel.app/components/bubble",
+      "markdownUrl": "https://agentcard-ds.vercel.app/r/bubble.md",
+      "type": "ui",
+      "title": "Bubble",
+      "description": "A message bubble: the person's in the electric blue with white text, the agent's on the pale gray, 12px corners with a square tail corner.",
+      "surface": "site",
+      "kinds": [],
+      "requires": [
+        "theme",
+        "utils"
+      ],
+      "packages": [
+        "@radix-ui/react-slot",
+        "class-variance-authority"
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "name": "button-group",
+      "useFor": "Use for related actions that act on the same thing (Previous and Next, Copy and Download) or a field joined to its action. Use secondary keys inside, ButtonGroupText for a label segment, and ButtonGroupSeparator between blue keys.",
+      "constraints": [
+        "Mixing primary and secondary keys in one group",
+        "More than five keys in a bar",
+        "Gaps between joined keys"
+      ],
+      "source": "Extrapolated from the brand's keys (agentcard-website src/app/globals.css --bevel)",
+      "exports": [
+        "ButtonGroup",
+        "ButtonGroupSeparator",
+        "ButtonGroupText",
+        "buttonGroupVariants"
+      ],
+      "client": false,
+      "docsUrl": "https://agentcard-ds.vercel.app/components/button-group",
+      "markdownUrl": "https://agentcard-ds.vercel.app/r/button-group.md",
+      "type": "ui",
+      "title": "Button Group",
+      "description": "Keys joined into one bar with merged edges, with an optional sunken text segment.",
+      "surface": "site",
+      "kinds": [],
+      "requires": [
+        "theme",
+        "utils"
+      ],
+      "packages": [
+        "@radix-ui/react-slot",
+        "class-variance-authority"
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "name": "button",
+      "useFor": "Use one primary action per section. Use secondary for other actions, on-brand on blue backgrounds and ghost in toolbars. Wire an onClick handler, use type=\"submit\" for forms, or use asChild with a link for navigation.",
+      "constraints": [
+        "Rounded pill buttons",
+        "Bold labels",
+        "Two blue keys side by side for equal actions",
+        "A gradient or glow on a key"
+      ],
+      "source": "agentcard-website src/app/globals.css:4159 (V7 buttons and tabs, one bevel)",
+      "exports": [
+        "Button",
+        "buttonVariants"
+      ],
+      "client": false,
+      "docsUrl": "https://agentcard-ds.vercel.app/components/button",
+      "markdownUrl": "https://agentcard-ds.vercel.app/r/button.md",
+      "type": "ui",
+      "title": "Button",
+      "description": "Buttons for primary, secondary, toolbar and on-blue actions.",
+      "surface": "site",
+      "kinds": [
+        "button-primary",
+        "button-secondary",
+        "button-on-brand",
+        "header-action"
+      ],
+      "requires": [
+        "theme",
+        "utils"
+      ],
+      "packages": [
+        "@radix-ui/react-slot",
+        "class-variance-authority"
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "name": "calendar",
+      "useFor": "Use inline to pick a date, several dates or a range (mode single, multiple or range) and inside DatePicker for a field. Pass disabled to block days (weekends, past days) and captionLayout=\"dropdown\" for dates far away.",
+      "constraints": [
+        "Animating month changes",
+        "Round day cells",
+        "A selected color other than the blue key"
+      ],
+      "source": "Extrapolated from the brand's keys and tab track (agentcard-website src/app/globals.css --bevel, .plan-tabs)",
+      "exports": [
+        "Calendar",
+        "CalendarDayButton",
+        "CalendarProps",
+        "DateRange"
+      ],
+      "client": true,
+      "docsUrl": "https://agentcard-ds.vercel.app/components/calendar",
+      "markdownUrl": "https://agentcard-ds.vercel.app/r/calendar.md",
+      "type": "ui",
+      "title": "Calendar",
+      "description": "A month grid of 36px cells; chosen days are blue keys and a range sits on a pale blue band.",
+      "surface": "site",
+      "kinds": [],
+      "requires": [
+        "theme",
+        "utils"
+      ],
+      "packages": [
+        "lucide-react"
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "name": "card",
+      "useFor": "Use default for features, plans or quotes. Use raised for product content with a preview. Use Window when the container needs a title bar.",
+      "constraints": [
+        "Gray card backgrounds",
+        "Heavy blurred shadows",
+        "Cards inside cards",
+        "Corners other than 12px or 20px"
+      ],
+      "source": "agentcard-website src/app/globals.css (.v7-trail li, .v7-sol); live https://www.agentcard.sh/",
+      "exports": [
+        "Card",
+        "CardHeader",
+        "CardFooter",
+        "CardTitle",
+        "CardAction",
+        "CardDescription",
+        "CardContent",
+        "cardVariants"
+      ],
+      "client": false,
+      "docsUrl": "https://agentcard-ds.vercel.app/components/card",
+      "markdownUrl": "https://agentcard-ds.vercel.app/r/card.md",
+      "type": "ui",
+      "title": "Card",
+      "description": "Container for related content, with default and raised variants.",
+      "surface": "site",
+      "kinds": [
+        "card",
+        "card-raised",
+        "card-title"
+      ],
+      "requires": [
+        "theme",
+        "utils"
+      ],
+      "packages": [
+        "class-variance-authority"
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "name": "carousel",
+      "useFor": "Use to browse a few items of the same kind (card designs, merchant logos, receipts). Wrap CarouselItem in CarouselContent and add CarouselPrevious and CarouselNext; use setApi to show the position.",
+      "constraints": [
+        "Autoplay",
+        "Essential content only on later slides",
+        "More than one carousel in view"
+      ],
+      "source": "Extrapolated from Agentcard (button.tsx white key, marquee rows)",
+      "exports": [
+        "Carousel",
+        "CarouselContent",
+        "CarouselItem",
+        "CarouselNext",
+        "CarouselPrevious",
+        "useCarousel",
+        "CarouselApi"
+      ],
+      "client": true,
+      "docsUrl": "https://agentcard-ds.vercel.app/components/carousel",
+      "markdownUrl": "https://agentcard-ds.vercel.app/r/carousel.md",
+      "type": "ui",
+      "title": "Carousel",
+      "description": "Slides that snap into place with white keys to move between them.",
+      "surface": "site",
+      "kinds": [],
+      "requires": [
+        "theme",
+        "utils"
+      ],
+      "packages": [
+        "lucide-react"
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "name": "chart",
+      "useFor": "Use to show spend or activity over time (BarChart, LineChart, AreaChart) or a share of a whole (PieChart). Wrap the chart in ChartContainer with a config that names each series (colors default to series-1 to series-4), then add ChartTooltip and ChartLegend. Give every chart an aria-label. Legend items toggle their series; arrow keys move the tooltip.",
+      "constraints": [
+        "More than four series",
+        "3D or gradient-heavy charts",
+        "Charts that animate again on every update",
+        "Colors outside the series tokens"
+      ],
+      "source": "Extrapolated from Agentcard: the series tokens, the tooltip (agentcard-website .v7-tooltip) and the display face's small print",
+      "exports": [
+        "ChartConfig",
+        "AreaChart",
+        "BarChart",
+        "ChartContainer",
+        "ChartLegend",
+        "ChartLegendContent",
+        "ChartStyle",
+        "ChartTooltip",
+        "ChartTooltipContent",
+        "LineChart",
+        "PieChart",
+        "useChart"
+      ],
+      "client": true,
+      "docsUrl": "https://agentcard-ds.vercel.app/components/chart",
+      "markdownUrl": "https://agentcard-ds.vercel.app/r/chart.md",
+      "type": "ui",
+      "title": "Chart",
+      "description": "Bar, line, area and donut charts in SVG, in the brand's four series colors, with the guides' white tooltip and a display-face legend.",
+      "surface": "site",
+      "kinds": [],
+      "requires": [
+        "theme",
+        "utils"
+      ],
+      "packages": []
+    },
+    {
+      "schemaVersion": 1,
+      "name": "checkbox",
+      "useFor": "Use for multiple selections or a single agreement. Pair it with Label. When passing checked, update it through onCheckedChange.",
+      "constraints": [
+        "Round checkboxes",
+        "Colors other than blue for checked",
+        "A checkbox for an action that happens at once (use a switch)"
+      ],
+      "source": "Extension from agentcard-website src/app/globals.css (--bevel-blue, --bevel-muted)",
+      "exports": [
+        "Checkbox"
+      ],
+      "client": true,
+      "docsUrl": "https://agentcard-ds.vercel.app/components/checkbox",
+      "markdownUrl": "https://agentcard-ds.vercel.app/r/checkbox.md",
+      "type": "ui",
+      "title": "Checkbox",
+      "description": "Checkbox with checked, unchecked, indeterminate and disabled states.",
+      "surface": "site",
+      "kinds": [],
+      "requires": [
+        "theme",
+        "utils"
+      ],
+      "packages": [
+        "@radix-ui/react-checkbox",
+        "lucide-react"
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "name": "code-block",
+      "useFor": "Use for code a person reads or copies: SDK calls, curl commands, API responses. Give it a CodeBlockHeader with CodeBlockTitle (the file name, or Terminal) and a CodeBlockCopyButton, then CodeBlockContent with the code. Pass wrap for long values and a max-h class for long files. It is shadcn's CodeBlock API in the CodeWindow look; on a page it sits on a blue panel as on the home page.",
+      "constraints": [
+        "A light code block",
+        "A full syntax theme with many colors",
+        "Rounded corners above 8px",
+        "Code in Inter"
+      ],
+      "source": "Agentcard code window: agentcard-website src/components/v7/integrations.tsx (CodePane), src/app/globals.css (.v7-intg-code); agentcard.sh / (computed)",
+      "exports": [
+        "CodeBlock",
+        "CodeBlockActions",
+        "CodeBlockContent",
+        "CodeBlockCopyButton",
+        "CodeBlockHeader",
+        "CodeBlockTitle"
+      ],
+      "client": true,
+      "docsUrl": "https://agentcard-ds.vercel.app/components/code-block",
+      "markdownUrl": "https://agentcard-ds.vercel.app/r/code-block.md",
+      "type": "ui",
+      "title": "Code Block",
+      "description": "Code on the ink ground, as the code window draws it: a bar with three squares, a file name and a copy key, then light highlighting and line numbers.",
+      "surface": "site",
+      "kinds": [],
+      "requires": [
+        "theme",
+        "code-window",
+        "copy-button",
+        "utils"
+      ],
+      "packages": []
+    },
+    {
+      "schemaVersion": 1,
+      "name": "code-window",
+      "useFor": "Use for commands, integration examples and API requests. Pass code as a string for highlighting and copying, or pass rendered children.",
+      "constraints": [
+        "A full syntax theme with many colors",
+        "A light code window",
+        "Rounded corners above 8px",
+        "Code set in a monospace other than the display face"
+      ],
+      "source": "agentcard-website src/components/v7/integrations.tsx (CodePane), src/app/globals.css:3341 (.v7-intg-code); agentcard.sh / (computed: .v7-intg-stage [class*=code])",
+      "exports": [
+        "CodeWindow",
+        "tokenize",
+        "CodeWindowProps"
+      ],
+      "client": false,
+      "docsUrl": "https://agentcard-ds.vercel.app/components/code-window",
+      "markdownUrl": "https://agentcard-ds.vercel.app/r/code-window.md",
+      "type": "ui",
+      "title": "Code window",
+      "description": "Code block with a filename, highlighting and optional copy action.",
+      "surface": "site",
+      "kinds": [
+        "code-window"
+      ],
+      "requires": [
+        "theme",
+        "copy-button",
+        "utils"
+      ],
+      "packages": []
+    },
+    {
+      "schemaVersion": 1,
+      "name": "collapse",
+      "useFor": "Use for optional form fields, settings or details. Connect open to state and give the trigger aria-expanded and aria-controls.",
+      "constraints": [
+        "Hiding the main action",
+        "Nesting collapses",
+        "Questions and answers (use the accordion)"
+      ],
+      "source": "agentcard-website src/app/globals.css (the FAQ's slide, .faq-list details::details-content)",
+      "exports": [
+        "Collapse"
+      ],
+      "client": true,
+      "docsUrl": "https://agentcard-ds.vercel.app/components/collapse",
+      "markdownUrl": "https://agentcard-ds.vercel.app/r/collapse.md",
+      "type": "ui",
+      "title": "Collapse",
+      "description": "Expandable content area that animates its height.",
+      "surface": "site",
+      "kinds": [],
+      "requires": [
+        "theme",
+        "utils"
+      ],
+      "packages": []
+    },
+    {
+      "schemaVersion": 1,
+      "name": "collapsible",
+      "useFor": "Use to hide secondary detail under a row (more card settings, a purchase's line items). Put a CollapsibleTrigger (often asChild on a button) and CollapsibleContent inside Collapsible; control it with open and onOpenChange when needed.",
+      "constraints": [
+        "Hiding required fields",
+        "Nesting collapsibles deeply",
+        "A trigger without a visible state"
+      ],
+      "source": "collapse.tsx (agentcard-website plan details)",
+      "exports": [
+        "Collapsible",
+        "CollapsibleContent",
+        "CollapsibleTrigger"
+      ],
+      "client": true,
+      "docsUrl": "https://agentcard-ds.vercel.app/components/collapsible",
+      "markdownUrl": "https://agentcard-ds.vercel.app/r/collapsible.md",
+      "type": "ui",
+      "title": "Collapsible",
+      "description": "A disclosure that grows open and shut with the brand's 300ms ease-out.",
+      "surface": "site",
+      "kinds": [],
+      "requires": [
+        "theme",
+        "collapse",
+        "utils"
+      ],
+      "packages": []
+    },
+    {
+      "schemaVersion": 1,
+      "name": "combobox",
+      "useFor": "Use for one or several choices from a list too long to scan (merchants, agents, currencies). Compose ComboboxTrigger (or ComboboxChips for several values), ComboboxContent, ComboboxInput, ComboboxList and ComboboxItem. Give it a name to submit the chosen values.",
+      "constraints": [
+        "A combobox for under six options (use a select)",
+        "Rounded triggers",
+        "Filtering that hides the chosen value without saying so"
+      ],
+      "source": "Extrapolated from agentcard.com/get-started (.v7-gate-field select) and agentcard-website src/components/v7/guide-search.tsx",
+      "exports": [
+        "Combobox",
+        "ComboboxChip",
+        "ComboboxChips",
+        "ComboboxChipsInput",
+        "ComboboxClear",
+        "ComboboxCollection",
+        "ComboboxContent",
+        "ComboboxEmpty",
+        "ComboboxGroup",
+        "ComboboxInput",
+        "ComboboxItem",
+        "ComboboxLabel",
+        "ComboboxList",
+        "ComboboxSeparator",
+        "ComboboxTrigger",
+        "ComboboxValue",
+        "useCombobox",
+        "useComboboxAnchor"
+      ],
+      "client": true,
+      "docsUrl": "https://agentcard-ds.vercel.app/components/combobox",
+      "markdownUrl": "https://agentcard-ds.vercel.app/r/combobox.md",
+      "type": "ui",
+      "title": "Combobox",
+      "description": "A searchable choice: the square field opens the floating panel with a search row and washed rows.",
+      "surface": "site",
+      "kinds": [],
+      "requires": [
+        "theme",
+        "surface",
+        "utils"
+      ],
+      "packages": [
+        "@radix-ui/react-popover",
+        "cmdk",
+        "lucide-react"
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "name": "command",
+      "useFor": "Use Command for an inline list and CommandDialog for a palette. Connect each CommandItem onSelect to navigation or an action. Bind the dialog to Cmd/Ctrl K when needed.",
+      "constraints": [
+        "Animating the palette open",
+        "A drop shadow on the panel",
+        "Rows without keyboard support",
+        "Icons in every row instead of a title and a line"
+      ],
+      "source": "Repository reference; public guide pages currently unavailable. agentcard-website src/components/v7/guide-search.tsx; src/app/globals.css (.v7-guide-search-layer, .v7-guide-search-panel, .v7-guide-search-field, .v7-guide-search-results, .v7-guide-search-group, .v7-guide-search-keys)",
+      "exports": [
+        "Command",
+        "CommandDialog",
+        "CommandEmpty",
+        "CommandFooter",
+        "CommandGroup",
+        "CommandInput",
+        "CommandItem",
+        "CommandList",
+        "CommandSeparator"
+      ],
+      "client": true,
+      "docsUrl": "https://agentcard-ds.vercel.app/components/command",
+      "markdownUrl": "https://agentcard-ds.vercel.app/r/command.md",
+      "type": "ui",
+      "title": "Command",
+      "description": "Searchable command list or dialog with keyboard navigation.",
+      "surface": "site",
+      "kinds": [],
+      "requires": [
+        "theme",
+        "dialog",
+        "window",
+        "utils"
+      ],
+      "packages": [
+        "@radix-ui/react-dialog",
+        "cmdk"
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "name": "context-menu",
+      "useFor": "Use for shortcuts on a row or an object (a purchase, a card) that are also reachable elsewhere. Group rows with separators and labels, mark the destructive row with variant destructive, and show shortcuts with ContextMenuShortcut.",
+      "constraints": [
+        "Actions found only here",
+        "Animating the highlight",
+        "Deep nesting beyond one submenu"
+      ],
+      "source": "Extrapolated from Agentcard (dropdown-menu.tsx)",
+      "exports": [
+        "ContextMenu",
+        "ContextMenuCheckboxItem",
+        "ContextMenuContent",
+        "ContextMenuGroup",
+        "ContextMenuItem",
+        "ContextMenuLabel",
+        "ContextMenuPortal",
+        "ContextMenuRadioGroup",
+        "ContextMenuRadioItem",
+        "ContextMenuSeparator",
+        "ContextMenuShortcut",
+        "ContextMenuSub",
+        "ContextMenuSubContent",
+        "ContextMenuSubTrigger",
+        "ContextMenuTrigger"
+      ],
+      "client": true,
+      "docsUrl": "https://agentcard-ds.vercel.app/components/context-menu",
+      "markdownUrl": "https://agentcard-ds.vercel.app/r/context-menu.md",
+      "type": "ui",
+      "title": "Context Menu",
+      "description": "A right-click menu drawn as the brand's menu: a white floating panel with display-face rows.",
+      "surface": "site",
+      "kinds": [],
+      "requires": [
+        "theme",
+        "surface",
+        "utils"
+      ],
+      "packages": [
+        "@radix-ui/react-context-menu",
+        "lucide-react"
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "name": "copy-button",
+      "useFor": "Place beside a command, key or ID and pass its value. Use a label that identifies what will be copied.",
+      "constraints": [
+        "A copy button without a label for screen readers",
+        "Green or red copy states",
+        "Copying without visible feedback"
+      ],
+      "source": "agentcard-website src/components/v7/command-copy.tsx; src/app/globals.css (.v7-command)",
+      "exports": [
+        "useCopy",
+        "CopyButton"
+      ],
+      "client": true,
+      "docsUrl": "https://agentcard-ds.vercel.app/components/copy-button",
+      "markdownUrl": "https://agentcard-ds.vercel.app/r/copy-button.md",
+      "type": "ui",
+      "title": "Copy button",
+      "description": "Copies text with success and failure feedback.",
+      "surface": "site",
+      "kinds": [
+        "button-secondary"
+      ],
+      "requires": [
+        "theme",
+        "tooltip",
+        "utils"
+      ],
+      "packages": [
+        "lucide-react"
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "name": "cta",
+      "useFor": "Use near the end of a page when another action is needed. Provide a working link or handler for the action.",
+      "constraints": [
+        "More than one per page",
+        "Two keys of equal weight",
+        "A blue key on the blue",
+        "A gradient or glow behind the headline",
+        "Long copy"
+      ],
+      "source": "Extension from agentcard-website src/app/globals.css:1288 (.cta, an earlier closing stage); built from the hero's ground and the band divider (agentcard.sh has no closing CTA)",
+      "exports": [
+        "Cta",
+        "CtaProps"
+      ],
+      "client": false,
+      "docsUrl": "https://agentcard-ds.vercel.app/components/cta",
+      "markdownUrl": "https://agentcard-ds.vercel.app/r/cta.md",
+      "type": "site",
+      "title": "CTA",
+      "description": "Blue section with a heading, action and optional media.",
+      "surface": "site",
+      "kinds": [
+        "button-on-brand"
+      ],
+      "requires": [
+        "theme",
+        "band-divider",
+        "utils"
+      ],
+      "packages": []
+    },
+    {
+      "schemaVersion": 1,
+      "name": "data-table",
+      "useFor": "Use for records people sort, filter and act on (purchases, cards, agents). Pass columns (header, accessor, cell, sortable), data and getRowId. Add selectable for bulk actions and pageSizes to let people choose rows per page; put actions in toolbar.",
+      "constraints": [
+        "Animating sorting or paging",
+        "Hiding the only identifying column",
+        "More than one table per page without headings"
+      ],
+      "source": "Built on table.tsx (agentcard-website .v7-guide-table)",
+      "exports": [
+        "DataTable",
+        "DataTableColumnHeader",
+        "DataTablePagination",
+        "DataTableViewOptions",
+        "DataTableColumn",
+        "DataTableProps",
+        "SortState"
+      ],
+      "client": true,
+      "docsUrl": "https://agentcard-ds.vercel.app/components/data-table",
+      "markdownUrl": "https://agentcard-ds.vercel.app/r/data-table.md",
+      "type": "ui",
+      "title": "Data Table",
+      "description": "The brand's ruled table with a search field, sortable heads, row selection, a Columns menu and page keys.",
+      "surface": "site",
+      "kinds": [],
+      "requires": [
+        "theme",
+        "button",
+        "checkbox",
+        "dropdown-menu",
+        "input",
+        "pagination",
+        "select",
+        "table",
+        "utils"
+      ],
+      "packages": [
+        "lucide-react"
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "name": "date-picker",
+      "useFor": "Use DatePicker for one date (a card's expiry, a report day) and DateRangePicker for a period (spending from and to). Add presets for common choices and name to submit the ISO dates with FormData.",
+      "constraints": [
+        "A free-text date without a calendar",
+        "Keeping the panel open after a single date is picked",
+        "Rounded triggers"
+      ],
+      "source": "Extrapolated from agentcard.com/get-started (.v7-gate-field select) and the brand's floating panel",
+      "exports": [
+        "DatePicker",
+        "DateRangePicker",
+        "formatDate",
+        "formatRange",
+        "DatePickerProps",
+        "DateRangePickerProps"
+      ],
+      "client": true,
+      "docsUrl": "https://agentcard-ds.vercel.app/components/date-picker",
+      "markdownUrl": "https://agentcard-ds.vercel.app/r/date-picker.md",
+      "type": "ui",
+      "title": "Date Picker",
+      "description": "A square date field with a blue calendar mark that opens the calendar in the floating panel.",
+      "surface": "site",
+      "kinds": [],
+      "requires": [
+        "theme",
+        "calendar",
+        "popover",
+        "utils"
+      ],
+      "packages": [
+        "lucide-react"
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "name": "dialog",
+      "useFor": "Use for a short form or confirmation. Provide a title and description. Set name for the title bar and size for wider content. Connect form submission and validation to the application.",
+      "constraints": [
+        "Dialogs for long reading",
+        "A dialog opened from another dialog",
+        "Blurring the page behind",
+        "Sliding in from an edge (use a sheet)"
+      ],
+      "source": "Extension from agentcard-website src/app/globals.css (.v7-windowbar); src/components/v7/window-mark.tsx",
+      "exports": [
+        "Dialog",
+        "DialogBody",
+        "DialogClose",
+        "DialogContent",
+        "DialogDescription",
+        "DialogFooter",
+        "DialogHeader",
+        "DialogOverlay",
+        "DialogPortal",
+        "DialogTitle",
+        "DialogTrigger",
+        "WindowClose"
+      ],
+      "client": true,
+      "docsUrl": "https://agentcard-ds.vercel.app/components/dialog",
+      "markdownUrl": "https://agentcard-ds.vercel.app/r/dialog.md",
+      "type": "ui",
+      "title": "Dialog",
+      "description": "Modal dialog with a title bar, focus trap and close control.",
+      "surface": "site",
+      "kinds": [
+        "window",
+        "window-bar"
+      ],
+      "requires": [
+        "theme",
+        "window",
+        "surface",
+        "utils"
+      ],
+      "packages": [
+        "@radix-ui/react-dialog",
+        "lucide-react"
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "name": "direction",
+      "useFor": "Wrap a right-to-left page or region in DirectionProvider dir=\"rtl\" (and set dir on the element) so menus, sliders, tabs and the segmented track flip. Read it in a component with useDirection.",
+      "constraints": [
+        "Setting direction only with CSS",
+        "Mixing directions inside one control"
+      ],
+      "source": "Radix DirectionProvider; no visual of its own",
+      "exports": [
+        "DirectionProvider",
+        "useDirection"
+      ],
+      "client": true,
+      "docsUrl": "https://agentcard-ds.vercel.app/components/direction",
+      "markdownUrl": "https://agentcard-ds.vercel.app/r/direction.md",
+      "type": "ui",
+      "title": "Direction",
+      "description": "Sets left-to-right or right-to-left reading for every Radix component inside it.",
+      "surface": "site",
+      "kinds": [],
+      "requires": [
+        "theme"
+      ],
+      "packages": [
+        "@radix-ui/react-direction"
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "name": "docs-link",
+      "useFor": "Use to link to a guide or reference in a new tab. Provide the destination URL and a descriptive label.",
+      "constraints": [
+        "Links styled as buttons",
+        "Arrows on links that stay on the site",
+        "Underlines in ink"
+      ],
+      "source": "Extension from agentcard-website src/app/globals.css (links); live https://www.agentcard.sh/",
+      "exports": [
+        "DocsLink"
+      ],
+      "client": false,
+      "docsUrl": "https://agentcard-ds.vercel.app/components/docs-link",
+      "markdownUrl": "https://agentcard-ds.vercel.app/r/docs-link.md",
+      "type": "ui",
+      "title": "Docs link",
+      "description": "External documentation link with an arrow.",
+      "surface": "site",
+      "kinds": [
+        "link"
+      ],
+      "requires": [
+        "theme",
+        "utils"
+      ],
+      "packages": [
+        "lucide-react"
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "name": "drawer",
+      "useFor": "Use on phones for a short task tied to the page: choosing a card, reviewing a purchase. Set direction (bottom by default). Put the title in DrawerHeader and the actions in DrawerFooter. Mark scrolling areas inside with data-drawer-no-drag.",
+      "constraints": [
+        "A drawer for long forms",
+        "Two drawers at once",
+        "Dragging that fights a scrolling list"
+      ],
+      "source": "Extrapolated from Agentcard (the sheet window, the ink scrim)",
+      "exports": [
+        "Drawer",
+        "DrawerClose",
+        "DrawerContent",
+        "DrawerDescription",
+        "DrawerFooter",
+        "DrawerHeader",
+        "DrawerOverlay",
+        "DrawerPortal",
+        "DrawerTitle",
+        "DrawerTrigger"
+      ],
+      "client": true,
+      "docsUrl": "https://agentcard-ds.vercel.app/components/drawer",
+      "markdownUrl": "https://agentcard-ds.vercel.app/r/drawer.md",
+      "type": "ui",
+      "title": "Drawer",
+      "description": "A panel pulled from an edge: the brand's white window with a grab handle, dragged away or flicked shut.",
+      "surface": "site",
+      "kinds": [],
+      "requires": [
+        "theme",
+        "surface",
+        "utils"
+      ],
+      "packages": [
+        "@radix-ui/react-dialog"
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "name": "dropdown-menu",
+      "useFor": "Use for actions on an item or a compact navigation menu. Set variant=\"glass\" on blue backgrounds. Use onSelect for actions and DropdownMenuHoldItem for destructive actions that require a hold.",
+      "constraints": [
+        "Menus for navigation that should be visible",
+        "More than one level of submenu",
+        "A destructive row that fires on one click"
+      ],
+      "source": "https://agentcard.com/ (.v7-dock-card); white menu and extra item types are extensions",
+      "exports": [
+        "DropdownMenu",
+        "DropdownMenuCheckboxItem",
+        "DropdownMenuContent",
+        "DropdownMenuGroup",
+        "DropdownMenuHoldItem",
+        "DropdownMenuItem",
+        "DropdownMenuLabel",
+        "DropdownMenuRadioGroup",
+        "DropdownMenuRadioItem",
+        "DropdownMenuSeparator",
+        "DropdownMenuShortcut",
+        "DropdownMenuSub",
+        "DropdownMenuSubContent",
+        "DropdownMenuSubTrigger",
+        "DropdownMenuTrigger"
+      ],
+      "client": true,
+      "docsUrl": "https://agentcard-ds.vercel.app/components/dropdown-menu",
+      "markdownUrl": "https://agentcard-ds.vercel.app/r/dropdown-menu.md",
+      "type": "ui",
+      "title": "Dropdown menu",
+      "description": "Action menu with standard and glass panels, submenus and selection controls.",
+      "surface": "site",
+      "kinds": [
+        "menu-panel",
+        "menu-item",
+        "glass-menu",
+        "glass-menu-item"
+      ],
+      "requires": [
+        "theme",
+        "use-hold",
+        "surface",
+        "utils"
+      ],
+      "packages": [
+        "@radix-ui/react-dropdown-menu",
+        "lucide-react"
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "name": "empty-state",
+      "useFor": "Explain what is missing and provide the next action. Set name for the title bar or null to hide it. Connect actions such as creating an item or clearing a search.",
+      "constraints": [
+        "Illustrations that shout",
+        "More than one action",
+        "Empty states that blame the reader"
+      ],
+      "source": "Extension from agentcard-website src/app/globals.css (.v7-windowbar)",
+      "exports": [
+        "EmptyState"
+      ],
+      "client": false,
+      "docsUrl": "https://agentcard-ds.vercel.app/components/empty-state",
+      "markdownUrl": "https://agentcard-ds.vercel.app/r/empty-state.md",
+      "type": "ui",
+      "title": "Empty state",
+      "description": "Message and optional action for an empty list or search result.",
+      "surface": "site",
+      "kinds": [
+        "window",
+        "window-bar"
+      ],
+      "requires": [
+        "theme",
+        "window",
+        "utils"
+      ],
+      "packages": []
+    },
+    {
+      "schemaVersion": 1,
+      "name": "empty",
+      "useFor": "Use when a list, a search or a view has nothing to show: say what is missing and give the one next action (New card, Clear search). Name the bar like a file (cards.list, search.results) or pass name={null}. It is shadcn's Empty API in the EmptyState look; use EmptyMedia variant icon for a lucide glyph.",
+      "constraints": [
+        "Illustrations that shout",
+        "More than one action",
+        "Empty states that blame the reader",
+        "A drop shadow"
+      ],
+      "source": "Extrapolated from Agentcard: the EmptyState (agentcard-website src/app/globals.css .v7-windowbar) and the white key (.v7-btn)",
+      "exports": [
+        "Empty",
+        "EmptyContent",
+        "EmptyDescription",
+        "EmptyHeader",
+        "EmptyMedia",
+        "EmptyTitle"
+      ],
+      "client": false,
+      "docsUrl": "https://agentcard-ds.vercel.app/components/empty",
+      "markdownUrl": "https://agentcard-ds.vercel.app/r/empty.md",
+      "type": "ui",
+      "title": "Empty",
+      "description": "An empty list as a quiet window: the sky bar, a centered key glyph, a display title, one muted line and one action on the pale ground.",
+      "surface": "site",
+      "kinds": [],
+      "requires": [
+        "theme",
+        "window",
+        "utils"
+      ],
+      "packages": [
+        "class-variance-authority"
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "name": "faq",
+      "useFor": "Pass title, lead and topics containing questions and answers. A single topic hides the tabs. Set bar to label the window.",
+      "constraints": [
+        "More than four topics",
+        "Answers longer than a short paragraph",
+        "Questions in caps",
+        "A chevron in place of the drawn +"
+      ],
+      "source": "agentcard-website src/components/faq.tsx, src/app/globals.css:932 (.faq2, .faq-list); agentcard.sh / (.faq-card, .faq-tabs, .faq-list, computed)",
+      "exports": [
+        "Faq",
+        "FaqTopic",
+        "FaqItem"
+      ],
+      "client": true,
+      "docsUrl": "https://agentcard-ds.vercel.app/components/faq",
+      "markdownUrl": "https://agentcard-ds.vercel.app/r/faq.md",
+      "type": "site",
+      "title": "FAQ",
+      "description": "FAQ section with optional topic tabs and expandable answers.",
+      "surface": "site",
+      "kinds": [
+        "faq",
+        "tabs",
+        "window",
+        "window-bar"
+      ],
+      "requires": [
+        "theme",
+        "accordion",
+        "window",
+        "utils"
+      ],
+      "packages": [
+        "@radix-ui/react-tabs"
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "name": "feature-rows",
+      "useFor": "Use FeatureRows for the main feature list and FeatureGrid for supporting details. Supply a screen or illustration for each feature.",
+      "constraints": [
+        "More than one blue key per row",
+        "Feature icons instead of screens",
+        "Stock photos in the panel",
+        "Rows without media"
+      ],
+      "source": "agentcard-website src/components/v7/feature-rows.tsx; agentcard.sh/vault and /issuing (computed: .v7-feat, .v7-feat-stage, .v7-feat-pill, .v7-feats.is-4)",
+      "exports": [
+        "FeatureRows",
+        "FeatureGrid",
+        "FeatureTag",
+        "FeatureLogos",
+        "FeaturePowered",
+        "FeatureRow",
+        "FeatureRowsProps",
+        "FeatureGridProps"
+      ],
+      "client": false,
+      "docsUrl": "https://agentcard-ds.vercel.app/components/feature-rows",
+      "markdownUrl": "https://agentcard-ds.vercel.app/r/feature-rows.md",
+      "type": "site",
+      "title": "Feature rows",
+      "description": "Product feature layouts with text and media.",
+      "surface": "site",
+      "kinds": [
+        "card-raised",
+        "card",
+        "chip",
+        "media-frame",
+        "card-title",
+        "body-text"
+      ],
+      "requires": [
+        "theme",
+        "utils"
+      ],
+      "packages": []
+    },
+    {
+      "schemaVersion": 1,
+      "name": "field",
+      "useFor": "Wrap Input, Textarea, TagsInput or SelectTrigger. Derive error from the current value and clear it when valid. Use required for required fields and htmlFor when the control has an explicit id.",
+      "constraints": [
+        "Labels inside the field as placeholders",
+        "Bold or caps labels",
+        "Errors shown only by color"
+      ],
+      "source": "agentcard-website src/app/globals.css (.v7-gate-field); live https://www.agentcard.sh/get-started",
+      "exports": [
+        "Field",
+        "useFieldControl"
+      ],
+      "client": true,
+      "docsUrl": "https://agentcard-ds.vercel.app/components/field",
+      "markdownUrl": "https://agentcard-ds.vercel.app/r/field.md",
+      "type": "ui",
+      "title": "Field",
+      "description": "Label, help text, error message and accessibility attributes for a form control.",
+      "surface": "site",
+      "kinds": [
+        "input"
+      ],
+      "requires": [
+        "theme",
+        "label",
+        "utils"
+      ],
+      "packages": []
+    },
+    {
+      "schemaVersion": 1,
+      "name": "form",
+      "useFor": "Use for a form with validation managed by react-hook-form: wrap it in Form, render each field with FormField, and place FormLabel, FormControl (around one control), FormDescription and FormMessage inside a FormItem. For a single field without react-hook-form, use Field.",
+      "constraints": [
+        "Red labels on invalid fields",
+        "Placeholders instead of labels",
+        "Validating on every keystroke before the first submit"
+      ],
+      "source": "agentcard.com/get-started (.v7-gate-field, computed)",
+      "exports": [
+        "Form",
+        "FormControl",
+        "FormDescription",
+        "FormField",
+        "FormItem",
+        "FormLabel",
+        "FormMessage",
+        "useFormField"
+      ],
+      "client": true,
+      "docsUrl": "https://agentcard-ds.vercel.app/components/form",
+      "markdownUrl": "https://agentcard-ds.vercel.app/r/form.md",
+      "type": "ui",
+      "title": "Form",
+      "description": "react-hook-form fields laid out as the brand's get-started form: display labels, square fields, red messages.",
+      "surface": "site",
+      "kinds": [],
+      "requires": [
+        "theme",
+        "label",
+        "utils"
+      ],
+      "packages": [
+        "@radix-ui/react-slot",
+        "react-hook-form"
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "name": "hero",
+      "useFor": "Use at the top of an Agentcard home or product page. Put SiteHeader in header and background imagery in background. Use titleClassName to adjust title sizing or wrapping.",
+      "constraints": [
+        "A gradient behind the title",
+        "A blue key on the blue",
+        "More than two keys",
+        "Long paragraphs in the hero",
+        "A smooth fade into the page instead of the bands"
+      ],
+      "source": "agentcard-website src/components/v7/immersive-hero.tsx; src/app/globals.css:4100 (.v7-immersive, .v7-pricing-scan); agentcard.sh / (computed)",
+      "exports": [
+        "Hero",
+        "HeroProps"
+      ],
+      "client": false,
+      "docsUrl": "https://agentcard-ds.vercel.app/components/hero",
+      "markdownUrl": "https://agentcard-ds.vercel.app/r/hero.md",
+      "type": "site",
+      "title": "Hero",
+      "description": "Page opening with a blue background, heading, actions and optional media.",
+      "surface": "site",
+      "kinds": [
+        "hero",
+        "hero-title",
+        "hero-subtitle",
+        "button-on-brand"
+      ],
+      "requires": [
+        "theme",
+        "band-divider",
+        "utils"
+      ],
+      "packages": []
+    },
+    {
+      "schemaVersion": 1,
+      "name": "hold-button",
+      "useFor": "Use for destructive actions such as closing a card. Connect onConfirm to the action. Releasing early, leaving the control or losing focus cancels the hold.",
+      "constraints": [
+        "Hold for actions that can be undone",
+        "Hiding how long to hold",
+        "A blue fill for a destructive action"
+      ],
+      "source": "Extension from agentcard-website src/app/globals.css (--bevel-white); principles (keys sink on press)",
+      "exports": [
+        "HoldButton"
+      ],
+      "client": true,
+      "docsUrl": "https://agentcard-ds.vercel.app/components/hold-button",
+      "markdownUrl": "https://agentcard-ds.vercel.app/r/hold-button.md",
+      "type": "ui",
+      "title": "Hold button",
+      "description": "Button that confirms an action after a continuous hold.",
+      "surface": "site",
+      "kinds": [
+        "button-secondary"
+      ],
+      "requires": [
+        "theme",
+        "use-hold",
+        "utils"
+      ],
+      "packages": []
+    },
+    {
+      "schemaVersion": 1,
+      "name": "home-page",
+      "useFor": "Use as a starting point for an Agentcard landing page. Replace sample content and media, and check every link.",
+      "constraints": [
+        "Blue grounds stacked between the hero and the footer",
+        "A window bar on every card"
+      ],
+      "source": "agentcard-website src/app/page.tsx; agentcard.sh / (computed)",
+      "exports": [
+        "HomePage"
+      ],
+      "client": false,
+      "docsUrl": "https://agentcard-ds.vercel.app/components/home-page",
+      "markdownUrl": "https://agentcard-ds.vercel.app/r/home-page.md",
+      "type": "block",
+      "title": "Home page",
+      "description": "Home page template with product sections, integrations, FAQ and navigation.",
+      "surface": "site",
+      "kinds": [],
+      "requires": [
+        "theme",
+        "faq",
+        "hero",
+        "integrations",
+        "logo-strip",
+        "nav-dock",
+        "product-grid",
+        "section",
+        "site-footer",
+        "site-header",
+        "testimonials",
+        "button",
+        "window"
+      ],
+      "packages": [
+        "lucide-react"
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "name": "hover-card",
+      "useFor": "Use to preview what a link points to (an agent, a merchant, a card) without leaving the page. Keep the content short and repeat anything essential on the destination: touch and keyboard users may never see it.",
+      "constraints": [
+        "Actions only reachable inside it",
+        "Long text",
+        "Opening on every passing hover (keep the delay)"
+      ],
+      "source": "Extrapolated from Agentcard (the popover panel)",
+      "exports": [
+        "HoverCard",
+        "HoverCardContent",
+        "HoverCardTrigger"
+      ],
+      "client": true,
+      "docsUrl": "https://agentcard-ds.vercel.app/components/hover-card",
+      "markdownUrl": "https://agentcard-ds.vercel.app/r/hover-card.md",
+      "type": "ui",
+      "title": "Hover Card",
+      "description": "A preview in the brand's floating panel that appears while the pointer rests on a link.",
+      "surface": "site",
+      "kinds": [],
+      "requires": [
+        "theme",
+        "surface",
+        "utils"
+      ],
+      "packages": [
+        "@radix-ui/react-hover-card"
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "name": "input-group",
+      "useFor": "Use when a field needs a unit, a prefix, a status or an action inside its border: an amount in USD, a domain, a Copy key on an API key, a search mark. Use InputGroupInput or InputGroupTextarea as the control and InputGroupAddon (align inline-start, inline-end, block-start or block-end) around it.",
+      "constraints": [
+        "A second border inside the group",
+        "Rounded groups",
+        "Buttons larger than the field"
+      ],
+      "source": "Extrapolated from agentcard.com/get-started (.v7-gate-field input) and the brand's keys",
+      "exports": [
+        "InputGroup",
+        "InputGroupAddon",
+        "InputGroupButton",
+        "InputGroupInput",
+        "InputGroupText",
+        "InputGroupTextarea"
+      ],
+      "client": true,
+      "docsUrl": "https://agentcard-ds.vercel.app/components/input-group",
+      "markdownUrl": "https://agentcard-ds.vercel.app/r/input-group.md",
+      "type": "ui",
+      "title": "Input Group",
+      "description": "The square field with labels, marks, a sunken segment or small keys inside it.",
+      "surface": "site",
+      "kinds": [],
+      "requires": [
+        "theme",
+        "button",
+        "utils"
+      ],
+      "packages": [
+        "class-variance-authority"
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "name": "input-otp",
+      "useFor": "Use for a short code sent by SMS or email (sign-in, a card reveal). Set maxLength and pattern={REGEXP_ONLY_DIGITS}, group the slots with InputOTPGroup and split long codes with InputOTPSeparator. Paste and SMS autofill fill every slot.",
+      "constraints": [
+        "Rounded slots",
+        "Auto-submitting without showing the code",
+        "More than eight slots"
+      ],
+      "source": "Extrapolated from agentcard.com/get-started (.v7-gate-field input)",
+      "exports": [
+        "InputOTP",
+        "InputOTPGroup",
+        "InputOTPSeparator",
+        "InputOTPSlot",
+        "REGEXP_ONLY_CHARS",
+        "REGEXP_ONLY_DIGITS",
+        "REGEXP_ONLY_DIGITS_AND_CHARS"
+      ],
+      "client": true,
+      "docsUrl": "https://agentcard-ds.vercel.app/components/input-otp",
+      "markdownUrl": "https://agentcard-ds.vercel.app/r/input-otp.md",
+      "type": "ui",
+      "title": "Input OTP",
+      "description": "Joined square slots in the brand's field for a one-time code, the active slot outlined in blue.",
+      "surface": "site",
+      "kinds": [],
+      "requires": [
+        "theme",
+        "utils"
+      ],
+      "packages": [
+        "lucide-react"
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "name": "input",
+      "useFor": "Use inside Field for a label and validation message. Set an appropriate input type. Use variant=\"search\" for search or filtering and connect changes to the results.",
+      "constraints": [
+        "Rounded form fields (only the search box has corners)",
+        "Gray filled inputs",
+        "Placeholder text as the only label",
+        "A glow or ring on focus (the brand draws the outline)"
+      ],
+      "source": "agentcard-website src/app/globals.css (.v7-gate-field input, .v7-guide-search); live https://www.agentcard.sh/get-started (computed)",
+      "exports": [
+        "Input",
+        "inputVariants"
+      ],
+      "client": true,
+      "docsUrl": "https://agentcard-ds.vercel.app/components/input",
+      "markdownUrl": "https://agentcard-ds.vercel.app/r/input.md",
+      "type": "ui",
+      "title": "Input",
+      "description": "Single-line text field with standard and search variants.",
+      "surface": "site",
+      "kinds": [
+        "input"
+      ],
+      "requires": [
+        "theme",
+        "field",
+        "utils"
+      ],
+      "packages": [
+        "class-variance-authority"
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "name": "integrations",
+      "useFor": "Pass rows with a title, description and options. Each option supplies a label, icon and panel. Use IntegrationCode and IntegrationScreen to build the preview.",
+      "constraints": [
+        "More than six tools in one row",
+        "Autoplaying the rows",
+        "Panels on a white ground",
+        "Light code windows"
+      ],
+      "source": "agentcard-website src/components/v7/integrations.tsx; agentcard.sh / (.v7-intg-row, .v7-intg-tab, .v7-intg-stage, computed)",
+      "exports": [
+        "Integrations",
+        "IntegrationCode",
+        "IntegrationScreen",
+        "IntegrationRow",
+        "IntegrationOption"
+      ],
+      "client": true,
+      "docsUrl": "https://agentcard-ds.vercel.app/components/integrations",
+      "markdownUrl": "https://agentcard-ds.vercel.app/r/integrations.md",
+      "type": "site",
+      "title": "Integrations",
+      "description": "Integration sections with selectable tools and matching previews.",
+      "surface": "site",
+      "kinds": [
+        "card-raised",
+        "media-frame",
+        "code-window",
+        "tabs"
+      ],
+      "requires": [
+        "theme",
+        "utils"
+      ],
+      "packages": [
+        "@radix-ui/react-tabs"
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "name": "item",
+      "useFor": "Use for rows in a list a person scans or picks from: cards, agents, merchants, updates. Set aria-current or data-selected on the current row (it turns pale sky with a blue title). Use outline for a row that stands alone as a card, muted for a row on the gray ground, size sm or xs for dense lists, and ItemHeader or ItemFooter for a date or a tag.",
+      "constraints": [
+        "Bold titles",
+        "More than two lines of description",
+        "Rows that move on hover",
+        "Rounded photos"
+      ],
+      "source": "Extrapolated from Agentcard: the guides' nav rows (agentcard-website .v7-guide-nav), the updates feed (/updates), the white key (.v7-btn) and the team page's photos (/about)",
+      "exports": [
+        "Item",
+        "ItemActions",
+        "ItemContent",
+        "ItemDescription",
+        "ItemFooter",
+        "ItemGroup",
+        "ItemHeader",
+        "ItemMedia",
+        "ItemSeparator",
+        "ItemTitle"
+      ],
+      "client": false,
+      "docsUrl": "https://agentcard-ds.vercel.app/components/item",
+      "markdownUrl": "https://agentcard-ds.vercel.app/r/item.md",
+      "type": "ui",
+      "title": "Item",
+      "description": "A list row: a blue glyph in a small key or a square photo, a display-face title over a muted line, and actions at the right.",
+      "surface": "site",
+      "kinds": [],
+      "requires": [
+        "theme",
+        "separator",
+        "utils"
+      ],
+      "packages": [
+        "@radix-ui/react-slot",
+        "class-variance-authority"
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "name": "kbd",
+      "useFor": "Use in control hints, menu items and command palette instructions. The bare variant is for compact search hints.",
+      "constraints": [
+        "Keys for things that are not keys",
+        "Dark keys",
+        "Keys in body copy larger than the text around them"
+      ],
+      "source": "Repository reference; public guide pages currently unavailable. agentcard-website src/app/globals.css (.v7-guide-search-keys kbd, .v7-guide-search kbd)",
+      "exports": [
+        "Kbd",
+        "kbdVariants"
+      ],
+      "client": false,
+      "docsUrl": "https://agentcard-ds.vercel.app/components/kbd",
+      "markdownUrl": "https://agentcard-ds.vercel.app/r/kbd.md",
+      "type": "ui",
+      "title": "Kbd",
+      "description": "Keyboard key or shortcut label.",
+      "surface": "site",
+      "kinds": [],
+      "requires": [
+        "theme",
+        "utils"
+      ],
+      "packages": [
+        "class-variance-authority"
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "name": "label",
+      "useFor": "Use the default form label above an input. Use variant=control for the larger label beside a checkbox, switch or radio. Connect htmlFor to the control id, or use Field to connect it automatically.",
+      "constraints": [
+        "Bold labels",
+        "Caps labels",
+        "Labels without a control to point at"
+      ],
+      "source": "https://agentcard.com/get-started (.v7-gate-field > span); control variant is an extension",
+      "exports": [
+        "Label"
+      ],
+      "client": true,
+      "docsUrl": "https://agentcard-ds.vercel.app/components/label",
+      "markdownUrl": "https://agentcard-ds.vercel.app/r/label.md",
+      "type": "ui",
+      "title": "Label",
+      "description": "Accessible label for a form control.",
+      "surface": "site",
+      "kinds": [],
+      "requires": [
+        "theme",
+        "utils"
+      ],
+      "packages": [
+        "@radix-ui/react-label"
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "name": "logo-strip",
+      "useFor": "Pass customer names and logos. Use the optional tone for the title bar. The layout adapts to the number of customers and screen width.",
+      "constraints": [
+        "Colored logos (marks are ink)",
+        "Bars in colors other than the five tints and sky",
+        "Links or buttons inside the windows"
+      ],
+      "source": "agentcard-website src/components/v7/products-showcase.tsx (Customers); agentcard.sh / (.v7-customers, .v7-customer, computed)",
+      "exports": [
+        "LogoStrip",
+        "Customer"
+      ],
+      "client": true,
+      "docsUrl": "https://agentcard-ds.vercel.app/components/logo-strip",
+      "markdownUrl": "https://agentcard-ds.vercel.app/r/logo-strip.md",
+      "type": "site",
+      "title": "Logo strip",
+      "description": "Customer logos in a responsive grid of small windows.",
+      "surface": "site",
+      "kinds": [
+        "logo-strip",
+        "window",
+        "window-bar"
+      ],
+      "requires": [
+        "theme",
+        "window",
+        "use-trail",
+        "utils"
+      ],
+      "packages": []
+    },
+    {
+      "schemaVersion": 1,
+      "name": "logo",
+      "useFor": "Use Lockup in headers and footers, and LogoMark in smaller spaces. Set label={null} when the containing link already has an accessible name.",
+      "constraints": [
+        "The logo in a color other than blue",
+        "ink or white",
+        "The mark stretched or outlined",
+        "A drop shadow or glow behind the logo",
+        "The wordmark retyped in a font"
+      ],
+      "source": "agentcard-brand-cli brand/logo (lockup.svg, mark.svg); agentcard.sh / (header a, 160x28)",
+      "exports": [
+        "Lockup",
+        "LogoMark",
+        "LogoProps"
+      ],
+      "client": false,
+      "docsUrl": "https://agentcard-ds.vercel.app/components/logo",
+      "markdownUrl": "https://agentcard-ds.vercel.app/r/logo.md",
+      "type": "ui",
+      "title": "Logo",
+      "description": "Agentcard wordmark and standalone mark.",
+      "surface": "site",
+      "kinds": [],
+      "requires": [
+        "theme",
+        "utils"
+      ],
+      "packages": []
+    },
+    {
+      "schemaVersion": 1,
+      "name": "marker",
+      "useFor": "Use separator for a date or a break between groups of messages, the default for an event in a thread (a card issued, a purchase made), border for a heading over a list, and unread for where new messages begin. Keep it to one short line.",
+      "constraints": [
+        "Bold or caps markers",
+        "A marker used as a heading",
+        "Colored lines other than the unread blue"
+      ],
+      "source": "Extrapolated from Agentcard: the updates page's dates (agentcard.sh/updates) and the ink hairlines between its entries",
+      "exports": [
+        "Marker",
+        "MarkerContent",
+        "MarkerIcon",
+        "markerVariants"
+      ],
+      "client": false,
+      "docsUrl": "https://agentcard-ds.vercel.app/components/marker",
+      "markdownUrl": "https://agentcard-ds.vercel.app/r/marker.md",
+      "type": "ui",
+      "title": "Marker",
+      "description": "A small display-face note in a conversation or feed: a date between hairlines, an event with a glyph, or the blue line where unread messages start.",
+      "surface": "site",
+      "kinds": [],
+      "requires": [
+        "theme",
+        "utils"
+      ],
+      "packages": [
+        "@radix-ui/react-slot",
+        "class-variance-authority"
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "name": "marquee",
+      "useFor": "Use for a merchant, customer or partner list. Use at most one per page.",
+      "constraints": [
+        "Logos in color on the line",
+        "A fast loop (under 30s a lap)",
+        "Two running lines on one page",
+        "Text a reader must read to act"
+      ],
+      "source": "agentcard-website src/components/v7/site-footer.tsx (.v7-foot-line); src/app/globals.css:5073; agentcard.sh / (computed)",
+      "exports": [
+        "Marquee",
+        "MarqueeProps"
+      ],
+      "client": true,
+      "docsUrl": "https://agentcard-ds.vercel.app/components/marquee",
+      "markdownUrl": "https://agentcard-ds.vercel.app/r/marquee.md",
+      "type": "visual",
+      "title": "Marquee",
+      "description": "Scrolling row of names that pauses on hover and respects reduced motion.",
+      "surface": "site",
+      "kinds": [
+        "logo-strip"
+      ],
+      "requires": [
+        "theme",
+        "utils"
+      ],
+      "packages": []
+    },
+    {
+      "schemaVersion": 1,
+      "name": "menubar",
+      "useFor": "Use at the top of a dense tool (a statement viewer, an editor) where menus group many commands. Keep three to six menus, each a MenubarMenu with a trigger and its content.",
+      "constraints": [
+        "A menubar for site navigation (use navigation menu)",
+        "A blue key for the open menu",
+        "Nested menus deeper than one level"
+      ],
+      "source": "Extrapolated from Agentcard (tabs.tsx track, dropdown-menu.tsx)",
+      "exports": [
+        "Menubar",
+        "MenubarCheckboxItem",
+        "MenubarContent",
+        "MenubarGroup",
+        "MenubarItem",
+        "MenubarLabel",
+        "MenubarMenu",
+        "MenubarPortal",
+        "MenubarRadioGroup",
+        "MenubarRadioItem",
+        "MenubarSeparator",
+        "MenubarShortcut",
+        "MenubarSub",
+        "MenubarSubContent",
+        "MenubarSubTrigger",
+        "MenubarTrigger"
+      ],
+      "client": true,
+      "docsUrl": "https://agentcard-ds.vercel.app/components/menubar",
+      "markdownUrl": "https://agentcard-ds.vercel.app/r/menubar.md",
+      "type": "ui",
+      "title": "Menubar",
+      "description": "An app's menu bar: the brand's sunken tab track with quiet triggers, the open one a white key.",
+      "surface": "site",
+      "kinds": [],
+      "requires": [
+        "theme",
+        "surface",
+        "utils"
+      ],
+      "packages": [
+        "@radix-ui/react-menubar",
+        "lucide-react"
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "name": "message-scroller",
+      "useFor": "Wrap a conversation in MessageScroller with MessageScrollerViewport, MessageScrollerContent and one MessageScrollerItem per message, then add MessageScrollerButton. Put a composer outside the scroll area inside MessageScrollerProvider and call useMessageScroller().scrollToEnd() after sending; set scrollAnchor on the message just sent to bring it to the top. It sits well inside a Window.",
+      "constraints": [
+        "Forcing the view to the end while someone reads older messages",
+        "A jump key that slides in",
+        "Animating each new message in"
+      ],
+      "source": "Extrapolated from Agentcard: the secondary key (agentcard-website .v7-btn) and the window (.v7-windowbar)",
+      "exports": [
+        "MessageScroller",
+        "MessageScrollerButton",
+        "MessageScrollerContent",
+        "MessageScrollerItem",
+        "MessageScrollerProvider",
+        "MessageScrollerViewport",
+        "useMessageScroller",
+        "useMessageScrollerScrollable",
+        "useMessageScrollerVisibility"
+      ],
+      "client": true,
+      "docsUrl": "https://agentcard-ds.vercel.app/components/message-scroller",
+      "markdownUrl": "https://agentcard-ds.vercel.app/r/message-scroller.md",
+      "type": "ui",
+      "title": "Message Scroller",
+      "description": "A conversation's scroll area that opens at the newest message, stays pinned while messages arrive, and shows the white Jump to latest key when the reader scrolls up.",
+      "surface": "site",
+      "kinds": [],
+      "requires": [
+        "theme",
+        "button",
+        "utils"
+      ],
+      "packages": [
+        "lucide-react"
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "name": "message",
+      "useFor": "Build a conversation from Message rows inside a MessageGroup: MessageAvatar with initials or a photo, MessageContent with a MessageHeader (the name, then a time element), the Bubble pieces and an optional MessageFooter (Delivered, Read). Set align end for the person's own messages; the row mirrors to the right.",
+      "constraints": [
+        "Round avatars",
+        "A bold sender name",
+        "Timestamps darker than the muted ink"
+      ],
+      "source": "Extrapolated from Agentcard: the About page's square people (agentcard.sh/about), the avatar's sky initials and the quote cards' company line",
+      "exports": [
+        "Message",
+        "MessageAvatar",
+        "MessageContent",
+        "MessageFooter",
+        "MessageGroup",
+        "MessageHeader"
+      ],
+      "client": false,
+      "docsUrl": "https://agentcard-ds.vercel.app/components/message",
+      "markdownUrl": "https://agentcard-ds.vercel.app/r/message.md",
+      "type": "ui",
+      "title": "Message",
+      "description": "One message in a conversation: a square avatar with sky initials, the sender in the display face with the time beside it, the bubbles and a small footer.",
+      "surface": "site",
+      "kinds": [],
+      "requires": [
+        "theme",
+        "utils"
+      ],
+      "packages": []
+    },
+    {
+      "schemaVersion": 1,
+      "name": "native-select",
+      "useFor": "Use where the platform picker is better than a custom menu: phones, long lists of countries or currencies, and forms that must work without script. Pair it with Field or a Label. Use size=\"sm\" in dense rows.",
+      "constraints": [
+        "Rounded corners",
+        "A custom arrow other than the triangle",
+        "Placeholder options that can be submitted"
+      ],
+      "source": "agentcard.com/get-started (.v7-gate-field select, computed)",
+      "exports": [
+        "NativeSelect",
+        "NativeSelectOptGroup",
+        "NativeSelectOption"
+      ],
+      "client": false,
+      "docsUrl": "https://agentcard-ds.vercel.app/components/native-select",
+      "markdownUrl": "https://agentcard-ds.vercel.app/r/native-select.md",
+      "type": "ui",
+      "title": "Native Select",
+      "description": "The browser's own select dressed as the brand's square field with the small ink triangle.",
+      "surface": "site",
+      "kinds": [],
+      "requires": [
+        "theme",
+        "utils"
+      ],
+      "packages": []
+    },
+    {
+      "schemaVersion": 1,
+      "name": "nav-dock",
+      "useFor": "Use with SiteHeader. Mark the current page and provide working destinations. Set hideAt to the footer’s id to hide the dock while the footer is visible.",
+      "constraints": [
+        "Two docks",
+        "More than six entries",
+        "Icons instead of labels",
+        "Animating the dock on every scroll"
+      ],
+      "source": "agentcard-website src/components/v7/section-dock.tsx; src/app/globals.css:4048 (.v7-dock-nav, .v7-dock-card, .v7-dock-go, .v7-mbar); agentcard.sh / (computed)",
+      "exports": [
+        "NavDock",
+        "DockLink",
+        "DockMenu",
+        "DockMenuItem",
+        "DockEntry",
+        "NavDockProps"
+      ],
+      "client": true,
+      "docsUrl": "https://agentcard-ds.vercel.app/components/nav-dock",
+      "markdownUrl": "https://agentcard-ds.vercel.app/r/nav-dock.md",
+      "type": "site",
+      "title": "Nav dock",
+      "description": "Floating navigation that becomes a top bar and menu on phones.",
+      "surface": "site",
+      "kinds": [
+        "nav-dock",
+        "nav-link"
+      ],
+      "requires": [
+        "theme",
+        "logo",
+        "utils"
+      ],
+      "packages": []
+    },
+    {
+      "schemaVersion": 1,
+      "name": "navigation-menu",
+      "useFor": "Use in a site header when a section has several destinations worth previewing (Product, Developers). Put plain links beside triggers with navigationMenuTriggerStyle. Call navigationMenuTriggerStyle from a client component.",
+      "constraints": [
+        "More than one row of panels",
+        "Hiding the only path to a page inside a panel",
+        "Hover-only panels on touch"
+      ],
+      "source": "agentcard-website site header links (site-header.tsx); panel extrapolated from the popover",
+      "exports": [
+        "NavigationMenu",
+        "NavigationMenuContent",
+        "NavigationMenuIndicator",
+        "NavigationMenuItem",
+        "NavigationMenuLink",
+        "NavigationMenuList",
+        "NavigationMenuTrigger",
+        "NavigationMenuViewport",
+        "navigationMenuTriggerStyle"
+      ],
+      "client": true,
+      "docsUrl": "https://agentcard-ds.vercel.app/components/navigation-menu",
+      "markdownUrl": "https://agentcard-ds.vercel.app/r/navigation-menu.md",
+      "type": "ui",
+      "title": "Navigation Menu",
+      "description": "The header's links with panels that open below in the brand's floating panel.",
+      "surface": "site",
+      "kinds": [],
+      "requires": [
+        "theme",
+        "utils"
+      ],
+      "packages": [
+        "@radix-ui/react-navigation-menu",
+        "class-variance-authority",
+        "lucide-react"
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "name": "page-header",
+      "useFor": "Place below SiteHeader on company, form, legal or update pages. Put supporting title content in children.",
+      "constraints": [
+        "A blue ground behind it",
+        "Centered",
+        "A second title under it",
+        "More than one per page"
+      ],
+      "source": "agentcard-website src/app/globals.css:1808 (.v7-about, .v7-about-head); agentcard.sh /about and /get-started (computed)",
+      "exports": [
+        "PageHeader"
+      ],
+      "client": false,
+      "docsUrl": "https://agentcard-ds.vercel.app/components/page-header",
+      "markdownUrl": "https://agentcard-ds.vercel.app/r/page-header.md",
+      "type": "site",
+      "title": "Page header",
+      "description": "Title, optional label and introduction for an inner page.",
+      "surface": "site",
+      "kinds": [
+        "eyebrow"
+      ],
+      "requires": [
+        "theme",
+        "section",
+        "utils"
+      ],
+      "packages": []
+    },
+    {
+      "schemaVersion": 1,
+      "name": "pagination",
+      "useFor": "Use under a long list or table. Show the first, last and the pages around the current one with ellipses between. Give links real hrefs or handle clicks; disable Previous on the first page and Next on the last with aria-disabled.",
+      "constraints": [
+        "Infinite numbers of page keys",
+        "A white current page",
+        "Pagination for fewer than two pages"
+      ],
+      "source": "Extrapolated from Agentcard (button.tsx keys, tabs.tsx blue key)",
+      "exports": [
+        "Pagination",
+        "PaginationContent",
+        "PaginationEllipsis",
+        "PaginationItem",
+        "PaginationLink",
+        "PaginationNext",
+        "PaginationPrevious"
+      ],
+      "client": false,
+      "docsUrl": "https://agentcard-ds.vercel.app/components/pagination",
+      "markdownUrl": "https://agentcard-ds.vercel.app/r/pagination.md",
+      "type": "ui",
+      "title": "Pagination",
+      "description": "Page keys in the display face: quiet until current, which is the blue key.",
+      "surface": "site",
+      "kinds": [],
+      "requires": [
+        "theme",
+        "utils"
+      ],
+      "packages": [
+        "lucide-react"
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "name": "popover",
+      "useFor": "Use for explanations, filters or small controls. Use variant=\"glass\" over blue backgrounds or imagery. Keep longer tasks in Dialog or Sheet.",
+      "constraints": [
+        "Forms longer than a few fields (use a dialog)",
+        "Popovers that open on hover (use a tooltip)",
+        "Gray panels"
+      ],
+      "source": "Extension from agentcard-website src/app/globals.css (.v7-dock-card)",
+      "exports": [
+        "Popover",
+        "PopoverAnchor",
+        "PopoverContent",
+        "PopoverTrigger"
+      ],
+      "client": true,
+      "docsUrl": "https://agentcard-ds.vercel.app/components/popover",
+      "markdownUrl": "https://agentcard-ds.vercel.app/r/popover.md",
+      "type": "ui",
+      "title": "Popover",
+      "description": "Anchored panel for contextual details or controls.",
+      "surface": "site",
+      "kinds": [
+        "popover-panel"
+      ],
+      "requires": [
+        "theme",
+        "surface",
+        "utils"
+      ],
+      "packages": [
+        "@radix-ui/react-popover"
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "name": "pricing-page",
+      "useFor": "Use as a starting point for Agentcard pricing pages. Set the current plans, features and action URLs.",
+      "constraints": [
+        "More than one featured plan per product",
+        "Prices in bold"
+      ],
+      "source": "agentcard-website src/app/pricing; agentcard.sh /pricing (computed)",
+      "exports": [
+        "PricingPage"
+      ],
+      "client": false,
+      "docsUrl": "https://agentcard-ds.vercel.app/components/pricing-page",
+      "markdownUrl": "https://agentcard-ds.vercel.app/r/pricing-page.md",
+      "type": "block",
+      "title": "Pricing page",
+      "description": "Pricing page template with product tabs, plans, footer and navigation.",
+      "surface": "site",
+      "kinds": [],
+      "requires": [
+        "theme",
+        "nav-dock",
+        "pricing",
+        "site-footer",
+        "site-header"
+      ],
+      "packages": []
+    },
+    {
+      "schemaVersion": 1,
+      "name": "pricing",
+      "useFor": "Pass title and products with their plans, prices, features and actions. Use one featured plan per product. A single product hides the tabs.",
+      "constraints": [
+        "More than one featured plan per product",
+        "Repeating the free plan's features in the paid plan (use includes)",
+        "Strikethrough prices without a reason",
+        "A pill or secondary key for the plan's action"
+      ],
+      "source": "agentcard-website src/components/v7/pricing-plans.tsx; agentcard.sh /pricing (.plan-tabs, .v7-offer-card, .v7-offer-list, computed)",
+      "exports": [
+        "Pricing",
+        "Plan",
+        "PlanFeature",
+        "PricingProduct"
+      ],
+      "client": true,
+      "docsUrl": "https://agentcard-ds.vercel.app/components/pricing",
+      "markdownUrl": "https://agentcard-ds.vercel.app/r/pricing.md",
+      "type": "site",
+      "title": "Pricing",
+      "description": "Pricing plans grouped by product, with optional tabs.",
+      "surface": "site",
+      "kinds": [
+        "window",
+        "window-bar",
+        "stat",
+        "tabs",
+        "button-primary"
+      ],
+      "requires": [
+        "theme",
+        "button",
+        "window",
+        "utils"
+      ],
+      "packages": [
+        "@radix-ui/react-tabs"
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "name": "product-grid",
+      "useFor": "Pass products with title, description, action and media. Use layout=\"lead\" for a full-width card and layout=\"half\" for paired cards.",
+      "constraints": [
+        "An odd number of half cards",
+        "A card without media",
+        "Two keys in one card",
+        "Media on a white ground instead of the stage"
+      ],
+      "source": "agentcard-website src/components/v7/products-showcase.tsx (SolutionCard); agentcard.sh / (.v7-sol, .v7-sol-lead, .v7-sol-half, computed)",
+      "exports": [
+        "ProductGrid",
+        "ProductItem",
+        "ProductAction"
+      ],
+      "client": false,
+      "docsUrl": "https://agentcard-ds.vercel.app/components/product-grid",
+      "markdownUrl": "https://agentcard-ds.vercel.app/r/product-grid.md",
+      "type": "site",
+      "title": "Product grid",
+      "description": "Product overview cards with text, actions and media.",
+      "surface": "site",
+      "kinds": [
+        "card-raised",
+        "media-frame",
+        "button-primary"
+      ],
+      "requires": [
+        "theme",
+        "button",
+        "utils"
+      ],
+      "packages": []
+    },
+    {
+      "schemaVersion": 1,
+      "name": "progress",
+      "useFor": "Use for spending limits, uploads or setup progress. Update value as progress changes and set max when the scale is not 100. Give the bar an accessible label.",
+      "constraints": [
+        "Gradients in the fill",
+        "Pill-shaped tracks",
+        "Progress without a label saying what it measures"
+      ],
+      "source": "Extension from agentcard-website src/app/globals.css (.plan-tabs, --bevel-blue)",
+      "exports": [
+        "Progress"
+      ],
+      "client": true,
+      "docsUrl": "https://agentcard-ds.vercel.app/components/progress",
+      "markdownUrl": "https://agentcard-ds.vercel.app/r/progress.md",
+      "type": "ui",
+      "title": "Progress",
+      "description": "Progress bar with a value, maximum and accessible progress state.",
+      "surface": "site",
+      "kinds": [],
+      "requires": [
+        "theme",
+        "utils"
+      ],
+      "packages": [
+        "@radix-ui/react-progress"
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "name": "prose",
+      "useFor": "Use for documentation, guides, legal content and release notes. Pass semantic HTML or rendered Markdown. Use wide for a wider content column.",
+      "constraints": [
+        "Bold headings or table headers",
+        "Body text wider than 680px",
+        "Links without the underline",
+        "Centered long text"
+      ],
+      "source": "agentcard-website src/app/globals.css:1808 (.v7-about-sheet), 2199 (.v7-guide-prose); agentcard.sh/terms and /card-terms (computed: .v7-about-head, .v7-prose)",
+      "exports": [
+        "Prose",
+        "ProseProps"
+      ],
+      "client": false,
+      "docsUrl": "https://agentcard-ds.vercel.app/components/prose",
+      "markdownUrl": "https://agentcard-ds.vercel.app/r/prose.md",
+      "type": "site",
+      "title": "Prose",
+      "description": "Typography and layout for long-form content.",
+      "surface": "site",
+      "kinds": [
+        "page",
+        "column",
+        "eyebrow",
+        "hero-title",
+        "body-text",
+        "link",
+        "table",
+        "code-window"
+      ],
+      "requires": [
+        "theme",
+        "utils"
+      ],
+      "packages": []
+    },
+    {
+      "schemaVersion": 1,
+      "name": "questionnaire",
+      "useFor": "Use to set something up in a few steps (a card for a new agent, a merchant list). Pass items (name, required, multiple, choices) to Questionnaire, then one QuestionnaireItem per question with its title, description, choices, an optional QuestionnaireInput for another answer and QuestionnaireError. End with QuestionnaireActions. The answers submit as one native form (FormData); the page saves them. Number keys (or letters) pick choices; Enter moves on.",
+      "constraints": [
+        "More than five questions",
+        "Several questions on one screen",
+        "Animated transitions between questions",
+        "A choice without a visible label"
+      ],
+      "source": "Extrapolated from Agentcard: the white key (agentcard-website .v7-btn), the checkbox and the progress bar of the library, and the pricing plans' choices",
+      "exports": [
+        "Questionnaire",
+        "QuestionnaireActions",
+        "QuestionnaireChoice",
+        "QuestionnaireChoiceDescription",
+        "QuestionnaireChoices",
+        "QuestionnaireDescription",
+        "QuestionnaireError",
+        "QuestionnaireInput",
+        "QuestionnaireItem",
+        "QuestionnaireNext",
+        "QuestionnairePrevious",
+        "QuestionnaireProgress",
+        "QuestionnaireSkip",
+        "QuestionnaireSubmit",
+        "QuestionnaireTitle"
+      ],
+      "client": true,
+      "docsUrl": "https://agentcard-ds.vercel.app/components/questionnaire",
+      "markdownUrl": "https://agentcard-ds.vercel.app/r/questionnaire.md",
+      "type": "ui",
+      "title": "Questionnaire",
+      "description": "Questions asked one at a time: white key choices with the brand's checkbox or radio and a shortcut key, a display-face question, a sunken progress bar, and Previous, Skip and Next keys.",
+      "surface": "site",
+      "kinds": [],
+      "requires": [
+        "theme",
+        "button",
+        "input",
+        "kbd",
+        "progress",
+        "utils"
+      ],
+      "packages": [
+        "lucide-react"
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "name": "radio-group",
+      "useFor": "Use for one choice among two to five options that should all stay visible (a card type, a spending period). Pair each item with a Label variant=\"control\". Give the root a name to submit with FormData; use a select for longer lists and a segmented control for a compact toolbar choice.",
+      "constraints": [
+        "Square radios (that is a checkbox)",
+        "A radio for an action that happens at once",
+        "Colors other than blue for the chosen state"
+      ],
+      "source": "Extrapolated from agentcard-website src/app/globals.css (the checkbox's --bevel-muted and --bevel-blue keys)",
+      "exports": [
+        "RadioGroup",
+        "RadioGroupItem"
+      ],
+      "client": true,
+      "docsUrl": "https://agentcard-ds.vercel.app/components/radio-group",
+      "markdownUrl": "https://agentcard-ds.vercel.app/r/radio-group.md",
+      "type": "ui",
+      "title": "Radio Group",
+      "description": "Round small keys for one choice from a short list; the chosen one is the blue key with a white dot.",
+      "surface": "site",
+      "kinds": [],
+      "requires": [
+        "theme",
+        "utils"
+      ],
+      "packages": [
+        "@radix-ui/react-radio-group"
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "name": "resizable",
+      "useFor": "Use in tools where people compare or size panes (a list beside a receipt). Put ResizablePanel items in a ResizablePanelGroup with a ResizableHandle between each; add withHandle when the edge needs to be found.",
+      "constraints": [
+        "Resizing as the only way to see content",
+        "Handles thicker than the rule",
+        "Animating while dragging"
+      ],
+      "source": "Extrapolated from Agentcard (table.tsx rules, the key)",
+      "exports": [
+        "ResizableHandle",
+        "ResizablePanel",
+        "ResizablePanelGroup"
+      ],
+      "client": true,
+      "docsUrl": "https://agentcard-ds.vercel.app/components/resizable",
+      "markdownUrl": "https://agentcard-ds.vercel.app/r/resizable.md",
+      "type": "ui",
+      "title": "Resizable",
+      "description": "Panels split by a 1px ink rule that can be dragged or moved with the arrow keys.",
+      "surface": "site",
+      "kinds": [],
+      "requires": [
+        "theme",
+        "utils"
+      ],
+      "packages": [
+        "lucide-react"
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "name": "scroll-area",
+      "useFor": "Use for a list or log inside a fixed-height window or panel.",
+      "constraints": [
+        "Scroll areas inside scroll areas",
+        "Hiding the main content in one",
+        "Scrolling the whole page in one"
+      ],
+      "source": "Extension from agentcard-website src/app/globals.css (--bevel-white)",
+      "exports": [
+        "ScrollArea"
+      ],
+      "client": true,
+      "docsUrl": "https://agentcard-ds.vercel.app/components/scroll-area",
+      "markdownUrl": "https://agentcard-ds.vercel.app/r/scroll-area.md",
+      "type": "ui",
+      "title": "Scroll area",
+      "description": "Scrollable container with overflow indicators and a scroll control.",
+      "surface": "site",
+      "kinds": [],
+      "requires": [
+        "theme",
+        "utils"
+      ],
+      "packages": [
+        "lucide-react"
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "name": "secret-field",
+      "useFor": "Use for API keys or card details. Provide a descriptive label. Use defaultRevealed only when the value should initially be visible.",
+      "constraints": [
+        "Showing a secret in full by default",
+        "Editable secrets (use an input)",
+        "Secrets without a copy key"
+      ],
+      "source": "Extension from agentcard-website src/app/globals.css (.v7-guide-search, .v7-command button)",
+      "exports": [
+        "maskSecret",
+        "SecretText",
+        "SecretField"
+      ],
+      "client": true,
+      "docsUrl": "https://agentcard-ds.vercel.app/components/secret-field",
+      "markdownUrl": "https://agentcard-ds.vercel.app/r/secret-field.md",
+      "type": "ui",
+      "title": "Secret field",
+      "description": "Masked value with reveal and copy controls.",
+      "surface": "site",
+      "kinds": [],
+      "requires": [
+        "theme",
+        "copy-button",
+        "tooltip",
+        "utils"
+      ],
+      "packages": [
+        "lucide-react"
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "name": "section",
+      "useFor": "Use SiteSection for content layout, SectionHeading for the title and description, and Eyebrow for an optional label. Choose white, paper or blue backgrounds as needed.",
+      "constraints": [
+        "Two blue sections in a row",
+        "Left-aligned section titles over centered content",
+        "Bold titles",
+        "Eyebrows in caps",
+        "A ground change without a band divider"
+      ],
+      "source": "agentcard-website src/app/globals.css:1520 (.v7-section), :1585 (.v7-heading-center), :1509 (.v7-eyebrow); agentcard.sh / and /about (computed)",
+      "exports": [
+        "SiteSection",
+        "SectionHeading",
+        "Eyebrow",
+        "SectionGround"
+      ],
+      "client": false,
+      "docsUrl": "https://agentcard-ds.vercel.app/components/section",
+      "markdownUrl": "https://agentcard-ds.vercel.app/r/section.md",
+      "type": "site",
+      "title": "Section",
+      "description": "Page section, section heading and optional label.",
+      "surface": "site",
+      "kinds": [
+        "section",
+        "column",
+        "section-heading",
+        "section-description",
+        "eyebrow"
+      ],
+      "requires": [
+        "theme",
+        "utils"
+      ],
+      "packages": []
+    },
+    {
+      "schemaVersion": 1,
+      "name": "segmented-control",
+      "useFor": "Use for a small set of options such as billing period or card type. Connect value and onValueChange. Use size=\"sm\" in compact layouts and variant=\"plain\" in toolbars.",
+      "constraints": [
+        "Switching between pages or panels (use tabs)",
+        "More than four options",
+        "Pill-shaped tracks"
+      ],
+      "source": "live https://www.agentcard.sh/pricing (.plan-tabs, .plan-tabs-thumb); src/app/globals.css (.v7-guide-tablist for size sm)",
+      "exports": [
+        "SegmentedControl"
+      ],
+      "client": true,
+      "docsUrl": "https://agentcard-ds.vercel.app/components/segmented-control",
+      "markdownUrl": "https://agentcard-ds.vercel.app/r/segmented-control.md",
+      "type": "ui",
+      "title": "Segmented control",
+      "description": "Single-value selector with radio semantics and arrow-key navigation.",
+      "surface": "site",
+      "kinds": [
+        "tabs"
+      ],
+      "requires": [
+        "theme",
+        "use-tab-glide",
+        "utils"
+      ],
+      "packages": []
+    },
+    {
+      "schemaVersion": 1,
+      "name": "select",
+      "useFor": "Use the field appearance inside Field for forms. Use compact in dense rows and ghost or chip for filters. Field required is inherited by Select. Give Select a name for FormData; keep value and onValueChange on the root. Use compact on SelectContent for compact fields and toolbar menus.",
+      "constraints": [
+        "Rounded field triggers",
+        "Empty string item values",
+        "Long lists without a search (use a command)"
+      ],
+      "source": "https://agentcard.com/get-started (native field); Radix menu extends repository guide styles",
+      "exports": [
+        "Select",
+        "SelectContent",
+        "SelectGroup",
+        "SelectItem",
+        "SelectLabel",
+        "SelectSeparator",
+        "SelectTrigger",
+        "SelectValue"
+      ],
+      "client": true,
+      "docsUrl": "https://agentcard-ds.vercel.app/components/select",
+      "markdownUrl": "https://agentcard-ds.vercel.app/r/select.md",
+      "type": "ui",
+      "title": "Select",
+      "description": "Single-choice select with field, compact, ghost and chip treatments.",
+      "surface": "site",
+      "kinds": [
+        "input"
+      ],
+      "requires": [
+        "theme",
+        "surface",
+        "field",
+        "utils"
+      ],
+      "packages": [
+        "@radix-ui/react-select",
+        "lucide-react",
+        "class-variance-authority"
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "name": "separator",
+      "useFor": "Use between related content groups or inline controls.",
+      "constraints": [
+        "Thick or colored rules",
+        "Rules between every row of a card",
+        "A smooth fade between the blue and white grounds (that is the band divider)"
+      ],
+      "source": "agentcard-website src/app/globals.css (--line); live https://www.agentcard.sh/get-started",
+      "exports": [
+        "Separator"
+      ],
+      "client": true,
+      "docsUrl": "https://agentcard-ds.vercel.app/components/separator",
+      "markdownUrl": "https://agentcard-ds.vercel.app/r/separator.md",
+      "type": "ui",
+      "title": "Separator",
+      "description": "Horizontal or vertical divider.",
+      "surface": "site",
+      "kinds": [],
+      "requires": [
+        "theme",
+        "utils"
+      ],
+      "packages": [
+        "@radix-ui/react-separator"
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "name": "sheet",
+      "useFor": "Use for item details, activity logs or longer forms. Choose right, left or bottom with side. Set modal={false} when the rest of the page must remain interactive.",
+      "constraints": [
+        "Sheets for a quick confirmation (use a dialog)",
+        "Full-screen sheets on desktop",
+        "Two sheets at once"
+      ],
+      "source": "Extension from agentcard-website src/app/globals.css (.v7-guide-nav, .v7-windowbar); live https://www.agentcard.sh (.v7-gate::backdrop)",
+      "exports": [
+        "Sheet",
+        "SheetBody",
+        "SheetClose",
+        "SheetContent",
+        "SheetDescription",
+        "SheetHeader",
+        "SheetTitle",
+        "SheetTrigger"
+      ],
+      "client": true,
+      "docsUrl": "https://agentcard-ds.vercel.app/components/sheet",
+      "markdownUrl": "https://agentcard-ds.vercel.app/r/sheet.md",
+      "type": "ui",
+      "title": "Sheet",
+      "description": "Side panel with a title, close control and focus management.",
+      "surface": "site",
+      "kinds": [
+        "window",
+        "window-bar"
+      ],
+      "requires": [
+        "theme",
+        "window",
+        "surface",
+        "utils"
+      ],
+      "packages": [
+        "@radix-ui/react-dialog",
+        "lucide-react"
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "name": "sidebar",
+      "useFor": "Use for an app's main navigation (agents, cards, purchases, settings). Wrap the app in SidebarProvider, put Sidebar beside SidebarInset, group rows in SidebarGroup with a label, and mark the current page with isActive. Use collapsible icon to fold it to its glyphs; it becomes a sheet on phones.",
+      "constraints": [
+        "Blue filled rows",
+        "More than two levels of nesting",
+        "Icons that move on hover"
+      ],
+      "source": "agentcard-website guides panel (.v7-guide-nav), extrapolated to an app rail",
+      "exports": [
+        "Sidebar",
+        "SidebarContent",
+        "SidebarFooter",
+        "SidebarGroup",
+        "SidebarGroupAction",
+        "SidebarGroupContent",
+        "SidebarGroupLabel",
+        "SidebarHeader",
+        "SidebarInput",
+        "SidebarInset",
+        "SidebarMenu",
+        "SidebarMenuAction",
+        "SidebarMenuBadge",
+        "SidebarMenuButton",
+        "SidebarMenuItem",
+        "SidebarMenuSkeleton",
+        "SidebarMenuSub",
+        "SidebarMenuSubButton",
+        "SidebarMenuSubItem",
+        "SidebarProvider",
+        "SidebarRail",
+        "SidebarSeparator",
+        "SidebarTrigger",
+        "useSidebar"
+      ],
+      "client": true,
+      "docsUrl": "https://agentcard-ds.vercel.app/components/sidebar",
+      "markdownUrl": "https://agentcard-ds.vercel.app/r/sidebar.md",
+      "type": "ui",
+      "title": "Sidebar",
+      "description": "An app's side rail drawn as the guides' panel: quiet 14px rows, the current one on the sky wash in blue.",
+      "surface": "site",
+      "kinds": [],
+      "requires": [
+        "theme",
+        "button",
+        "input",
+        "separator",
+        "sheet",
+        "skeleton",
+        "tooltip",
+        "utils"
+      ],
+      "packages": [
+        "@radix-ui/react-slot",
+        "class-variance-authority",
+        "lucide-react"
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "name": "site-footer",
+      "useFor": "Provide link groups, description and optional backing content. Check that every link resolves. Add an id when NavDock uses hideAt.",
+      "constraints": [
+        "A white footer",
+        "Icons beside every link",
+        "More than six columns",
+        "Bold headings",
+        "A second wordmark"
+      ],
+      "source": "agentcard-website src/components/v7/site-footer.tsx; src/app/globals.css:5049 (.v7-foot); agentcard.sh / (computed)",
+      "exports": [
+        "SiteFooter",
+        "FooterGroup",
+        "FooterLink",
+        "SiteFooterProps"
+      ],
+      "client": false,
+      "docsUrl": "https://agentcard-ds.vercel.app/components/site-footer",
+      "markdownUrl": "https://agentcard-ds.vercel.app/r/site-footer.md",
+      "type": "site",
+      "title": "Site footer",
+      "description": "Footer with navigation groups, logos and optional merchant list.",
+      "surface": "site",
+      "kinds": [
+        "footer",
+        "logo-strip",
+        "link"
+      ],
+      "requires": [
+        "theme",
+        "logo",
+        "band-divider",
+        "marquee",
+        "striped-wordmark",
+        "utils"
+      ],
+      "packages": []
+    },
+    {
+      "schemaVersion": 1,
+      "name": "site-header",
+      "useFor": "Use at the top of a page. Pair with NavDock for navigation. Hide the header on phones when the dock already provides the mobile header.",
+      "constraints": [
+        "A filled or sticky header bar",
+        "More than one key",
+        "A blue key in the header",
+        "Many links in the header"
+      ],
+      "source": "agentcard-website src/components/v7/space-header.tsx; src/app/globals.css:4102 (.v7-space-header, .v7-get-started-face); agentcard.sh / and /pricing (computed)",
+      "exports": [
+        "SiteHeader",
+        "HeaderLink"
+      ],
+      "client": false,
+      "docsUrl": "https://agentcard-ds.vercel.app/components/site-header",
+      "markdownUrl": "https://agentcard-ds.vercel.app/r/site-header.md",
+      "type": "site",
+      "title": "Site header",
+      "description": "Page header with the Agentcard logo and a primary link.",
+      "surface": "site",
+      "kinds": [
+        "header",
+        "header-action",
+        "nav-link"
+      ],
+      "requires": [
+        "theme",
+        "button",
+        "logo",
+        "utils"
+      ],
+      "packages": []
+    },
+    {
+      "schemaVersion": 1,
+      "name": "skeleton",
+      "useFor": "Match the expected content dimensions and replace it when loading completes.",
+      "constraints": [
+        "Skeletons for content that loads at once",
+        "Gray blocks that do not match the final layout",
+        "Colored sheens"
+      ],
+      "source": "Extension from agentcard-website src/app/globals.css (--palette-ink 7 percent)",
+      "exports": [
+        "Skeleton"
+      ],
+      "client": false,
+      "docsUrl": "https://agentcard-ds.vercel.app/components/skeleton",
+      "markdownUrl": "https://agentcard-ds.vercel.app/r/skeleton.md",
+      "type": "ui",
+      "title": "Skeleton",
+      "description": "Placeholder that reserves space while content loads.",
+      "surface": "site",
+      "kinds": [],
+      "requires": [
+        "theme",
+        "utils"
+      ],
+      "packages": []
+    },
+    {
+      "schemaVersion": 1,
+      "name": "slider",
+      "useFor": "Use to set an amount within a range where the exact figure matters less than its size (a daily limit, a share of a budget). Show the current value beside it, give it an aria-label or a Label, and pass two values for a range.",
+      "constraints": [
+        "A slider for an exact amount someone must type (use a field)",
+        "Animating the key's position",
+        "A round blue knob"
+      ],
+      "source": "Extrapolated from the brand's switch and tab track (agentcard-website src/app/globals.css .plan-tabs, --bevel)",
+      "exports": [
+        "Slider"
+      ],
+      "client": true,
+      "docsUrl": "https://agentcard-ds.vercel.app/components/slider",
+      "markdownUrl": "https://agentcard-ds.vercel.app/r/slider.md",
+      "type": "ui",
+      "title": "Slider",
+      "description": "A sunken track filled with the blue key up to the value, with the switch's white key riding on it.",
+      "surface": "site",
+      "kinds": [],
+      "requires": [
+        "theme",
+        "utils"
+      ],
+      "packages": [
+        "@radix-ui/react-slider"
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "name": "sonner",
+      "useFor": "Mount one Toaster near the application root. Show a toast after an action succeeds or fails. Connect any toast action to its intended behavior.",
+      "constraints": [
+        "Toasts for errors that need an answer (use a dialog or a banner)",
+        "More than one action",
+        "Dark toasts",
+        "Long sentences in a toast"
+      ],
+      "source": "Repository reference; public guide pages currently unavailable. agentcard-website src/app/globals.css (.v7-toast, .v7-toast-icon), src/components/v7/guide-client.tsx (GuideToaster)",
+      "exports": [
+        "Toaster"
+      ],
+      "client": true,
+      "docsUrl": "https://agentcard-ds.vercel.app/components/sonner",
+      "markdownUrl": "https://agentcard-ds.vercel.app/r/sonner.md",
+      "type": "ui",
+      "title": "Toast",
+      "description": "Toast notifications with optional actions.",
+      "surface": "site",
+      "kinds": [],
+      "requires": [
+        "theme",
+        "utils"
+      ],
+      "packages": [
+        "sonner"
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "name": "spinner",
+      "useFor": "Use during a pending operation. Pair it with a label, prevent duplicate submissions when needed and restore the control when the operation finishes.",
+      "constraints": [
+        "Spinners for whole pages (use skeletons)",
+        "Colored spinners that ignore their text"
+      ],
+      "source": "Extension using the site text colors and reduced-motion behavior; no standalone spinner found on the current public site",
+      "exports": [
+        "Spinner"
+      ],
+      "client": false,
+      "docsUrl": "https://agentcard-ds.vercel.app/components/spinner",
+      "markdownUrl": "https://agentcard-ds.vercel.app/r/spinner.md",
+      "type": "ui",
+      "title": "Spinner",
+      "description": "Loading indicator that inherits the surrounding text color.",
+      "surface": "site",
+      "kinds": [],
+      "requires": [
+        "theme",
+        "utils"
+      ],
+      "packages": [
+        "lucide-react"
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "name": "sticker-field",
+      "useFor": "Use with Agentcard illustrations in section margins. Keep content and controls unobstructed. Motion stops for reduced-motion preferences.",
+      "constraints": [
+        "Stickers over text or controls",
+        "Fast or bouncy motion",
+        "Stickers on phones over the column",
+        "More than eight in one section"
+      ],
+      "source": "agentcard-website src/components/v7/sticker-rails.tsx, src/components/faq-stickers.tsx; src/app/globals.css:899 (.faq-sticker), 1605 (.v7-sticker-rails); agentcard.sh / and /pricing (computed)",
+      "exports": [
+        "StickerField",
+        "Sticker",
+        "StickerFieldProps"
+      ],
+      "client": false,
+      "docsUrl": "https://agentcard-ds.vercel.app/components/sticker-field",
+      "markdownUrl": "https://agentcard-ds.vercel.app/r/sticker-field.md",
+      "type": "visual",
+      "title": "Sticker field",
+      "description": "Decorative floating objects positioned around section content.",
+      "surface": "site",
+      "kinds": [
+        "section"
+      ],
+      "requires": [
+        "theme",
+        "utils"
+      ],
+      "packages": []
+    },
+    {
+      "schemaVersion": 1,
+      "name": "striped-wordmark",
+      "useFor": "Use across the bottom of SiteFooter on blue. Supports short uppercase words.",
+      "constraints": [
+        "More than one per page",
+        "Long words or sentences",
+        "On a white ground",
+        "Set in a font instead of the bars"
+      ],
+      "source": "agentcard-website src/components/v7/site-footer.tsx (BarGlyph, .v7-foot-glyphs); src/app/globals.css:5085; agentcard.sh / (computed)",
+      "exports": [
+        "StripedWordmark"
+      ],
+      "client": false,
+      "docsUrl": "https://agentcard-ds.vercel.app/components/striped-wordmark",
+      "markdownUrl": "https://agentcard-ds.vercel.app/r/striped-wordmark.md",
+      "type": "visual",
+      "title": "Striped wordmark",
+      "description": "SVG wordmark with horizontal stripes.",
+      "surface": "site",
+      "kinds": [],
+      "requires": [
+        "theme",
+        "utils"
+      ],
+      "packages": []
+    },
+    {
+      "schemaVersion": 1,
+      "name": "surface",
+      "useFor": "Wrap an area with the required white, paper or blue ground so content and overlays use matching colors.",
+      "constraints": [
+        "Blue grounds stacked one after another",
+        "A blue ground behind long text"
+      ],
+      "source": "agentcard-website src/app/globals.css (.on-paper, .on-blue)",
+      "exports": [
+        "Surface",
+        "usePortalContainer"
+      ],
+      "client": true,
+      "docsUrl": "https://agentcard-ds.vercel.app/r/surface.md",
+      "markdownUrl": "https://agentcard-ds.vercel.app/r/surface.md",
+      "type": "lib",
+      "title": "Surface",
+      "description": "Background and text context shared by a section and its overlays.",
+      "surface": "site",
+      "kinds": [],
+      "requires": [
+        "utils"
+      ],
+      "packages": []
+    },
+    {
+      "schemaVersion": 1,
+      "name": "switch",
+      "useFor": "Pair with Label. Connect checked and onCheckedChange when the application owns the setting.",
+      "constraints": [
+        "Pill-shaped switches",
+        "Colors other than blue for on",
+        "A switch inside a form that needs a submit (use a checkbox)"
+      ],
+      "source": "Extension from agentcard-website src/app/globals.css (THE PLAN TABS, --bevel-white)",
+      "exports": [
+        "Switch"
+      ],
+      "client": true,
+      "docsUrl": "https://agentcard-ds.vercel.app/components/switch",
+      "markdownUrl": "https://agentcard-ds.vercel.app/r/switch.md",
+      "type": "ui",
+      "title": "Switch",
+      "description": "Toggle for a setting that takes effect immediately.",
+      "surface": "site",
+      "kinds": [],
+      "requires": [
+        "theme",
+        "utils"
+      ],
+      "packages": [
+        "@radix-ui/react-switch"
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "name": "table",
+      "useFor": "Use for purchases, cards, plans or other comparable records. Give each TableCell after the first a label for the mobile layout. Use Badge for statuses.",
+      "constraints": [
+        "Zebra stripes",
+        "Bold headers",
+        "Caps headers",
+        "Tables nested in a card or window (the table is its own frame)"
+      ],
+      "source": "Repository reference; public guide pages currently unavailable. agentcard-website src/app/globals.css (.v7-guide-table)",
+      "exports": [
+        "Table",
+        "TableBody",
+        "TableCaption",
+        "TableCell",
+        "TableFooter",
+        "TableHead",
+        "TableHeader",
+        "TableRow"
+      ],
+      "client": false,
+      "docsUrl": "https://agentcard-ds.vercel.app/components/table",
+      "markdownUrl": "https://agentcard-ds.vercel.app/r/table.md",
+      "type": "ui",
+      "title": "Table",
+      "description": "Responsive table that stacks row content on phones.",
+      "surface": "site",
+      "kinds": [
+        "table"
+      ],
+      "requires": [
+        "theme",
+        "utils"
+      ],
+      "packages": []
+    },
+    {
+      "schemaVersion": 1,
+      "name": "tabs",
+      "useFor": "Use for related views such as plans, FAQ topics or item details. Give each TabsTrigger a matching TabsContent. Use glide={false} when supplying a custom selected state.",
+      "constraints": [
+        "Tabs for actions",
+        "Underlined tabs",
+        "Pill-shaped tabs",
+        "More than one blue key in a track"
+      ],
+      "source": "live https://www.agentcard.sh/pricing (.plan-tabs, .plan-tab, .plan-tabs-thumb); src/app/globals.css (.v7-guide-tablist for size sm)",
+      "exports": [
+        "Tabs",
+        "TabsList",
+        "TabsTrigger",
+        "TabsContent",
+        "tabsTriggerVariants"
+      ],
+      "client": true,
+      "docsUrl": "https://agentcard-ds.vercel.app/components/tabs",
+      "markdownUrl": "https://agentcard-ds.vercel.app/r/tabs.md",
+      "type": "ui",
+      "title": "Tabs",
+      "description": "Tabbed views with default, small and plain treatments.",
+      "surface": "site",
+      "kinds": [
+        "tabs"
+      ],
+      "requires": [
+        "theme",
+        "use-tab-glide",
+        "utils"
+      ],
+      "packages": [
+        "@radix-ui/react-tabs",
+        "class-variance-authority"
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "name": "tag-filter",
+      "useFor": "Connect onAddTag and onRemoveTag to the filter state, then apply those filters to the results.",
+      "constraints": [
+        "Filters that hide which tags are on",
+        "Colored tags per category"
+      ],
+      "source": "Extension from agentcard-website src/app/globals.css (.v7-guide-prose code, .v7-guide-search-field, .v7-guide-search-results)",
+      "exports": [
+        "TagFilter"
+      ],
+      "client": true,
+      "docsUrl": "https://agentcard-ds.vercel.app/components/tag-filter",
+      "markdownUrl": "https://agentcard-ds.vercel.app/r/tag-filter.md",
+      "type": "ui",
+      "title": "Tag filter",
+      "description": "Searchable tag picker with removable selected filters.",
+      "surface": "site",
+      "kinds": [
+        "chip"
+      ],
+      "requires": [
+        "theme",
+        "popover",
+        "utils"
+      ],
+      "packages": [
+        "lucide-react"
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "name": "tags-input",
+      "useFor": "Use inside Field for domains, emails or similar values. Enter or comma adds a value; Backspace removes the last value when the input is empty. Provide isTagInvalid for validation.",
+      "constraints": [
+        "Rounded fields",
+        "Tags without a way to remove them",
+        "Free text that should be a textarea"
+      ],
+      "source": "Extension from live https://www.agentcard.sh/get-started (.v7-gate-field input); src/app/globals.css (.v7-guide-prose code)",
+      "exports": [
+        "TagsInput"
+      ],
+      "client": true,
+      "docsUrl": "https://agentcard-ds.vercel.app/components/tags-input",
+      "markdownUrl": "https://agentcard-ds.vercel.app/r/tags-input.md",
+      "type": "ui",
+      "title": "Tags input",
+      "description": "Editable list of values with add, remove and validation states.",
+      "surface": "site",
+      "kinds": [
+        "input"
+      ],
+      "requires": [
+        "theme",
+        "field",
+        "utils"
+      ],
+      "packages": [
+        "lucide-react"
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "name": "team-directory",
+      "useFor": "Use for teams, advisors, investors or partners. Use tone=\"blue\" for the primary directory and the default tone for others. Provide current names and links.",
+      "constraints": [
+        "Color photos",
+        "Round avatars",
+        "Bold names",
+        "More than one blue-bar window per page",
+        "Cards with gaps between people instead of the ruled grid"
+      ],
+      "source": "agentcard-website src/components/v7/company-page.tsx; src/app/globals.css:1808 (.v7-about); agentcard.sh/about (computed: .v7-about-sec, .v7-about-cell)",
+      "exports": [
+        "TeamDirectory",
+        "TeamPerson",
+        "TeamFooterCell",
+        "TeamDirectoryProps"
+      ],
+      "client": false,
+      "docsUrl": "https://agentcard-ds.vercel.app/components/team-directory",
+      "markdownUrl": "https://agentcard-ds.vercel.app/r/team-directory.md",
+      "type": "site",
+      "title": "Team directory",
+      "description": "Responsive directory of people with photos, roles and optional links.",
+      "surface": "site",
+      "kinds": [
+        "window",
+        "window-bar",
+        "card",
+        "link"
+      ],
+      "requires": [
+        "theme",
+        "window",
+        "utils"
+      ],
+      "packages": []
+    },
+    {
+      "schemaVersion": 1,
+      "name": "testimonials",
+      "useFor": "Pass cases with name, logo, quote, context and tag. Use approved customer quotes and attribution.",
+      "constraints": [
+        "More than one quote per window",
+        "Bold or italic quotes",
+        "A trail of a single case",
+        "Photos in place of the company's mark"
+      ],
+      "source": "agentcard-website src/components/v7/products-showcase.tsx (CaseCard), product-trail.tsx; agentcard.sh / (.v7-cases, .v7-trail, .v7-case, computed)",
+      "exports": [
+        "Testimonials",
+        "Case"
+      ],
+      "client": true,
+      "docsUrl": "https://agentcard-ds.vercel.app/components/testimonials",
+      "markdownUrl": "https://agentcard-ds.vercel.app/r/testimonials.md",
+      "type": "site",
+      "title": "Testimonials",
+      "description": "Customer quotes with names, logos and optional context.",
+      "surface": "site",
+      "kinds": [
+        "window",
+        "window-bar",
+        "card"
+      ],
+      "requires": [
+        "theme",
+        "window",
+        "use-trail",
+        "utils"
+      ],
+      "packages": []
+    },
+    {
+      "schemaVersion": 1,
+      "name": "textarea",
+      "useFor": "Use inside Field for messages, notes and other longer input. Connect value and onChange when the form owns the state.",
+      "constraints": [
+        "Rounded corners",
+        "Gray fills",
+        "Resizing sideways"
+      ],
+      "source": "Published CSS on https://agentcard.com/get-started (.v7-gate-field textarea); the current visible form has no textarea",
+      "exports": [
+        "Textarea"
+      ],
+      "client": true,
+      "docsUrl": "https://agentcard-ds.vercel.app/components/textarea",
+      "markdownUrl": "https://agentcard-ds.vercel.app/r/textarea.md",
+      "type": "ui",
+      "title": "Textarea",
+      "description": "Resizable multi-line text field.",
+      "surface": "site",
+      "kinds": [
+        "input"
+      ],
+      "requires": [
+        "theme",
+        "field",
+        "utils"
+      ],
+      "packages": []
+    },
+    {
+      "schemaVersion": 1,
+      "name": "toast",
+      "useFor": "Use only where the older toast API is needed; prefer Sonner. Mount Toaster once and call toast({ title, description, action }). Use variant destructive for failures and keep messages to a line.",
+      "constraints": [
+        "Toasts for errors that need a decision",
+        "Several actions in one toast",
+        "Long messages"
+      ],
+      "source": "agentcard-website globals.css .v7-toast (as sonner.tsx)",
+      "exports": [
+        "Toast",
+        "ToastAction",
+        "ToastClose",
+        "ToastDescription",
+        "Toaster",
+        "ToastProvider",
+        "ToastTitle",
+        "ToastViewport",
+        "toast",
+        "useToast",
+        "ToastActionElement",
+        "ToastProps"
+      ],
+      "client": true,
+      "docsUrl": "https://agentcard-ds.vercel.app/components/toast",
+      "markdownUrl": "https://agentcard-ds.vercel.app/r/toast.md",
+      "type": "ui",
+      "title": "Toast",
+      "description": "The Radix toast in the brand's toast: a white card at the bottom left with a display-face title and a small blue action.",
+      "surface": "site",
+      "kinds": [],
+      "requires": [
+        "theme",
+        "utils"
+      ],
+      "packages": [
+        "@radix-ui/react-toast",
+        "class-variance-authority",
+        "lucide-react"
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "name": "toggle-group",
+      "useFor": "Use type=\"single\" for one view choice or type=\"multiple\" for filters that can combine (Airlines, Hotels, Software). The default sits in the tab track; use variant=\"outline\" for toolbar keys, with spacing={0} to join them. Use SegmentedControl for a single choice whose blue key should glide.",
+      "constraints": [
+        "Mixing the track and outline styles in one group",
+        "More than six choices in a track",
+        "A gliding key in a multiple group"
+      ],
+      "source": "Extrapolated from agentcard.com/pricing (.plan-tabs) and the brand's keys",
+      "exports": [
+        "ToggleGroup",
+        "ToggleGroupItem"
+      ],
+      "client": true,
+      "docsUrl": "https://agentcard-ds.vercel.app/components/toggle-group",
+      "markdownUrl": "https://agentcard-ds.vercel.app/r/toggle-group.md",
+      "type": "ui",
+      "title": "Toggle Group",
+      "description": "Keys in the sunken tab track, the chosen ones blue; or separate white keys that stay pressed.",
+      "surface": "site",
+      "kinds": [],
+      "requires": [
+        "theme",
+        "toggle",
+        "utils"
+      ],
+      "packages": [
+        "@radix-ui/react-toggle-group",
+        "class-variance-authority"
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "name": "toggle",
+      "useFor": "Use for a two-state formatting or view option in a toolbar (Pin, Show receipts). Give icon-only toggles an aria-label. Use a switch for a setting that takes effect at once and a checkbox in forms.",
+      "constraints": [
+        "A blue fill for the on state (that is the chosen tab)",
+        "A toggle that triggers an action",
+        "Icon-only toggles without a name"
+      ],
+      "source": "Extrapolated from the brand's keys (agentcard-website src/app/globals.css --bevel, --pressed)",
+      "exports": [
+        "Toggle",
+        "toggleVariants"
+      ],
+      "client": true,
+      "docsUrl": "https://agentcard-ds.vercel.app/components/toggle",
+      "markdownUrl": "https://agentcard-ds.vercel.app/r/toggle.md",
+      "type": "ui",
+      "title": "Toggle",
+      "description": "A key that stays down: a ghost or white key that sinks into the pressed well when on.",
+      "surface": "site",
+      "kinds": [],
+      "requires": [
+        "theme",
+        "utils"
+      ],
+      "packages": [
+        "@radix-ui/react-toggle",
+        "class-variance-authority"
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "name": "tooltip",
+      "useFor": "Use to explain an icon control or add brief context. Keep a separate accessible name on the control; do not put essential instructions only in the tooltip.",
+      "constraints": [
+        "Tooltips for anything needed to finish a task",
+        "Long text (use a popover)",
+        "Dark tooltips"
+      ],
+      "source": "Extension from agentcard-website src/app/globals.css (.v7-dock-card)",
+      "exports": [
+        "Tooltip",
+        "TooltipTrigger",
+        "TooltipContent",
+        "TooltipProvider"
+      ],
+      "client": true,
+      "docsUrl": "https://agentcard-ds.vercel.app/components/tooltip",
+      "markdownUrl": "https://agentcard-ds.vercel.app/r/tooltip.md",
+      "type": "ui",
+      "title": "Tooltip",
+      "description": "Short contextual label shown on hover or keyboard focus.",
+      "surface": "site",
+      "kinds": [],
+      "requires": [
+        "theme",
+        "surface",
+        "utils"
+      ],
+      "packages": [
+        "@radix-ui/react-tooltip"
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "name": "trace",
+      "useFor": "Use to show what an agent did or is doing during a purchase: one TraceLine per step with a TraceIcon, a TraceTitle and an optional TraceDescription (a duration or a count). Set status running (use Spinner as its glyph), pending or error. Wrap a step in TraceCollapsible with TraceCollapsibleTrigger and TraceCollapsibleContent when it has detail; wrap a line in a link or button to make it act.",
+      "constraints": [
+        "Bold step titles",
+        "More than one running step",
+        "Steps that animate in one by one",
+        "Colors other than ink",
+        "red and the muted ink"
+      ],
+      "source": "Extrapolated from Agentcard: the updates page's display-face lines (agentcard.sh/updates), the FAQ's disclosure and the Collapse",
+      "exports": [
+        "Trace",
+        "TraceCollapsible",
+        "TraceCollapsibleContent",
+        "TraceCollapsibleTrigger",
+        "TraceDescription",
+        "TraceIcon",
+        "TraceLine",
+        "TraceTitle"
+      ],
+      "client": true,
+      "docsUrl": "https://agentcard-ds.vercel.app/components/trace",
+      "markdownUrl": "https://agentcard-ds.vercel.app/r/trace.md",
+      "type": "ui",
+      "title": "Trace",
+      "description": "An agent's steps as quiet display-face lines with a glyph, a running step in ink with a spinner, a failed one in red, and steps that open to show their detail.",
+      "surface": "site",
+      "kinds": [],
+      "requires": [
+        "theme",
+        "collapse",
+        "utils"
+      ],
+      "packages": [
+        "@radix-ui/react-collapsible",
+        "lucide-react"
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "name": "typography",
+      "useFor": "Use for long-form text (guides, updates, legal pages) where a component would be too much: headings H1 to H4, P for paragraphs, Lead under a page title, Muted for secondary lines, Small for captions, InlineCode for names and values, Table for a small table in text. Use Table (the component) for data.",
+      "constraints": [
+        "Bold headings",
+        "All caps headings",
+        "Body text under 14px",
+        "A heading set in Inter"
+      ],
+      "source": "Agentcard type scale: agentcard-website src/app/globals.css (h1 to h5, .v7-guide-prose, .v7-guide-prose code); agentcard.sh (computed)",
+      "exports": [
+        "TypographyBlockquote",
+        "TypographyH1",
+        "TypographyH2",
+        "TypographyH3",
+        "TypographyH4",
+        "TypographyInlineCode",
+        "TypographyLarge",
+        "TypographyLead",
+        "TypographyList",
+        "TypographyMuted",
+        "TypographyP",
+        "TypographySmall",
+        "TypographyTable"
+      ],
+      "client": false,
+      "docsUrl": "https://agentcard-ds.vercel.app/components/typography",
+      "markdownUrl": "https://agentcard-ds.vercel.app/r/typography.md",
+      "type": "ui",
+      "title": "Typography",
+      "description": "The brand's type as components: display-face headings at 500 tracked tight, Inter body copy, a muted lead, a blue-ruled quote and the sky inline code chip.",
+      "surface": "site",
+      "kinds": [],
+      "requires": [
+        "theme",
+        "utils"
+      ],
+      "packages": []
+    },
+    {
+      "schemaVersion": 1,
+      "name": "updates-feed",
+      "useFor": "Use for changelogs or activity updates. Provide dates, change groups and optional media. Place in a Prose column or another readable content width.",
+      "constraints": [
+        "Rounded or filled tags",
+        "Colors other than blue ink and red for tags",
+        "Cards around each day",
+        "Long paragraphs instead of bullets"
+      ],
+      "source": "agentcard.sh/updates (computed: .v7-upd-feed, .v7-upd-day, .v7-upd-tag, .v7-upd-group, .v7-upd-video); not in the agentcard-website source yet",
+      "exports": [
+        "UpdatesFeed",
+        "UpdateTag",
+        "UpdateDay",
+        "UpdateEntry",
+        "UpdatesFeedProps"
+      ],
+      "client": false,
+      "docsUrl": "https://agentcard-ds.vercel.app/components/updates-feed",
+      "markdownUrl": "https://agentcard-ds.vercel.app/r/updates-feed.md",
+      "type": "site",
+      "title": "Updates feed",
+      "description": "Dated release notes grouped by change type.",
+      "surface": "site",
+      "kinds": [
+        "table",
+        "chip",
+        "body-text",
+        "caption",
+        "media-frame"
+      ],
+      "requires": [
+        "theme",
+        "utils"
+      ],
+      "packages": []
+    },
+    {
+      "schemaVersion": 1,
+      "name": "use-hold",
+      "useFor": "Use for hold-to-confirm controls. Spread handlers on the control and use isHolding for its visual state. Pass disabled to prevent confirmation.",
+      "constraints": [
+        "Hold for actions that can be undone"
+      ],
+      "exports": [
+        "useHold"
+      ],
+      "client": true,
+      "docsUrl": "https://agentcard-ds.vercel.app/r/use-hold.md",
+      "markdownUrl": "https://agentcard-ds.vercel.app/r/use-hold.md",
+      "type": "hook",
+      "title": "useHold",
+      "description": "Confirms after a continuous pointer or keyboard hold and cancels when interrupted.",
+      "surface": "site",
+      "kinds": [],
+      "requires": [
+        "theme"
+      ],
+      "packages": []
+    },
+    {
+      "schemaVersion": 1,
+      "name": "use-tab-glide",
+      "useFor": "Use for a shared selection indicator in a row of options. The indicator is measured from the parent’s outer edge; account for the border when positioning it.",
+      "constraints": [
+        "Animating the key with a timed transition that restarts when interrupted"
+      ],
+      "exports": [
+        "useTabGlide"
+      ],
+      "client": true,
+      "docsUrl": "https://agentcard-ds.vercel.app/r/use-tab-glide.md",
+      "markdownUrl": "https://agentcard-ds.vercel.app/r/use-tab-glide.md",
+      "type": "hook",
+      "title": "useTabGlide",
+      "description": "Moves a selection indicator between tabs, respecting reduced motion.",
+      "surface": "site",
+      "kinds": [],
+      "requires": [
+        "theme"
+      ],
+      "packages": []
+    },
+    {
+      "schemaVersion": 1,
+      "name": "use-trail",
+      "useFor": "Use with Testimonials or LogoStrip layouts. Mark cards with data-trail-card and apply the matching TRAIL_REST position.",
+      "constraints": [
+        "A trail through a single card",
+        "Animating the cards on scroll"
+      ],
+      "source": "agentcard-website src/components/v7/product-trail.tsx",
+      "exports": [
+        "TRAIL_REST",
+        "useTrail"
+      ],
+      "client": true,
+      "docsUrl": "https://agentcard-ds.vercel.app/r/use-trail.md",
+      "markdownUrl": "https://agentcard-ds.vercel.app/r/use-trail.md",
+      "type": "hook",
+      "title": "useTrail",
+      "description": "Draws a responsive connecting line through a set of cards.",
+      "surface": "site",
+      "kinds": [],
+      "requires": [
+        "theme"
+      ],
+      "packages": []
+    },
+    {
+      "schemaVersion": 1,
+      "name": "utils",
+      "useFor": "Use cn to combine component classes and caller overrides.",
+      "constraints": [],
+      "source": "src/lib/utils.ts",
+      "exports": [
+        "cn"
+      ],
+      "client": false,
+      "docsUrl": "https://agentcard-ds.vercel.app/r/utils.md",
+      "markdownUrl": "https://agentcard-ds.vercel.app/r/utils.md",
+      "type": "lib",
+      "title": "cn",
+      "description": "Class-name utilities that understand the design token scales.",
+      "surface": "both",
+      "kinds": [],
+      "requires": [],
+      "packages": [
+        "clsx",
+        "tailwind-merge"
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "name": "window",
+      "useFor": "Use for plans, directories, code examples and other grouped content that needs a title. Use at most one blue title bar per group.",
+      "constraints": [
+        "A window bar on every card of a page",
+        "Colored bars other than sky blue and the five tints",
+        "Rounded corners above 12px"
+      ],
+      "source": "agentcard.sh /pricing (.v7-offer-card .v7-windowbar) and / (.v7-customer), computed; agentcard-website src/components/v7/window-mark.tsx",
+      "exports": [
+        "Window",
+        "WindowBar",
+        "WindowMark",
+        "windowBarVariants"
+      ],
+      "client": false,
+      "docsUrl": "https://agentcard-ds.vercel.app/components/window",
+      "markdownUrl": "https://agentcard-ds.vercel.app/r/window.md",
+      "type": "ui",
+      "title": "Window",
+      "description": "Content container with a title bar and optional controls.",
+      "surface": "site",
+      "kinds": [
+        "window",
+        "window-bar",
+        "card"
+      ],
+      "requires": [
+        "theme",
+        "utils"
+      ],
+      "packages": [
+        "class-variance-authority"
+      ]
+    }
+  ]
+}

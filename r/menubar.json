@@ -1,0 +1,77 @@
+{
+  "schemaVersion": 1,
+  "name": "menubar",
+  "useFor": "Use at the top of a dense tool (a statement viewer, an editor) where menus group many commands. Keep three to six menus, each a MenubarMenu with a trigger and its content.",
+  "constraints": [
+    "A menubar for site navigation (use navigation menu)",
+    "A blue key for the open menu",
+    "Nested menus deeper than one level"
+  ],
+  "documentation": "",
+  "source": "Extrapolated from Agentcard (tabs.tsx track, dropdown-menu.tsx)",
+  "exports": [
+    "Menubar",
+    "MenubarCheckboxItem",
+    "MenubarContent",
+    "MenubarGroup",
+    "MenubarItem",
+    "MenubarLabel",
+    "MenubarMenu",
+    "MenubarPortal",
+    "MenubarRadioGroup",
+    "MenubarRadioItem",
+    "MenubarSeparator",
+    "MenubarShortcut",
+    "MenubarSub",
+    "MenubarSubContent",
+    "MenubarSubTrigger",
+    "MenubarTrigger"
+  ],
+  "client": true,
+  "docsUrl": "https://agentcard-ds.vercel.app/components/menubar",
+  "markdownUrl": "https://agentcard-ds.vercel.app/r/menubar.md",
+  "examples": [
+    {
+      "path": "examples/menubar.tsx",
+      "content": "\"use client\";\n\nimport { useState } from \"react\";\n\nimport { Menubar, MenubarCheckboxItem, MenubarContent, MenubarItem, MenubarLabel, MenubarMenu, MenubarRadioGroup, MenubarRadioItem, MenubarSeparator, MenubarShortcut, MenubarSub, MenubarSubContent, MenubarSubTrigger, MenubarTrigger } from \"@/components/ui/menubar\";\n\nfunction StatementBar({ defaultValue }: { defaultValue?: string }) {\n  const [declined, setDeclined] = useState(true);\n  const [group, setGroup] = useState(\"agent\");\n  return (\n    <Menubar defaultValue={defaultValue}>\n      <MenubarMenu value=\"statement\">\n        <MenubarTrigger>Statement</MenubarTrigger>\n        <MenubarContent>\n          <MenubarItem>\n            New statement <MenubarShortcut>⌘N</MenubarShortcut>\n          </MenubarItem>\n          <MenubarItem>\n            Download PDF <MenubarShortcut>⌘S</MenubarShortcut>\n          </MenubarItem>\n          <MenubarSub>\n            <MenubarSubTrigger>Share</MenubarSubTrigger>\n            <MenubarSubContent>\n              <MenubarItem>Email to finance</MenubarItem>\n              <MenubarItem>Copy link</MenubarItem>\n            </MenubarSubContent>\n          </MenubarSub>\n          <MenubarSeparator />\n          <MenubarItem disabled>Close the month</MenubarItem>\n        </MenubarContent>\n      </MenubarMenu>\n      <MenubarMenu value=\"view\">\n        <MenubarTrigger>View</MenubarTrigger>\n        <MenubarContent>\n          <MenubarCheckboxItem checked={declined} onCheckedChange={(on) => setDeclined(on === true)}>\n            Show declined purchases\n          </MenubarCheckboxItem>\n          <MenubarSeparator />\n          <MenubarLabel>Group by</MenubarLabel>\n          <MenubarRadioGroup value={group} onValueChange={setGroup}>\n            <MenubarRadioItem value=\"agent\">Agent</MenubarRadioItem>\n            <MenubarRadioItem value=\"merchant\">Merchant</MenubarRadioItem>\n            <MenubarRadioItem value=\"day\">Day</MenubarRadioItem>\n          </MenubarRadioGroup>\n        </MenubarContent>\n      </MenubarMenu>\n      <MenubarMenu value=\"cards\">\n        <MenubarTrigger>Cards</MenubarTrigger>\n        <MenubarContent>\n          <MenubarItem>New card</MenubarItem>\n          <MenubarItem>Set limits</MenubarItem>\n          <MenubarSeparator />\n          <MenubarItem variant=\"destructive\">Freeze all cards</MenubarItem>\n        </MenubarContent>\n      </MenubarMenu>\n    </Menubar>\n  );\n}\n\nexport function Site() {\n  return (\n    <div className=\"flex justify-center\">\n      <StatementBar />\n    </div>\n  );\n}\n\nexport function Open() {\n  return (\n    <div className=\"flex h-80 justify-center\">\n      <StatementBar defaultValue=\"view\" />\n    </div>\n  );\n}\n",
+      "exports": [
+        "Site",
+        "Open"
+      ],
+      "requires": [
+        "menubar"
+      ],
+      "packages": [],
+      "previews": [
+        {
+          "name": "Site",
+          "url": "https://agentcard-ds.vercel.app/preview/menubar/Site"
+        },
+        {
+          "name": "Open",
+          "url": "https://agentcard-ds.vercel.app/preview/menubar/Open"
+        }
+      ]
+    }
+  ],
+  "type": "ui",
+  "title": "Menubar",
+  "description": "An app's menu bar: the brand's sunken tab track with quiet triggers, the open one a white key.",
+  "surface": "site",
+  "kinds": [],
+  "requires": [
+    "theme",
+    "surface",
+    "utils"
+  ],
+  "packages": [
+    "@radix-ui/react-menubar",
+    "lucide-react"
+  ],
+  "files": [
+    {
+      "path": "components/ui/menubar.tsx",
+      "content": "\"use client\";\n\nimport * as React from \"react\";\nimport * as MenubarPrimitive from \"@radix-ui/react-menubar\";\nimport { Check, ChevronRight } from \"lucide-react\";\n\nimport { usePortalContainer } from \"@/lib/surface\";\nimport { cn } from \"@/lib/utils\";\n\n// An app's menu bar, extrapolated from the brand's tabs (tabs.tsx, .plan-tabs): the sunken track (pale, a hairline,\n// 12px corners, 4px inset, the inner shadow) holding 32px triggers in the 14px display face at 68 percent ink; the open\n// one is the white key (a hairline, the light line inside the top, the soft drop) in ink. Its menus are the brand's\n// menu (dropdown-menu.tsx): the floating panel with 4px of padding and display-face rows that wash when highlighted.\n// A menu grows from its trigger (scale 0.97 and a fade, 160ms ease-out) and closes at once, so moving along the bar\n// with the arrows or the pointer never waits on a closing panel. Highlighting a row is instant.\nconst PANEL =\n  \"z-50 flex min-w-48 max-w-(--radix-menubar-content-available-width) max-h-(--radix-menubar-content-available-height) origin-(--radix-menubar-content-transform-origin) animate-pop-in flex-col gap-0.5 overflow-y-auto overscroll-contain rounded-control border border-hairline bg-surface p-1 text-fg shadow-tooltip outline-none motion-reduce:animate-none\";\nconst ROW =\n  \"relative flex w-full cursor-default items-center gap-2 rounded-menu px-2.5 py-2 font-display text-body-sm leading-snug text-fg-secondary outline-none select-none data-[disabled]:pointer-events-none data-[disabled]:opacity-40 data-[highlighted]:bg-wash-hover data-[highlighted]:text-fg data-[inset]:pl-8 [&_svg]:size-3.5 [&_svg]:shrink-0\";\nconst DANGER = \"text-danger data-[highlighted]:bg-danger/6 data-[highlighted]:text-danger\";\nconst QUIET = \"text-fg-muted\";\n\nfunction Menubar({ className, ...props }: React.ComponentProps<typeof MenubarPrimitive.Root>) {\n  return <MenubarPrimitive.Root data-slot=\"menubar\" className={cn(\"flex h-10 w-fit items-center gap-1 rounded-card border border-hairline bg-subtle p-1 shadow-well\", className)} {...props} />;\n}\n\nfunction MenubarMenu(props: React.ComponentProps<typeof MenubarPrimitive.Menu>) {\n  return <MenubarPrimitive.Menu data-slot=\"menubar-menu\" {...props} />;\n}\n\nfunction MenubarTrigger({ className, ...props }: React.ComponentProps<typeof MenubarPrimitive.Trigger>) {\n  return (\n    <MenubarPrimitive.Trigger\n      data-slot=\"menubar-trigger\"\n      className={cn(\n        \"flex h-8 items-center gap-1.5 rounded-control border border-transparent px-3 font-display text-body-sm leading-none text-fg-muted outline-none select-none transition-[background-color,color] duration-150 ease-out hover:bg-wash-pill hover:text-fg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-solid focus-visible:outline-focus-ring data-[state=open]:border-hairline data-[state=open]:bg-surface data-[state=open]:text-fg data-[state=open]:shadow-key motion-reduce:transition-none\",\n        className,\n      )}\n      {...props}\n    />\n  );\n}\n\nfunction MenubarContent({ className, align = \"start\", alignOffset = -4, sideOffset = 8, collisionPadding = 8, ...props }: React.ComponentProps<typeof MenubarPrimitive.Content>) {\n  return (\n    <MenubarPrimitive.Portal container={usePortalContainer()}>\n      <MenubarPrimitive.Content data-slot=\"menubar-content\" align={align} alignOffset={alignOffset} sideOffset={sideOffset} collisionPadding={collisionPadding} className={cn(PANEL, className)} {...props} />\n    </MenubarPrimitive.Portal>\n  );\n}\n\nfunction MenubarGroup(props: React.ComponentProps<typeof MenubarPrimitive.Group>) {\n  return <MenubarPrimitive.Group data-slot=\"menubar-group\" {...props} />;\n}\n\nfunction MenubarPortal(props: React.ComponentProps<typeof MenubarPrimitive.Portal>) {\n  return <MenubarPrimitive.Portal data-slot=\"menubar-portal\" container={usePortalContainer()} {...props} />;\n}\n\nfunction MenubarSub(props: React.ComponentProps<typeof MenubarPrimitive.Sub>) {\n  return <MenubarPrimitive.Sub data-slot=\"menubar-sub\" {...props} />;\n}\n\nfunction MenubarRadioGroup(props: React.ComponentProps<typeof MenubarPrimitive.RadioGroup>) {\n  return <MenubarPrimitive.RadioGroup data-slot=\"menubar-radio-group\" {...props} />;\n}\n\nfunction MenubarItem({ className, inset, variant = \"default\", ...props }: React.ComponentProps<typeof MenubarPrimitive.Item> & { inset?: boolean; variant?: \"default\" | \"destructive\" }) {\n  return <MenubarPrimitive.Item data-slot=\"menubar-item\" data-inset={inset ? \"\" : undefined} data-variant={variant} className={cn(ROW, variant === \"destructive\" && DANGER, className)} {...props} />;\n}\n\nfunction MenubarCheckboxItem({ className, children, checked, ...props }: React.ComponentProps<typeof MenubarPrimitive.CheckboxItem>) {\n  return (\n    <MenubarPrimitive.CheckboxItem data-slot=\"menubar-checkbox-item\" checked={checked} className={cn(ROW, \"pr-8\", className)} {...props}>\n      {children}\n      <MenubarPrimitive.ItemIndicator className=\"absolute right-2.5 text-fg-brand\">\n        <Check strokeWidth={1.75} />\n      </MenubarPrimitive.ItemIndicator>\n    </MenubarPrimitive.CheckboxItem>\n  );\n}\n\nfunction MenubarRadioItem({ className, children, ...props }: React.ComponentProps<typeof MenubarPrimitive.RadioItem>) {\n  return (\n    <MenubarPrimitive.RadioItem data-slot=\"menubar-radio-item\" className={cn(ROW, \"pr-8 data-[state=checked]:text-fg\", className)} {...props}>\n      {children}\n      <MenubarPrimitive.ItemIndicator className=\"absolute right-2.5 text-fg-brand\">\n        <Check strokeWidth={1.75} />\n      </MenubarPrimitive.ItemIndicator>\n    </MenubarPrimitive.RadioItem>\n  );\n}\n\nfunction MenubarLabel({ className, inset, ...props }: React.ComponentProps<typeof MenubarPrimitive.Label> & { inset?: boolean }) {\n  return <MenubarPrimitive.Label data-slot=\"menubar-label\" data-inset={inset ? \"\" : undefined} className={cn(\"px-2.5 pt-2 pb-1 font-display text-caption data-[inset]:pl-8\", QUIET, className)} {...props} />;\n}\n\nfunction MenubarSeparator({ className, ...props }: React.ComponentProps<typeof MenubarPrimitive.Separator>) {\n  return <MenubarPrimitive.Separator data-slot=\"menubar-separator\" className={cn(\"-mx-1 my-1 h-px bg-line\", className)} {...props} />;\n}\n\nfunction MenubarShortcut({ className, ...props }: React.ComponentProps<\"span\">) {\n  return <span data-slot=\"menubar-shortcut\" className={cn(\"ml-auto pl-4 text-caption\", QUIET, className)} {...props} />;\n}\n\nfunction MenubarSubTrigger({ className, inset, children, ...props }: React.ComponentProps<typeof MenubarPrimitive.SubTrigger> & { inset?: boolean }) {\n  return (\n    <MenubarPrimitive.SubTrigger data-slot=\"menubar-sub-trigger\" data-inset={inset ? \"\" : undefined} className={cn(ROW, \"data-[state=open]:bg-wash-hover data-[state=open]:text-fg\", className)} {...props}>\n      {children}\n      <ChevronRight className=\"ml-auto\" strokeWidth={1.5} />\n    </MenubarPrimitive.SubTrigger>\n  );\n}\n\nfunction MenubarSubContent({ className, collisionPadding = 8, ...props }: React.ComponentProps<typeof MenubarPrimitive.SubContent>) {\n  return (\n    <MenubarPrimitive.Portal container={usePortalContainer()}>\n      <MenubarPrimitive.SubContent data-slot=\"menubar-sub-content\" collisionPadding={collisionPadding} className={cn(PANEL, \"min-w-40\", className)} {...props} />\n    </MenubarPrimitive.Portal>\n  );\n}\n\nexport {\n  Menubar,\n  MenubarCheckboxItem,\n  MenubarContent,\n  MenubarGroup,\n  MenubarItem,\n  MenubarLabel,\n  MenubarMenu,\n  MenubarPortal,\n  MenubarRadioGroup,\n  MenubarRadioItem,\n  MenubarSeparator,\n  MenubarShortcut,\n  MenubarSub,\n  MenubarSubContent,\n  MenubarSubTrigger,\n  MenubarTrigger,\n};\n"
+    }
+  ]
+}
