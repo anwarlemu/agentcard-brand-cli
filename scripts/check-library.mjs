@@ -4,7 +4,7 @@ import { createRequire } from 'node:module';
 const root=new URL('..', import.meta.url).pathname;
 const require=createRequire(`${root}/package.json`);
 const {chromium}=require('playwright-core');
-const base=process.env.DOCS_URL || 'http://127.0.0.1:4645';
+const base=process.env.DOCS_URL || 'http://localhost:4645';
 const out=process.env.AUDIT_DIR || '/tmp/agentcard-library-audit';
 mkdirSync(out,{recursive:true});
 const {items}=JSON.parse(readFileSync(`${root}/apps/www/lib/registry-index.json`));

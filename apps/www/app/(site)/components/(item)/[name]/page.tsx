@@ -2,10 +2,8 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import { Window } from "@/components/ui/window";
-import { Command } from "@www/components/chrome";
-import { CtaCard } from "@www/components/cta-card";
+import { Command, PageBody, PageHead } from "@www/components/chrome";
 import { Pager } from "@www/components/pager";
-import { Contents } from "@www/components/toc";
 import { Code } from "@www/components/code";
 import { FramePreview } from "@www/components/frame-preview";
 import { Preview } from "@www/components/preview";
@@ -46,37 +44,39 @@ export default async function ComponentPage({ params }: { params: Promise<{ name
   if (!item) notFound();
   // The main example first (a page, then the preview), then its states (Open, Few...) in their own order.
   const MAIN = ["Block", "Site"];
-  const demos = Object.entries(examples[item.name] ?? {}).sort(([a], [b]) => (MAIN.includes(a) ? MAIN.indexOf(a) : 9) - (MAIN.includes(b) ? MAIN.indexOf(b) : 9));
+  const all = examples[item.name] ?? {};
+  const order = item.examples.filter((name) => all[name]);
+  const demos = [...order.filter((n) => MAIN.includes(n)), ...order.filter((n) => !MAIN.includes(n))].map((name) => [name, all[name]] as const);
   // Isolate demos that focus, lock scrolling, or open overlays from the surrounding docs.
   const framed = needsPreviewFrame(item);
-  const surfaceFlag = item.surface === "site" || item.surface === "product" ? ` --surface ${item.surface}` : "";
-  const sections = [
-    ...(demos.length ? [{ id: "preview", label: "Preview" }] : []),
-    { id: "usage", label: "Usage" },
-    ...(item.examples.length ? [{ id: "example", label: "Example" }] : []),
-    { id: "source", label: "Source" },
-  ];
   // The library's order, as the panel lists it: by group, then each group's own order.
-  const flat = GROUPS.flatMap((g) => items.filter((i) => i.type === g.type));
+  const flat = GROUPS.flatMap((g) => items.filter((i) => i.type === g.type).sort((x, y) => x.title.localeCompare(y.title)));
   const at = flat.findIndex((i) => i.name === item.name);
   const prev = at > 0 ? flat[at - 1] : undefined;
   const next = at < flat.length - 1 ? flat[at + 1] : undefined;
+  const group = GROUPS.find((g) => g.type === item.type)?.label ?? TYPE_LABEL[item.type];
   return (
-    <div className="grid grid-cols-[minmax(0,1fr)] items-start gap-12 xl:grid-cols-[minmax(0,1fr)_clamp(15.25rem,19vw,17.5rem)]">
-      <article className="mx-auto grid w-full max-w-180 min-w-0 grid-cols-[minmax(0,1fr)] gap-14">
-        <header className="border-b border-line-rule pb-7">
-          <p className="font-display text-caption tracking-label text-fg-label">{TYPE_LABEL[item.type]}</p>
-          <h1 className="mt-3 font-display text-h2 leading-display font-medium tracking-tight text-pretty">{item.title}</h1>
-          <p className="mt-3.5 text-body-lg leading-normal text-fg-muted">
-            <Prose text={item.description} />
-          </p>
-          <p className="mt-4 flex flex-wrap gap-x-5 gap-y-2 text-body-sm text-fg-brand">
-            <a href={`/r/${item.name}.md`} className="underline underline-offset-4">Text reference</a>
-            <a href={`/r/${item.name}.json`} className="underline underline-offset-4">Source and examples as JSON</a>
-          </p>
-          <Command command={`${CLI_COMMAND} add ${item.name}${surfaceFlag}`} className="mt-7 max-w-none" />
-          <p className="mt-2 text-caption text-fg-muted">Run from the target React 19.2+ app root with Tailwind CSS 4 and the <code>@/*</code> source alias.</p>
-        </header>
+    <>
+      <PageHead
+        eyebrow={group}
+        title={item.title}
+        description={<Prose text={item.description} />}
+        actions={
+          <>
+            <a href={`/r/${item.name}.md`} className="rounded-sm text-fg-brand underline underline-offset-4 outline-none focus-visible:outline-2 focus-visible:outline-focus-ring">
+              Text reference
+            </a>
+            <a href={`/r/${item.name}.json`} className="rounded-sm text-fg-brand underline underline-offset-4 outline-none focus-visible:outline-2 focus-visible:outline-focus-ring">
+              JSON
+            </a>
+          </>
+        }
+      />
+      <PageBody className="max-w-200">
+        <div className="grid grid-cols-[minmax(0,1fr)] gap-2">
+          <Command command={`${CLI_COMMAND} add ${item.name}`} />
+          <p className="text-caption text-fg-muted">Run from the target React 19.2+ app root with Tailwind CSS 4 and the <code>@/*</code> source alias.</p>
+        </div>
 
         {demos.length > 0 && (
           <div id="preview" className="grid scroll-mt-6 gap-8">
@@ -104,12 +104,8 @@ export default async function ComponentPage({ params }: { params: Promise<{ name
         </Section>
 
         <Pager prev={prev && { name: prev.name, title: prev.title }} next={next && { name: next.name, title: next.title }} />
-      </article>
-      <div className="sticky top-6 hidden flex-col gap-6 xl:flex">
-        <Contents sections={sections} />
-        <CtaCard command={`${CLI_COMMAND} add ${item.name}${surfaceFlag}`} />
-      </div>
-    </div>
+      </PageBody>
+    </>
   );
 }
 

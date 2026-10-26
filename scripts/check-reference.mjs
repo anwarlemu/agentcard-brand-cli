@@ -6,7 +6,7 @@ import {createRequire} from 'node:module';
 const require=createRequire(import.meta.url);
 const {chromium}=require('playwright-core');
 const fixture=JSON.parse(readFileSync(new URL('../test/fixtures/reference-styles.json',import.meta.url)));
-const base=process.env.DOCS_URL || 'http://127.0.0.1:4645';
+const base=process.env.DOCS_URL || 'http://localhost:4645';
 const browser=await chromium.launch();
 const page=await browser.newPage({viewport:fixture.viewport,reducedMotion:'reduce'});
 const failures=[];
