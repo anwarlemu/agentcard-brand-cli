@@ -53,6 +53,8 @@ function asText(value: unknown): string | undefined {
 function jobsFrom(opts: ImageRenderOpts): ImageJob[] {
 	const file = readInput(opts.input) as RawImageInput & { size?: unknown; sizes?: unknown };
 	const pick = (flag: unknown, fromFile: unknown) => (flag !== undefined && flag !== '' ? flag : fromFile);
+	// `--no-footer` arrives as footer:false. An empty flag falls through to the file.
+	const noFooter = opts.footer === false || Boolean(opts.noFooter || file.noFooter);
 	const fields = resolveFields(
 		{
 			template: pick(opts.template, file.template),
@@ -63,9 +65,9 @@ function jobsFrom(opts: ImageRenderOpts): ImageJob[] {
 			by: pick(opts.by, file.by),
 			image: pick(opts.image, file.image),
 			window: pick(opts.window, file.window),
-			footer: pick(opts.footer, file.footer),
+			footer: noFooter ? undefined : pick(opts.footer, file.footer),
 			ground: pick(opts.ground, file.ground),
-			noFooter: Boolean(opts.noFooter || file.noFooter),
+			noFooter,
 		},
 		{ footer: siteHost() },
 	);

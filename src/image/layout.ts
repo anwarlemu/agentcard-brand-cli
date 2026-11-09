@@ -3,7 +3,7 @@
 
 import { readFileSync } from 'node:fs';
 import type { Ground, ImageJob } from './catalog.js';
-import { brandFonts, document, drawBand, drawLine, drawLogo, drawText, fitText, flatten, px, rect, tokenColor, trackingEm, type Block } from './paint.js';
+import { brandFonts, document, drawBand, drawLine, drawLogo, drawText, fitText, flatten, logoBox, parseColor, px, rect, tokenColor, trackingEm, type Block } from './paint.js';
 
 export type Theme = { bg: string; fg: string; muted: string; accent: string; logo: string; bandToward: string };
 
@@ -84,7 +84,13 @@ function windowMark(x: number, y: number, color: string) {
 
 let clipSeq = 0;
 
+function rgba(color: string, alpha: number) {
+	const c = parseColor(color);
+	return `rgba(${c.r}, ${c.g}, ${c.b}, ${alpha})`;
+}
+
 function framedWindow(x: number, y: number, w: number, h: number, name: string, inner: string) {
+	if (w < 64 || h < 64) throw new Error('The window does not fit this size. Shorten the text.');
 	const { medium } = brandFonts();
 	const id = `w${++clipSeq}`;
 	const bar = 36;
@@ -92,13 +98,13 @@ function framedWindow(x: number, y: number, w: number, h: number, name: string, 
 	const edge = flatten(tokenColor('border-hairline'), white());
 	const rule = flatten(tokenColor('border-window'), sky());
 	const mark = brand();
-	const arrow = flatten('rgba(0, 0, 255, 0.45)', sky());
+	const arrow = flatten(rgba(brand(), 0.45), sky());
 	const labelSize = 14;
 	const baseline = y + bar / 2 + (medium.ascender / medium.unitsPerEm) * labelSize * 0.35;
 	const nameX = x + 36;
 	const nameW = Math.max(40, w - 78);
 	return [
-		rect(x + shadow(), y + shadow(), w, h, 'rgba(23, 24, 24, 0.22)', r),
+		rect(x + shadow(), y + shadow(), w, h, rgba(ink(), 0.22), r),
 		`<defs><clipPath id="${id}">${rect(x, y, w, h, '#fff', r)}</clipPath></defs>`,
 		`<g clip-path="url(#${id})">`,
 		rect(x, y, w, h, white()),
@@ -119,7 +125,12 @@ function screenshotInner(job: ImageJob, x: number, y: number, w: number, h: numb
 	const top = y + 36;
 	const bodyH = h - 36;
 	if (job.image) {
-		const buf = readFileSync(job.image);
+		let buf: Buffer;
+		try {
+			buf = readFileSync(job.image);
+		} catch {
+			throw new Error(`Could not read the screenshot at ${job.image}.`);
+		}
 		if (buf.length > 15_000_000) throw new Error('Screenshot is larger than 15MB.');
 		const kind = buf[0] === 0x89 && buf[1] === 0x50 ? 'png' : buf[0] === 0xff && buf[1] === 0xd8 ? 'jpeg' : '';
 		if (!kind) throw new Error('Screenshot must be a PNG or JPEG.');
@@ -129,7 +140,8 @@ function screenshotInner(job: ImageJob, x: number, y: number, w: number, h: numb
 	}
 	// No file yet: the hand, in the window, so the frame still reads as the brand.
 	const markH = Math.min(120, bodyH * 0.42);
-	const markW = markH * (270 / 150);
+	const box = logoBox('mark');
+	const markW = markH * (box.width / box.height);
 	return [rect(x, top, w, bodyH, paper()), drawLogo('mark', x + (w - markW) / 2, top + (bodyH - markH) / 2, markH, brand())].join('');
 }
 

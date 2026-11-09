@@ -78,7 +78,7 @@ export function cleanText(value: unknown, field: string): string | undefined {
 }
 
 export function parseSizes(value: string | undefined): SizeId[] {
-	const raw = (value ?? 'og').split(',').map((s) => s.trim()).filter(Boolean);
+	const raw = (value ?? 'og').split(',').map((s) => s.trim().toLowerCase()).filter(Boolean);
 	if (raw.length === 1 && raw[0] === 'all') return Object.keys(SIZES) as SizeId[];
 	const ids: SizeId[] = [];
 	for (const id of raw) {
@@ -90,7 +90,7 @@ export function parseSizes(value: string | undefined): SizeId[] {
 }
 
 export function parseExports(value: string | undefined): ('png' | 'svg')[] {
-	const raw = (value ?? 'png,svg').split(',').map((s) => s.trim()).filter(Boolean);
+	const raw = (value ?? 'png,svg').split(',').map((s) => s.trim().toLowerCase()).filter(Boolean);
 	const out: ('png' | 'svg')[] = [];
 	for (const id of raw) {
 		if (id !== 'png' && id !== 'svg') throw new Error(`Unknown export "${id}". Use png, svg, or png,svg.`);
@@ -122,11 +122,11 @@ export type RawImageInput = {
 
 /** Check one set of fields. Size is applied by the caller, once per requested size. */
 export function resolveFields(raw: RawImageInput, defaults: { footer: string }): ImageFields {
-	const template = String(raw.template ?? 'headline');
+	const template = String(raw.template ?? 'headline').trim().toLowerCase();
 	if (!(template in TEMPLATES)) throw new Error(`Unknown template "${template}". Use ${Object.keys(TEMPLATES).join(', ')}.`);
 	const id = template as TemplateId;
 	const spec = TEMPLATES[id];
-	const groundRaw = cleanText(raw.ground, 'ground');
+	const groundRaw = cleanText(raw.ground, 'ground')?.toLowerCase();
 	if (groundRaw && groundRaw !== 'blue' && groundRaw !== 'paper' && groundRaw !== 'white') throw new Error('Ground must be blue, paper or white.');
 	if (id === 'announcement' && groundRaw) throw new Error('The announcement template keeps its blue cap and paper body. Leave ground off.');
 	const fields: ImageFields = {
@@ -141,6 +141,7 @@ export function resolveFields(raw: RawImageInput, defaults: { footer: string }):
 		footer: raw.noFooter ? '' : cleanText(raw.footer, 'footer') ?? defaults.footer,
 		ground: (groundRaw as Ground | undefined) ?? (spec.ground === 'split' ? undefined : spec.ground),
 	};
+	if (fields.image && id !== 'screenshot') throw new Error('Pass --image only with the screenshot template.');
 	const missing = spec.needs.filter((key) => !fields[key as keyof ImageFields]);
 	if (missing.length) throw new Error(`The ${id} template needs ${missing.map((key) => `--${key}`).join(' and ')}.`);
 	return fields;

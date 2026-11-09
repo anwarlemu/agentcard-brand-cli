@@ -70,7 +70,7 @@ npx agentcard-ds image list --json
 
 ## Render an image
 
-`image render` writes an Open Graph image (1200 by 630) or a social post (`square` 1080 by 1080, `portrait` 1080 by 1350, `landscape` 1200 by 675) from copy you pass in. Templates are `headline`, `subtext`, `screenshot`, `quote` and `announcement`. Output is PNG and SVG, with no browser. `image list --json` lists every field. `--json` prints the files and their pixel sizes. Pictures use the brand tokens, the shipped logo and Inter.
+`image render` writes an Open Graph image (1200 by 630) or a social post (`square` 1080 by 1080, `portrait` 1080 by 1350, `landscape` 1200 by 675) from copy you pass in. Templates are `headline`, `subtext`, `screenshot`, `quote` and `announcement`. Output is PNG and SVG, with no browser. `image list --json` lists every field. `--json` prints the files and their pixel sizes. The default footer is the site host, and `--no-footer` leaves it off. Pictures use the brand tokens, the shipped logo and Inter.
 
 ```sh
 npx agentcard-ds image render --template quote --quote "A sentence someone said." --by "The source" --size og,square --out ./images --json

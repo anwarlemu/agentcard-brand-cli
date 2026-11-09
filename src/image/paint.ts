@@ -2,7 +2,7 @@
 // Type is outlined so an SVG opens the same way everywhere, with no font installed.
 
 import { readFileSync } from 'node:fs';
-import opentype, { type Font } from 'opentype.js';
+import opentype, { type Font, type Glyph } from 'opentype.js';
 import { tokens } from '../lib/brand.js';
 import { pkgPath } from '../lib/paths.js';
 
@@ -107,11 +107,78 @@ export function brandFonts() {
 	return fontPair;
 }
 
-/** Width of the ink. opentype.js adds one extra letter-spacing after the last glyph; that gap is not ink. */
+// Inter's default quotes are square slabs. The round alternates match the display face this image stands in for.
+const ROUND_QUOTES = new Set(['quotedblleft', 'quotedblright', 'quoteleft', 'quoteright']);
+const roundCache = new WeakMap<Font, Map<string, Glyph | null>>();
+const kernCache = new WeakMap<Font, unknown>();
+
+function roundQuote(font: Font, glyph: Glyph): Glyph {
+	let cache = roundCache.get(font);
+	if (!cache) roundCache.set(font, (cache = new Map()));
+	const known = cache.get(glyph.name);
+	if (known !== undefined) return known ?? glyph;
+	if (!ROUND_QUOTES.has(glyph.name)) {
+		cache.set(glyph.name, null);
+		return glyph;
+	}
+	const alt = font.nameToGlyph(`${glyph.name}.ss03`);
+	const use = alt.name === `${glyph.name}.ss03` ? alt : null;
+	cache.set(glyph.name, use);
+	return use ?? glyph;
+}
+
+function lineGlyphs(font: Font, text: string) {
+	let round = false;
+	const glyphs = font.stringToGlyphs(text).map((glyph) => {
+		const next = roundQuote(font, glyph);
+		if (next !== glyph) round = true;
+		return next;
+	});
+	return { glyphs, round };
+}
+
+function kerningTables(font: Font) {
+	let tables = kernCache.get(font);
+	if (tables === undefined) {
+		tables = font.position.getKerningTables(font.position.getDefaultScriptName());
+		kernCache.set(font, tables);
+	}
+	return tables;
+}
+
+/** Positions for one line. The returned advance includes the extra letter-spacing opentype.js adds after the last glyph. */
+function placeGlyphs(font: Font, glyphs: Glyph[], size: number, tracking: number) {
+	const scale = size / font.unitsPerEm;
+	const tables = kerningTables(font);
+	const stops: number[] = [];
+	let advance = 0;
+	for (let i = 0; i < glyphs.length; i++) {
+		stops.push(advance);
+		const glyph = glyphs[i];
+		if (glyph.advanceWidth) advance += glyph.advanceWidth * scale;
+		if (i < glyphs.length - 1) advance += font.position.getKerningValue(tables, glyph.index, glyphs[i + 1].index) * scale;
+		advance += tracking * size;
+	}
+	return { stops, advance };
+}
+
+function inkAdvance(font: Font, text: string, size: number, tracking: number) {
+	const { glyphs, round } = lineGlyphs(font, text);
+	if (!round) return font.getAdvanceWidth(text, size, { letterSpacing: tracking, kerning: true });
+	return placeGlyphs(font, glyphs, size, tracking).advance;
+}
+
+function inkPath(font: Font, text: string, x: number, baseline: number, size: number, tracking: number) {
+	const { glyphs, round } = lineGlyphs(font, text);
+	if (!round) return font.getPath(text, x, baseline, size, { letterSpacing: tracking, kerning: true }).toPathData(1);
+	const { stops } = placeGlyphs(font, glyphs, size, tracking);
+	return glyphs.map((glyph, index) => glyph.getPath(x + stops[index], baseline, size).toPathData(1)).join('');
+}
+
+/** Width of the ink. `tracking` is a fraction of the em. opentype.js adds one extra letter-spacing after the last glyph; that gap is not ink. */
 export function measure(font: Font, text: string, size: number, tracking: number): number {
 	if (!text) return 0;
-	const advance = font.getAdvanceWidth(text, size, { letterSpacing: tracking, kerning: true });
-	return advance - tracking * size;
+	return inkAdvance(font, text, size, tracking) - tracking * size;
 }
 
 export type Block = { font: Font; size: number; tracking: number; leading: number; lines: string[]; height: number };
@@ -187,7 +254,7 @@ export function drawText(block: Block, x: number, top: number, align: 'left' | '
 		const width = measure(block.font, line, block.size, block.tracking);
 		const left = align === 'center' ? x + (boxWidth - width) / 2 : x;
 		const baseline = top + asc + index * block.size * block.leading;
-		const data = block.font.getPath(line, left, baseline, block.size, { letterSpacing: block.tracking, kerning: true }).toPathData(1);
+		const data = inkPath(block.font, line, left, baseline, block.size, block.tracking);
 		if (data) parts.push(`<path d="${data}" fill="${fill}"/>`);
 	});
 	return parts.join('');
@@ -200,7 +267,7 @@ export function drawLine(font: Font, text: string, x: number, baseline: number, 
 		while (line.length > 1 && measure(font, `${line}…`, size, tracking) > maxWidth) line = line.slice(0, -1);
 		line = `${line.trimEnd()}…`;
 	}
-	const data = font.getPath(line, x, baseline, size, { letterSpacing: tracking, kerning: true }).toPathData(1);
+	const data = inkPath(font, line, x, baseline, size, tracking);
 	return data ? `<path d="${data}" fill="${fill}"/>` : '';
 }
 
@@ -221,6 +288,11 @@ function readLogo(file: string): Logo {
 function logoSet() {
 	logos ??= { mark: readLogo('mark.svg'), lockup: readLogo('lockup.svg') };
 	return logos;
+}
+
+export function logoBox(kind: 'mark' | 'lockup') {
+	const logo = logoSet()[kind];
+	return { width: logo.width, height: logo.height };
 }
 
 /** The lockup (wordmark plus hand) or the hand alone, painted in one flat color. */

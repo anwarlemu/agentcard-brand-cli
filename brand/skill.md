@@ -15,7 +15,7 @@ For new applications, `create --template vite --name <directory>` scaffolds the 
 
 Read `guide` for brand rules and `tokens <term> --json` for custom styling. Keep colors scoped to component roles; preserve artwork, chart data and unrelated palettes. Use `check --json` and the application's build and interaction tests to verify the result.
 
-Render images with `image list --json`, then `image render --template <id> --json`. Sizes are `og` (1200 by 630), `square` (1080 by 1080), `portrait` (1080 by 1350) and `landscape` (1200 by 675). Templates are `headline`, `subtext`, `screenshot`, `quote` and `announcement`. The command uses brand tokens, the shipped logo and Inter. It writes PNG and SVG with no browser. Pass `--input <file>` for a JSON object of the same fields.
+Render images with `image list --json`, then `image render --template <id> --json`. Sizes are `og` (1200 by 630), `square` (1080 by 1080), `portrait` (1080 by 1350) and `landscape` (1200 by 675). Templates are `headline`, `subtext`, `screenshot`, `quote` and `announcement`. The command uses brand tokens, the shipped logo and Inter. It writes PNG and SVG with no browser. Pass `--input <file>` for a JSON object of the same fields. `--no-footer` leaves off the site line.
 
 The standard shadcn registry is `{{registry}}/r/shadcn/{name}.json`, under `@{{bin}}` in components.json. Use `npx shadcn@4.22.1 add @{{bin}}/theme @{{bin}}/<name>` for shadcn's workspace routing and ecosystem integrations. The same registry works with its MCP server. Component references are at `{{registry}}/components`.
 

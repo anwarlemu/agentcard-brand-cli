@@ -5,6 +5,7 @@ import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { imageRender } from '../src/commands/image.js';
 import { SIZES, TEMPLATES, type SizeId, type TemplateId } from '../src/image/catalog.js';
+import { brandFonts, drawText, fitText } from '../src/image/paint.js';
 import { tokens } from '../src/lib/brand.js';
 
 const ROOT = join(import.meta.dirname, '..');
@@ -76,13 +77,45 @@ describe('images', () => {
 			expect(existsSync(join(dir, 'missing'))).toBe(false);
 			await quiet(() => imageRender({ template: 'screenshot', headline: 'Empty window', out: join(dir, 'empty'), export: 'png', json: true }));
 			expect(pngSize(readFileSync(join(dir, 'empty', 'screenshot-og.png')))).toEqual({ width: 1200, height: 630 });
+			await quiet(() => imageRender({ template: 'Headline', headline: 'Case', size: 'OG', export: 'svg', out: join(dir, 'case'), json: true }));
+			expect(existsSync(join(dir, 'case', 'headline-og.svg'))).toBe(true);
+			const withFooter = join(dir, 'footer');
+			const noFooter = join(dir, 'no-footer');
+			await quiet(() => imageRender({ template: 'headline', headline: 'Footer', footer: 'Shown', out: withFooter, export: 'svg', json: true }));
+			await quiet(() => imageRender({ template: 'headline', headline: 'Footer', footer: false, out: noFooter, export: 'svg', json: true }));
+			expect(readFileSync(join(withFooter, 'headline-og.svg'), 'utf8')).not.toBe(readFileSync(join(noFooter, 'headline-og.svg'), 'utf8'));
+			const titled = join(dir, 'titled');
+			await quiet(() => imageRender({ template: 'headline', headline: 'A & B < C', out: titled, export: 'svg', json: true }));
+			const titledSvg = readFileSync(join(titled, 'headline-og.svg'), 'utf8');
+			expect(titledSvg).toContain('<title>A &amp; B &lt; C</title>');
+			await expect(quiet(() => imageRender({ template: 'headline', headline: 'No shot', image: join(dir, 'unused.png'), out: join(dir, 'wrong'), json: true }))).rejects.toThrow(/screenshot template/);
+			writeFileSync(join(dir, 'notes.txt'), 'not a picture');
+			await expect(quiet(() => imageRender({ template: 'screenshot', headline: 'Bad file', image: join(dir, 'notes.txt'), out: join(dir, 'bad'), json: true }))).rejects.toThrow(/PNG or JPEG/);
+			expect(existsSync(join(dir, 'bad'))).toBe(false);
+			await expect(quiet(() => imageRender({ template: 'screenshot', headline: 'Missing file', image: join(dir, 'missing.png'), out: join(dir, 'gone'), json: true }))).rejects.toThrow(/Could not read/);
+			expect(existsSync(join(dir, 'gone'))).toBe(false);
 		} finally {
 			rmSync(dir, { recursive: true, force: true });
 		}
 	});
 
-	it('answers image render --help', () => {
+	it('draws the round quote, not the square default', () => {
+		const block = fitText(brandFonts().medium, '\u201C', 300, 160, { start: 120, min: 40, leading: 1, maxLines: 1, role: 'quote' });
+		expect(drawText(block, 0, 0, 'left', 300, '#0000FF')).toMatch(/Q/);
+	});
+
+	it('answers image render --help and writes from the built command', () => {
 		expect(execFileSync(process.execPath, [BIN, 'image', 'render', '--help'], { encoding: 'utf8' })).toMatch(/--template/);
 		expect(execFileSync(process.execPath, [BIN, 'image', 'list', '--help'], { encoding: 'utf8' })).toMatch(/Usage/);
+		const dir = mkdtempSync(join(tmpdir(), 'ds-image-cli-'));
+		try {
+			const out = execFileSync(process.execPath, [BIN, 'image', 'render', '--template', 'headline', '--headline', 'From the command', '--no-footer', '--export', 'svg', '--out', dir, '--json'], { encoding: 'utf8' });
+			const parsed = JSON.parse(out) as { ok: boolean; files: { path: string }[] };
+			expect(parsed.ok).toBe(true);
+			expect(parsed.files).toHaveLength(1);
+			expect(existsSync(join(dir, 'headline-og.svg'))).toBe(true);
+		} finally {
+			rmSync(dir, { recursive: true, force: true });
+		}
 	});
 });

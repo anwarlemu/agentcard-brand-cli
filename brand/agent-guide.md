@@ -76,7 +76,7 @@ Use this when the brief needs an Open Graph image or a social post. The command 
 
 `image list --json` is the list of sizes, templates and required fields. Sizes are `og` (1200 by 630), `square` (1080 by 1080), `portrait` (1080 by 1350) and `landscape` (1200 by 675, for X and LinkedIn). Templates are `headline`, `subtext`, `screenshot`, `quote` and `announcement`.
 
-Pass copy as flags, or as a JSON object with `--input`. Flags override the file. `--dry-run` lists files and writes nothing. `--json` lists every written file with its pixel size. The default export is PNG and SVG. SVG text is outlined, so the file does not need a font installed.
+Pass copy as flags, or as a JSON object with `--input`. Flags override the file. `--dry-run` lists files and writes nothing. `--json` lists every written file with its pixel size. The default export is PNG and SVG. SVG text is outlined, so the file does not need a font installed. The default footer is the site host. `--no-footer` leaves that line off.
 
 The display face named in the tokens is not included. Images set text and display in Inter, at the token weights and tracking. The logo is the lockup shipped with the brand files. Do not redraw it. A screenshot is a PNG or JPEG. The announcement template keeps a blue cap and a paper body, so leave `--ground` off for that template.
 
