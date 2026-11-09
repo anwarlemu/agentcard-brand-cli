@@ -7,5 +7,6 @@
 - Use component variants and brand tokens. `{{cli}} look <file>` gives element guidance; `{{cli}} tokens <term>` finds values.
 - Connect controls to state, validation and real actions. Test keyboard controls, focus, invalid/disabled/loading states, and phone and desktop layouts.
 - Run the project's checks and build, then `{{cli}} check --json`. Token checks alone do not verify appearance or behavior.
+- Render images with `{{cli}} image render`. `{{cli}} image list --json` lists sizes, templates and fields.
 - Review screenshots against the library. `{{cli}} review <url> --any` captures and reviews an untracked page; report manual review honestly when no reviewer is available.
 - A `ds-override: <reason>` comment only counts after the user approves it with `{{cli}} approve`.

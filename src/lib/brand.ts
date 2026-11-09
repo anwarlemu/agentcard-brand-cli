@@ -13,6 +13,8 @@ export type BrandConfig = {
 	reviewModel: string;
 	reviewThreshold: number;
 	registryUrl?: string;
+	/** The public site, used as the default footer on rendered images. */
+	site?: string;
 	/** The surfaces the brand has: a site (pages people read), a product (an app people work in), or both. */
 	surfaces?: ('site' | 'product')[];
 	/** How the brand's fonts load: a stylesheet URL, next/font families, and what a native app adds. */
