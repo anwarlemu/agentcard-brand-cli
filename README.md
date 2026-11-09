@@ -65,6 +65,15 @@ npx agentcard-ds add hero section site-header site-footer --surface site
 npx agentcard-ds list --json
 npx agentcard-ds show select --json
 npx agentcard-ds tokens border
+npx agentcard-ds image list --json
+```
+
+## Render an image
+
+`image render` writes an Open Graph image (1200 by 630) or a social post (`square` 1080 by 1080, `portrait` 1080 by 1350, `landscape` 1200 by 675) from copy you pass in. Templates are `headline`, `subtext`, `screenshot`, `quote` and `announcement`. Output is PNG and SVG, with no browser. `image list --json` lists every field. `--json` prints the files and their pixel sizes. Pictures use the brand tokens, the shipped logo and Inter.
+
+```sh
+npx agentcard-ds image render --template quote --quote "A sentence someone said." --by "The source" --size og,square --out ./images --json
 ```
 
 ## Instructions for coding agents
@@ -76,6 +85,7 @@ Build this page using the Agentcard design system at https://agentcard-ds.vercel
 Read https://agentcard-ds.vercel.app/agents.md first.
 Run npx agentcard-ds show <name> --json for exact exports, usage rules, examples and source.
 Add existing components with the CLI. Use design tokens for custom layout and styling.
+Render Open Graph and social images with npx agentcard-ds image render. Run image list --json for sizes and templates.
 Connect every control to its intended behavior. Include validation, loading, empty and error states where needed.
 Run the project checks and the CLI token check. Test keyboard interaction and desktop and phone layouts.
 ```
@@ -106,6 +116,8 @@ Run these commands with `npx agentcard-ds` after installing the CLI.
 | `list` | List available components, sections, page templates and visuals. |
 | `look <file\|element>` | Show component and token guidance for a file or element type. |
 | `tokens [term]` | Find a token by name or role. |
+| `image list` | List image sizes, templates and the fields each template takes. |
+| `image render` | Render an Open Graph or social image to PNG and SVG. |
 | `check [files...]` | Check style values. Use `--changed` for Git changes or `--fix` for exact token replacements. |
 | `review <url> --any` | Review a page that is not part of an existing conversion task list. |
 | `review <url>` | Review a tracked screen and mark its task complete when it passes. |
@@ -137,8 +149,8 @@ commits. Adding individual components with `add` does not run this conversion.
 - `/r/<name>.md` and `/r/<name>.json`: usage rules, exports, dependencies, examples and exact source.
 
 All references are generated from the same registry the CLI installs. Prefer individual component references to
-the complete file. `guide`, `list`, `show`, `look`, `tokens` and `check` without `--fix` are read-only. `init` and
-`add` accept `--dry-run`; add `--json` for structured results. JSON goes to stdout; progress goes to stderr.
+the complete file. `guide`, `list`, `show`, `look`, `tokens`, `image list` and `check` without `--fix` are read-only. `init` and
+`add` accept `--dry-run`; `image render` does too. Add `--json` for structured results. JSON goes to stdout; progress goes to stderr.
 
 ## Source
 

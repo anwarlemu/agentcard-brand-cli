@@ -24,14 +24,17 @@ await build({
 	format: 'esm',
 	target: 'node20',
 	// Babel's optional external config loader is disabled by configFile:false and babelrc:false.
-	external: ['playwright-core', '@babel/preset-typescript'],
+	// resvg renders PNG and loads its own wasm file, so it stays a package, like playwright-core.
+	external: ['playwright-core', '@babel/preset-typescript', '@resvg/resvg-wasm'],
 	banner: { js: "import { createRequire as __ds_require } from 'node:module'; const require = __ds_require(import.meta.url);" },
 	logLevel: 'warning',
 });
 const pkg = JSON.parse(readFileSync(join(root, 'package.json'), 'utf8'));
+const resvg = pkg.dependencies?.['@resvg/resvg-wasm'];
 delete pkg.devDependencies;
 delete pkg.dependencies;
 delete pkg.workspaces;
+if (resvg) pkg.dependencies = { '@resvg/resvg-wasm': resvg };
 pkg.scripts = {};
 writeFileSync(join(out, 'package.json'), `${JSON.stringify(pkg, null, 2)}\n`);
 console.log(`release tree in ${out}`);

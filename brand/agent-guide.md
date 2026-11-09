@@ -53,11 +53,32 @@ The component reference states its source. `{{registry}}/r/audit.json` records t
 - Follow the user's brief. For new pages, add the required content and behavior. When only restyling an existing page, preserve its content, links, order and behavior unless the user requests changes.
 - Use component props and variants shown in the source. Read the named example functions before composing compound components. Keep client state inside a client component when using Next.js; imports of client components can still be rendered by server pages.
 - Use design tokens for custom styles. `{{cli}} tokens <term> --json` finds values; `{{cli}} look <element-or-file> --json` explains styling by role. Use `var(--ds-*)` in CSS or the matching Tailwind utilities.
+- For a picture rather than a component, render it with the CLI. See "Render images" below. Do not invent a second palette for social or Open Graph art.
 - Body text uses Inter; headings, labels and buttons use the display font stack. Use the provided blue and white/paper grounds, button bevels, windows and stepped band divider. Do not introduce unrelated colors, shadows or type scales.
 - The installed stylesheet imports `./_{{bin}}/brand.css` and `./_{{bin}}/theme.css` beside the main stylesheet. `brand.css` includes tokens and base styles. Keep both imports after `@import "tailwindcss"`. Let the installer configure fonts; do not add a second font loader.
 - Put one control in each Field. Field connects labels, help, errors and required state. Validation and submission belong to your form. For Select use `value` and `onValueChange`, SelectTrigger with SelectValue, and SelectContent with SelectItem; values must be non-empty strings. Give the root a `name` for FormData. Use `defaultValue` only for uncontrolled input.
 - Connect every action to its intended behavior. Handle empty, loading, disabled, invalid, success and error states. Preserve keyboard controls, focus return, accessible names and native form semantics. Never present a preview's local demo action as a completed backend operation.
 - Use the provided portal behavior. Surface is for an isolated preview or a scoped theme; ordinary pages do not need an extra Surface wrapper. Mount one Toaster per application when using toast notifications.
+
+## Render images
+
+Use this when the brief needs an Open Graph image or a social post. The command reads brand tokens, the shipped logo and the Inter fonts included with the CLI. It does not open a browser. The same content always writes the same pixels, so it can run in CI or a sandbox.
+
+```sh
+{{cli}} image list --json
+{{cli}} image render --template headline --headline "Let agents buy anything online" --json
+{{cli}} image render --template subtext --size og,square --headline "A short title" --subtext "One supporting line." --out ./images --json
+{{cli}} image render --template screenshot --size landscape --headline "A feature" --image ./screen.png --json
+{{cli}} image render --template quote --quote "A sentence someone said." --by "The source" --json
+{{cli}} image render --template announcement --eyebrow "New" --headline "What shipped" --subtext "One line on what changed." --json
+{{cli}} image render --input content.json --size all --export png --json
+```
+
+`image list --json` is the list of sizes, templates and required fields. Sizes are `og` (1200 by 630), `square` (1080 by 1080), `portrait` (1080 by 1350) and `landscape` (1200 by 675, for X and LinkedIn). Templates are `headline`, `subtext`, `screenshot`, `quote` and `announcement`.
+
+Pass copy as flags, or as a JSON object with `--input`. Flags override the file. `--dry-run` lists files and writes nothing. `--json` lists every written file with its pixel size. The default export is PNG and SVG. SVG text is outlined, so the file does not need a font installed.
+
+The display face named in the tokens is not included. Images set text and display in Inter, at the token weights and tracking. The logo is the lockup shipped with the brand files. Do not redraw it. A screenshot is a PNG or JPEG. The announcement template keeps a blue cap and a paper body, so leave `--ground` off for that template.
 
 ## Verify before finishing
 
@@ -71,8 +92,8 @@ The component reference states its source. `{{registry}}/r/audit.json` records t
 
 `init` and conversion install AGENTS.md and a local `.ds/agent-guide.md`, plus supported agent instruction files and hook configuration. Agents that do not load those files automatically should read them explicitly. Hooks support Claude Code, Codex and Cursor when enabled by that tool; other agents run the CLI checks directly. Codex hook activation may require the user's `/hooks` trust step. No hook integration is required to use the components correctly.
 
-Read-only commands: `guide`, `list`, `show`, `look`, `tokens`, `check` without `--fix`.
-Commands that write project files: `init`, `add`, `apply`, the legacy bare conversion command, `check --fix`, and review/snapshot state updates. Use `--dry-run` with `init`, `add` or conversion to inspect planned writes. JSON goes to stdout and progress goes to stderr. Installation/build failures return a nonzero exit code.
+Read-only commands: `guide`, `list`, `show`, `look`, `tokens`, `check` without `--fix`, and `image list`.
+Commands that write project files: `init`, `add`, `apply`, the legacy bare conversion command, `check --fix`, review/snapshot state updates, and `image render` (image files only, to `--out`). Use `--dry-run` with `init`, `add`, conversion or `image render` to inspect planned writes. JSON goes to stdout and progress goes to stderr. Installation/build failures return a nonzero exit code.
 
 ## Project configuration and agent handoff
 
