@@ -15,14 +15,33 @@ function startWasm() {
 	return wasmReady;
 }
 
+const rasterOptions = (width: number) => ({ fitTo: { mode: 'width' as const, value: width }, shapeRendering: 2 as const, font: { loadSystemFonts: false } });
+
 export function rasterize(svg: string, width: number): Promise<Buffer> {
 	return startWasm().then(() => {
-		const renderer = new Resvg(svg, { fitTo: { mode: 'width', value: width }, shapeRendering: 2, font: { loadSystemFonts: false } });
+		const renderer = new Resvg(svg, rasterOptions(width));
 		try {
 			const png = renderer.render();
 			const bytes = Buffer.from(png.asPng());
 			png.free();
 			return bytes;
+		} finally {
+			renderer.free();
+		}
+	});
+}
+
+/** RGBA pixels for video frames. The PNG path above stays the still-image renderer. */
+export function rasterizeRgba(svg: string, width: number): Promise<{ width: number; height: number; pixels: Uint8Array }> {
+	return startWasm().then(() => {
+		const renderer = new Resvg(svg, rasterOptions(width));
+		try {
+			const image = renderer.render();
+			const pixels = new Uint8Array(image.pixels.byteLength);
+			pixels.set(image.pixels);
+			const size = { width: image.width, height: image.height, pixels };
+			image.free();
+			return size;
 		} finally {
 			renderer.free();
 		}

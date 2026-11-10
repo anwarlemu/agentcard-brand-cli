@@ -1,12 +1,12 @@
 # {{brand}} design system
 - Read `.ds/agent-guide.md` before changing UI. It contains setup, component discovery, composition and verification instructions for any coding agent.
 - Follow the user's brief. Build new pages and controls when requested; when only restyling, preserve existing content, links, order and behavior.
-- Use `{{cli}} list --json` to discover components, then `{{cli}} show <name> --json` for exact exports, usage, examples and source. Do not guess props.
+- Start with `{{cli}} manifest --json`. Discover components with `{{cli}} component list --json`, `{{cli}} component inspect <name> --json` and `{{cli}} component emit <name> --json`. `{{cli}} show <name> --json` still returns source. Do not guess props.
 - Use `{{cli}} init` to prepare new work, then `{{cli}} add <names...>` for the components it needs. Inspect planned writes with `--dry-run`.
 - Use `{{cli}} apply --dry-run` to preview a requested restyle, then `{{cli}} apply` and follow its review tasks. The legacy bare command also converts styles; use explicit commands for discovery and setup.
 - Use component variants and brand tokens. `{{cli}} look <file>` gives element guidance; `{{cli}} tokens <term>` finds values.
 - Connect controls to state, validation and real actions. Test keyboard controls, focus, invalid/disabled/loading states, and phone and desktop layouts.
 - Run the project's checks and build, then `{{cli}} check --json`. Token checks alone do not verify appearance or behavior.
-- Render images with `{{cli}} image render`. `{{cli}} image list --json` lists sizes, templates and fields.
+- Render images with `{{cli}} image render` and short videos with `{{cli}} video render`. `{{cli}} image list --json` and `{{cli}} video list --json` list sizes and templates. Read tokens, fonts, logos and voice with `{{cli}} brand --json`, and site rules with `{{cli}} principles --json`.
 - Review screenshots against the library. `{{cli}} review <url> --any` captures and reviews an untracked page; report manual review honestly when no reviewer is available.
 - A `ds-override: <reason>` comment only counts after the user approves it with `{{cli}} approve`.

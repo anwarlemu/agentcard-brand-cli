@@ -391,7 +391,7 @@ describe('the one command', () => {
 		rmSync(p, { recursive: true });
 	});
 	it('every command answers --help', () => {
-		for (const c of ['review', 'look', 'check', 'tokens', 'image', 'approve', 'done', 'skip', 'snapshot', 'hook']) expect(execFileSync(process.execPath, [BIN, c, '--help'], { encoding: 'utf8' })).toMatch(/Usage/);
+		for (const c of ['review', 'look', 'check', 'tokens', 'image', 'video', 'component', 'brand', 'principles', 'manifest', 'describe', 'approve', 'done', 'skip', 'snapshot', 'hook']) expect(execFileSync(process.execPath, [BIN, c, '--help'], { encoding: 'utf8' })).toMatch(/Usage/);
 	});
 });
 

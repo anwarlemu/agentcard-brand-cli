@@ -70,10 +70,45 @@ npx agentcard-ds image list --json
 
 ## Render an image
 
-`image render` writes an Open Graph image (1200 by 630) or a social post (`square` 1080 by 1080, `portrait` 1080 by 1350, `landscape` 1200 by 675) from copy you pass in. Templates are `headline`, `subtext`, `screenshot`, `quote` and `announcement`. Output is PNG and SVG, with no browser. `image list --json` lists every field. `--json` prints the files and their pixel sizes. The default footer is the site host, and `--no-footer` leaves it off. Pictures use the brand tokens, the shipped logo and Inter.
+`image render` writes an Open Graph image (1200 by 630) or a social post (`square` 1080 by 1080, `portrait` 1080 by 1350, `landscape` 1200 by 675) from copy you pass in. Templates are `headline`, `subtext`, `screenshot`, `quote` and `announcement`. Output is PNG and SVG, with no browser. `image list --json` lists every field. `--json` prints the files and their pixel sizes. The default footer is the site host, and `--no-footer` leaves it off. Pictures use the brand tokens, the shipped logo and the shipped font files. `--template` is required. An unknown template, size or JSON field is an error.
 
 ```sh
 npx agentcard-ds image render --template quote --quote "A sentence someone said." --by "The source" --size og,square --out ./images --json
+```
+
+## Read the brand system
+
+`manifest --json` is the catalog: every command, token group, font, logo rule, image template, video template, component and principle. `describe --json` is the same command. `brand --json` returns tokens, fonts, logos and voice. Groups are `color`, `type`, `space`, `radius`, `motion`, `shadow`, `band`, `glass` and `other`.
+
+```sh
+npx agentcard-ds manifest --json
+npx agentcard-ds brand tokens --group color --json
+npx agentcard-ds brand tokens --name=--ds-color-brand --json
+npx agentcard-ds brand fonts --json
+npx agentcard-ds brand logos --json
+npx agentcard-ds brand voice --json
+npx agentcard-ds principles --surface site --json
+```
+
+Use the equals form for `--name`. A bare `--ds-...` is parsed as a flag. `brand fonts --json` says which families ship and which token families have no file. Do not download a stand-in. `principles --surface product --json` reports whether a product system is defined. If it is not, do not invent one.
+
+## Render a video
+
+`video render` writes a short clip from the same tokens, logo files and shipped fonts. Sizes are `square` (1080 by 1080), `vertical` (1080 by 1920) and `landscape` (1920 by 1080). Templates are `social`, `announcement` and `product`. `--size` is required. The clip is 12 frames at 12 fps, Motion JPEG in an MP4, eased with `--ds-easing-out`. There is no browser and no duration flag. The same inputs write the same bytes. Samples are in `examples/videos/`.
+
+```sh
+npx agentcard-ds video list --json
+npx agentcard-ds video render --template social --size square --headline "Let agents buy anything online" --out ./videos --json
+```
+
+## Use a component without guessing
+
+`component list`, `component inspect` and `component emit` read the bundled library. `inspect` returns exports, variant maps, example states, usage and constraints. `emit --state` copies an example file. `emit --set` emits markup only for variant keys and values that exist.
+
+```sh
+npx agentcard-ds component inspect button --json
+npx agentcard-ds component emit button --state Site --json
+npx agentcard-ds component emit button --set variant=primary --set size=sm --text "Start free" --json
 ```
 
 ## Instructions for coding agents
@@ -83,9 +118,11 @@ Include this with the page requirements:
 ```text
 Build this page using the Agentcard design system at https://agentcard-ds.vercel.app.
 Read https://agentcard-ds.vercel.app/agents.md first.
-Run npx agentcard-ds show <name> --json for exact exports, usage rules, examples and source.
-Add existing components with the CLI. Use design tokens for custom layout and styling.
-Render Open Graph and social images with npx agentcard-ds image render. Run image list --json for sizes and templates.
+Run npx agentcard-ds manifest --json first. It lists every command, token, template, size, component and rule.
+Run npx agentcard-ds component inspect <name> --json before writing that component. Use component emit for markup. show --json still returns source.
+Add existing components with the CLI. Use design tokens from brand tokens --json. Do not invent a token name.
+Render Open Graph and social images with npx agentcard-ds image render. Render short videos with npx agentcard-ds video render. Run image list --json and video list --json for sizes and templates.
+Read site rules with npx agentcard-ds principles --json. If product.defined is false, do not invent product principles.
 Connect every control to its intended behavior. Include validation, loading, empty and error states where needed.
 Run the project checks and the CLI token check. Test keyboard interaction and desktop and phone layouts.
 ```
@@ -116,8 +153,16 @@ Run these commands with `npx agentcard-ds` after installing the CLI.
 | `list` | List available components, sections, page templates and visuals. |
 | `look <file\|element>` | Show component and token guidance for a file or element type. |
 | `tokens [term]` | Find a token by name or role. |
+| `manifest` | List every command, token, template, size, component and rule. `describe` is the same command. |
+| `brand` | Tokens, fonts, logos and voice. `brand tokens`, `brand fonts`, `brand logos` and `brand voice` read one part. |
+| `principles` | Website do and don't lists, element rules, and whether product principles exist. |
+| `component list` | List bundled components. |
+| `component inspect <name>` | Exports, variants, states, usage and constraints. |
+| `component emit <name>` | Copy an example state, or emit markup from the variant map. |
 | `image list` | List image sizes, templates and the fields each template takes. |
-| `image render` | Render an Open Graph or social image to PNG and SVG. |
+| `image render` | Render an Open Graph or social image to PNG and SVG. `--template` is required. |
+| `video list` | List video sizes, templates, the frame count and the renderer. |
+| `video render` | Render a short Motion JPEG MP4. `--template` and `--size` are required. |
 | `check [files...]` | Check style values. Use `--changed` for Git changes or `--fix` for exact token replacements. |
 | `review <url> --any` | Review a page that is not part of an existing conversion task list. |
 | `review <url>` | Review a tracked screen and mark its task complete when it passes. |
@@ -149,8 +194,8 @@ commits. Adding individual components with `add` does not run this conversion.
 - `/r/<name>.md` and `/r/<name>.json`: usage rules, exports, dependencies, examples and exact source.
 
 All references are generated from the same registry the CLI installs. Prefer individual component references to
-the complete file. `guide`, `list`, `show`, `look`, `tokens`, `image list` and `check` without `--fix` are read-only. `init` and
-`add` accept `--dry-run`; `image render` does too. Add `--json` for structured results. JSON goes to stdout; progress goes to stderr.
+the complete file. `manifest`, `describe`, `guide`, `brand`, `principles`, `component`, `list`, `show`, `look`, `tokens`, `image list`, `video list` and `check` without `--fix` are read-only. `init` and
+`add` accept `--dry-run`; `image render` and `video render` do too. Add `--json` for structured results. JSON goes to stdout; progress goes to stderr. Start with `manifest --json`.
 
 ## Source
 

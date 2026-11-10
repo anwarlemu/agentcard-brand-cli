@@ -1,8 +1,9 @@
+import { createHash } from 'node:crypto';
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { brand, cli } from '../lib/brand.js';
 import { emit } from '../lib/output.js';
-import { catalog, parseExports, parseSizes, resolveFields, safeName, SIZES, type ImageJob, type RawImageInput } from '../image/catalog.js';
+import { assertImageInput, catalog, parseExports, parseSizes, resolveFields, safeName, SIZES, type ImageJob } from '../image/catalog.js';
 import { showPath, writeImages } from '../image/render.js';
 
 function siteHost() {
@@ -15,7 +16,7 @@ function siteHost() {
 	}
 }
 
-function readInput(file: string | undefined): RawImageInput {
+function readInput(file: string | undefined): unknown {
 	if (!file) return {};
 	let text = '';
 	try {
@@ -24,16 +25,25 @@ function readInput(file: string | undefined): RawImageInput {
 		throw new Error(`Could not read ${file}.`);
 	}
 	try {
-		const data = JSON.parse(text) as unknown;
-		if (!data || typeof data !== 'object' || Array.isArray(data)) throw new Error('Image input must be a JSON object.');
-		return data as RawImageInput;
+		return JSON.parse(text) as unknown;
 	} catch (error) {
-		if (error instanceof SyntaxError) throw new Error(`Image input is not valid JSON.`);
+		if (error instanceof SyntaxError) throw new Error('Image input is not valid JSON.');
 		throw error;
 	}
 }
 
-export type ImageRenderOpts = RawImageInput & {
+export type ImageRenderOpts = {
+	template?: unknown;
+	headline?: unknown;
+	subtext?: unknown;
+	eyebrow?: unknown;
+	quote?: unknown;
+	by?: unknown;
+	image?: unknown;
+	window?: unknown;
+	footer?: unknown;
+	ground?: unknown;
+	noFooter?: boolean;
 	size?: string;
 	sizes?: unknown;
 	out?: string;
@@ -51,26 +61,31 @@ function asText(value: unknown): string | undefined {
 }
 
 function jobsFrom(opts: ImageRenderOpts): ImageJob[] {
-	const file = readInput(opts.input) as RawImageInput & { size?: unknown; sizes?: unknown };
+	const file = assertImageInput(readInput(opts.input), 'image file');
 	const pick = (flag: unknown, fromFile: unknown) => (flag !== undefined && flag !== '' ? flag : fromFile);
 	// `--no-footer` arrives as footer:false. An empty flag falls through to the file.
 	const noFooter = opts.footer === false || Boolean(opts.noFooter || file.noFooter);
-	const fields = resolveFields(
-		{
-			template: pick(opts.template, file.template),
-			headline: pick(opts.headline, file.headline),
-			subtext: pick(opts.subtext, file.subtext),
-			eyebrow: pick(opts.eyebrow, file.eyebrow),
-			quote: pick(opts.quote, file.quote),
-			by: pick(opts.by, file.by),
-			image: pick(opts.image, file.image),
-			window: pick(opts.window, file.window),
-			footer: noFooter ? undefined : pick(opts.footer, file.footer),
-			ground: pick(opts.ground, file.ground),
-			noFooter,
-		},
-		{ footer: siteHost() },
+	const merged = assertImageInput(
+		Object.fromEntries(
+			Object.entries({
+				template: pick(opts.template, file.template),
+				headline: pick(opts.headline, file.headline),
+				subtext: pick(opts.subtext, file.subtext),
+				eyebrow: pick(opts.eyebrow, file.eyebrow),
+				quote: pick(opts.quote, file.quote),
+				by: pick(opts.by, file.by),
+				image: pick(opts.image, file.image),
+				window: pick(opts.window, file.window),
+				footer: noFooter ? undefined : pick(opts.footer, file.footer),
+				ground: pick(opts.ground, file.ground),
+				noFooter: noFooter ? true : undefined,
+				size: pick(opts.size, file.size),
+				sizes: file.sizes,
+			}).filter(([, value]) => value !== undefined),
+		),
+		'image',
 	);
+	const fields = resolveFields(merged, { footer: siteHost() });
 	if (fields.image) fields.image = resolve(String(fields.image));
 	const requested = asText(opts.size) ?? asText(file.sizes) ?? asText(file.size);
 	return parseSizes(requested).map((size) => ({ ...fields, size, width: SIZES[size].width, height: SIZES[size].height }));
@@ -96,6 +111,6 @@ export async function imageRender(opts: ImageRenderOpts) {
 		return;
 	}
 	const written = await writeImages(jobs, { out, name, formats });
-	const files = written.map((file) => ({ ...file, path: showPath(file.path) }));
+	const files = written.map((file) => ({ ...file, path: showPath(file.path), sha256: createHash('sha256').update(readFileSync(file.path)).digest('hex') }));
 	emit(opts, { ok: true, dryRun: false, template: jobs[0].template, files }, () => [`Wrote ${files.length} file${files.length === 1 ? '' : 's'}.`, ...files.map((file) => `  ${file.path}  ${file.width} by ${file.height}`)].join('\n'));
 }

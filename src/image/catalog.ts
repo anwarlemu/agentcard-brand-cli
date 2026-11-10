@@ -1,5 +1,9 @@
 // Sizes, templates and the content an agent passes in. Layout code reads this; it does not invent copy.
 
+import { z } from 'zod';
+import { typeNote } from '../brand/catalog.js';
+import { parseSchema } from '../lib/schema.js';
+
 export const SIZES = {
 	og: { width: 1200, height: 630, label: 'Open Graph', use: 'Link previews, 1200 by 630' },
 	square: { width: 1080, height: 1080, label: 'Square', use: 'Feed posts, 1080 by 1080' },
@@ -106,23 +110,35 @@ export function safeName(value: string): string {
 	return name;
 }
 
-export type RawImageInput = {
-	template?: unknown;
-	headline?: unknown;
-	subtext?: unknown;
-	eyebrow?: unknown;
-	quote?: unknown;
-	by?: unknown;
-	image?: unknown;
-	window?: unknown;
-	footer?: unknown;
-	ground?: unknown;
-	noFooter?: boolean;
-};
+export const IMAGE_FIELDS = ['template', 'headline', 'subtext', 'eyebrow', 'quote', 'by', 'image', 'window', 'footer', 'ground', 'noFooter', 'size', 'sizes'] as const;
+
+export const imageInputSchema = z.object({
+	template: z.string().optional(),
+	headline: z.string().optional(),
+	subtext: z.string().optional(),
+	eyebrow: z.string().optional(),
+	quote: z.string().optional(),
+	by: z.string().optional(),
+	image: z.string().optional(),
+	window: z.string().optional(),
+	footer: z.string().optional(),
+	ground: z.string().optional(),
+	noFooter: z.boolean().optional(),
+	size: z.string().optional(),
+	sizes: z.string().optional(),
+}).strict();
+
+export type RawImageInput = z.infer<typeof imageInputSchema>;
+
+export function assertImageInput(value: unknown, label = 'image'): RawImageInput {
+	if (!value || typeof value !== 'object' || Array.isArray(value)) throw new Error(`${label} input must be a JSON object.`);
+	return parseSchema(imageInputSchema, value, label, IMAGE_FIELDS);
+}
 
 /** Check one set of fields. Size is applied by the caller, once per requested size. */
 export function resolveFields(raw: RawImageInput, defaults: { footer: string }): ImageFields {
-	const template = String(raw.template ?? 'headline').trim().toLowerCase();
+	if (typeof raw.template !== 'string' || !raw.template.trim()) throw new Error(`Missing template. Use ${Object.keys(TEMPLATES).join(', ')}.`);
+	const template = raw.template.trim().toLowerCase();
 	if (!(template in TEMPLATES)) throw new Error(`Unknown template "${template}". Use ${Object.keys(TEMPLATES).join(', ')}.`);
 	const id = template as TemplateId;
 	const spec = TEMPLATES[id];
@@ -153,10 +169,7 @@ export function catalog() {
 		sizes: Object.entries(SIZES).map(([id, size]) => ({ id, ...size })),
 		templates: Object.entries(TEMPLATES).map(([id, template]) => ({ id, ...template })),
 		exports: ['png', 'svg'],
-		type: {
-			family: 'Inter',
-			weights: { text: 400, display: 500 },
-			note: 'The display family named in the brand tokens is not included. Images set text and display in Inter, the body font shipped with the CLI, at the token weights and tracking. Logos are the shipped lockup, drawn as vectors.',
-		},
+		fields: IMAGE_FIELDS,
+		type: { note: typeNote() },
 	};
 }

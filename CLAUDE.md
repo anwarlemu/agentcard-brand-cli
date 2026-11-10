@@ -21,7 +21,9 @@ npm run ci           # build, limits, registry, tests; must pass before you push
   into `apps/www/public/r`, type-checks the library and runs the value check over it.
 - `apps/www/`: the docs site (Next.js), deployed to the Vercel project `agentcard-ds` (Agencidev team) with
   `vercel deploy --prod --scope agencidev-dev` from the repo root; it renders every item from source.
-- `src/library/`: loading registry items (`registry.ts`) and swap mode (`swap.ts`); `src/commands/add.ts` (add, list).
+- `src/library/`: loading registry items (`registry.ts`), component contracts (`contract.ts`: list, inspect, emit) and swap mode (`swap.ts`); `src/commands/add.ts` (add, list).
+- `src/brand/`: the agent catalog (`manifest.ts`), token groups, font files, logo rules, voice and principles. `AGENTS.md` is the handoff for an agent that only has the CLI.
+- `src/image/` and `src/video/`: headless stills (PNG and SVG) and short Motion JPEG MP4 clips. Samples are `examples/images/` and `examples/videos/`.
 - `brand/`: the only brand-specific content. `tokens.css` is the single source of values (`:root`). `site.css` is the
   base layer (type defaults, phone steps, the blue hero and its stepped bands). `elements.json` holds how each kind of
   element is styled, with `match` data for detection and a `source`. `reference/` holds the brand's own pages as
