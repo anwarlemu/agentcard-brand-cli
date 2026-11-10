@@ -141,6 +141,7 @@ describe('images stay strict', () => {
 		const dir = mkdtempSync(join(tmpdir(), 'ds-image-strict-'));
 		try {
 			await expect(captureAsync(() => imageRender({ template: 'poster', headline: 'Hello', out: dir, json: true }))).rejects.toThrow(/Unknown template/);
+			await expect(captureAsync(() => imageRender({ template: 'headline', headline: 'Hello', subtext: 'Not used', out: dir, json: true }))).rejects.toThrow(/does not take --subtext/);
 			await expect(captureAsync(() => imageRender({ headline: 'Hello', out: dir, json: true }))).rejects.toThrow(/Missing template/);
 			writeFileSync(join(dir, 'card.json'), JSON.stringify({ template: 'headline', headline: 'Hello', palette: 'neon' }));
 			await expect(captureAsync(() => imageRender({ input: join(dir, 'card.json'), out: dir, json: true }))).rejects.toThrow(/Unknown image file field/);

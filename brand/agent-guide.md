@@ -80,7 +80,7 @@ Use this when the brief needs an Open Graph image or a social post. The command 
 
 Pass copy as flags, or as a JSON object with `--input`. Flags override the file. `--dry-run` lists files and writes nothing. `--json` lists every written file with its pixel size. The default export is PNG and SVG. SVG text is outlined, so the file does not need a font installed. The default footer is the site host. `--no-footer` leaves that line off.
 
-The display face named in the tokens is not included. `{{cli}} brand fonts --json` names the families that ship and the families that do not. Images and videos outline text with the shipped files. Do not download a stand-in. The logo is the lockup shipped with the brand files. Do not redraw it. A screenshot is a PNG or JPEG. The announcement template keeps a blue cap and a paper body, so leave `--ground` off for that template. A missing template, an unknown template, an unknown size, or an unknown JSON field is an error.
+The display face named in the tokens is not included. `{{cli}} brand fonts --json` names the families that ship and the families that do not. Images and videos outline text with the shipped files. Do not download a stand-in. The logo is the lockup shipped with the brand files. Do not redraw it. A screenshot is a PNG or JPEG. The announcement template keeps a blue cap and a paper body, so leave `--ground` off for that template. A missing template, an unknown template, an unknown size, an unknown JSON field, or a field the template does not list is an error.
 
 ## Read the brand system
 

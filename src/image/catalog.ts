@@ -158,6 +158,10 @@ export function resolveFields(raw: RawImageInput, defaults: { footer: string }):
 		ground: (groundRaw as Ground | undefined) ?? (spec.ground === 'split' ? undefined : spec.ground),
 	};
 	if (fields.image && id !== 'screenshot') throw new Error('Pass --image only with the screenshot template.');
+	const allowed = new Set<string>([...spec.needs, ...spec.optional]);
+	for (const key of ['headline', 'subtext', 'eyebrow', 'quote', 'by', 'window'] as const) {
+		if (fields[key] && !allowed.has(key)) throw new Error(`The ${id} template does not take --${key}.`);
+	}
 	const missing = spec.needs.filter((key) => !fields[key as keyof ImageFields]);
 	if (missing.length) throw new Error(`The ${id} template needs ${missing.map((key) => `--${key}`).join(' and ')}.`);
 	return fields;
