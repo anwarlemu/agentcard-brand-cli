@@ -65,6 +65,55 @@ npx agentcard-ds add hero section site-header site-footer --surface site
 npx agentcard-ds list --json
 npx agentcard-ds show select --json
 npx agentcard-ds tokens border
+npx agentcard-ds image list --json
+```
+
+## Make images, clips, slides, illustrations and merch
+
+Every asset is drawn from the brand's own layouts and tokens, with no browser, and the same input writes the same bytes.
+
+- `image render`: share images and social posts. Templates `hero`, `window` and `cards` (the brand's image editor layouts, with its toon objects) plus `headline`, `subtext`, `screenshot`, `quote` and `announcement`. Sizes `og` 1200x630, `square` 1080x1080, `portrait` 1080x1350, `landscape` 1200x675, `story` 1080x1920, `x-banner` 1500x500 and `linkedin-banner` 1584x396. PNG and SVG. `--image` takes your picture; `--toon` makes it a toon object.
+- `video render`: clips that move the way the brand does (ease-out entrances, the site's sticker drift, the band's grain), MP4 and WebM through ffmpeg (Motion JPEG MP4 without it), 2 to 12 seconds, `--still` for one frame.
+- `deck`: slides at 1920x1080 from a JSON file (cover, section, statement, bullets, stat, quote, image, cards, end): a PNG per slide and one PDF.
+- `illustrate`: toon object illustrations from the brand's fifteen objects or any picture. Rules in `brand/illustration.md`.
+- `merch`: print files at real size with bleed and safe area (tee, hoodie, cap, tote, mug wrap, stickers with cut lines, poster): SVG in inches, PNG at 300 dpi and a proof. Sizes are vendor conventions.
+- `figma tokens|push|pull|check`: variables, Figma-ready files and value checks; the CLI prints the Figma MCP calls and never calls Figma itself.
+
+```sh
+npx agentcard-ds image render --template hero --headline "Let agents buy anything online" --size all --json
+npx agentcard-ds video render --template hero --headline "Let agents buy anything online" --size square --export mp4,webm --json
+npx agentcard-ds deck --input deck.json --out deck --json
+npx agentcard-ds illustrate cart coins --ground paper --json
+npx agentcard-ds merch tee-front --variant all --json
+npx agentcard-ds figma tokens --out figma --json
+```
+
+The docs site shows a gallery of each (Assets, Illustrations and Figma pages); `npm run gallery` regenerates it.
+
+## Read the brand system
+
+`manifest --json` is the catalog: every command and flag, token group, font, logo rule, image template and size, video template, slide type, merch item, illustration subject, Figma action, component and principle. `describe --json` is the same command. `brand --json` returns tokens, fonts, logos and voice. Groups are `color`, `type`, `space`, `radius`, `motion`, `shadow`, `band`, `glass` and `other`.
+
+```sh
+npx agentcard-ds manifest --json
+npx agentcard-ds brand tokens --group color --json
+npx agentcard-ds brand tokens --name=--ds-color-brand --json
+npx agentcard-ds brand fonts --json
+npx agentcard-ds brand logos --json
+npx agentcard-ds brand voice --json
+npx agentcard-ds principles --surface site --json
+```
+
+Use the equals form for `--name`. A bare `--ds-...` is parsed as a flag. `brand fonts --json` says which families ship and which token families have no file. Do not download a stand-in. `principles --surface product --json` reports whether a product system is defined. If it is not, do not invent one.
+
+## Use a component without guessing
+
+`component list`, `component inspect` and `component emit` read the bundled library. `inspect` returns exports, variant maps, example states, usage and constraints. `emit --state` copies an example file. `emit --set` emits markup only for variant keys and values that exist.
+
+```sh
+npx agentcard-ds component inspect button --json
+npx agentcard-ds component emit button --state Site --json
+npx agentcard-ds component emit button --set variant=primary --set size=sm --text "Start free" --json
 ```
 
 ## Instructions for coding agents
@@ -74,8 +123,11 @@ Include this with the page requirements:
 ```text
 Build this page using the Agentcard design system at https://agentcard-ds.vercel.app.
 Read https://agentcard-ds.vercel.app/agents.md first.
-Run npx agentcard-ds show <name> --json for exact exports, usage rules, examples and source.
-Add existing components with the CLI. Use design tokens for custom layout and styling.
+Run npx agentcard-ds manifest --json first. It lists every command, token, template, size, component and rule.
+Run npx agentcard-ds component inspect <name> --json before writing that component. Use component emit for markup. show --json still returns source.
+Add existing components with the CLI. Use design tokens from brand tokens --json. Do not invent a token name.
+Render images with npx agentcard-ds image render, clips with video render, slides with deck, illustrations with illustrate, merch with merch and Figma files with figma. Run manifest --json for every template, size and subject.
+Read site rules with npx agentcard-ds principles --json. If product.defined is false, do not invent product principles.
 Connect every control to its intended behavior. Include validation, loading, empty and error states where needed.
 Run the project checks and the CLI token check. Test keyboard interaction and desktop and phone layouts.
 ```
@@ -106,6 +158,20 @@ Run these commands with `npx agentcard-ds` after installing the CLI.
 | `list` | List available components, sections, page templates and visuals. |
 | `look <file\|element>` | Show component and token guidance for a file or element type. |
 | `tokens [term]` | Find a token by name or role. |
+| `manifest` | List every command, token, template, size, component and rule. `describe` is the same command. |
+| `brand` | Tokens, fonts, logos and voice. `brand tokens`, `brand fonts`, `brand logos` and `brand voice` read one part. |
+| `principles` | Website do and don't lists, element rules, and whether product principles exist. |
+| `component list` | List bundled components. |
+| `component inspect <name>` | Exports, variants, states, usage and constraints. |
+| `component emit <name>` | Copy an example state, or emit markup from the variant map. |
+| `image list` | List image sizes, templates and the fields each template takes. |
+| `image render` | Render an Open Graph or social image to PNG and SVG. `--template` is required. |
+| `video list` | List video sizes, templates, the motion and the renderer. |
+| `video render` | Render an MP4 or WebM clip (ffmpeg), or one frame with `--still`. `--template` is required. |
+| `deck` | Render slides from a JSON file to a PNG per slide and one PDF. `--list` names the slide types. |
+| `illustrate [subjects...]` | Draw toon object illustrations, or a toon from `--image`, to SVG and PNG. |
+| `merch [items...]` | Write merch print files at real size with bleed, safe area, proof and cut lines. |
+| `figma <action>` | `tokens`, `push`, `pull`, `check`: Figma-ready files and the Figma MCP steps. |
 | `check [files...]` | Check style values. Use `--changed` for Git changes or `--fix` for exact token replacements. |
 | `review <url> --any` | Review a page that is not part of an existing conversion task list. |
 | `review <url>` | Review a tracked screen and mark its task complete when it passes. |
@@ -137,8 +203,8 @@ commits. Adding individual components with `add` does not run this conversion.
 - `/r/<name>.md` and `/r/<name>.json`: usage rules, exports, dependencies, examples and exact source.
 
 All references are generated from the same registry the CLI installs. Prefer individual component references to
-the complete file. `guide`, `list`, `show`, `look`, `tokens` and `check` without `--fix` are read-only. `init` and
-`add` accept `--dry-run`; add `--json` for structured results. JSON goes to stdout; progress goes to stderr.
+the complete file. `manifest`, `describe`, `guide`, `brand`, `principles`, `component`, `list`, `show`, `look`, `tokens`, `image list`, `video list` and `check` without `--fix` are read-only. `init` and
+`add` accept `--dry-run`; `image render` and `video render` do too. Add `--json` for structured results. JSON goes to stdout; progress goes to stderr. Start with `manifest --json`.
 
 ## Source
 

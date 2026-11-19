@@ -1,0 +1,16 @@
+{
+	"$comment": "Short motion pieces built the way the brand moves. Entrances use the motion tokens (--ds-easing-out over --ds-duration-slow, never ease-in), staggered a little; the toon objects then drift the way the site's sticker field does (a few pixels and a degree or two on a 9 to 15 second loop, --ds-easing-in-out); the band's grain jumps between eight offsets every 80ms as the band divider's does. Nothing exits: a clip ends on the finished frame, so it loops cleanly into a still.",
+	"source": "registry/components/visuals/sticker-field.tsx (drift), registry/components/visuals/band-divider.tsx (grain jumps), brand/tokens.css (--ds-easing-out, --ds-easing-in-out, --ds-duration-slow, --ds-space-6)",
+	"fps": 30,
+	"seconds": { "default": 4, "min": 2, "max": 12 },
+	"enter": { "start": 0.2, "duration": "--ds-duration-slow", "easing": "--ds-easing-out", "lift": "--ds-space-6", "stagger": 0.06, "fromScale": 0.95 },
+	"drift": { "easing": "--ds-easing-in-out", "periodMin": 9, "periodSpread": 7 },
+	"grain": { "interval": 0.08, "jumps": [[0, 0], [-37, 21], [53, -45], [-61, -13], [29, 59], [-19, -67], [71, 7], [-47, 43]] },
+	"sizes": {
+		"square": { "width": 1080, "height": 1080 },
+		"vertical": { "width": 1080, "height": 1920 },
+		"landscape": { "width": 1920, "height": 1080 },
+		"portrait": { "width": 1080, "height": 1350 },
+		"og": { "width": 1200, "height": 630 }
+	}
+}

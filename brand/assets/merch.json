@@ -1,0 +1,387 @@
+{
+	"$comment": "Merch print files (no mockups). Trim sizes, bleed and safe areas are common print-vendor conventions, not brand rules: confirm against the vendor's template for the exact blank before ordering. Layouts are in inches from the trim's top left. Only the approved lockup and mark (brand/logo) in the approved logo colors (blue, ink, white: registry/docs/logo.md) and the brand grounds are used; type is Inter Medium set as outlines. Colors are the screen values (sRGB): ask the vendor to match --ds-color-brand #0000FF as a spot or its nearest process build.",
+	"dpi": 300,
+	"copy": {
+		"headline": "Let agents buy anything online"
+	},
+	"variants": {
+		"blue": {
+			"about": "Blue ground to the bleed, white logo and type",
+			"ground": "blue",
+			"ink": "white"
+		},
+		"paper": {
+			"about": "Paper ground to the bleed, blue logo and ink type",
+			"ground": "paper",
+			"ink": "brand"
+		},
+		"ink": {
+			"about": "Ink ground to the bleed, white logo and type",
+			"ground": "ink",
+			"ink": "white"
+		},
+		"brand": {
+			"about": "Blue logo and type alone on a clear ground (light blanks)",
+			"ink": "brand"
+		},
+		"white": {
+			"about": "White logo and type alone on a clear ground (dark or blue blanks)",
+			"ink": "white"
+		},
+		"ink-logo": {
+			"about": "Ink logo and type alone on a clear ground (light blanks)",
+			"ink": "ink"
+		}
+	},
+	"logo": {
+		"minWidth": {
+			"lockup": 1,
+			"mark": 0.4
+		},
+		"clearSpace": "half-height",
+		"note": "The brand defines no minimum size or clear space. The CLI keeps a convention: the lockup at least 1 in wide and the mark at least 0.4 in (cap embroidery), clear space of at least half the logo's height from the trim and from every other element, and every logo inside the safe area."
+	},
+	"items": [
+		{
+			"id": "tee-front",
+			"name": "T-shirt front",
+			"size": [
+				12,
+				16
+			],
+			"bleed": 0,
+			"safe": 0.5,
+			"method": "DTG or screen print",
+			"source": "Common adult tee front print area (DTG standard, 12 by 16 in). Garments are not trimmed, so no bleed.",
+			"variants": [
+				"brand",
+				"white",
+				"ink-logo"
+			],
+			"layers": [
+				{
+					"type": "logo",
+					"kind": "lockup",
+					"box": [
+						2,
+						1.5,
+						8,
+						1.43
+					]
+				}
+			]
+		},
+		{
+			"id": "tee-back",
+			"name": "T-shirt back",
+			"size": [
+				12,
+				16
+			],
+			"bleed": 0,
+			"safe": 0.5,
+			"method": "DTG or screen print",
+			"source": "Common adult tee back print area (12 by 16 in). No bleed.",
+			"variants": [
+				"brand",
+				"white",
+				"ink-logo"
+			],
+			"layers": [
+				{
+					"type": "logo",
+					"kind": "mark",
+					"box": [
+						3,
+						1.8,
+						6,
+						3.36
+					]
+				},
+				{
+					"type": "text",
+					"slot": "headline",
+					"box": [
+						1,
+						7,
+						10,
+						3.2
+					],
+					"size": 1.25,
+					"align": "center",
+					"maxLines": 2
+				}
+			]
+		},
+		{
+			"id": "hoodie-front",
+			"name": "Hoodie front",
+			"size": [
+				12,
+				10
+			],
+			"bleed": 0,
+			"safe": 0.5,
+			"method": "DTG or screen print",
+			"source": "Pullover hoodie front above the pouch pocket (12 by 10 in is common; vendors range from 11.5 by 11.5 to 12 by 12 in). No bleed.",
+			"variants": [
+				"brand",
+				"white",
+				"ink-logo"
+			],
+			"layers": [
+				{
+					"type": "logo",
+					"kind": "lockup",
+					"box": [
+						1.25,
+						4.15,
+						9.5,
+						1.7
+					]
+				}
+			]
+		},
+		{
+			"id": "cap-front",
+			"name": "Cap front panel",
+			"size": [
+				4,
+				1.75
+			],
+			"bleed": 0,
+			"safe": 0.125,
+			"method": "embroidery",
+			"source": "Common front embroidery area on a structured six-panel cap (4 by 1.75 in). Thread, so one color per file and no bleed.",
+			"variants": [
+				"white",
+				"brand",
+				"ink-logo"
+			],
+			"layers": [
+				{
+					"type": "logo",
+					"kind": "lockup",
+					"box": [
+						0.35,
+						0.58,
+						3.3,
+						0.59
+					]
+				}
+			]
+		},
+		{
+			"id": "tote",
+			"name": "Tote bag",
+			"size": [
+				12,
+				14
+			],
+			"bleed": 0,
+			"safe": 0.5,
+			"method": "screen print or DTG",
+			"source": "Print area on a standard 15 by 16 in canvas tote (12 by 14 in is common). No bleed.",
+			"variants": [
+				"brand",
+				"white",
+				"ink-logo"
+			],
+			"layers": [
+				{
+					"type": "logo",
+					"kind": "mark",
+					"box": [
+						2.5,
+						2.5,
+						7,
+						3.9
+					]
+				},
+				{
+					"type": "logo",
+					"kind": "lockup",
+					"box": [
+						3,
+						9.4,
+						6,
+						1.07
+					]
+				}
+			]
+		},
+		{
+			"id": "mug-wrap",
+			"name": "Mug wrap, 11 oz",
+			"size": [
+				9,
+				3.5
+			],
+			"bleed": 0.125,
+			"safe": 0.25,
+			"method": "sublimation",
+			"source": "11 oz mug wrap (9 by 3.5 in is common; vendors range from 8.5 to 9.5 in wide) with 0.125 in bleed. A lockup sits on each side of the handle.",
+			"variants": [
+				"blue",
+				"paper",
+				"ink"
+			],
+			"layers": [
+				{
+					"type": "band",
+					"to": "contrast",
+					"at": 3.0,
+					"step": 0.08
+				},
+				{
+					"type": "logo",
+					"kind": "lockup",
+					"box": [
+						0.6,
+						1.1,
+						3.2,
+						0.57
+					]
+				},
+				{
+					"type": "logo",
+					"kind": "lockup",
+					"box": [
+						5.2,
+						1.1,
+						3.2,
+						0.57
+					]
+				}
+			]
+		},
+		{
+			"id": "sticker",
+			"name": "Sticker, die-cut lockup",
+			"size": [
+				3,
+				1.25
+			],
+			"bleed": 0.125,
+			"safe": 0.125,
+			"method": "die-cut vinyl",
+			"source": "Die-cut sticker 3 by 1.25 in, cut along a rounded rectangle (the CutContour path in the SVG, a spot line the cutter reads and does not print), 0.125 in bleed past the cut and 0.125 in safe inside it.",
+			"cut": {
+				"radius": 0.2
+			},
+			"variants": [
+				"blue",
+				"paper",
+				"ink"
+			],
+			"layers": [
+				{
+					"type": "logo",
+					"kind": "lockup",
+					"box": [
+						0.35,
+						0.39,
+						2.3,
+						0.41
+					]
+				}
+			]
+		},
+		{
+			"id": "sticker-mark",
+			"name": "Sticker, die-cut mark",
+			"size": [
+				2,
+				2
+			],
+			"bleed": 0.125,
+			"safe": 0.125,
+			"method": "die-cut vinyl",
+			"source": "Die-cut sticker 2 by 2 in with rounded corners (CutContour path), 0.125 in bleed and safe.",
+			"cut": {
+				"radius": 0.3
+			},
+			"variants": [
+				"blue",
+				"paper",
+				"ink"
+			],
+			"layers": [
+				{
+					"type": "logo",
+					"kind": "mark",
+					"box": [
+						0.4,
+						0.62,
+						1.2,
+						0.67
+					]
+				}
+			]
+		},
+		{
+			"id": "poster",
+			"name": "Poster",
+			"size": [
+				18,
+				24
+			],
+			"bleed": 0.125,
+			"safe": 0.5,
+			"method": "digital or offset print",
+			"source": "18 by 24 in poster (a standard size), 0.125 in bleed, 0.5 in safe.",
+			"variants": [
+				"blue",
+				"paper",
+				"ink"
+			],
+			"layers": [
+				{
+					"type": "scan"
+				},
+				{
+					"type": "text",
+					"slot": "headline",
+					"box": [
+						1.25,
+						2.5,
+						15.5,
+						9
+					],
+					"size": 3,
+					"align": "left",
+					"maxLines": 3
+				},
+				{
+					"type": "band",
+					"to": "contrast",
+					"at": 19.5,
+					"step": 0.25
+				},
+				{
+					"type": "logo",
+					"kind": "lockup",
+					"box": [
+						1.25,
+						21.6,
+						6,
+						1.07
+					]
+				},
+				{
+					"type": "text",
+					"slot": "url",
+					"box": [
+						11,
+						21.85,
+						5.75,
+						0.6
+					],
+					"size": 0.42,
+					"align": "right",
+					"maxLines": 1
+				}
+			]
+		}
+	]
+}

@@ -1,0 +1,402 @@
+[
+	{
+		"file": "/assets/image-1-hero-og.jpg",
+		"title": "hero, og (1200 by 630)",
+		"command": "npx agentcard-ds image render --template hero --headline \"Let agents buy anything online\"",
+		"width": 1200,
+		"height": 630,
+		"group": "image"
+	},
+	{
+		"file": "/assets/image-2-window-og.jpg",
+		"title": "window, og (1200 by 630)",
+		"command": "npx agentcard-ds image render --template window --eyebrow Issuing --headline \"Create one-time and multi-use cards\"",
+		"width": 1200,
+		"height": 630,
+		"group": "image"
+	},
+	{
+		"file": "/assets/image-3-cards-landscape.jpg",
+		"title": "cards, landscape (1200 by 675)",
+		"command": "npx agentcard-ds image render --template cards --input cards.json --size landscape",
+		"width": 1200,
+		"height": 675,
+		"group": "image"
+	},
+	{
+		"file": "/assets/image-4-hero-story.jpg",
+		"title": "hero, story (1080 by 1920)",
+		"command": "npx agentcard-ds image render --template hero --eyebrow New --headline \"Purchase Agent\" --subtext \"...\" --stickers under --size story",
+		"width": 1080,
+		"height": 1920,
+		"group": "image"
+	},
+	{
+		"file": "/assets/image-5-window-square.jpg",
+		"title": "window, square (1080 by 1080)",
+		"command": "npx agentcard-ds image render --template window --eyebrow Vault --headline \"...\" --picture wallet --window-body sky --window vault.product --size square",
+		"width": 1080,
+		"height": 1080,
+		"group": "image"
+	},
+	{
+		"file": "/assets/image-6-hero-x-banner.jpg",
+		"title": "hero, x-banner (1500 by 500)",
+		"command": "npx agentcard-ds image render --template hero --headline \"...\" --size x-banner",
+		"width": 1500,
+		"height": 500,
+		"group": "image"
+	},
+	{
+		"file": "/assets/image-7-hero-linkedin-banner.jpg",
+		"title": "hero, linkedin-banner (1584 by 396)",
+		"command": "npx agentcard-ds image render --template hero --headline \"...\" --ground ink --size linkedin-banner",
+		"width": 1584,
+		"height": 396,
+		"group": "image"
+	},
+	{
+		"file": "/assets/image-8-hero-portrait.jpg",
+		"title": "hero, portrait (1080 by 1350)",
+		"command": "npx agentcard-ds image render --template hero --headline \"...\" --ground ink --stickers scatter --seed 8 --count 6 --size portrait",
+		"width": 1080,
+		"height": 1350,
+		"group": "image"
+	},
+	{
+		"file": "/assets/image-9-subtext-og.jpg",
+		"title": "subtext, og (1200 by 630)",
+		"command": "npx agentcard-ds image render --template subtext --headline \"...\" --subtext \"...\"",
+		"width": 1200,
+		"height": 630,
+		"group": "image"
+	},
+	{
+		"file": "/assets/image-10-quote-square.jpg",
+		"title": "quote, square (1080 by 1080)",
+		"command": "npx agentcard-ds image render --template quote --quote \"...\" --by \"Head of product, Acme\" --size square",
+		"width": 1080,
+		"height": 1080,
+		"group": "image"
+	},
+	{
+		"file": "/assets/deck-01-cover.jpg",
+		"title": "cover",
+		"command": "npx agentcard-ds deck --sample",
+		"width": 1920,
+		"height": 1080,
+		"group": "deck"
+	},
+	{
+		"file": "/assets/deck-02-section.jpg",
+		"title": "section",
+		"command": "npx agentcard-ds deck --sample",
+		"width": 1920,
+		"height": 1080,
+		"group": "deck"
+	},
+	{
+		"file": "/assets/deck-03-statement.jpg",
+		"title": "statement",
+		"command": "npx agentcard-ds deck --sample",
+		"width": 1920,
+		"height": 1080,
+		"group": "deck"
+	},
+	{
+		"file": "/assets/deck-04-bullets.jpg",
+		"title": "bullets",
+		"command": "npx agentcard-ds deck --sample",
+		"width": 1920,
+		"height": 1080,
+		"group": "deck"
+	},
+	{
+		"file": "/assets/deck-05-stat.jpg",
+		"title": "stat",
+		"command": "npx agentcard-ds deck --sample",
+		"width": 1920,
+		"height": 1080,
+		"group": "deck"
+	},
+	{
+		"file": "/assets/deck-06-quote.jpg",
+		"title": "quote",
+		"command": "npx agentcard-ds deck --sample",
+		"width": 1920,
+		"height": 1080,
+		"group": "deck"
+	},
+	{
+		"file": "/assets/deck-07-image.jpg",
+		"title": "image",
+		"command": "npx agentcard-ds deck --sample",
+		"width": 1920,
+		"height": 1080,
+		"group": "deck"
+	},
+	{
+		"file": "/assets/deck-08-cards.jpg",
+		"title": "cards",
+		"command": "npx agentcard-ds deck --sample",
+		"width": 1920,
+		"height": 1080,
+		"group": "deck"
+	},
+	{
+		"file": "/assets/deck-09-end.jpg",
+		"title": "end",
+		"command": "npx agentcard-ds deck --sample",
+		"width": 1920,
+		"height": 1080,
+		"group": "deck"
+	},
+	{
+		"file": "/assets/illustration-cart.jpg",
+		"title": "cart",
+		"command": "npx agentcard-ds illustrate cart",
+		"width": 1080,
+		"height": 1080,
+		"group": "illustration"
+	},
+	{
+		"file": "/assets/illustration-row.jpg",
+		"title": "row",
+		"command": "npx agentcard-ds illustrate coins wallet receipt --ground paper",
+		"width": 1080,
+		"height": 1080,
+		"group": "illustration"
+	},
+	{
+		"file": "/assets/illustration-preset.jpg",
+		"title": "preset",
+		"command": "npx agentcard-ds illustrate --composition preset --size og",
+		"width": 1200,
+		"height": 630,
+		"group": "illustration"
+	},
+	{
+		"file": "/assets/illustration-scatter.jpg",
+		"title": "scatter",
+		"command": "npx agentcard-ds illustrate --composition scatter --seed 5 --size og --ground ink",
+		"width": 1200,
+		"height": 630,
+		"group": "illustration"
+	},
+	{
+		"file": "/assets/illustration-band.jpg",
+		"title": "band",
+		"command": "npx agentcard-ds illustrate gift --band paper",
+		"width": 1080,
+		"height": 1080,
+		"group": "illustration"
+	},
+	{
+		"file": "/assets/illustration-terminal.jpg",
+		"title": "terminal",
+		"command": "npx agentcard-ds illustrate terminal --ground white",
+		"width": 1080,
+		"height": 1080,
+		"group": "illustration"
+	},
+	{
+		"file": "/assets/subject-card.jpg",
+		"title": "The black card",
+		"command": "npx agentcard-ds illustrate card",
+		"width": 727,
+		"height": 435,
+		"group": "subject"
+	},
+	{
+		"file": "/assets/subject-cart.jpg",
+		"title": "Orange cart",
+		"command": "npx agentcard-ds illustrate cart",
+		"width": 652,
+		"height": 669,
+		"group": "subject"
+	},
+	{
+		"file": "/assets/subject-coins.jpg",
+		"title": "Coins",
+		"command": "npx agentcard-ds illustrate coins",
+		"width": 545,
+		"height": 364,
+		"group": "subject"
+	},
+	{
+		"file": "/assets/subject-gift.jpg",
+		"title": "Pink gift",
+		"command": "npx agentcard-ds illustrate gift",
+		"width": 657,
+		"height": 691,
+		"group": "subject"
+	},
+	{
+		"file": "/assets/subject-wallet.jpg",
+		"title": "Wallet",
+		"command": "npx agentcard-ds illustrate wallet",
+		"width": 590,
+		"height": 501,
+		"group": "subject"
+	},
+	{
+		"file": "/assets/subject-bag.jpg",
+		"title": "Shopping bag",
+		"command": "npx agentcard-ds illustrate bag",
+		"width": 609,
+		"height": 717,
+		"group": "subject"
+	},
+	{
+		"file": "/assets/subject-sale-tag.jpg",
+		"title": "Red sale tag",
+		"command": "npx agentcard-ds illustrate sale-tag",
+		"width": 420,
+		"height": 719,
+		"group": "subject"
+	},
+	{
+		"file": "/assets/subject-phone.jpg",
+		"title": "Teal phone",
+		"command": "npx agentcard-ds illustrate phone",
+		"width": 342,
+		"height": 669,
+		"group": "subject"
+	},
+	{
+		"file": "/assets/subject-cash.jpg",
+		"title": "Mint cash",
+		"command": "npx agentcard-ds illustrate cash",
+		"width": 703,
+		"height": 443,
+		"group": "subject"
+	},
+	{
+		"file": "/assets/subject-parcel.jpg",
+		"title": "Parcel",
+		"command": "npx agentcard-ds illustrate parcel",
+		"width": 556,
+		"height": 475,
+		"group": "subject"
+	},
+	{
+		"file": "/assets/subject-terminal.jpg",
+		"title": "Yellow terminal",
+		"command": "npx agentcard-ds illustrate terminal",
+		"width": 539,
+		"height": 707,
+		"group": "subject"
+	},
+	{
+		"file": "/assets/subject-purse.jpg",
+		"title": "Lilac purse",
+		"command": "npx agentcard-ds illustrate purse",
+		"width": 678,
+		"height": 650,
+		"group": "subject"
+	},
+	{
+		"file": "/assets/subject-cardholder.jpg",
+		"title": "Coral cardholder",
+		"command": "npx agentcard-ds illustrate cardholder",
+		"width": 608,
+		"height": 649,
+		"group": "subject"
+	},
+	{
+		"file": "/assets/subject-receipt.jpg",
+		"title": "Blue receipt",
+		"command": "npx agentcard-ds illustrate receipt",
+		"width": 595,
+		"height": 681,
+		"group": "subject"
+	},
+	{
+		"file": "/assets/subject-checkout.jpg",
+		"title": "Checkout screen",
+		"command": "npx agentcard-ds illustrate checkout",
+		"width": 609,
+		"height": 418,
+		"group": "subject"
+	},
+	{
+		"file": "/assets/merch-tee-front-brand.jpg",
+		"title": "T-shirt front (12 by 16 in, brand)",
+		"command": "npx agentcard-ds merch tee-front --variant brand",
+		"width": 3600,
+		"height": 4800,
+		"group": "merch"
+	},
+	{
+		"file": "/assets/merch-tee-back-brand.jpg",
+		"title": "T-shirt back (12 by 16 in, brand)",
+		"command": "npx agentcard-ds merch tee-back --variant brand",
+		"width": 3600,
+		"height": 4800,
+		"group": "merch"
+	},
+	{
+		"file": "/assets/merch-hoodie-front-brand.jpg",
+		"title": "Hoodie front (12 by 10 in, brand)",
+		"command": "npx agentcard-ds merch hoodie-front --variant brand",
+		"width": 3600,
+		"height": 3000,
+		"group": "merch"
+	},
+	{
+		"file": "/assets/merch-cap-front-white.jpg",
+		"title": "Cap front panel (4 by 1.75 in, white)",
+		"command": "npx agentcard-ds merch cap-front --variant white",
+		"width": 1200,
+		"height": 525,
+		"group": "merch"
+	},
+	{
+		"file": "/assets/merch-tote-brand.jpg",
+		"title": "Tote bag (12 by 14 in, brand)",
+		"command": "npx agentcard-ds merch tote --variant brand",
+		"width": 3600,
+		"height": 4200,
+		"group": "merch"
+	},
+	{
+		"file": "/assets/merch-mug-wrap-blue.jpg",
+		"title": "Mug wrap, 11 oz (9 by 3.5 in, blue)",
+		"command": "npx agentcard-ds merch mug-wrap --variant blue",
+		"width": 2775,
+		"height": 1125,
+		"group": "merch"
+	},
+	{
+		"file": "/assets/merch-sticker-blue.jpg",
+		"title": "Sticker, die-cut lockup (3 by 1.25 in, blue)",
+		"command": "npx agentcard-ds merch sticker --variant blue",
+		"width": 975,
+		"height": 450,
+		"group": "merch"
+	},
+	{
+		"file": "/assets/merch-sticker-mark-blue.jpg",
+		"title": "Sticker, die-cut mark (2 by 2 in, blue)",
+		"command": "npx agentcard-ds merch sticker-mark --variant blue",
+		"width": 675,
+		"height": 675,
+		"group": "merch"
+	},
+	{
+		"file": "/assets/merch-poster-blue.jpg",
+		"title": "Poster (18 by 24 in, blue)",
+		"command": "npx agentcard-ds merch poster --variant blue",
+		"width": 5475,
+		"height": 7275,
+		"group": "merch"
+	},
+	{
+		"file": "/assets/clip-og.mp4",
+		"title": "hero clip, og",
+		"command": "npx agentcard-ds video render --template hero --headline \"Let agents buy anything online\" --size og --export mp4,webm",
+		"width": 1200,
+		"height": 630,
+		"group": "video"
+	}
+]

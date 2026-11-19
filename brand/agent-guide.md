@@ -2,6 +2,8 @@
 
 Use this system to build {{brand}} pages and interfaces from the user's brief. These instructions work with any agent that can read text and edit project files. The CLI is a local Node.js tool; no model account or agent-specific integration is needed for setup, discovery, installation or token checks.
 
+The first command is `{{cli}} manifest --json`. It lists every command, token group, font file, logo rule, image template, video template, component, and site or product principle. `{{cli}} describe --json` is the same command. Do not invent a name that is absent from that JSON. Unknown templates, sizes, components, tokens and JSON fields are errors. The CLI does not substitute a nearby name.
+
 ## Start here
 
 1. Read the project instructions and package.json. Identify the framework, package manager, stylesheet and import aliases. Use the user's requirements to decide whether to build new UI or restyle existing UI.
@@ -53,11 +55,130 @@ The component reference states its source. `{{registry}}/r/audit.json` records t
 - Follow the user's brief. For new pages, add the required content and behavior. When only restyling an existing page, preserve its content, links, order and behavior unless the user requests changes.
 - Use component props and variants shown in the source. Read the named example functions before composing compound components. Keep client state inside a client component when using Next.js; imports of client components can still be rendered by server pages.
 - Use design tokens for custom styles. `{{cli}} tokens <term> --json` finds values; `{{cli}} look <element-or-file> --json` explains styling by role. Use `var(--ds-*)` in CSS or the matching Tailwind utilities.
+- For a picture rather than a component, render it with the CLI. See "Render images" and "Render videos" below. Do not invent a second palette for social, Open Graph or video art.
 - Body text uses Inter; headings, labels and buttons use the display font stack. Use the provided blue and white/paper grounds, button bevels, windows and stepped band divider. Do not introduce unrelated colors, shadows or type scales.
 - The installed stylesheet imports `./_{{bin}}/brand.css` and `./_{{bin}}/theme.css` beside the main stylesheet. `brand.css` includes tokens and base styles. Keep both imports after `@import "tailwindcss"`. Let the installer configure fonts; do not add a second font loader.
 - Put one control in each Field. Field connects labels, help, errors and required state. Validation and submission belong to your form. For Select use `value` and `onValueChange`, SelectTrigger with SelectValue, and SelectContent with SelectItem; values must be non-empty strings. Give the root a `name` for FormData. Use `defaultValue` only for uncontrolled input.
 - Connect every action to its intended behavior. Handle empty, loading, disabled, invalid, success and error states. Preserve keyboard controls, focus return, accessible names and native form semantics. Never present a preview's local demo action as a completed backend operation.
 - Use the provided portal behavior. Surface is for an isolated preview or a scoped theme; ordinary pages do not need an extra Surface wrapper. Mount one Toaster per application when using toast notifications.
+
+## Render images
+
+Use this when the brief needs an Open Graph image, a social post or a profile banner. The command reads the brand tokens, the shipped logo, the shipped Inter files and the brand's toon objects. It does not open a browser. The same content always writes the same bytes, so it can run in CI or a sandbox.
+
+```sh
+{{cli}} image list --json
+{{cli}} image render --template hero --headline "Let agents buy anything online" --size all --json
+{{cli}} image render --template window --eyebrow "Issuing" --headline "Create one-time and multi-use cards" --picture card --json
+{{cli}} image render --template cards --input cards.json --size landscape --json
+{{cli}} image render --template hero --headline "A title" --stickers scatter --seed 4 --size square --json
+{{cli}} image render --template hero --headline "A title" --image ./photo.jpg --toon --size story --json
+{{cli}} image render --template screenshot --headline "A feature" --image ./screen.png --json
+```
+
+Templates: `hero`, `window` and `cards` are the brand's image editor layouts (the hero with toon objects round the words, words beside a sky-barred window, numbered cards); `headline`, `subtext`, `screenshot`, `quote` and `announcement` are the first templates. Sizes: `og` (1200 by 630), `square` (1080 by 1080), `portrait` (1080 by 1350), `landscape` (1200 by 675), `story` (1080 by 1920), `x-banner` (1500 by 500) and `linkedin-banner` (1584 by 396), or `all`. `image list --json` lists each template's fields and sizes.
+
+Pass copy as flags, or as a JSON object with `--input` (flags override it). Cards are a list of `{ "title", "body" }`, or text with a blank line between cards. `--stickers` arranges the toon objects: `preset` (the hero's seven), `under` (one large object under the words), `scatter` (seeded: the same `--seed` gives the same picture) or `none`; `--subjects` picks which objects. `--image` puts your PNG or JPEG in the window or, on the hero, in as the object; `--toon` makes it a toon object first. Grounds are `blue`, `paper`, `white` and `ink`; `--band` adds the stepped band toward another ground. `--dry-run` lists files and writes nothing. The default export is PNG and SVG; SVG text is outlined.
+
+The display face named in the tokens is not included, so images set it in the shipped Inter. Do not download a stand-in, do not redraw the logo, and never put a third-party logo, a real person's name or a real quote into an image: use Acme for samples. An unknown template, size, subject, ground or field exits 1 and names the closest choice.
+
+## Make slides
+
+```sh
+{{cli}} deck --list --json
+{{cli}} deck --input deck.json --out deck --json
+{{cli}} deck --sample --out deck
+```
+
+A deck file is `{ "slides": [ { "type": "cover", "title": "...", "body": "..." } ] }`. Types: `cover`, `section`, `statement`, `bullets`, `stat`, `quote`, `image`, `cards` and `end`; `deck --list --json` lists each type's slots. Slides are 1920 by 1080: one PNG per slide (`--format png,svg` for SVG too) and one `deck.pdf`. An unknown type or slot exits 1 with the closest name.
+
+## Make illustrations
+
+The brand illustrates with toon objects: everyday things of buying and paying, rendered as glossy 3D toys. Read `brand/illustration.md` (in this package) for the rules.
+
+```sh
+{{cli}} illustrate --list --json
+{{cli}} illustrate cart --ground blue --json
+{{cli}} illustrate coins wallet receipt --ground paper --json
+{{cli}} illustrate --composition scatter --seed 5 --size og --json
+{{cli}} illustrate --image ./photo.jpg --composition object --json
+```
+
+Subjects are the fifteen objects (`card`, `cart`, `coins`, `gift`, `wallet`, `bag`, `sale-tag`, `phone`, `cash`, `parcel`, `terminal`, `purse`, `cardholder`, `receipt`, `checkout`). Compositions: `single`, `row`, `preset`, `scatter` and `object` (the object alone on a clear ground). `--image` turns any picture into a toon object. Output is SVG (vector ground, the objects as embedded pictures, since they are 3D renders) and PNG.
+
+## Make merch print files
+
+```sh
+{{cli}} merch --list --json
+{{cli}} merch tee-front --variant all --json
+{{cli}} merch poster sticker --json
+```
+
+Items: `tee-front`, `tee-back`, `hoodie-front`, `cap-front`, `tote`, `mug-wrap`, `sticker`, `sticker-mark` and `poster`. Each writes an SVG at real size in inches, a PNG at 300 dpi, a proof with the trim, bleed and safe guides, and for stickers a CutContour line. Only the approved lockup and mark in blue, ink or white are used. The sizes are common vendor conventions, not brand rules: tell the person to confirm them against the vendor's template.
+
+## Read the brand system
+
+```sh
+{{cli}} brand --json
+{{cli}} brand tokens --group color --json
+{{cli}} brand tokens --name=--ds-color-brand --json
+{{cli}} brand fonts --json
+{{cli}} brand logos --json
+{{cli}} brand voice --json
+```
+
+Token groups are `color`, `type`, `space`, `radius`, `motion`, `shadow`, `band`, `glass` and `other`. `--name` must use the equals form, because a bare `--ds-...` is parsed as a flag. A missing token or an unknown group is an error. Logo usage rules come from the logo component. Voice is the Voice section of the principle file, including the quoted words to avoid.
+
+## Render videos
+
+Use this for a short clip that moves the way the brand does: words and objects arrive on the brand's ease-out (`--ds-easing-out` over `--ds-duration-slow`, staggered), the objects then drift like the site's sticker field, and the band's grain jumps. Nothing eases in and nothing starts from nothing.
+
+```sh
+{{cli}} video list --json
+{{cli}} video render --template hero --headline "Let agents buy anything online" --size square,vertical --export mp4,webm --json
+{{cli}} video render --template cards --input cards.json --size landscape --seconds 6 --json
+{{cli}} video render --template hero --headline "A title" --still end --json
+```
+
+Templates: `hero`, `window` and `cards` (the image layouts, with the image fields) and `social`, `announcement` and `product` (the first clips). Sizes: `square`, `vertical`, `landscape`, `portrait` and `og`. Clips run 2 to 12 seconds (default 4) at 30 fps. MP4 is H.264 and WebM is VP9 through ffmpeg, single-threaded and bit-exact, so the same input writes the same bytes on the same ffmpeg. Without ffmpeg, MP4 falls back to Motion JPEG and WebM is refused. `--still <seconds>` (or `end`) writes one frame as PNG and SVG.
+
+## Work in Figma
+
+The CLI never calls Figma itself: each action writes files and prints the Figma MCP calls to make, in order.
+
+```sh
+{{cli}} figma tokens --out figma --json
+{{cli}} figma push illustration cart --file <fileKey> --json
+{{cli}} figma push asset images/hero-og.svg --file <fileKey> --json
+{{cli}} figma push component button --file <fileKey> --json
+{{cli}} figma pull "https://figma.com/design/<fileKey>/<name>?node-id=1-2" --json
+{{cli}} figma check figma/variables-1-2.json figma/design-1-2.txt --json
+```
+
+`tokens` writes the tokens as Figma variables (one collection, mode Site) with use_figma scripts that are safe to rerun. `push` prepares an illustration, image, slide, component or page (SVG for upload_assets, a script for small SVGs, HTML for html_to_figma). `pull` prints the read steps and where to save each result; `check` lists every off-brand color, font, size, radius and spacing in the saved results with the nearest token, and exits 1 when there are any. Load the Figma skills the steps name before calling use_figma or get_design_context.
+
+## Components, without guessing props
+
+`{{cli}} list` and `{{cli}} show` remain the way to install and to read full source. When you need the prop map before writing UI, use the component commands. They read the bundled library and do not fetch the network.
+
+```sh
+{{cli}} component list --json
+{{cli}} component inspect button --json
+{{cli}} component emit button --state Site --json
+{{cli}} component emit button --set variant=primary --set size=sm --text "Start free" --json
+```
+
+`inspect` returns exports, variant keys and values, example state names, usage and constraints. `emit --state` copies that example file unchanged and also returns the one export. `emit --set` builds markup only from keys and values that exist on a complete variant map. An unknown key, an unknown value, or a map that is not fully static is an error. Use `--state` for the real example when `--set` is refused. Do not invent a prop that `inspect` does not list.
+
+## Design principles
+
+```sh
+{{cli}} principles --json
+{{cli}} principles --surface site --json
+{{cli}} principles --surface product --json
+```
+
+The site object is the website rules, the do list, the don't list, the element rules and the review rubric, copied from the brand files. The product object says whether a product system is defined. If `product.defined` is false, there is no product principle set to follow. `mentions` are existing lines and element records that contain the word. Do not write a product system from those mentions.
 
 ## Verify before finishing
 
@@ -71,8 +192,8 @@ The component reference states its source. `{{registry}}/r/audit.json` records t
 
 `init` and conversion install AGENTS.md and a local `.ds/agent-guide.md`, plus supported agent instruction files and hook configuration. Agents that do not load those files automatically should read them explicitly. Hooks support Claude Code, Codex and Cursor when enabled by that tool; other agents run the CLI checks directly. Codex hook activation may require the user's `/hooks` trust step. No hook integration is required to use the components correctly.
 
-Read-only commands: `guide`, `list`, `show`, `look`, `tokens`, `check` without `--fix`.
-Commands that write project files: `init`, `add`, `apply`, the legacy bare conversion command, `check --fix`, and review/snapshot state updates. Use `--dry-run` with `init`, `add` or conversion to inspect planned writes. JSON goes to stdout and progress goes to stderr. Installation/build failures return a nonzero exit code.
+Read-only commands: `manifest`, `describe`, `guide`, `brand`, `principles`, `component list`, `component inspect`, `component emit`, `list`, `show`, `look`, `tokens`, `check` without `--fix`, `image list` and `video list`.
+Commands that write project files: `init`, `add`, `apply`, the legacy bare conversion command, `check --fix`, review/snapshot state updates, `image render` (image files only, to `--out`) and `video render` (video files only, to `--out`). Use `--dry-run` with `init`, `add`, conversion, `image render` or `video render` to inspect planned writes. JSON goes to stdout and progress goes to stderr. Installation/build failures return a nonzero exit code.
 
 ## Project configuration and agent handoff
 

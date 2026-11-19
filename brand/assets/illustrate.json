@@ -1,0 +1,37 @@
+{
+	"$comment": "The toon objects: the brand's 3D sticker art and the toon style that turns any picture into one (brand/illustration.md). Subjects are the image editor's own stickers (agd-playground public/agentcard-og/*.webp, served on agentcard.sh), converted to PNG. Compositions are the editor's sticker arrangements: preset (the hero's margins), scatter (seeded, clear of each other), under (one large object), row and single are plain arrangements of the same objects.",
+	"source": "agd-playground src/components/agentcard-og/draw.ts (STICKERS, scatter, underneath), Editor.tsx (HERO_STICKERS), toon.ts (toonify); public/agentcard-og",
+	"subjects": {
+		"card": { "file": "brand/illustration/objects/card.png", "label": "The black card", "source": "public/agentcard-og/agentcard-main.webp" },
+		"cart": { "file": "brand/illustration/objects/cart.png", "label": "Orange cart", "source": "public/agentcard-og/orange-cart.webp" },
+		"coins": { "file": "brand/illustration/objects/coins.png", "label": "Coins", "source": "public/agentcard-og/coins.webp" },
+		"gift": { "file": "brand/illustration/objects/gift.png", "label": "Pink gift", "source": "public/agentcard-og/pink-gift.webp" },
+		"wallet": { "file": "brand/illustration/objects/wallet.png", "label": "Wallet", "source": "public/agentcard-og/wallet.webp" },
+		"bag": { "file": "brand/illustration/objects/bag.png", "label": "Shopping bag", "source": "public/agentcard-og/shopping-bag.webp" },
+		"sale-tag": { "file": "brand/illustration/objects/sale-tag.png", "label": "Red sale tag", "source": "public/agentcard-og/red-sale-tag.webp" },
+		"phone": { "file": "brand/illustration/objects/phone.png", "label": "Teal phone", "source": "public/agentcard-og/teal-phone.webp" },
+		"cash": { "file": "brand/illustration/objects/cash.png", "label": "Mint cash", "source": "public/agentcard-og/mint-cash.webp" },
+		"parcel": { "file": "brand/illustration/objects/parcel.png", "label": "Parcel", "source": "public/agentcard-og/parcel.webp" },
+		"terminal": { "file": "brand/illustration/objects/terminal.png", "label": "Yellow terminal", "source": "public/agentcard-og/yellow-terminal.webp" },
+		"purse": { "file": "brand/illustration/objects/purse.png", "label": "Lilac purse", "source": "public/agentcard-og/lilac-purse.webp" },
+		"cardholder": { "file": "brand/illustration/objects/cardholder.png", "label": "Coral cardholder", "source": "public/agentcard-og/coral-cardholder.webp" },
+		"receipt": { "file": "brand/illustration/objects/receipt.png", "label": "Blue receipt", "source": "public/agentcard-og/blue-receipt.webp" },
+		"checkout": { "file": "brand/illustration/objects/checkout.png", "label": "Checkout screen", "source": "public/agentcard-og/checkout.webp" }
+	},
+	"compositions": {
+		"single": "One object, large and tilted a little, in the middle of the ground.",
+		"under": "One object, large, in the lower part of the ground (the social hero's arrangement).",
+		"preset": "The hero's seven objects in the margins (Editor.tsx HERO_STICKERS).",
+		"scatter": "Objects scattered without overlapping, from a seed (draw.ts scatter).",
+		"row": "Objects side by side on one line, alternating tilts."
+	},
+	"sizes": {
+		"square": { "width": 1080, "height": 1080 },
+		"og": { "width": 1200, "height": 630 },
+		"portrait": { "width": 1080, "height": 1350 },
+		"story": { "width": 1080, "height": 1920 },
+		"wide": { "width": 1920, "height": 1080 }
+	},
+	"grounds": ["blue", "paper", "white", "ink", "none"],
+	"defaults": { "composition": "single", "size": "square", "ground": "blue", "scan": true, "rotate": -6 }
+}

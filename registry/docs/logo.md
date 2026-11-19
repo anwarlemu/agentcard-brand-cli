@@ -6,7 +6,7 @@ surface: site
 description: "Agentcard wordmark and standalone mark."
 kinds: []
 use_for: "Use Lockup in headers and footers, and LogoMark in smaller spaces. Set label={null} when the containing link already has an accessible name."
-never: [The logo in a color other than blue, ink or white, The mark stretched or outlined, A drop shadow or glow behind the logo, The wordmark retyped in a font]
+never: ["The logo in a color other than blue, ink or white", "The mark stretched or outlined", "A drop shadow or glow behind the logo", "The wordmark retyped in a font"]
 source: agentcard-brand-cli brand/logo (lockup.svg, mark.svg); agentcard.sh / (header a, 160x28)
 ---
 

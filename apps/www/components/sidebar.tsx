@@ -21,6 +21,9 @@ const PAGES = [
   { href: "/", label: "Introduction" },
   { href: "/components", label: "All components" },
   { href: "/theme", label: "Theme" },
+  { href: "/assets", label: "Assets" },
+  { href: "/illustrations", label: "Illustrations" },
+  { href: "/figma", label: "Figma" },
 ];
 
 function List({ groups, query, onNavigate }: { groups: RailGroup[]; query: string; onNavigate: () => void }) {
