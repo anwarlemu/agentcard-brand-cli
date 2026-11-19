@@ -3,7 +3,7 @@ import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { brand, cli } from '../lib/brand.js';
 import { emit } from '../lib/output.js';
-import { assertImageInput, catalog, parseExports, parseSizes, resolveFields, safeName, SIZES, type ImageJob } from '../image/catalog.js';
+import { assertImageInput, catalog, parseExports, parseSizes, resolveFields, safeName, SIZES, templateSizes, type ImageJob } from '../image/catalog.js';
 import { showPath, writeImages } from '../image/render.js';
 
 function siteHost() {
@@ -46,6 +46,18 @@ export type ImageRenderOpts = {
 	noFooter?: boolean;
 	size?: string;
 	sizes?: unknown;
+	button?: unknown;
+	band?: unknown;
+	scan?: unknown;
+	logo?: unknown;
+	windowBody?: unknown;
+	picture?: unknown;
+	toon?: unknown;
+	stickers?: unknown;
+	subjects?: unknown;
+	seed?: unknown;
+	count?: unknown;
+	cards?: unknown;
 	out?: string;
 	name?: string;
 	export?: string;
@@ -60,35 +72,34 @@ function asText(value: unknown): string | undefined {
 	return undefined;
 }
 
+// Fields a flag and the JSON file share. Booleans that default on (scan, logo) arrive from --no-scan and --no-logo as false.
+const SHARED = ['template', 'headline', 'subtext', 'eyebrow', 'quote', 'by', 'image', 'window', 'ground', 'button', 'band', 'windowBody', 'picture', 'stickers', 'subjects', 'seed', 'count', 'cards'] as const;
+
 function jobsFrom(opts: ImageRenderOpts): ImageJob[] {
 	const file = assertImageInput(readInput(opts.input), 'image file');
 	const pick = (flag: unknown, fromFile: unknown) => (flag !== undefined && flag !== '' ? flag : fromFile);
 	// `--no-footer` arrives as footer:false. An empty flag falls through to the file.
 	const noFooter = opts.footer === false || Boolean(opts.noFooter || file.noFooter);
-	const merged = assertImageInput(
-		Object.fromEntries(
-			Object.entries({
-				template: pick(opts.template, file.template),
-				headline: pick(opts.headline, file.headline),
-				subtext: pick(opts.subtext, file.subtext),
-				eyebrow: pick(opts.eyebrow, file.eyebrow),
-				quote: pick(opts.quote, file.quote),
-				by: pick(opts.by, file.by),
-				image: pick(opts.image, file.image),
-				window: pick(opts.window, file.window),
-				footer: noFooter ? undefined : pick(opts.footer, file.footer),
-				ground: pick(opts.ground, file.ground),
-				noFooter: noFooter ? true : undefined,
-				size: pick(opts.size, file.size),
-				sizes: file.sizes,
-			}).filter(([, value]) => value !== undefined),
-		),
-		'image',
-	);
-	const fields = resolveFields(merged, { footer: siteHost() });
+	const merged: Record<string, unknown> = {};
+	for (const key of SHARED) merged[key] = pick(opts[key], file[key]);
+	merged.footer = noFooter ? undefined : pick(opts.footer, file.footer);
+	merged.noFooter = noFooter ? true : undefined;
+	merged.scan = opts.scan === false ? false : file.scan;
+	merged.logo = opts.logo === false ? false : file.logo;
+	merged.toon = opts.toon === true ? true : file.toon;
+	merged.size = pick(opts.size, file.size);
+	merged.sizes = file.sizes;
+	const checked = assertImageInput(Object.fromEntries(Object.entries(merged).filter(([, value]) => value !== undefined)), 'image');
+	const fields = resolveFields(checked, { footer: siteHost() });
 	if (fields.image) fields.image = resolve(String(fields.image));
 	const requested = asText(opts.size) ?? asText(file.sizes) ?? asText(file.size);
-	return parseSizes(requested).map((size) => ({ ...fields, size, width: SIZES[size].width, height: SIZES[size].height }));
+	const allowed = templateSizes(fields.template);
+	const sizes = parseSizes(requested).filter((size) => {
+		if (allowed.includes(size)) return true;
+		if (requested === 'all') return false;
+		throw new Error(`The ${fields.template} template is not drawn at ${size}. Use ${allowed.join(', ')}.`);
+	});
+	return sizes.map((size) => ({ ...fields, size, width: SIZES[size]!.width, height: SIZES[size]!.height }));
 }
 
 export function imageList(opts: { json?: boolean }) {
@@ -96,7 +107,7 @@ export function imageList(opts: { json?: boolean }) {
 	emit(opts, data, () => {
 		const sizes = data.sizes.map((size) => `  ${size.id.padEnd(12)} ${size.width} by ${size.height}  ${size.use}`);
 		const templates = data.templates.map((template) => `  ${template.id.padEnd(14)} needs ${template.needs.join(', ')}. ${template.summary}`);
-		return [`Sizes`, ...sizes, '', `Templates`, ...templates, '', `Exports: png and svg. Default size is og. Default export is both.`, data.type.note, '', `${cli()} image render --template headline --headline "..." --json`].join('\n');
+		return [`Sizes`, ...sizes, '', `Templates`, ...templates, '', `Subjects (toon objects): ${data.subjects.join(', ')}`, `Sticker modes: ${data.stickerModes.join(', ')}. Grounds: ${data.grounds.join(', ')}.`, '', `Exports: png and svg. Default size is og. Default export is both.`, data.type.note, '', `${cli()} image render --template hero --headline "..." --json`].join('\n');
 	});
 }
 

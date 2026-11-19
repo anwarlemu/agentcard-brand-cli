@@ -68,17 +68,31 @@ npx agentcard-ds tokens border
 npx agentcard-ds image list --json
 ```
 
-## Render an image
+## Make images, clips, slides, illustrations and merch
 
-`image render` writes an Open Graph image (1200 by 630) or a social post (`square` 1080 by 1080, `portrait` 1080 by 1350, `landscape` 1200 by 675) from copy you pass in. Templates are `headline`, `subtext`, `screenshot`, `quote` and `announcement`. Output is PNG and SVG, with no browser. `image list --json` lists every field. `--json` prints the files and their pixel sizes. The default footer is the site host, and `--no-footer` leaves it off. Pictures use the brand tokens, the shipped logo and the shipped font files. `--template` is required. An unknown template, size or JSON field is an error, and so is a field the template does not list.
+Every asset is drawn from the brand's own layouts and tokens, with no browser, and the same input writes the same bytes.
+
+- `image render`: share images and social posts. Templates `hero`, `window` and `cards` (the brand's image editor layouts, with its toon objects) plus `headline`, `subtext`, `screenshot`, `quote` and `announcement`. Sizes `og` 1200x630, `square` 1080x1080, `portrait` 1080x1350, `landscape` 1200x675, `story` 1080x1920, `x-banner` 1500x500 and `linkedin-banner` 1584x396. PNG and SVG. `--image` takes your picture; `--toon` makes it a toon object.
+- `video render`: clips that move the way the brand does (ease-out entrances, the site's sticker drift, the band's grain), MP4 and WebM through ffmpeg (Motion JPEG MP4 without it), 2 to 12 seconds, `--still` for one frame.
+- `deck`: slides at 1920x1080 from a JSON file (cover, section, statement, bullets, stat, quote, image, cards, end): a PNG per slide and one PDF.
+- `illustrate`: toon object illustrations from the brand's fifteen objects or any picture. Rules in `brand/illustration.md`.
+- `merch`: print files at real size with bleed and safe area (tee, hoodie, cap, tote, mug wrap, stickers with cut lines, poster): SVG in inches, PNG at 300 dpi and a proof. Sizes are vendor conventions.
+- `figma tokens|push|pull|check`: variables, Figma-ready files and value checks; the CLI prints the Figma MCP calls and never calls Figma itself.
 
 ```sh
-npx agentcard-ds image render --template quote --quote "A sentence someone said." --by "The source" --size og,square --out ./images --json
+npx agentcard-ds image render --template hero --headline "Let agents buy anything online" --size all --json
+npx agentcard-ds video render --template hero --headline "Let agents buy anything online" --size square --export mp4,webm --json
+npx agentcard-ds deck --input deck.json --out deck --json
+npx agentcard-ds illustrate cart coins --ground paper --json
+npx agentcard-ds merch tee-front --variant all --json
+npx agentcard-ds figma tokens --out figma --json
 ```
+
+The docs site shows a gallery of each (Assets, Illustrations and Figma pages); `npm run gallery` regenerates it.
 
 ## Read the brand system
 
-`manifest --json` is the catalog: every command, token group, font, logo rule, image template, video template, component and principle. `describe --json` is the same command. `brand --json` returns tokens, fonts, logos and voice. Groups are `color`, `type`, `space`, `radius`, `motion`, `shadow`, `band`, `glass` and `other`.
+`manifest --json` is the catalog: every command and flag, token group, font, logo rule, image template and size, video template, slide type, merch item, illustration subject, Figma action, component and principle. `describe --json` is the same command. `brand --json` returns tokens, fonts, logos and voice. Groups are `color`, `type`, `space`, `radius`, `motion`, `shadow`, `band`, `glass` and `other`.
 
 ```sh
 npx agentcard-ds manifest --json
@@ -91,15 +105,6 @@ npx agentcard-ds principles --surface site --json
 ```
 
 Use the equals form for `--name`. A bare `--ds-...` is parsed as a flag. `brand fonts --json` says which families ship and which token families have no file. Do not download a stand-in. `principles --surface product --json` reports whether a product system is defined. If it is not, do not invent one.
-
-## Render a video
-
-`video render` writes a short clip from the same tokens, logo files and shipped fonts. Sizes are `square` (1080 by 1080), `vertical` (1080 by 1920) and `landscape` (1920 by 1080). Templates are `social`, `announcement` and `product`. `--size` is required. The clip is 12 frames at 12 fps, Motion JPEG in an MP4, eased with `--ds-easing-out`. There is no browser and no duration flag. The same inputs write the same bytes. Samples are in `examples/videos/`.
-
-```sh
-npx agentcard-ds video list --json
-npx agentcard-ds video render --template social --size square --headline "Let agents buy anything online" --out ./videos --json
-```
 
 ## Use a component without guessing
 
@@ -121,7 +126,7 @@ Read https://agentcard-ds.vercel.app/agents.md first.
 Run npx agentcard-ds manifest --json first. It lists every command, token, template, size, component and rule.
 Run npx agentcard-ds component inspect <name> --json before writing that component. Use component emit for markup. show --json still returns source.
 Add existing components with the CLI. Use design tokens from brand tokens --json. Do not invent a token name.
-Render Open Graph and social images with npx agentcard-ds image render. Render short videos with npx agentcard-ds video render. Run image list --json and video list --json for sizes and templates.
+Render images with npx agentcard-ds image render, clips with video render, slides with deck, illustrations with illustrate, merch with merch and Figma files with figma. Run manifest --json for every template, size and subject.
 Read site rules with npx agentcard-ds principles --json. If product.defined is false, do not invent product principles.
 Connect every control to its intended behavior. Include validation, loading, empty and error states where needed.
 Run the project checks and the CLI token check. Test keyboard interaction and desktop and phone layouts.
@@ -161,8 +166,12 @@ Run these commands with `npx agentcard-ds` after installing the CLI.
 | `component emit <name>` | Copy an example state, or emit markup from the variant map. |
 | `image list` | List image sizes, templates and the fields each template takes. |
 | `image render` | Render an Open Graph or social image to PNG and SVG. `--template` is required. |
-| `video list` | List video sizes, templates, the frame count and the renderer. |
-| `video render` | Render a short Motion JPEG MP4. `--template` and `--size` are required. |
+| `video list` | List video sizes, templates, the motion and the renderer. |
+| `video render` | Render an MP4 or WebM clip (ffmpeg), or one frame with `--still`. `--template` is required. |
+| `deck` | Render slides from a JSON file to a PNG per slide and one PDF. `--list` names the slide types. |
+| `illustrate [subjects...]` | Draw toon object illustrations, or a toon from `--image`, to SVG and PNG. |
+| `merch [items...]` | Write merch print files at real size with bleed, safe area, proof and cut lines. |
+| `figma <action>` | `tokens`, `push`, `pull`, `check`: Figma-ready files and the Figma MCP steps. |
 | `check [files...]` | Check style values. Use `--changed` for Git changes or `--fix` for exact token replacements. |
 | `review <url> --any` | Review a page that is not part of an existing conversion task list. |
 | `review <url>` | Review a tracked screen and mark its task complete when it passes. |

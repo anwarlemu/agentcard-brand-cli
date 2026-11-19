@@ -9,11 +9,17 @@ import { imageList, imageRender } from './commands/image.js';
 import { componentEmit, componentInspect, componentList } from './commands/component.js';
 import { brandCommand, brandFonts, brandLogos, brandTokens, brandVoice, manifestCommand, principlesCommand } from './commands/system.js';
 import { videoList, videoRender } from './commands/video.js';
+import { registerIllustrate } from './commands/illustrate.js';
+import { registerDeck } from './commands/deck.js';
+import { registerMerch } from './commands/merch.js';
+import { registerFigma } from './commands/figma.js';
 import { approve, check, done, look, skip, tokensCommand } from './commands/small.js';
 import { type HookResult, cursorPreToolUse, cursorStop, preToolUse, sessionStart, stop, userPromptSubmit } from './hooks/handlers.js';
 import { readHookInput } from './hooks/payload.js';
 import { brand, cli, hasProduct } from './lib/brand.js';
 import { findProjectRoot } from './lib/paths.js';
+import { unknownName } from './lib/names.js';
+import { attachProgram } from './brand/manifest.js';
 
 const program = new Command();
 const b = brand();
@@ -69,25 +75,37 @@ image.command('list').description('List sizes, templates and the fields each tem
 image
 	.command('render')
 	.description('Write PNG and SVG images for one template')
-	.option('-t, --template <id>', 'headline, subtext, screenshot, quote or announcement')
-	.option('-s, --size <sizes>', 'og, square, portrait, landscape, or all, comma-separated')
-	.option('--headline <text>', 'main line')
+	.option('-t, --template <id>', 'hero, window, cards, headline, subtext, screenshot, quote or announcement')
+	.option('-s, --size <sizes>', 'og, square, portrait, landscape, story, x-banner, linkedin-banner, or all (comma-separated)')
+	.option('--headline <text>', 'main line (the title on cards)')
 	.option('--subtext <text>', 'supporting line')
 	.option('--eyebrow <text>', 'short label above the headline')
+	.option('--button <text>', 'hero and window: a key under the words')
 	.option('--quote <text>', 'quote text, for the quote template')
 	.option('--by <text>', 'who said the quote')
-	.option('--image <file>', 'PNG or JPEG placed in the screenshot window')
-	.option('--window <name>', 'title bar label, such as screen.preview')
+	.option('--cards <text>', 'cards: blank-line-separated cards, heading on the first line')
+	.option('--image <file>', 'PNG or JPEG: the screenshot or window picture, or the hero object')
+	.option('--toon', 'make --image a toon object (cut out, plastic, lit, with thickness)')
+	.option('--picture <subject>', 'window: the toon object in the window, or none')
+	.option('--window <name>', 'window bar label, such as issuing.product')
+	.option('--window-body <body>', 'window: blue, sky or white')
+	.option('--stickers <mode>', 'preset, under, scatter or none')
+	.option('--subjects <names>', 'toon objects to use, comma-separated')
+	.option('--seed <n>', 'scatter: the arrangement (same seed, same picture)')
+	.option('--count <n>', 'scatter: how many objects, 1 to 14')
+	.option('--ground <ground>', 'blue, paper, white or ink')
+	.option('--band <ground>', 'stepped band at the bottom toward a ground, or none')
+	.option('--no-scan', 'leave the scanlines off the blue ground')
+	.option('--no-logo', 'leave the lockup off')
 	.option('--footer <text>', 'small line; default is the brand site host')
 	.option('--no-footer', 'leave the footer line off')
-	.option('--ground <ground>', 'blue, paper or white')
 	.option('-o, --out <dir>', 'directory to write', 'images')
 	.option('-n, --name <name>', 'file name prefix; default is the template')
 	.option('--export <formats>', 'png, svg, or png,svg')
-	.option('-i, --input <file>', 'JSON object of the same fields; flags override it. Use - for stdin')
+	.option('-i, --input <file>', 'JSON object of the same fields; flags override it; - reads stdin')
 	.option('--dry-run', 'list the files and write nothing')
 	.option('--json', 'JSON output')
-	.addHelpText('after', '\nExamples:\n  image render --template headline --headline "Let agents buy anything online" --json\n  image render --template subtext --size og,square --headline "..." --subtext "..." --out ./images\n  image render --template screenshot --image ./screen.png --headline "..."\n  image render --template quote --quote "..." --by "..."\n  image render --input content.json --size all --json\n')
+	.addHelpText('after', '\nExamples:\n  image render --template hero --headline "Let agents buy anything online" --size all\n  image render --template window --eyebrow Issuing --headline "..." --picture card\n  image render --template cards --input cards.json --size landscape\n  image render --template hero --stickers scatter --seed 4 --headline "..."\n  image render --template hero --image ./photo.jpg --toon --headline "..."\n  image render --template screenshot --image ./screen.png --headline "..."\n')
 	.action((_opts, command) => imageRender(command.optsWithGlobals()));
 
 const video = program.command('video').description('Render on-brand short videos from content');
@@ -95,21 +113,38 @@ video.action(() => video.help());
 video.command('list').description('List sizes, templates, the frame count and the renderer').option('--json', 'JSON output').action((_opts, command) => videoList(command.optsWithGlobals()));
 video
 	.command('render')
-	.description('Write an MP4 for one template')
-	.option('-t, --template <id>', 'social, announcement or product')
-	.option('-s, --size <sizes>', 'square, vertical, landscape, or all, comma-separated')
-	.option('--headline <text>', 'main line')
-	.option('--subtext <text>', 'supporting line, for announcement and product')
-	.option('--eyebrow <text>', 'short label, for social and announcement')
-	.option('--window <name>', 'title bar label, for product')
+	.description('Write an MP4 or WebM clip for one template, or one frame with --still')
+	.option('-t, --template <id>', 'hero, window, cards, social, announcement or product')
+	.option('-s, --size <sizes>', 'square, vertical, landscape, portrait, og, or all (comma-separated)')
+	.option('--seconds <n>', 'clip length, 2 to 12 (default 4)')
+	.option('--still [seconds]', 'write the frame at this time (or the end) as PNG and SVG')
+	.option('--headline <text>', 'main line (the title on cards)')
+	.option('--subtext <text>', 'supporting line')
+	.option('--eyebrow <text>', 'short label above the headline')
+	.option('--button <text>', 'hero and window: a key under the words')
+	.option('--cards <text>', 'cards: blank-line-separated cards, heading first')
+	.option('--image <file>', 'PNG or JPEG: the window picture or the hero object')
+	.option('--toon', 'make --image a toon object')
+	.option('--picture <subject>', 'window: the toon object in the window, or none')
+	.option('--window <name>', 'window bar label')
+	.option('--window-body <body>', 'window: blue, sky or white')
+	.option('--stickers <mode>', 'preset, under, scatter or none')
+	.option('--subjects <names>', 'toon objects to use, comma-separated')
+	.option('--seed <n>', 'scatter: the arrangement')
+	.option('--count <n>', 'scatter: how many objects')
+	.option('--ground <ground>', 'blue, paper, white or ink')
+	.option('--band <ground>', 'stepped band at the bottom toward a ground, or none')
+	.option('--no-scan', 'leave the scanlines off the blue ground')
+	.option('--no-logo', 'leave the lockup off')
 	.option('--footer <text>', 'small line; default is the brand site host')
 	.option('--no-footer', 'leave the footer line off')
 	.option('-o, --out <dir>', 'directory to write', 'videos')
 	.option('-n, --name <name>', 'file name prefix; default is the template')
-	.option('--export <format>', 'mp4')
-	.option('-i, --input <file>', 'JSON object of the same fields; flags override it. Use - for stdin')
+	.option('--export <formats>', 'mp4, webm, or mp4,webm (default mp4)')
+	.option('-i, --input <file>', 'JSON object of the same fields; flags override it; - reads stdin')
 	.option('--dry-run', 'list the files and write nothing')
 	.option('--json', 'JSON output')
+	.addHelpText('after', '\nExamples:\n  video render --template hero --headline "Let agents buy anything online" --size square,vertical --export mp4,webm\n  video render --template cards --input cards.json --size landscape --seconds 6\n  video render --template hero --headline "..." --still end\n')
 	.action((_opts, command) => videoRender(command.optsWithGlobals()));
 program.command('approve').description('Approve ds-override comments (a person, in a terminal)').option('--all', 'approve every pending override').action((opts) => approve(opts));
 program.command('snapshot [url]').description('Save how each main screen looks before hand edits (run once, with the app running); reviews compare against it').action((url) => snapshot(url));
@@ -146,6 +181,40 @@ program
 	});
 
 workflow(program);
+registerIllustrate(program);
+registerDeck(program);
+registerMerch(program);
+registerFigma(program);
+
+// An unknown command exits 1 with the nearest names, instead of commander's "too many arguments".
+{
+	const args = process.argv.slice(2);
+	let first: string | undefined;
+	for (let i = 0; i < args.length; i++) {
+		const a = args[i]!;
+		if (a === '-c' || a === '--cwd') {
+			i++;
+			continue;
+		}
+		if (a.startsWith('-')) continue;
+		first = a;
+		break;
+	}
+	const names = program.commands.flatMap((c) => [c.name(), ...c.aliases()]).concat('help');
+	const group = first ? program.commands.find((c) => c.name() === first || c.aliases().includes(first)) : undefined;
+	// A group (image, video, component, brand) takes no arguments of its own: its next word must be one of its commands.
+	const next = group && group.commands.length && !group.registeredArguments.length ? args.slice(args.indexOf(first!) + 1).find((a) => !a.startsWith('-')) : undefined;
+	const subs = group ? group.commands.flatMap((c) => [c.name(), ...c.aliases()]) : [];
+	const bad = first && !names.includes(first) ? unknownName('command', first, names.filter((n) => n !== 'help')) : next && !subs.includes(next) && next !== 'help' ? unknownName(`${first} command`, next, subs) : undefined;
+	if (bad) {
+		const error = bad;
+		if (args.includes('--json')) process.stdout.write(`${JSON.stringify({ ok: false, error: error.message })}\n`);
+		else process.stderr.write(`${error.message}\n`);
+		process.exit(1);
+	}
+}
+
+attachProgram(program);
 
 program.parseAsync().catch((error: Error) => {
 	if (program.opts().json || process.argv.includes('--json')) process.stdout.write(`${JSON.stringify({ ok: false, error: error.message })}\n`);

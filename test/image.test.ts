@@ -4,7 +4,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { imageRender } from '../src/commands/image.js';
-import { SIZES, TEMPLATES, type SizeId, type TemplateId } from '../src/image/catalog.js';
+import { SIZES, TEMPLATES, templateSizes, type TemplateId } from '../src/image/catalog.js';
 import { brandFonts, drawText, fitText } from '../src/image/paint.js';
 import { tokens } from '../src/lib/brand.js';
 
@@ -28,6 +28,9 @@ async function quiet(run: () => Promise<void>) {
 }
 
 const copy: Record<TemplateId, Record<string, string>> = {
+	hero: { headline: 'Let agents buy anything online' },
+	window: { eyebrow: 'Issuing', headline: 'Create one-time and multi-use cards' },
+	cards: { headline: 'How it works', cards: 'Save it once\nYour user adds their card a single time.\n\nEvery purchase is approved\nWith a passkey, tied to that exact cart.' },
 	headline: { headline: 'Let agents buy anything online' },
 	subtext: { headline: 'Powering payments for agentic startups', subtext: 'Teams run their agents purchases in one place.' },
 	screenshot: { headline: 'Issuing', subtext: 'One-time cards for an agent checkout.' },
@@ -45,14 +48,14 @@ describe('images', () => {
 			for (const template of Object.keys(TEMPLATES) as TemplateId[]) {
 				const out = join(dir, template);
 				await quiet(() => imageRender({ ...copy[template], template, size: 'all', out, export: 'png,svg', json: true, ...(template === 'screenshot' ? { image: shot } : {}) }));
-				for (const size of Object.keys(SIZES) as SizeId[]) {
+				for (const size of templateSizes(template)) {
 					const png = readFileSync(join(out, `${template}-${size}.png`));
 					const svg = readFileSync(join(out, `${template}-${size}.svg`), 'utf8');
-					expect(pngSize(png), `${template} ${size}`).toEqual({ width: SIZES[size].width, height: SIZES[size].height });
-					expect(svg).toContain(`width="${SIZES[size].width}"`);
-					expect(svg).toContain(`height="${SIZES[size].height}"`);
+					expect(pngSize(png), `${template} ${size}`).toEqual({ width: SIZES[size]!.width, height: SIZES[size]!.height });
+					expect(svg).toContain(`width="${SIZES[size]!.width}"`);
+					expect(svg).toContain(`height="${SIZES[size]!.height}"`);
 					expect(svg).toContain(brandBlue);
-					expect(svg).not.toContain('NaN');
+					expect(svg.replace(/data:image\/[a-z]+;base64,[^"]+/g, ''), 'no NaN outside embedded pictures').not.toContain('NaN');
 				}
 			}
 		} finally {

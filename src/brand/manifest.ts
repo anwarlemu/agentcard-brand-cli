@@ -7,7 +7,29 @@ import { catalog as imageCatalog } from '../image/catalog.js';
 import { brand, cli } from '../lib/brand.js';
 import { pkgPath } from '../lib/paths.js';
 import { contractOf, library } from '../library/contract.js';
-import { videoCatalog } from '../video/catalog.js';
+import { videoCatalog } from '../commands/video.js';
+import type { Command, Option } from 'commander';
+import { deckCatalog } from '../commands/deck.js';
+import { illustrateCatalog } from '../commands/illustrate.js';
+import { merchCatalog } from '../commands/merch.js';
+import { FIGMA_ACTIONS, PUSH_KINDS } from '../commands/figma.js';
+import { imageConfig } from '../image/scene.js';
+
+let program: Command | undefined;
+/** The CLI hands its command tree over, so the manifest lists every command and flag from the definitions themselves. */
+export function attachProgram(p: Command) {
+	program = p;
+}
+
+const flagOf = (o: Option) => o.long?.replace(/^--/, '') ?? o.short?.replace(/^-/, '') ?? o.flags;
+
+function commandTree(cmd: Command, prefix: string[] = []): { path: string[]; usage: string; summary: string; flags: string[]; aliases: string[] }[] {
+	return cmd.commands.flatMap((c) => {
+		const path = [...prefix, c.name()];
+		const row = { path, usage: `${cli()} ${path.join(' ')}${c.usage() ? ` ${c.usage()}` : ''}`, summary: c.description(), flags: [...new Set(c.options.map(flagOf))], aliases: c.aliases() };
+		return [row, ...commandTree(c, path)];
+	});
+}
 
 export const COMMANDS = [
 	{ path: ['manifest'], summary: 'List every command, token, template, size, component and rule.', reads: true, writes: false, json: true },
@@ -21,7 +43,14 @@ export const COMMANDS = [
 	{ path: ['image', 'list'], summary: 'Open Graph and social sizes, templates and fields.', reads: true, writes: false, json: true },
 	{ path: ['image', 'render'], summary: 'Write a PNG and SVG. Unknown templates, sizes, exports and JSON fields error.', reads: false, writes: true, json: true },
 	{ path: ['video', 'list'], summary: 'Video sizes, templates, frame count and renderer.', reads: true, writes: false, json: true },
-	{ path: ['video', 'render'], summary: 'Write an MP4. Sizes are square, vertical and landscape. Unknown templates, sizes and fields error.', reads: false, writes: true, json: true },
+	{ path: ['video', 'render'], summary: 'Write an MP4 or WebM clip (ffmpeg; Motion JPEG MP4 without it), or one frame with --still. Unknown templates, sizes and fields error.', reads: false, writes: true, json: true },
+	{ path: ['deck'], summary: 'Slides at 1920 by 1080 from a JSON file: a PNG per slide and one PDF. --list names the slide types and slots.', reads: false, writes: true, json: true },
+	{ path: ['merch'], summary: 'Merch print files at real size with bleed and safe area (SVG, 300 dpi PNG, proof, cut line). --list names items and variants.', reads: false, writes: true, json: true },
+	{ path: ['illustrate'], summary: 'Toon object illustrations from the brand\'s objects or any picture (SVG and PNG). --list names subjects and compositions.', reads: false, writes: true, json: true },
+	{ path: ['figma', 'tokens'], summary: 'The tokens as Figma variables: tokens.json and use_figma scripts, plus the MCP steps.', reads: false, writes: true, json: true },
+	{ path: ['figma', 'push'], summary: 'An illustration, image, slide, component or page as Figma-ready files, plus the MCP steps.', reads: false, writes: true, json: true },
+	{ path: ['figma', 'pull'], summary: 'The MCP read steps for a Figma node and where to save each result.', reads: true, writes: false, json: true },
+	{ path: ['figma', 'check'], summary: 'Saved Figma variables or design context checked against the tokens; off-brand values name the nearest token and exit 1.', reads: true, writes: false, json: true },
 	{ path: ['component', 'list'], summary: 'Every bundled component.', reads: true, writes: false, json: true },
 	{ path: ['component', 'inspect'], summary: 'Exports, variant maps, example states, usage and constraints for one component.', reads: true, writes: false, json: true },
 	{ path: ['component', 'emit'], summary: 'Copy an example state, or emit markup whose props are keys from that variant map.', reads: true, writes: false, json: true },
@@ -84,8 +113,17 @@ export function manifest() {
 		fonts: fontReport,
 		logos: logoReport,
 		voice: voice(),
+		validation: 'Every asset command checks its inputs: an unknown command, template, size, subject, slide type, slot, merch item, variant, composition, ground or export exits 1 and names the closest match. Nothing is substituted.',
+		cli: program ? commandTree(program) : [],
 		images: imageCatalog(),
 		videos: videoCatalog(),
+		decks: deckCatalog(),
+		merch: merchCatalog(),
+		illustrate: illustrateCatalog(),
+		figma: { actions: [...FIGMA_ACTIONS], pushKinds: [...PUSH_KINDS], note: 'The CLI never calls Figma: each action writes files and prints the Figma MCP tool calls to make, in order.', workflow: 'brand/agent-guide.md (Figma)' },
+		themes: Object.keys(imageConfig().grounds),
+		lockups: { files: ['brand/logo/lockup.svg', 'brand/logo/mark.svg'], colors: ['blue', 'ink', 'white'], merchVariants: merchCatalog().variants.map((v) => v.id), rules: merchCatalog().logo.note },
+		rules: { illustration: 'brand/illustration.md', images: imageConfig().notes, motion: videoCatalog().motion.source },
 		components,
 		principles: rules,
 	};

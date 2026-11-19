@@ -38,6 +38,11 @@ npm run ci           # build, limits, registry, tests; must pass before you push
 - `src/install/`: the brand stylesheet and fonts, contract, hooks (Claude Code, Codex, Cursor), pre-commit.
 - `src/plan/`: the task queue (`state.json` in the app), element detection and `look` output.
 - `src/check/`: the value check (rules.ts), used by hooks, pre-commit and `check`.
+- Assets: `src/image/` (SVG scenes: the editor's hero, window and cards in `scene.ts` and `compose.ts`, the first templates
+  in `layout.ts`, outlined Inter in `paint.ts`, PNG through resvg), `src/assets/` (PNG codec, pictures, cutout, the toon
+  treatment, PDF), `src/illustrate/`, `src/deck/`, `src/merch/`, `src/video/` (motion and ffmpeg), `src/figma/`, and their
+  commands. Layouts, sizes and motion are data in `brand/assets/*.json`; the objects are `brand/illustration/objects`;
+  rules in `brand/illustration.md`. `npm run gallery` regenerates the docs gallery (`apps/www/public/assets`).
 - `src/review/`, `src/hooks/`, `src/commands/`.
 
 ## Rules

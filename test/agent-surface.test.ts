@@ -59,11 +59,14 @@ describe('manifest', () => {
 		const data = manifest();
 		expect(data.entry).toMatch(/manifest --json/);
 		expect(data.tokens.groups.map((group) => group.id)).toEqual(expect.arrayContaining(['color', 'type', 'space', 'radius', 'motion']));
-		expect(data.images.templates.map((item) => item.id).sort()).toEqual(['announcement', 'headline', 'quote', 'screenshot', 'subtext']);
-		expect(data.images.sizes.map((item) => item.id).sort()).toEqual(['landscape', 'og', 'portrait', 'square']);
-		expect(data.videos.templates.map((item) => item.id).sort()).toEqual(['announcement', 'product', 'social']);
-		expect(data.videos.sizes.map((item) => item.id)).toEqual(['square', 'vertical', 'landscape']);
-		expect(data.videos.renderer.frames).toBe(12);
+		expect(data.images.templates.map((item) => item.id).sort()).toEqual(['announcement', 'cards', 'headline', 'hero', 'quote', 'screenshot', 'subtext', 'window']);
+		expect(data.images.sizes.map((item) => item.id).sort()).toEqual(['landscape', 'linkedin-banner', 'og', 'portrait', 'square', 'story', 'x-banner']);
+		expect(data.videos.templates.map((item) => item.id).sort()).toEqual(['announcement', 'cards', 'hero', 'product', 'social', 'window']);
+		expect(data.videos.sizes.map((item) => item.id)).toEqual(['square', 'vertical', 'landscape', 'portrait', 'og']);
+		expect(data.videos.renderer.fps).toBe(30);
+		expect(data.decks.slides.map((item) => item.id)).toEqual(expect.arrayContaining(['cover', 'section', 'statement', 'bullets', 'stat', 'quote', 'image', 'end']));
+		expect(data.merch.items.map((item) => item.id)).toEqual(expect.arrayContaining(['tee-front', 'tee-back', 'hoodie-front', 'cap-front', 'tote', 'mug-wrap', 'sticker', 'poster']));
+		expect(data.figma.actions).toEqual(['tokens', 'push', 'pull', 'check']);
 		expect(data.components.map((item) => item.name)).toContain('button');
 		const button = data.components.find((item) => item.name === 'button');
 		expect(button?.variants[0]?.keys.variant).toEqual(expect.arrayContaining(['primary', 'secondary', 'on-brand', 'ghost']));
@@ -180,15 +183,15 @@ describe('video', () => {
 	it('writes byte-identical mp4 files and rejects unknown options', async () => {
 		const dir = mkdtempSync(join(tmpdir(), 'ds-video-'));
 		try {
-			const first = await captureAsync(() => videoRender({ template: 'social', headline: 'One line', size: 'square', out: join(dir, 'a'), export: 'mp4', json: true }));
-			const second = await captureAsync(() => videoRender({ template: 'social', headline: 'One line', size: 'square', out: join(dir, 'b'), json: true }));
+			const first = await captureAsync(() => videoRender({ template: 'social', headline: 'One line', size: 'square', seconds: 2, out: join(dir, 'a'), export: 'mp4', json: true }));
+			const second = await captureAsync(() => videoRender({ template: 'social', headline: 'One line', size: 'square', seconds: 2, out: join(dir, 'b'), json: true }));
 			const a = JSON.parse(first) as { ok: boolean; files: { sha256: string; width: number; height: number; frames: number }[] };
 			const b = JSON.parse(second) as { files: { sha256: string }[] };
 			expect(a.ok).toBe(true);
-			expect(a.files[0]).toMatchObject({ width: 1080, height: 1080, frames: 12 });
+			expect(a.files[0]).toMatchObject({ width: 1080, height: 1080, frames: 60 });
 			expect(a.files[0].sha256).toBe(b.files[0].sha256);
 			expect(readFileSync(join(dir, 'a', 'social-square.mp4')).equals(readFileSync(join(dir, 'b', 'social-square.mp4')))).toBe(true);
-			await expect(captureAsync(() => videoRender({ template: 'social', headline: 'One line', size: 'og', out: dir, json: true }))).rejects.toThrow(/Unknown size/);
+			await expect(captureAsync(() => videoRender({ template: 'social', headline: 'One line', size: 'banner', out: dir, json: true }))).rejects.toThrow(/Unknown size/);
 			await expect(captureAsync(() => videoRender({ template: 'trailer', headline: 'One line', size: 'square', out: dir, json: true }))).rejects.toThrow(/Unknown template/);
 			await expect(captureAsync(() => videoRender({ template: 'social', size: 'square', out: dir, json: true }))).rejects.toThrow(/headline/);
 			await expect(captureAsync(() => videoRender({ template: 'social', headline: 'One line', eyebrow: 'Now', window: 'nope', size: 'square', out: dir, json: true }))).rejects.toThrow(/does not take --window/);

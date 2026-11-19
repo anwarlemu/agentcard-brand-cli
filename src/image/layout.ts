@@ -2,7 +2,9 @@
 // Positions are in pixels at the export size. Type sizes follow the brand's display steps and shrink to fit.
 
 import { readFileSync } from 'node:fs';
-import type { Ground, ImageJob } from './catalog.js';
+import { isScene, type Ground, type ImageJob } from './catalog.js';
+import { buildScene } from './compose.js';
+import { sceneSvg } from './scene.js';
 import { brandFonts, document, drawBand, drawLine, drawLogo, drawText, fitText, flatten, logoBox, parseColor, px, rect, tokenColor, trackingEm, type Block } from './paint.js';
 
 export type Theme = { bg: string; fg: string; muted: string; accent: string; logo: string; bandToward: string };
@@ -14,8 +16,8 @@ const brand = () => tokenColor('brand');
 const sky = () => tokenColor('sky');
 
 export function themeFor(ground: Ground): Theme {
-	if (ground === 'blue') {
-		const bg = brand();
+	if (ground === 'blue' || ground === 'ink') {
+		const bg = ground === 'blue' ? brand() : ink();
 		return { bg, fg: white(), muted: flatten(tokenColor('text-on-brand-muted'), bg), accent: sky(), logo: white(), bandToward: paper() };
 	}
 	const bg = ground === 'paper' ? paper() : white();
@@ -242,7 +244,8 @@ function quoteLayout(job: ImageJob, theme: Theme) {
 	const by = job.by ? fitText(regular, job.by, innerW, 28, { start: 18, min: 14, leading: 1.2, maxLines: 1, role: 'attribution' }) : undefined;
 	const chrome = 36 + 28 + mark.height + 12 + 28 + (by ? by.height + 18 : 0);
 	const quote = fitText(medium, job.quote!, innerW, Math.max(48, availH - chrome), { start: Math.min(44, job.height * 0.048), min: 22, leading: px('--ds-leading-snug'), maxLines: job.height > 1000 ? 8 : 6, role: 'quote' });
-	const h = Math.min(availH, chrome + quote.height);
+	if (chrome + quote.height > availH + 0.5) throw new Error('The quote does not fit this size. Shorten it, or pick a taller size.');
+	const h = chrome + quote.height;
 	const y = availTop + Math.max(0, (availH - h) / 2);
 	const x = pad();
 	const innerX = x + 44;
@@ -291,6 +294,10 @@ function announcementLayout(job: ImageJob) {
 
 export function renderSvg(job: ImageJob): string {
 	clipSeq = 0;
+	if (isScene(job.template)) {
+		const scene = buildScene({ ...job, template: job.template, footer: job.footer });
+		return sceneSvg(scene);
+	}
 	const ground = job.template === 'announcement' ? 'paper' : job.ground ?? 'blue';
 	const theme = themeFor(ground);
 	let body = '';

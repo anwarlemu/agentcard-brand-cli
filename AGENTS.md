@@ -12,9 +12,9 @@ npx agentcard-ds manifest --json
 
 1. Brand system. `brand --json` returns tokens, fonts, logos and voice. `brand tokens --json` lists groups: color, type, space, radius, motion, shadow, band, glass, and other. `brand tokens --group color --json` is one group. `brand tokens --name=--ds-color-brand --json` is one token. Use the equals form. A bare `--ds-...` is parsed as a flag. `brand fonts --json` lists the font files that ship and the font tokens whose families do not. `brand logos --json` lists the files in `brand/logo` and the usage rules stored with the logo component. `brand voice --json` is the Voice section, including the quoted words to avoid.
 
-2. Images. `image list --json` lists sizes (`og` 1200 by 630, `square` 1080 by 1080, `portrait` 1080 by 1350, `landscape` 1200 by 675) and templates (`headline`, `subtext`, `screenshot`, `quote`, `announcement`). `image render` requires `--template`. The default size is `og`. Output is PNG and SVG. Text is outlined from the shipped font files. The same inputs write the same bytes. A missing template, an unknown template, an unknown size, an unknown JSON field, or a field the template does not list is an error.
+2. Images. `image list --json` lists sizes (`og`, `square`, `portrait`, `landscape`, `story`, `x-banner`, `linkedin-banner`) and templates (`hero`, `window`, `cards` from the brand's image editor, plus `headline`, `subtext`, `screenshot`, `quote`, `announcement`). `image render` requires `--template`. Output is PNG and SVG; text is outlined from the shipped font files; the toon objects come from `brand/illustration/objects`. The same inputs write the same bytes (a scatter's `--seed` included). Unknown names exit 1 with the closest choice.
 
-3. Video. `video list --json` lists templates (`social`, `announcement`, `product`) and sizes (`square` 1080 by 1080, `vertical` 1080 by 1920, `landscape` 1920 by 1080). `--size` is required. `video render` writes Motion JPEG in an MP4: 12 frames at 12 fps, eased with `--ds-easing-out`. There is no duration flag and no browser. The same inputs write the same bytes. Sample files are in `examples/videos/`, one per template family. Still samples are in `examples/images/`.
+3. Video, decks, illustrations, merch, Figma. `video render` writes MP4 (H.264) and WebM (VP9) through ffmpeg, single-threaded and bit-exact, 2 to 12 seconds at 30 fps, with motion from `brand/assets/video.json` (ease-out entrances, the sticker drift, the grain jumps); without ffmpeg MP4 falls back to Motion JPEG. `deck` renders slides from JSON to PNG and PDF. `illustrate` draws toon objects (rules in `brand/illustration.md`). `merch` writes print files at vendor-convention sizes. `figma` writes files and prints Figma MCP steps; it never calls Figma. Layouts and sizes for all of them are data in `brand/assets/*.json`.
 
 4. Components. `component list --json` lists the bundled library. `component inspect <name> --json` returns exports, variant maps, example states, usage and constraints. `component emit <name> --state <State> --json` copies that example file unchanged. `component emit <name> --set key=value --text "..." --json` emits markup only from keys and values that exist on a complete variant map. Unknown keys and values error. `list`, `show`, `search` and `view` remain for the registry record and for installing into an app.
 
@@ -26,9 +26,9 @@ Read `gaps` in the manifest and stop there. Do not download a stand-in font, do 
 
 - Display and mono font tokens name families that are not in `brand/fonts`. Only the Inter files ship. Images and videos outline text with those files.
 - `brand.json` lists the site surface only. `brand/principles.md` has no Product section.
-- Video is Motion JPEG, not H.264. Players that accept MJPEG in MP4 can open it. A browser video element may not.
+- Without ffmpeg, MP4 is Motion JPEG and WebM is refused.
 - `component emit --set` covers static variant keys only. Use `--state` for the real example markup. A component without a complete variant map refuses `--set`.
-- Clip length is fixed at 12 frames and 12 fps. Duration tokens are for interface transitions and are not stretched into the clip.
+- The toon objects are rendered pictures: illustration SVGs carry them as embedded images over a vector ground.
 
 ## Working in this repository
 

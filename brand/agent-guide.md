@@ -64,23 +64,57 @@ The component reference states its source. `{{registry}}/r/audit.json` records t
 
 ## Render images
 
-Use this when the brief needs an Open Graph image or a social post. The command reads brand tokens, the shipped logo and the Inter fonts included with the CLI. It does not open a browser. The same content always writes the same pixels, so it can run in CI or a sandbox.
+Use this when the brief needs an Open Graph image, a social post or a profile banner. The command reads the brand tokens, the shipped logo, the shipped Inter files and the brand's toon objects. It does not open a browser. The same content always writes the same bytes, so it can run in CI or a sandbox.
 
 ```sh
 {{cli}} image list --json
-{{cli}} image render --template headline --headline "Let agents buy anything online" --json
-{{cli}} image render --template subtext --size og,square --headline "A short title" --subtext "One supporting line." --out ./images --json
-{{cli}} image render --template screenshot --size landscape --headline "A feature" --image ./screen.png --json
-{{cli}} image render --template quote --quote "A sentence someone said." --by "The source" --json
-{{cli}} image render --template announcement --eyebrow "New" --headline "What shipped" --subtext "One line on what changed." --json
-{{cli}} image render --input content.json --size all --export png --json
+{{cli}} image render --template hero --headline "Let agents buy anything online" --size all --json
+{{cli}} image render --template window --eyebrow "Issuing" --headline "Create one-time and multi-use cards" --picture card --json
+{{cli}} image render --template cards --input cards.json --size landscape --json
+{{cli}} image render --template hero --headline "A title" --stickers scatter --seed 4 --size square --json
+{{cli}} image render --template hero --headline "A title" --image ./photo.jpg --toon --size story --json
+{{cli}} image render --template screenshot --headline "A feature" --image ./screen.png --json
 ```
 
-`image list --json` is the list of sizes, templates and required fields. Sizes are `og` (1200 by 630), `square` (1080 by 1080), `portrait` (1080 by 1350) and `landscape` (1200 by 675, for X and LinkedIn). Templates are `headline`, `subtext`, `screenshot`, `quote` and `announcement`.
+Templates: `hero`, `window` and `cards` are the brand's image editor layouts (the hero with toon objects round the words, words beside a sky-barred window, numbered cards); `headline`, `subtext`, `screenshot`, `quote` and `announcement` are the first templates. Sizes: `og` (1200 by 630), `square` (1080 by 1080), `portrait` (1080 by 1350), `landscape` (1200 by 675), `story` (1080 by 1920), `x-banner` (1500 by 500) and `linkedin-banner` (1584 by 396), or `all`. `image list --json` lists each template's fields and sizes.
 
-Pass copy as flags, or as a JSON object with `--input`. Flags override the file. `--dry-run` lists files and writes nothing. `--json` lists every written file with its pixel size. The default export is PNG and SVG. SVG text is outlined, so the file does not need a font installed. The default footer is the site host. `--no-footer` leaves that line off.
+Pass copy as flags, or as a JSON object with `--input` (flags override it). Cards are a list of `{ "title", "body" }`, or text with a blank line between cards. `--stickers` arranges the toon objects: `preset` (the hero's seven), `under` (one large object under the words), `scatter` (seeded: the same `--seed` gives the same picture) or `none`; `--subjects` picks which objects. `--image` puts your PNG or JPEG in the window or, on the hero, in as the object; `--toon` makes it a toon object first. Grounds are `blue`, `paper`, `white` and `ink`; `--band` adds the stepped band toward another ground. `--dry-run` lists files and writes nothing. The default export is PNG and SVG; SVG text is outlined.
 
-The display face named in the tokens is not included. `{{cli}} brand fonts --json` names the families that ship and the families that do not. Images and videos outline text with the shipped files. Do not download a stand-in. The logo is the lockup shipped with the brand files. Do not redraw it. A screenshot is a PNG or JPEG. The announcement template keeps a blue cap and a paper body, so leave `--ground` off for that template. A missing template, an unknown template, an unknown size, an unknown JSON field, or a field the template does not list is an error.
+The display face named in the tokens is not included, so images set it in the shipped Inter. Do not download a stand-in, do not redraw the logo, and never put a third-party logo, a real person's name or a real quote into an image: use Acme for samples. An unknown template, size, subject, ground or field exits 1 and names the closest choice.
+
+## Make slides
+
+```sh
+{{cli}} deck --list --json
+{{cli}} deck --input deck.json --out deck --json
+{{cli}} deck --sample --out deck
+```
+
+A deck file is `{ "slides": [ { "type": "cover", "title": "...", "body": "..." } ] }`. Types: `cover`, `section`, `statement`, `bullets`, `stat`, `quote`, `image`, `cards` and `end`; `deck --list --json` lists each type's slots. Slides are 1920 by 1080: one PNG per slide (`--format png,svg` for SVG too) and one `deck.pdf`. An unknown type or slot exits 1 with the closest name.
+
+## Make illustrations
+
+The brand illustrates with toon objects: everyday things of buying and paying, rendered as glossy 3D toys. Read `brand/illustration.md` (in this package) for the rules.
+
+```sh
+{{cli}} illustrate --list --json
+{{cli}} illustrate cart --ground blue --json
+{{cli}} illustrate coins wallet receipt --ground paper --json
+{{cli}} illustrate --composition scatter --seed 5 --size og --json
+{{cli}} illustrate --image ./photo.jpg --composition object --json
+```
+
+Subjects are the fifteen objects (`card`, `cart`, `coins`, `gift`, `wallet`, `bag`, `sale-tag`, `phone`, `cash`, `parcel`, `terminal`, `purse`, `cardholder`, `receipt`, `checkout`). Compositions: `single`, `row`, `preset`, `scatter` and `object` (the object alone on a clear ground). `--image` turns any picture into a toon object. Output is SVG (vector ground, the objects as embedded pictures, since they are 3D renders) and PNG.
+
+## Make merch print files
+
+```sh
+{{cli}} merch --list --json
+{{cli}} merch tee-front --variant all --json
+{{cli}} merch poster sticker --json
+```
+
+Items: `tee-front`, `tee-back`, `hoodie-front`, `cap-front`, `tote`, `mug-wrap`, `sticker`, `sticker-mark` and `poster`. Each writes an SVG at real size in inches, a PNG at 300 dpi, a proof with the trim, bleed and safe guides, and for stickers a CutContour line. Only the approved lockup and mark in blue, ink or white are used. The sizes are common vendor conventions, not brand rules: tell the person to confirm them against the vendor's template.
 
 ## Read the brand system
 
@@ -97,18 +131,31 @@ Token groups are `color`, `type`, `space`, `radius`, `motion`, `shadow`, `band`,
 
 ## Render videos
 
-Use this for a short on-brand clip. The command reads the same tokens, logo files and shipped fonts as image rendering. It does not open a browser and it does not call ffmpeg. Frames are SVG, rasterized with system fonts off, then stored as Motion JPEG in an MP4. The frame count, frame rate and easing token are fixed, so the same inputs write the same bytes.
+Use this for a short clip that moves the way the brand does: words and objects arrive on the brand's ease-out (`--ds-easing-out` over `--ds-duration-slow`, staggered), the objects then drift like the site's sticker field, and the band's grain jumps. Nothing eases in and nothing starts from nothing.
 
 ```sh
 {{cli}} video list --json
-{{cli}} video render --template social --size square --headline "Let agents buy anything online" --json
-{{cli}} video render --template announcement --size vertical --eyebrow "New" --headline "What shipped" --subtext "One line on what changed." --json
-{{cli}} video render --template product --size landscape --headline "A feature" --subtext "One supporting line." --json
+{{cli}} video render --template hero --headline "Let agents buy anything online" --size square,vertical --export mp4,webm --json
+{{cli}} video render --template cards --input cards.json --size landscape --seconds 6 --json
+{{cli}} video render --template hero --headline "A title" --still end --json
 ```
 
-Templates are `social`, `announcement` and `product`. Sizes are `square` (1080 by 1080), `vertical` (1080 by 1920, 9:16) and `landscape` (1920 by 1080, 16:9). `--size` is required. There is no duration flag. The clip is 12 frames at 12 fps. Motion samples `--ds-easing-out`. Duration tokens stay on interface transitions and are not stretched into the clip. The container is Motion JPEG, not H.264. Players that accept MJPEG in MP4 can open it. A browser video element may not.
+Templates: `hero`, `window` and `cards` (the image layouts, with the image fields) and `social`, `announcement` and `product` (the first clips). Sizes: `square`, `vertical`, `landscape`, `portrait` and `og`. Clips run 2 to 12 seconds (default 4) at 30 fps. MP4 is H.264 and WebM is VP9 through ffmpeg, single-threaded and bit-exact, so the same input writes the same bytes on the same ffmpeg. Without ffmpeg, MP4 falls back to Motion JPEG and WebM is refused. `--still <seconds>` (or `end`) writes one frame as PNG and SVG.
 
-`--template social` does not take `--subtext` or `--window`. `--template announcement` does not take `--window` and does not take `--ground`. `--template product` does not take `--eyebrow`. Pass a field the template does not list and the command errors.
+## Work in Figma
+
+The CLI never calls Figma itself: each action writes files and prints the Figma MCP calls to make, in order.
+
+```sh
+{{cli}} figma tokens --out figma --json
+{{cli}} figma push illustration cart --file <fileKey> --json
+{{cli}} figma push asset images/hero-og.svg --file <fileKey> --json
+{{cli}} figma push component button --file <fileKey> --json
+{{cli}} figma pull "https://figma.com/design/<fileKey>/<name>?node-id=1-2" --json
+{{cli}} figma check figma/variables-1-2.json figma/design-1-2.txt --json
+```
+
+`tokens` writes the tokens as Figma variables (one collection, mode Site) with use_figma scripts that are safe to rerun. `push` prepares an illustration, image, slide, component or page (SVG for upload_assets, a script for small SVGs, HTML for html_to_figma). `pull` prints the read steps and where to save each result; `check` lists every off-brand color, font, size, radius and spacing in the saved results with the nearest token, and exits 1 when there are any. Load the Figma skills the steps name before calling use_figma or get_design_context.
 
 ## Components, without guessing props
 
