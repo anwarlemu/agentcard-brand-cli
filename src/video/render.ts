@@ -1,16 +1,14 @@
 // Rasterize each frame with resvg, encode JPEG in process, and mux a Motion JPEG MP4.
 
+import jpeg from 'jpeg-js';
 import { createHash } from 'node:crypto';
 import { mkdirSync, writeFileSync } from 'node:fs';
-import { createRequire } from 'node:module';
 import { join } from 'node:path';
 import { rasterizeRgba } from '../image/render.js';
 import { JPEG_QUALITY, VIDEO_FPS, VIDEO_FRAMES, type VideoJob } from './catalog.js';
 import { frameSvg } from './frames.js';
 import { muxMjpeg } from './mp4.js';
 
-const require = createRequire(import.meta.url);
-const jpeg = require('jpeg-js') as { encode: (image: { data: Uint8Array; width: number; height: number }, quality?: number) => { data: Uint8Array } };
 
 function matte(pixels: Uint8Array, width: number, height: number): Uint8Array {
 	if (pixels.length !== width * height * 4) throw new Error(`Renderer returned ${pixels.length} bytes for ${width} by ${height}.`);

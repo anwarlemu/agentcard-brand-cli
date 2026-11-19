@@ -25,7 +25,7 @@ export default function IllustrationsPage() {
         <Command command={`${CLI_COMMAND} illustrate --list`} />
 
         <Block title="The objects" description="Fifteen objects, each a cut-out with alpha. Name one or more as subjects.">
-          <div className="grid grid-cols-3 items-start gap-3 sm:grid-cols-5">
+          <div className="grid grid-cols-2 items-start gap-3 sm:grid-cols-5">
             {subjects.map((e) => (
               <Shot key={e.file} entry={e} fit />
             ))}

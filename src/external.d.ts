@@ -30,3 +30,11 @@ declare module 'opentype.js' {
 	const opentype: { parse: typeof parse };
 	export default opentype;
 }
+
+declare module 'jpeg-js' {
+	const jpeg: {
+		encode: (image: { data: Uint8Array; width: number; height: number }, quality?: number) => { data: Uint8Array };
+		decode: (data: Buffer, opts: { useTArray: boolean; formatAsRGBA: boolean; maxMemoryUsageInMB?: number }) => { width: number; height: number; data: Uint8Array };
+	};
+	export default jpeg;
+}

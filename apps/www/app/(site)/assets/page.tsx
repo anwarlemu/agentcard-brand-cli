@@ -83,7 +83,7 @@ export default function AssetsPage() {
         <Block id="video" title="Clips" description="The brand's motion: words and objects arrive on the ease-out token, the objects drift like the site's sticker field, and the band's grain jumps. MP4 and WebM through ffmpeg, or one frame with --still.">
           {clip && (
             <figure className="overflow-hidden rounded-card border border-hairline bg-surface shadow-tile">
-              <video src={clip.file} width={clip.width} height={clip.height} controls muted playsInline preload="metadata" className="block h-auto w-full bg-paper" aria-label={clip.title} />
+              <video src={clip.file} poster={images[0]?.file} width={clip.width} height={clip.height} controls muted playsInline preload="metadata" className="block h-auto w-full bg-paper" aria-label={clip.title} />
               <figcaption className="px-3 py-2 text-caption text-fg-muted">{clip.title}, 4 seconds at 30 fps</figcaption>
             </figure>
           )}

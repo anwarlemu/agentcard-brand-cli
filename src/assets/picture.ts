@@ -1,12 +1,10 @@
-import { createRequire } from 'node:module';
+import jpeg from 'jpeg-js';
 import { readFileSync } from 'node:fs';
 import { decodePng, encodePng, isPng, type Pixels } from './png.js';
 
 // The user's pictures and the brand's art, as pixels and as data URIs an SVG can carry. PNG and JPEG decode in
 // process (no browser, no system tool), so a render is the same on every machine.
 
-const require = createRequire(import.meta.url);
-const jpeg = require('jpeg-js') as { decode: (data: Buffer, opts: { useTArray: boolean; formatAsRGBA: boolean; maxMemoryUsageInMB?: number }) => { width: number; height: number; data: Uint8Array } };
 
 export const MAX_PICTURE_BYTES = 15_000_000;
 

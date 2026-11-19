@@ -1,21 +1,20 @@
 // Renders the docs site's asset gallery from the CLI's own renderers: share images, deck slides, illustrations, merch
 // proofs and one clip, as small JPEGs (and the clip as MP4) in apps/www/public/assets, with gallery.json describing
 // each one and the command that makes it. Run after a change to the asset engine or brand/assets: npm run gallery.
+import jpeg from 'jpeg-js';
 import { execFileSync } from 'node:child_process';
 import { mkdirSync, rmSync, writeFileSync } from 'node:fs';
-import { createRequire } from 'node:module';
 import { join } from 'node:path';
 import { sampleDeck, slideSvg } from '../src/deck/slides.js';
 import { parseCards } from '../src/image/compose.js';
 import { renderSvg } from '../src/image/layout.js';
+import { TEMPLATES } from '../src/image/catalog.js';
 import { rasterizeRgba } from '../src/image/render.js';
 import { illustrateConfig } from '../src/image/scene.js';
 import { buildIllustration, illustrationSvg } from '../src/illustrate/render.js';
 import { brand, cli } from '../src/lib/brand.js';
 import { merchConfig, merchSvgs } from '../src/merch/render.js';
 
-const require = createRequire(import.meta.url);
-const jpeg = require('jpeg-js') as { encode: (image: { data: Uint8Array; width: number; height: number }, quality?: number) => { data: Uint8Array } };
 const root = new URL('..', import.meta.url).pathname;
 const out = join(root, 'apps', 'www', 'public', 'assets');
 rmSync(out, { recursive: true, force: true });
@@ -55,7 +54,7 @@ const images: [string, keyof typeof SIZES, Record<string, unknown>, string][] = 
 ];
 for (const [i, [template, size, fields, flags]] of images.entries()) {
 	const [width, height] = SIZES[size];
-	await save('image', `image-${i + 1}-${template}-${size}.jpg`, renderSvg({ template: template as never, size, width, height, footer: host, ...fields } as never), width, height, `${template}, ${size} (${width} by ${height})`, `${cli()} image render ${flags}${size === 'og' || flags.includes('--size') ? '' : ` --size ${size}`}`);
+	await save('image', `image-${i + 1}-${template}-${size}.jpg`, renderSvg({ template: template as never, size, width, height, footer: host, ground: (TEMPLATES as Record<string, { ground: string }>)[template]!.ground === 'split' ? undefined : (TEMPLATES as Record<string, { ground: string }>)[template]!.ground, ...fields } as never), width, height, `${template}, ${size} (${width} by ${height})`, `${cli()} image render ${flags}${size === 'og' || flags.includes('--size') ? '' : ` --size ${size}`}`);
 }
 
 for (const [i, slide] of sampleDeck().entries()) await save('deck', `deck-${String(i + 1).padStart(2, '0')}-${slide.type}.jpg`, slideSvg(slide, i), 1920, 1080, `${slide.type}`, `${cli()} deck --sample`, 640);

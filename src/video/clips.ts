@@ -1,6 +1,7 @@
 // A clip: frames of a scene (hero, window, cards) or of a first-generation template (social, announcement, product)
 // over time, encoded as MP4 or WebM through ffmpeg, or as Motion JPEG MP4 in process when ffmpeg is missing.
 
+import jpeg from 'jpeg-js';
 import { buildScene, type SceneFields } from '../image/compose.js';
 import { rasterizeRgba } from '../image/render.js';
 import { pictureArt, sceneSvg, type Art, type Scene } from '../image/scene.js';
@@ -10,10 +11,7 @@ import { encode, ffmpegPath, type Container } from './ffmpeg.js';
 import { frameSvg } from './frames.js';
 import { frameTimes, sceneMotion, videoConfig } from './motion.js';
 import { muxMjpeg } from './mp4.js';
-import { createRequire } from 'node:module';
 
-const require = createRequire(import.meta.url);
-const jpeg = require('jpeg-js') as { encode: (image: { data: Uint8Array; width: number; height: number }, quality?: number) => { data: Uint8Array } };
 
 export const SCENE_CLIPS = ['hero', 'window', 'cards'] as const;
 export const LEGACY_CLIPS = ['social', 'announcement', 'product'] as const;
