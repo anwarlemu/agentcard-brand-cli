@@ -3,7 +3,7 @@ name: code-window
 title: Code window
 type: ui
 surface: site
-description: "Code block with a filename, highlighting and optional copy action."
+description: "Code block with a filename, highlighting and optional copy action. Long code scrolls and fades at any edge with more past it (fade-xy)."
 kinds: [code-window]
 use_for: "Use for commands, integration examples and API requests. Pass code as a string for highlighting and copying, or pass rendered children."
 never: [A full syntax theme with many colors, A light code window, Rounded corners above 8px, Code set in a monospace other than the display face]

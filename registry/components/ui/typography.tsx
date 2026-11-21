@@ -66,14 +66,16 @@ function TypographyInlineCode({ className, ...props }: React.ComponentProps<"cod
 /** A plain table in running text: the sky head with blue labels in the display face, ink rules between rows. For data, use Table. */
 function TypographyTable({ className, ...props }: React.ComponentProps<"table">) {
   return (
-    <div data-slot="typography-table" className="my-5 w-full overflow-x-auto rounded-card border border-hairline">
-      <table
-        className={cn(
-          "w-full border-collapse font-sans text-body-sm leading-normal text-fg [&_td]:border-t [&_td]:border-line [&_td]:px-3.5 [&_td]:py-2.5 [&_th]:bg-sky [&_th]:px-3.5 [&_th]:py-2.5 [&_th]:text-left [&_th]:font-display [&_th]:text-caption [&_th]:font-normal [&_th]:text-fg-brand",
-          className,
-        )}
-        {...props}
-      />
+    <div data-slot="typography-table" className="my-5 w-full overflow-hidden rounded-card border border-hairline">
+      <div className="overflow-x-auto fade-x">
+        <table
+          className={cn(
+            "w-full border-collapse font-sans text-body-sm leading-normal text-fg [&_td]:border-t [&_td]:border-line [&_td]:px-3.5 [&_td]:py-2.5 [&_th]:bg-sky [&_th]:px-3.5 [&_th]:py-2.5 [&_th]:text-left [&_th]:font-display [&_th]:text-caption [&_th]:font-normal [&_th]:text-fg-brand",
+            className,
+          )}
+          {...props}
+        />
+      </div>
     </div>
   );
 }

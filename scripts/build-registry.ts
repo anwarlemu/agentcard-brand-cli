@@ -95,7 +95,7 @@ const themeItem = {
 	name: 'theme',
 	type: 'theme',
 	title: `${brand.name} theme`,
-	description: `The ${brand.name} tokens and the Tailwind names that read them.`,
+	description: `The ${brand.name} tokens, the Tailwind names that read them, and the scroll-edge fades (fade-y, fade-x, fade-xy).`,
 	surface: 'site',
 	kinds: [] as string[],
 	requires: [] as string[],

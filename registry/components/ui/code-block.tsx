@@ -66,7 +66,7 @@ function CodeBlockContent({ code, language, lineNumbers = true, wrap = false, cl
       data-slot="code-block-content"
       tabIndex={0}
       className={cn(
-        "m-0 min-h-0 flex-1 overflow-auto pt-3.5 pb-4 font-mono text-micro [line-height:1.55] outline-none [scrollbar-width:thin] [tab-size:2] focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-sky md:text-caption",
+        "m-0 min-h-0 flex-1 overflow-auto fade-xy pt-3.5 pb-4 font-mono text-micro [line-height:1.55] outline-none [scrollbar-width:thin] [tab-size:2] focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-sky md:text-caption",
         className,
       )}
       {...props}

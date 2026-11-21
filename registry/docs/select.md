@@ -3,7 +3,7 @@ name: select
 title: Select
 type: ui
 surface: site
-description: "Single-choice select with field, compact, ghost and chip treatments."
+description: "Single-choice select with field, compact, ghost and chip treatments. A long list fades at an edge with more past it instead of cutting options off."
 kinds: [input]
 use_for: "Use the field appearance inside Field for forms. Use compact in dense rows and ghost or chip for filters. Field required is inherited by Select. Give Select a name for FormData; keep value and onValueChange on the root. Use compact on SelectContent for compact fields and toolbar menus."
 never: [Rounded field triggers, Empty string item values, Long lists without a search (use a command)]

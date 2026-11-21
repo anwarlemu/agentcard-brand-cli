@@ -204,7 +204,109 @@ const motion = `@theme {
 	}
 }
 `;
-const themeCss = `${header}@theme inline {\n${theme.join('\n')}\n}\n\n${motion}`;
+// Scroll edges fade, never cut content off: fade-y on a box that scrolls down, fade-x on one that scrolls sideways,
+// fade-xy on one that scrolls both ways (code). An
+// edge with more content past it fades over 24px; the fade grows with the first and last 24px of scroll (tied to the
+// scroll, not to time), so a list at rest shows its first row in full and a box that does not scroll has no fade.
+// Browsers without scroll timelines get a short fixed fade. It ships in theme.css, which the docs, the theme item and
+// every installed item (each requires the theme) all load.
+const fadeUtility = (name, side, axis) => `@utility ${name} {
+	mask-image: linear-gradient(to ${side}, transparent, black var(--fade-start), black calc(100% - var(--fade-end)), transparent);
+
+	@supports (animation-timeline: scroll()) {
+		animation: fade-start linear both, fade-end linear both;
+		animation-range: 0px 24px, calc(100% - 24px) 100%;
+		animation-timeline: scroll(self ${axis}), scroll(self ${axis});
+	}
+
+	@supports not (animation-timeline: scroll()) {
+		--fade-start: 8px;
+		--fade-end: 8px;
+	}
+}`;
+const fade = `@property --fade-start {
+	syntax: "<length>";
+	inherits: false;
+	initial-value: 0px;
+}
+
+@property --fade-end {
+	syntax: "<length>";
+	inherits: false;
+	initial-value: 0px;
+}
+
+@property --fade-x-start {
+	syntax: "<length>";
+	inherits: false;
+	initial-value: 0px;
+}
+
+@property --fade-x-end {
+	syntax: "<length>";
+	inherits: false;
+	initial-value: 0px;
+}
+
+@keyframes fade-x-start {
+	from {
+		--fade-x-start: 0px;
+	}
+	to {
+		--fade-x-start: 24px;
+	}
+}
+
+@keyframes fade-x-end {
+	from {
+		--fade-x-end: 24px;
+	}
+	to {
+		--fade-x-end: 0px;
+	}
+}
+
+@keyframes fade-start {
+	from {
+		--fade-start: 0px;
+	}
+	to {
+		--fade-start: 24px;
+	}
+}
+
+@keyframes fade-end {
+	from {
+		--fade-end: 24px;
+	}
+	to {
+		--fade-end: 0px;
+	}
+}
+
+${fadeUtility('fade-y', 'bottom', 'block')}
+
+${fadeUtility('fade-x', 'right', 'inline')}
+
+@utility fade-xy {
+	mask-image: linear-gradient(to bottom, transparent, black var(--fade-start), black calc(100% - var(--fade-end)), transparent), linear-gradient(to right, transparent, black var(--fade-x-start), black calc(100% - var(--fade-x-end)), transparent);
+	mask-composite: intersect;
+
+	@supports (animation-timeline: scroll()) {
+		animation: fade-start linear both, fade-end linear both, fade-x-start linear both, fade-x-end linear both;
+		animation-range: 0px 24px, calc(100% - 24px) 100%, 0px 24px, calc(100% - 24px) 100%;
+		animation-timeline: scroll(self block), scroll(self block), scroll(self inline), scroll(self inline);
+	}
+
+	@supports not (animation-timeline: scroll()) {
+		--fade-start: 8px;
+		--fade-end: 8px;
+		--fade-x-start: 8px;
+		--fade-x-end: 8px;
+	}
+}
+`;
+const themeCss = `${header}@theme inline {\n${theme.join('\n')}\n}\n\n${motion}\n${fade}`;
 const fonts = `${header}@import url("${brand.fonts.css}");\n`;
 
 mkdirSync(new URL('../build', import.meta.url), { recursive: true });

@@ -18,6 +18,9 @@ const PANEL = {
   glass: "border-line-on-brand bg-glass bg-(image:--ds-glass-sheen) text-on-brand shadow-floating [backdrop-filter:var(--ds-glass-blur)]",
 } as const;
 
+// The panel stays still and keeps its shadow; the rows scroll inside it and fade at an edge with more past it.
+const SCROLL = "flex min-h-0 flex-col [gap:inherit] overflow-y-auto overscroll-contain fade-y";
+
 const MenuVariant = React.createContext<keyof typeof PANEL>("default");
 
 const ROW =
@@ -33,7 +36,7 @@ function DropdownMenuTrigger(props: React.ComponentProps<typeof DropdownMenuPrim
   return <DropdownMenuPrimitive.Trigger data-slot="dropdown-menu-trigger" {...props} />;
 }
 
-function DropdownMenuContent({ className, sideOffset = 6, collisionPadding = 8, align = "end", variant = "default", ...props }: React.ComponentProps<typeof DropdownMenuPrimitive.Content> & { variant?: keyof typeof PANEL; onOpenAutoFocus?: (event: Event) => void }) {
+function DropdownMenuContent({ className, sideOffset = 6, collisionPadding = 8, align = "end", variant = "default", children, ...props }: React.ComponentProps<typeof DropdownMenuPrimitive.Content> & { variant?: keyof typeof PANEL; onOpenAutoFocus?: (event: Event) => void }) {
   return (
     <DropdownMenuPrimitive.Portal container={usePortalContainer()}>
       <MenuVariant.Provider value={variant}>
@@ -43,9 +46,11 @@ function DropdownMenuContent({ className, sideOffset = 6, collisionPadding = 8, 
           sideOffset={sideOffset}
           collisionPadding={collisionPadding}
           align={align}
-          className={cn("group/menu z-50 flex min-w-[min(12rem,var(--radix-dropdown-menu-content-available-width))] max-w-(--radix-dropdown-menu-content-available-width) max-h-(--radix-dropdown-menu-content-available-height) overflow-y-auto overscroll-contain origin-(--radix-dropdown-menu-content-transform-origin) animate-pop-in motion-reduce:animate-none flex-col gap-0.5 rounded-control border p-1 outline-none", PANEL[variant], className)}
+          className={cn("group/menu z-50 flex min-w-[min(12rem,var(--radix-dropdown-menu-content-available-width))] max-w-(--radix-dropdown-menu-content-available-width) max-h-(--radix-dropdown-menu-content-available-height) overflow-hidden origin-(--radix-dropdown-menu-content-transform-origin) animate-pop-in motion-reduce:animate-none flex-col gap-0.5 rounded-control border p-1 outline-none", PANEL[variant], className)}
           {...props}
-        />
+        >
+          <div data-slot="dropdown-menu-viewport" className={SCROLL}>{children}</div>
+        </DropdownMenuPrimitive.Content>
       </MenuVariant.Provider>
     </DropdownMenuPrimitive.Portal>
   );
@@ -148,7 +153,7 @@ function DropdownMenuSubTrigger({ className, children, ...props }: React.Compone
   );
 }
 
-function DropdownMenuSubContent({ className, variant: variantProp, collisionPadding = 8, ...props }: React.ComponentProps<typeof DropdownMenuPrimitive.SubContent> & { variant?: keyof typeof PANEL }) {
+function DropdownMenuSubContent({ className, variant: variantProp, collisionPadding = 8, children, ...props }: React.ComponentProps<typeof DropdownMenuPrimitive.SubContent> & { variant?: keyof typeof PANEL }) {
   const inheritedVariant = React.useContext(MenuVariant);
   const variant = variantProp ?? inheritedVariant;
   return (
@@ -158,9 +163,11 @@ function DropdownMenuSubContent({ className, variant: variantProp, collisionPadd
           data-slot="dropdown-menu-sub-content"
           collisionPadding={collisionPadding}
           data-variant={variant}
-          className={cn("group/menu z-50 flex min-w-[min(10rem,var(--radix-dropdown-menu-content-available-width))] max-w-(--radix-dropdown-menu-content-available-width) max-h-(--radix-dropdown-menu-content-available-height) overflow-y-auto overscroll-contain origin-(--radix-dropdown-menu-content-transform-origin) animate-pop-in motion-reduce:animate-none flex-col gap-0.5 rounded-control border p-1", PANEL[variant], className)}
+          className={cn("group/menu z-50 flex min-w-[min(10rem,var(--radix-dropdown-menu-content-available-width))] max-w-(--radix-dropdown-menu-content-available-width) max-h-(--radix-dropdown-menu-content-available-height) overflow-hidden origin-(--radix-dropdown-menu-content-transform-origin) animate-pop-in motion-reduce:animate-none flex-col gap-0.5 rounded-control border p-1", PANEL[variant], className)}
           {...props}
-        />
+        >
+          <div data-slot="dropdown-menu-viewport" className={SCROLL}>{children}</div>
+        </DropdownMenuPrimitive.SubContent>
       </MenuVariant.Provider>
     </DropdownMenuPrimitive.Portal>
   );

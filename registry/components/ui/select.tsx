@@ -91,7 +91,7 @@ function SelectContent({ className, children, compact = false, position = "poppe
         <SelectPrimitive.ScrollUpButton className="flex h-6 items-center justify-center text-fg-muted">
           <ChevronUp className="size-3.5" strokeWidth={1.5} />
         </SelectPrimitive.ScrollUpButton>
-        <SelectPrimitive.Viewport className="flex w-full flex-col gap-0.5">{children}</SelectPrimitive.Viewport>
+        <SelectPrimitive.Viewport className="flex w-full flex-col gap-0.5 fade-y">{children}</SelectPrimitive.Viewport>
         <SelectPrimitive.ScrollDownButton className="flex h-6 items-center justify-center text-fg-muted">
           <ChevronDown className="size-3.5" strokeWidth={1.5} />
         </SelectPrimitive.ScrollDownButton>

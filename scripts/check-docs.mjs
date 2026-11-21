@@ -4,6 +4,7 @@ import assert from 'node:assert/strict';
 import { chromium } from 'playwright-core';
 import { checkOverlays } from './check-overlays.mjs';
 import { checkInteractions } from './check-interactions.mjs';
+import { checkFade } from './check-fade.mjs';
 
 const base = process.env.DOCS_URL ?? 'http://localhost:4645';
 const browser = await chromium.launch();
@@ -92,6 +93,7 @@ try {
   console.log('PASS: the mobile rail closes after choosing an item, without horizontal overflow.');
   await checkOverlays(page, base);
   await checkInteractions(page, base);
+  await checkFade(page, base);
   assert.deepEqual(errors, [], 'Browser errors');
   console.log('PASS: no browser runtime or resource errors.');
 } finally {

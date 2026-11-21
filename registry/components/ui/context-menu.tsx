@@ -13,7 +13,9 @@ import { cn } from "@/lib/utils";
 // pointer (scale 0.97 and a fade, 160ms ease-out). Labels and shortcuts are the 12px display face, separators a 14
 // percent ink rule, checks and the radio mark blue, destructive rows red. The trigger is any area; it takes no style.
 const PANEL =
-  "z-50 flex min-w-48 max-w-(--radix-context-menu-content-available-width) max-h-(--radix-context-menu-content-available-height) origin-(--radix-context-menu-content-transform-origin) animate-pop-in flex-col gap-0.5 overflow-y-auto overscroll-contain rounded-control border border-hairline bg-surface p-1 text-fg shadow-tooltip outline-none motion-reduce:animate-none";
+  "z-50 flex min-w-48 max-w-(--radix-context-menu-content-available-width) max-h-(--radix-context-menu-content-available-height) origin-(--radix-context-menu-content-transform-origin) animate-pop-in flex-col gap-0.5 overflow-hidden rounded-control border border-hairline bg-surface p-1 text-fg shadow-tooltip outline-none motion-reduce:animate-none";
+// The panel stays still and keeps its shadow; the rows scroll inside it and fade at an edge with more past it.
+const SCROLL = "flex min-h-0 flex-col [gap:inherit] overflow-y-auto overscroll-contain fade-y";
 const ROW =
   "relative flex w-full cursor-default items-center gap-2 rounded-menu px-2.5 py-2 font-display text-body-sm leading-snug text-fg-secondary outline-none select-none data-[disabled]:pointer-events-none data-[disabled]:opacity-40 data-[highlighted]:bg-wash-hover data-[highlighted]:text-fg data-[inset]:pl-8 [&_svg]:size-3.5 [&_svg]:shrink-0";
 const DANGER = "text-danger data-[highlighted]:bg-danger/6 data-[highlighted]:text-danger";
@@ -27,10 +29,12 @@ function ContextMenuTrigger(props: React.ComponentProps<typeof ContextMenuPrimit
   return <ContextMenuPrimitive.Trigger data-slot="context-menu-trigger" {...props} />;
 }
 
-function ContextMenuContent({ className, collisionPadding = 8, ...props }: React.ComponentProps<typeof ContextMenuPrimitive.Content>) {
+function ContextMenuContent({ className, collisionPadding = 8, children, ...props }: React.ComponentProps<typeof ContextMenuPrimitive.Content>) {
   return (
     <ContextMenuPrimitive.Portal container={usePortalContainer()}>
-      <ContextMenuPrimitive.Content data-slot="context-menu-content" collisionPadding={collisionPadding} className={cn(PANEL, className)} {...props} />
+      <ContextMenuPrimitive.Content data-slot="context-menu-content" collisionPadding={collisionPadding} className={cn(PANEL, className)} {...props}>
+        <div data-slot="context-menu-viewport" className={SCROLL}>{children}</div>
+      </ContextMenuPrimitive.Content>
     </ContextMenuPrimitive.Portal>
   );
 }
@@ -98,10 +102,12 @@ function ContextMenuSubTrigger({ className, inset, children, ...props }: React.C
   );
 }
 
-function ContextMenuSubContent({ className, collisionPadding = 8, ...props }: React.ComponentProps<typeof ContextMenuPrimitive.SubContent>) {
+function ContextMenuSubContent({ className, collisionPadding = 8, children, ...props }: React.ComponentProps<typeof ContextMenuPrimitive.SubContent>) {
   return (
     <ContextMenuPrimitive.Portal container={usePortalContainer()}>
-      <ContextMenuPrimitive.SubContent data-slot="context-menu-sub-content" collisionPadding={collisionPadding} className={cn(PANEL, "min-w-40", className)} {...props} />
+      <ContextMenuPrimitive.SubContent data-slot="context-menu-sub-content" collisionPadding={collisionPadding} className={cn(PANEL, "min-w-40", className)} {...props}>
+        <div data-slot="context-menu-viewport" className={SCROLL}>{children}</div>
+      </ContextMenuPrimitive.SubContent>
     </ContextMenuPrimitive.Portal>
   );
 }

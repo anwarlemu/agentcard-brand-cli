@@ -17,7 +17,7 @@ export function Code({ code, title, lang = "tsx", tall = false, className }: { c
         className="h-9 pr-1.5"
         actions={<CodeCopyButton text={text} />}
       />
-      <pre tabIndex={0} className={cn("m-0 overflow-auto px-4 pt-3.5 pb-4 font-code text-body-sm leading-relaxed whitespace-pre text-white/92 outline-none [scrollbar-width:thin] [tab-size:2] focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-sky", tall ? "max-h-140" : "max-h-96")}>
+      <pre tabIndex={0} className={cn("m-0 overflow-auto fade-xy px-4 pt-3.5 pb-4 font-code text-body-sm leading-relaxed whitespace-pre text-white/92 outline-none [scrollbar-width:thin] [tab-size:2] focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-sky", tall ? "max-h-140" : "max-h-96")}>
         <code>
           {tokenize(text, lang).map((t, i) => (
             <span key={i} className={t.kind === "comment" ? "text-white/45" : t.kind === "string" ? "text-sky" : undefined}>

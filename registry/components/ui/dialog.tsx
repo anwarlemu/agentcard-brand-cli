@@ -79,7 +79,7 @@ function DialogContent({
         {...props}
       >
         <WindowBar name={name} tone={tone} actions={showCloseButton ? <WindowClose /> : undefined} />
-        <div className="relative min-h-0 flex-1 overflow-y-auto">{children}</div>
+        <div className="relative min-h-0 flex-1 overflow-y-auto fade-y">{children}</div>
       </DialogPrimitive.Content>
     </DialogPortal>
   );

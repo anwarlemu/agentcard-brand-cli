@@ -11,12 +11,11 @@ function Table({ className, label = "Table", ...props }: React.ComponentProps<"t
   return (
     <div
       data-slot="table-container"
-      role="region"
-      aria-label={label}
-      tabIndex={0}
-      className="relative w-full overflow-x-auto rounded-card border border-hairline bg-surface shadow-guide outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-solid focus-visible:outline-focus-ring"
+      className="relative w-full overflow-hidden rounded-card border border-hairline bg-surface shadow-guide has-[>[data-slot=table-scroll]:focus-visible]:outline-2 has-[>[data-slot=table-scroll]:focus-visible]:outline-offset-2 has-[>[data-slot=table-scroll]:focus-visible]:outline-solid has-[>[data-slot=table-scroll]:focus-visible]:outline-focus-ring"
     >
-      <table data-slot="table" className={cn("w-full caption-bottom border-collapse text-left text-body-sm leading-normal text-fg max-sm:block", className)} {...props} />
+      <div data-slot="table-scroll" role="region" aria-label={label} tabIndex={0} className="overflow-x-auto fade-x outline-none">
+        <table data-slot="table" className={cn("w-full caption-bottom border-collapse text-left text-body-sm leading-normal text-fg max-sm:block", className)} {...props} />
+      </div>
     </div>
   );
 }

@@ -14,7 +14,9 @@ import { cn } from "@/lib/utils";
 // A menu grows from its trigger (scale 0.97 and a fade, 160ms ease-out) and closes at once, so moving along the bar
 // with the arrows or the pointer never waits on a closing panel. Highlighting a row is instant.
 const PANEL =
-  "z-50 flex min-w-48 max-w-(--radix-menubar-content-available-width) max-h-(--radix-menubar-content-available-height) origin-(--radix-menubar-content-transform-origin) animate-pop-in flex-col gap-0.5 overflow-y-auto overscroll-contain rounded-control border border-hairline bg-surface p-1 text-fg shadow-tooltip outline-none motion-reduce:animate-none";
+  "z-50 flex min-w-48 max-w-(--radix-menubar-content-available-width) max-h-(--radix-menubar-content-available-height) origin-(--radix-menubar-content-transform-origin) animate-pop-in flex-col gap-0.5 overflow-hidden rounded-control border border-hairline bg-surface p-1 text-fg shadow-tooltip outline-none motion-reduce:animate-none";
+// The panel stays still and keeps its shadow; the rows scroll inside it and fade at an edge with more past it.
+const SCROLL = "flex min-h-0 flex-col [gap:inherit] overflow-y-auto overscroll-contain fade-y";
 const ROW =
   "relative flex w-full cursor-default items-center gap-2 rounded-menu px-2.5 py-2 font-display text-body-sm leading-snug text-fg-secondary outline-none select-none data-[disabled]:pointer-events-none data-[disabled]:opacity-40 data-[highlighted]:bg-wash-hover data-[highlighted]:text-fg data-[inset]:pl-8 [&_svg]:size-3.5 [&_svg]:shrink-0";
 const DANGER = "text-danger data-[highlighted]:bg-danger/6 data-[highlighted]:text-danger";
@@ -41,10 +43,12 @@ function MenubarTrigger({ className, ...props }: React.ComponentProps<typeof Men
   );
 }
 
-function MenubarContent({ className, align = "start", alignOffset = -4, sideOffset = 8, collisionPadding = 8, ...props }: React.ComponentProps<typeof MenubarPrimitive.Content>) {
+function MenubarContent({ className, align = "start", alignOffset = -4, sideOffset = 8, collisionPadding = 8, children, ...props }: React.ComponentProps<typeof MenubarPrimitive.Content>) {
   return (
     <MenubarPrimitive.Portal container={usePortalContainer()}>
-      <MenubarPrimitive.Content data-slot="menubar-content" align={align} alignOffset={alignOffset} sideOffset={sideOffset} collisionPadding={collisionPadding} className={cn(PANEL, className)} {...props} />
+      <MenubarPrimitive.Content data-slot="menubar-content" align={align} alignOffset={alignOffset} sideOffset={sideOffset} collisionPadding={collisionPadding} className={cn(PANEL, className)} {...props}>
+        <div data-slot="menubar-viewport" className={SCROLL}>{children}</div>
+      </MenubarPrimitive.Content>
     </MenubarPrimitive.Portal>
   );
 }
@@ -112,10 +116,12 @@ function MenubarSubTrigger({ className, inset, children, ...props }: React.Compo
   );
 }
 
-function MenubarSubContent({ className, collisionPadding = 8, ...props }: React.ComponentProps<typeof MenubarPrimitive.SubContent>) {
+function MenubarSubContent({ className, collisionPadding = 8, children, ...props }: React.ComponentProps<typeof MenubarPrimitive.SubContent>) {
   return (
     <MenubarPrimitive.Portal container={usePortalContainer()}>
-      <MenubarPrimitive.SubContent data-slot="menubar-sub-content" collisionPadding={collisionPadding} className={cn(PANEL, "min-w-40", className)} {...props} />
+      <MenubarPrimitive.SubContent data-slot="menubar-sub-content" collisionPadding={collisionPadding} className={cn(PANEL, "min-w-40", className)} {...props}>
+        <div data-slot="menubar-viewport" className={SCROLL}>{children}</div>
+      </MenubarPrimitive.SubContent>
     </MenubarPrimitive.Portal>
   );
 }

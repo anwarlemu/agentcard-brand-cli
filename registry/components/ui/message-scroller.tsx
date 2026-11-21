@@ -152,7 +152,7 @@ function MessageScrollerViewport({ className, onScroll, ...props }: React.Compon
         update();
         onScroll?.(event);
       }}
-      className={cn("size-full min-h-0 min-w-0 overflow-y-auto overscroll-contain outline-none [scrollbar-gutter:stable] [scrollbar-width:thin] focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-solid focus-visible:outline-focus-ring", className)}
+      className={cn("size-full min-h-0 min-w-0 overflow-y-auto overscroll-contain fade-y outline-none [scrollbar-gutter:stable] [scrollbar-width:thin] focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-solid focus-visible:outline-focus-ring", className)}
       {...props}
     />
   );

@@ -13,7 +13,7 @@ Install with `add <names...> --dry-run --json`, then `add <names...> --json`. Ex
 
 For new applications, `create --template vite --name <directory>` scaffolds the framework and installs the brand. Existing applications use `init`. Use `apply --dry-run` only when the user requests conversion of existing styles; package installation and restyling are different operations.
 
-Read `guide` for brand rules and `tokens <term> --json` for custom styling. Keep colors scoped to component roles; preserve artwork, chart data and unrelated palettes. Use `check --json` and the application's build and interaction tests to verify the result.
+Read `guide` for brand rules and `tokens <term> --json` for custom styling. A box you make scroll (a list, a panel body, code) never cuts content off at a hard edge: give the scrolling element `fade-y`, `fade-x` or `fade-xy` from the theme, and its edges fade only where more content lies past them. Keep colors scoped to component roles; preserve artwork, chart data and unrelated palettes. Use `check --json` and the application's build and interaction tests to verify the result.
 
 Read the whole system with `manifest --json` before choosing a token, template, component or rule. `describe --json` is the same command. `brand --json` is tokens, fonts, logos and voice. `brand tokens --name=--ds-color-brand --json` looks up one token and errors if the name is missing. `principles --json` is the website do and don't list. If `product.defined` is false, do not invent product rules.
 

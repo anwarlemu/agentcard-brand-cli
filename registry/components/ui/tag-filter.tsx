@@ -69,7 +69,7 @@ function TagFilter({
               className="h-11 min-w-0 flex-1 bg-transparent font-display text-body text-fg caret-primary outline-none placeholder:text-fg-faint [&::-webkit-search-cancel-button]:hidden"
             />
           </label>
-          <ul className="max-h-64 overflow-y-auto p-1">
+          <ul className="max-h-64 overflow-y-auto fade-y p-1">
             {options.length === 0 && <li className="px-2.5 py-2 font-display text-body-sm text-fg-muted">{tagOptions.length === 0 ? "No tags yet" : "No matching tags"}</li>}
             {options.map((tag) => {
               const isSelected = selected.has(tag);

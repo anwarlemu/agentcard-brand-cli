@@ -79,7 +79,7 @@ function SheetHeader({ className, ...props }: React.ComponentProps<"div">) {
 }
 
 function SheetBody({ className, ...props }: React.ComponentProps<"div">) {
-  return <div data-slot="sheet-body" className={cn("min-h-0 flex-1 overflow-y-auto px-6 pt-4 pb-6 text-body text-fg", className)} {...props} />;
+  return <div data-slot="sheet-body" className={cn("min-h-0 flex-1 overflow-y-auto fade-y px-6 pt-4 pb-6 text-body text-fg", className)} {...props} />;
 }
 
 function SheetTitle({ className, ...props }: React.ComponentProps<typeof SheetPrimitive.Title>) {

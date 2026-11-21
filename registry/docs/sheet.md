@@ -3,7 +3,7 @@ name: sheet
 title: Sheet
 type: ui
 surface: site
-description: "Side panel with a title, close control and focus management."
+description: "Side panel with a title, close control and focus management. The body scrolls and fades at an edge with more past it."
 kinds: [window, window-bar]
 use_for: "Use for item details, activity logs or longer forms. Choose right, left or bottom with side. Set modal={false} when the rest of the page must remain interactive."
 never: [Sheets for a quick confirmation (use a dialog), Full-screen sheets on desktop, Two sheets at once]

@@ -114,7 +114,7 @@ export function DocsRail({ groups, repo, site }: { groups: RailGroup[]; repo: st
         <div className="mx-3.5 mt-4 mb-4 lg:mt-0">
           <Input variant="search" value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Filter components" aria-label="Filter components" />
         </div>
-        <div data-rail-scroll="" className="grid min-h-0 flex-1 content-start gap-5 overflow-y-auto overscroll-contain px-3.5 pb-6 [scrollbar-width:thin]">
+        <div data-rail-scroll="" className="grid min-h-0 flex-1 content-start gap-5 overflow-y-auto overscroll-contain px-3.5 pb-6 fade-y [scrollbar-width:thin]">
           <List groups={groups} query={query} onNavigate={close} />
         </div>
         <div className="flex items-center gap-4 border-t border-line-subtle px-6 py-3.5 font-display text-caption">

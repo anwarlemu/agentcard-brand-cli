@@ -31,6 +31,8 @@ const BODY = [
   // Code: a sky chip inline, the ink window for blocks.
   "[&_:not(pre)>code]:rounded-sm [&_:not(pre)>code]:border [&_:not(pre)>code]:border-ring-tint [&_:not(pre)>code]:bg-sky-wash [&_:not(pre)>code]:px-1.5 [&_:not(pre)>code]:py-px [&_:not(pre)>code]:font-mono [&_:not(pre)>code]:text-body-sm [&_:not(pre)>code]:text-fg-brand [&_:not(pre)>code]:[overflow-wrap:anywhere]",
   "[&_pre]:overflow-x-auto [&_pre]:rounded-control [&_pre]:bg-code [&_pre]:px-4 [&_pre]:py-3.5 [&_pre]:font-mono [&_pre]:text-caption [&_pre]:leading-4.5 [&_pre]:text-white/88 [&_pre]:shadow-code",
+  // A block's code scrolls sideways inside the window and fades at an edge with more past it; the window keeps its shadow.
+  "[&_pre:has(>code)]:overflow-hidden [&_pre:has(>code)]:p-0 [&_pre>code]:block [&_pre>code]:overflow-x-auto [&_pre>code]:px-4 [&_pre>code]:py-3.5 [&_pre>code]:fade-x",
   // Quotes, rules and figures.
   "[&_blockquote]:border-l-2 [&_blockquote]:border-brand [&_blockquote]:pl-4 [&_blockquote]:text-ink/70",
   "[&_hr]:my-11 [&_hr]:border-0 [&_hr]:border-t [&_hr]:border-ink/18",

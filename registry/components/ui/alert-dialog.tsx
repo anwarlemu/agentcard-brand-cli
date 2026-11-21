@@ -59,7 +59,7 @@ function AlertDialogContent({
         {...props}
       >
         <WindowBar name={name} tone={tone} />
-        <div className="relative min-h-0 flex-1 overflow-y-auto">{children}</div>
+        <div className="relative min-h-0 flex-1 overflow-y-auto fade-y">{children}</div>
       </AlertDialogPrimitive.Content>
     </AlertDialogPortal>
   );

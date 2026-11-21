@@ -88,7 +88,7 @@ function CommandList({ className, ...props }: React.ComponentProps<typeof Comman
   return (
     <CommandPrimitive.List
       data-slot="command-list"
-      className={cn("min-h-0 flex-1 scroll-py-2 overflow-x-hidden overflow-y-auto px-2 pt-1.5 pb-2 [scrollbar-color:var(--ds-color-border-default)_transparent] [scrollbar-width:thin]", className)}
+      className={cn("min-h-0 flex-1 scroll-py-2 overflow-x-hidden overflow-y-auto fade-y px-2 pt-1.5 pb-2 [scrollbar-color:var(--ds-color-border-default)_transparent] [scrollbar-width:thin]", className)}
       {...props}
     />
   );
