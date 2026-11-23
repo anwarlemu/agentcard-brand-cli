@@ -146,3 +146,36 @@ describe('the logo keeps its clear space', () => {
 		expect(failures).toEqual([]);
 	}, 240000);
 });
+
+describe('only the headline you pass', () => {
+	it('draws the headline and the brand address, nothing else, for every template and size', async () => {
+		const { resolveFields, assertImageInput } = await import('../src/image/catalog.js');
+		const { siteHost } = await import('../src/commands/image.js');
+		const { renderJob } = await import('../src/image/layout.js');
+		const words = (t: string) => t.toLowerCase().split(/\s+/).filter(Boolean).sort().join(' ');
+		const failures: string[] = [];
+		const headline = 'Everything your agents need';
+		for (const template of Object.keys(TEMPLATES) as TemplateId[]) {
+			if (template === 'logo') continue;
+			const spec = TEMPLATES[template];
+			const need = spec.needs as readonly string[];
+			const raw = { template, headline, ...(need.includes('body') ? { body: 'Body' } : {}), ...(need.includes('cards') ? { cards: 'One\n\nTwo' } : {}), ...(need.includes('quote') ? { quote: 'Quote' } : {}), ...(template === 'screenshot' ? { image: wide } : {}) };
+			if (need.includes('quote')) delete (raw as Record<string, unknown>).headline;
+			const fields = resolveFields(assertImageInput(raw), { footer: siteHost() });
+			for (const size of templateSizes(template)) {
+				const { width, height } = SIZES[size]!;
+				try {
+					const layers = renderJob({ ...fields, size, width, height }).layers;
+					const drawn = words(layers.filter((l) => l.text).map((l) => l.text!.drawn).join(' '));
+					const passed = [fields.headline, fields.body, fields.quote, ...(fields.cards ?? []).flatMap((c) => [c.title, c.body])].filter(Boolean).join(' ');
+					const own = layers.filter((l) => l.text?.own).map((l) => l.text!.drawn).join(' ');
+					if (drawn !== words(`${passed} ${own}`)) failures.push(`${template} ${size}: drew "${drawn}"`);
+					if (own && own !== siteHost()) failures.push(`${template} ${size}: own words "${own}" are not the brand address`);
+				} catch (error) {
+					if (!/Shorten|fewer|room|too long/.test((error as Error).message)) failures.push(`${template} ${size}: ${(error as Error).message}`);
+				}
+			}
+		}
+		expect(failures).toEqual([]);
+	}, 120000);
+});
