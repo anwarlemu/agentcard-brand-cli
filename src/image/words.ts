@@ -7,7 +7,7 @@ import { tokens } from '../lib/brand.js';
 import { imageConfig, type SceneGround, type Stage } from './config.js';
 import { boxShadow, Ids, num, radiusPx, shadowToken } from './effects.js';
 import { brandFonts, drawable, drawLine, flatten, lineInk, measure, mix, readBack, rect, tokenColor, trackingEm, trackingFor, wrapEven, wrapFit, type Wrapped } from './paint.js';
-import { bottom, freeRects, right, union } from './space.js';
+import { bottom, freeRects, hit as hitBox, right, union } from './space.js';
 
 export type Align = 'left' | 'center' | 'right';
 export type Edits = Record<string, LayerEdit>;
@@ -175,9 +175,13 @@ export function placeWords(words: WordsIn, edits: Edits, stage: Stage, frame: Re
 	const maxW = opts.maxW * Math.max(1, scaleOf(edits, 'headline'));
 	const diag = Math.hypot(frame.w, frame.h);
 	let best: (Placed & { score: number }) | null = null;
-	for (const room of freeRects(frame, obstacles).slice(0, 10)) {
+	// The free boxes round everything, and boxes that reach past one thing when narrower words clear it (centered words
+	// over a banner's covered corner, rather than squeezed above it or pushed aside).
+	const tries: { room: Rect; maxW: number; check: boolean }[] = freeRects(frame, obstacles).slice(0, 10).map((room) => ({ room, maxW, check: false }));
+	for (const o of obstacles) for (const room of freeRects(frame, obstacles.filter((x) => x !== o)).slice(0, 3)) for (const f of [1, 0.82, 0.66]) tries.push({ room, maxW: maxW * f, check: true });
+	for (const { room, maxW: mw, check } of tries) {
 		if (room.w < 60 * stage.k || room.h < stage.small) continue;
-		const m = fitWords(words, edits, stage, room, { S, maxW, bodyMax: maxW * cfg.body.width });
+		const m = fitWords(words, edits, stage, check ? { w: Math.min(room.w, mw), h: room.h } : room, { S, maxW: mw, bodyMax: mw * cfg.body.width });
 		if (!m) continue;
 		const clamp = (v: number, lo: number, hi: number) => Math.max(lo, Math.min(Math.max(lo, hi), v));
 		const x = align === 'left' ? clamp(tx, room.x, right(room) - m.w) : align === 'right' ? clamp(tx, room.x + m.w, right(room)) : clamp(tx, room.x + m.w / 2, right(room) - m.w / 2);
@@ -185,7 +189,11 @@ export function placeWords(words: WordsIn, edits: Edits, stage: Stage, frame: Re
 		const top = clamp(wantTop, room.y, bottom(room) - m.h);
 		const left = align === 'left' ? x : align === 'right' ? x - m.w : x - m.w / 2;
 		const dist = Math.hypot(x - tx, top - wantTop) / diag;
-		const score = m.S / S - dist * 0.8;
+		// Staying where the layout puts the words counts for more than a few points of size: on a banner the words fit
+		// above a covered corner before they move away from the middle.
+		const off = align === 'center' && Math.abs(x - tx) > frame.w * 0.03 ? 0.35 : 0;
+		const score = m.S / S - dist * 2 - off;
+		if (check && obstacles.some((o) => hitBox({ x: left, y: top, w: m.w, h: m.h }, o))) continue;
 		if (!best || score > best.score + 1e-6) best = { m, x, top, align, box: { x: left, y: top, w: m.w, h: m.h }, room, score };
 	}
 	if (!best) {

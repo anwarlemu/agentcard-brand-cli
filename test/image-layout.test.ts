@@ -54,7 +54,7 @@ export function problems(layers: DrawnLayer[], W: number, H: number, size: strin
 		if (l.bleeds) continue;
 		for (const r of inks(l)) {
 			if (r.x < -0.6 || r.y < -0.6 || r.x + r.w > W + 0.6 || r.y + r.h > H + 0.6) out.push(`${l.id} leaves the canvas`);
-			if (stage.avoid.some((a) => overlaps(r, a))) out.push(`${l.id} sits under the platform's own`);
+			if (l.kind !== 'art' && stage.avoid.some((a) => overlaps(r, a))) out.push(`${l.id} sits under the platform's own`);
 			const s = stage.frame;
 			const slack = l.kind === 'art' ? 24 * stage.k : 2 * stage.k;
 			if (r.x < s.x - slack || r.y < s.y - slack || r.x + r.w > s.x + s.w + slack || r.y + r.h > s.y + s.h + slack) out.push(`${l.id} leaves the safe frame`);
@@ -117,4 +117,32 @@ describe('every layout at every size', () => {
 		if (process.env.DS_SHOW) console.log(refused.join('\n'));
 		expect(refused.filter((r) => !/linkedin-page|linkedin-banner|youtube|email|x-banner/.test(r))).toEqual([]);
 	});
+});
+
+describe('the logo keeps its clear space', () => {
+	it('from the words and the objects at every anchor, size and template', () => {
+		const failures: string[] = [];
+		for (const template of ['hero', 'window', 'headline', 'subtext', 'screenshot', 'quote', 'announcement', 'cards'] as TemplateId[]) {
+			const anchors = template === 'announcement' ? ['top-left', 'top', 'top-right'] : template === 'quote' ? ['top-left', 'top', 'top-right', 'bottom-left', 'bottom-right'] : template === 'cards' ? ['bottom-left', 'bottom-right', 'top-left', 'top-right'] : ['top-left', 'top', 'top-right', 'left', 'center', 'right', 'bottom-left', 'bottom', 'bottom-right'];
+			for (const size of ['og', 'x-banner', 'story', 'square', 'linkedin-banner'].filter((s) => templateSizes(template).includes(s)))
+				for (const anchor of anchors) {
+					const { width, height } = SIZES[size]!;
+					try {
+						const scene = buildScene({ template, width, height, size, ...allowed(template, cases.full!(template)), ...(template === 'screenshot' ? { image: wide } : {}), edits: { logo: { anchor: anchor as never } } });
+						const layers = drawScene(scene).layers;
+						const logo = layers.find((l) => l.id === 'logo');
+						if (!logo) continue;
+						const clear = logo.logo!.clear;
+						const box = { x: logo.box.x - clear, y: logo.box.y - clear, w: logo.box.w + clear * 2, h: logo.box.h + clear * 2 };
+						for (const l of layers) {
+							if (l === logo || l.bleeds || logo.over?.includes(l.id) || l.over?.includes('logo')) continue;
+							if ((l.ink ?? [l.box]).some((r) => overlaps(r, box))) failures.push(`${template} ${size} logo ${anchor}: ${l.id} is inside its clear space`);
+						}
+					} catch (error) {
+						if (!/Shorten|fewer|room|too long/.test((error as Error).message)) failures.push(`${template} ${size} ${anchor}: ${(error as Error).message}`);
+					}
+				}
+		}
+		expect(failures).toEqual([]);
+	}, 240000);
 });

@@ -641,8 +641,8 @@ export function layoutOf(s: Scene): Layout {
 	const art = s.edits.art ?? {};
 	if ((s.objects.mode === 'preset' || s.objects.mode === 'scatter') && !art.hidden) {
 		const fit = cfg.stickers.fit;
+		// Objects are art, not words: they may sit by a covered corner rather than shrink to dodge it.
 		const keep = [
-			...stage.avoid,
 			...(L.logo ? [inflate(L.logo.rect, Math.max(L.logo.clear, fit.clear * k))] : []),
 			...(L.words ? [inflate(L.words.box, fit.clear * k)] : []),
 			...(L.window ? [inflate(L.window, fit.clear * k)] : []),
