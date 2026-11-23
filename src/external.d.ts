@@ -5,7 +5,7 @@ declare module '@babel/plugin-transform-typescript' {
 
 /** The font parser has no shipped types. Only the calls this package makes are declared. */
 declare module 'opentype.js' {
-	export type GlyphPath = { toPathData(decimalPlaces?: number): string };
+	export type GlyphPath = { toPathData(decimalPlaces?: number): string; getBoundingBox(): { x1: number; y1: number; x2: number; y2: number } };
 	export type Glyph = {
 		name: string;
 		index: number;
@@ -17,6 +17,7 @@ declare module 'opentype.js' {
 		descender: number;
 		unitsPerEm: number;
 		stringToGlyphs(text: string): Glyph[];
+		charToGlyph(char: string): Glyph;
 		nameToGlyph(name: string): Glyph;
 		getAdvanceWidth(text: string, fontSize: number, options?: { letterSpacing?: number; kerning?: boolean }): number;
 		getPath(text: string, x: number, y: number, fontSize: number, options?: { letterSpacing?: number; kerning?: boolean }): GlyphPath;
@@ -38,3 +39,6 @@ declare module 'jpeg-js' {
 	};
 	export default jpeg;
 }
+
+declare module '@jsquash/webp/codec/enc/webp_enc.js';
+declare module '@jsquash/webp/meta.js';

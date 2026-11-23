@@ -8,7 +8,9 @@ import type { Pixels } from '../assets/png.js';
 import { toonify } from '../assets/toon.js';
 import { band, Ids, placed, scan } from '../image/effects.js';
 import { bandMixes, document, rect } from '../image/paint.js';
-import { groundColor, illustrateConfig, imageConfig, pictureArt, scatter, subjectArt, type Art, type SceneGround } from '../image/scene.js';
+import { settle } from '../image/objects.js';
+import { groundColor, illustrateConfig, imageConfig, pictureArt, scatter, subjectArt, unitOf, type Art, type Rect, type SceneGround } from '../image/scene.js';
+import { inflate, turnedBox } from '../image/space.js';
 import { unknownName } from '../lib/names.js';
 
 export const COMPOSITIONS = ['object', 'single', 'row', 'preset', 'scatter'] as const;
@@ -71,31 +73,50 @@ export function buildIllustration(input: IllustrateInput): Illustration {
 	const ground = input.ground ?? (cfg.defaults.ground as IllGround);
 	const short = Math.min(W, H);
 	const items: Illustration['items'] = [];
+	// Objects stand above the band, never on it.
+	const bandH = input.band && input.band !== 'none' && input.band !== ground ? Math.max(imageConfig().scene.band.minStep, (imageConfig().scene.band.step * W) / imageConfig().unit.width) * imageConfig().scene.band.steps : 0;
+	const midY = (H - bandH) / 2;
 	const put = (a: Art, cx: number, cy: number, width: number, r: number) => items.push({ art: a, cx, cy, w: width, h: (width * a.height) / a.width, rotate: r });
 	if (composition === 'single') {
 		if (objects.length !== 1) throw new Error('The single composition draws one object. Use row, preset or scatter for several.');
 		const a = objects[0]!;
 		// As large as the room allows at the editor's largest object (0.62 of the short side), whichever side binds.
-		const fit = Math.min(0.62 * short, (0.62 * short * a.width) / a.height, W * 0.78);
-		put(a, W / 2, H / 2, fit, rotate);
+		const room = Math.min(short, H - bandH);
+		const fit = Math.min(0.62 * short, (0.62 * room * a.width) / a.height, W * 0.78);
+		put(a, W / 2, midY, fit, rotate);
 	} else if (composition === 'row') {
 		const n = objects.length;
 		const slot = (W * 0.86) / n;
 		objects.forEach((a, i) => {
 			const width = Math.min(slot * 0.86, 0.5 * short, (0.5 * short * a.width) / a.height);
-			put(a, W * 0.07 + slot * (i + 0.5), H / 2, width, i % 2 ? -rotate : rotate);
+			put(a, W * 0.07 + slot * (i + 0.5), midY, width, i % 2 ? -rotate : rotate);
 		});
 	} else if (composition === 'preset') {
 		const preset = imageConfig().stickers.preset;
 		const named = input.subjects.length ? preset.filter((p) => input.subjects.includes(p.subject)) : preset;
 		if (!named.length) throw new Error(`None of ${input.subjects.join(', ')} is in the preset. Use scatter or row.`);
-		for (const p of named) put(subjectArt(p.subject), p.x * W, p.y * H, p.size * short, p.rotate);
+		const k = unitOf(W, H);
+		const m = 24 * k;
+		const got = settle(named.map((p) => ({ art: subjectArt(p.subject), x: p.x, y: p.y * ((H - bandH) / H), size: p.size, rotate: p.rotate })), W, H, { x: m, y: m, w: W - m * 2, h: H - bandH - m * 2 }, [], imageConfig().stickers.fit.gap * k);
+		if (got.left.length) throw new Error(`There is no room for ${got.left.join(', ')} at this size.`);
+		for (const st of got.stickers) put(st.art, st.x * W, st.y * H, st.size * short, st.rotate);
 	} else {
 		const names = input.subjects.length ? input.subjects : Object.keys(cfg.subjects);
 		const sc = imageConfig().stickers.scatter;
-		const placedList = scatter(W, H, H, [], input.count ?? sc.count, input.seed ?? sc.seed, names);
-		for (const p of placedList) put(subjectArt(p.subject), p.x * W, p.y * H, p.size * short, p.rotate);
-		if (input.image) put(objects[0]!, W / 2, H / 2, 0.42 * short, rotate);
+		const count = input.count ?? (input.subjects.length ? input.subjects.length : sc.count);
+		if (count < 1 || count > sc.max) throw new Error(`count must be a whole number from 1 to ${sc.max}.`);
+		const k = unitOf(W, H);
+		const m = 30 * k;
+		const center: Rect[] = [];
+		if (input.image) {
+			const a = objects[0]!;
+			const w = Math.min(0.42 * short, (0.42 * short * a.width) / a.height);
+			put(a, W / 2, H / 2, w, rotate);
+			center.push(inflate(turnedBox(W / 2, H / 2, w, (w * a.height) / a.width, rotate), 16 * k));
+		}
+		const got = scatter(W, H, { x: m, y: m, w: W - m * 2, h: H - bandH - m * 2 }, center, count, input.seed ?? sc.seed, names, sc.gap * k);
+		if (input.subjects.length && got.left.length) throw new Error(`There is no room for ${got.left.join(', ')} at this size. Name fewer subjects or pick a larger size.`);
+		for (const st of got.stickers) put(st.art, st.x * W, st.y * H, st.size * short, st.rotate);
 	}
 	return { width: W, height: H, ground, scan: input.scan ?? cfg.defaults.scan, band: input.band ?? 'none', items, title: `${composition} illustration` };
 }

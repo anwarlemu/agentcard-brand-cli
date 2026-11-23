@@ -2,10 +2,12 @@ import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 import type { Command } from 'commander';
 import { parseFormats, sha256, show } from '../assets/io.js';
-import { imagesToPdf } from '../assets/pdf.js';
-import { checkSlide, deckConfig, sampleDeck, slideSvg, type Slide } from '../deck/slides.js';
-import { rasterize, rasterizeRgba } from '../image/render.js';
+import type { ImageFormat } from '../assets/encode.js';
+import { imagesToPdf, pdfPage } from '../assets/pdf.js';
+import { checkSlide, deckConfig, drawSlide, sampleDeck, type Slide } from '../deck/slides.js';
+import { encodeAll, rasterizeRgba } from '../image/render.js';
 import { cli } from '../lib/brand.js';
+import { unknownName } from '../lib/names.js';
 import { emit } from '../lib/output.js';
 
 // `deck`: slides from a JSON file (or the sample deck), one PNG per slide (SVG too with --format) and one PDF.
@@ -17,8 +19,10 @@ export function deckCatalog() {
 	return {
 		width: cfg.width,
 		height: cfg.height,
-		slides: Object.entries(cfg.slides).map(([id, s]) => ({ id, name: s.name, about: s.about, slots: s.slots, needs: s.needs })),
-		input: '{ "slides": [ { "type": "cover", "title": "...", "body": "..." }, ... ] }',
+		slides: Object.entries(cfg.slides).map(([id, s]) => ({ id, name: s.name, about: s.about, slots: s.slots, needs: s.needs, themes: cfg.themes[id as keyof typeof cfg.themes] })),
+		aliases: cfg.aliases,
+		formats: ['png', 'svg', 'jpg', 'webp', 'pdf'],
+		input: '{ "slides": [ { "type": "cover", "headline": "...", "body": "..." }, ... ] }',
 		outputs: ['slide-NN-<type>.png', 'slide-NN-<type>.svg (with --format svg)', 'deck.pdf'],
 	};
 }
@@ -40,15 +44,6 @@ function readSlides(file: string): Slide[] {
 	return list.map((s, i) => checkSlide(s, i));
 }
 
-function rgbOf(pixels: Uint8Array, width: number, height: number): Buffer {
-	const rgb = Buffer.alloc(width * height * 3);
-	for (let i = 0; i < width * height; i++) {
-		const a = pixels[i * 4 + 3]! / 255;
-		for (let c = 0; c < 3; c++) rgb[i * 3 + c] = Math.round(pixels[i * 4 + c]! * a + 255 * (1 - a));
-	}
-	return rgb;
-}
-
 export async function deck(flags: Flags) {
 	if (flags.list) {
 		const data = deckCatalog();
@@ -57,27 +52,34 @@ export async function deck(flags: Flags) {
 	}
 	if (!flags.input && !flags.sample) throw new Error('Pass --input deck.json (or - for stdin), or --sample for the sample deck.');
 	const slides = flags.sample && !flags.input ? sampleDeck().map((s, i) => checkSlide(s, i)) : readSlides(String(flags.input));
-	const formats = parseFormats(typeof flags.format === 'string' ? flags.format : undefined, ['png']);
+	const formats = parseFormats(typeof flags.format === 'string' ? flags.format : undefined, ['png'], ['png', 'svg', 'jpg', 'webp', 'pdf']);
+	const theme = typeof flags.theme === 'string' ? flags.theme : undefined;
+	if (theme && !slides.some((s) => deckConfig().themes[s.type].includes(theme as never))) throw unknownName('theme', theme, [...new Set(slides.flatMap((s) => deckConfig().themes[s.type]))]);
 	const dir = resolve(typeof flags.out === 'string' ? flags.out : 'deck');
 	const { width, height } = deckConfig();
 	const files: { path: string; data: Buffer; format: string }[] = [];
 	const pages: { rgb: Buffer; width: number; height: number }[] = [];
-	for (const [i, slide] of slides.entries()) {
-		const svg = slideSvg(slide, i);
+	const warnings: string[] = [];
+	for (const [i, raw] of slides.entries()) {
+		// --theme is the ground of every slide that does not set its own.
+		const slide = theme && raw.theme === undefined && deckConfig().themes[raw.type].includes(theme as never) ? { ...raw, theme } : raw;
+		const drawn = drawSlide(slide, i);
+		const svg = drawn.svg;
+		warnings.push(...drawn.notes.map((n) => `Slide ${i + 1}: ${n}`));
 		const stem = `slide-${String(i + 1).padStart(2, '0')}-${slide.type}`;
-		if (formats.includes('svg')) files.push({ path: join(dir, `${stem}.svg`), data: Buffer.from(svg), format: 'svg' });
-		if (formats.includes('png')) files.push({ path: join(dir, `${stem}.png`), data: await rasterize(svg, width), format: 'png' });
+		const made = await encodeAll(svg, width, formats.filter((f): f is ImageFormat => f !== 'pdf'));
+		for (const f of ['svg', 'png', 'jpg', 'webp'] as const) if (made[f]) files.push({ path: join(dir, `${stem}.${f}`), data: made[f]!, format: f });
 		if (flags.pdf !== false) {
 			const px = await rasterizeRgba(svg, width);
-			pages.push({ rgb: rgbOf(px.pixels, px.width, px.height), width: px.width, height: px.height });
+			pages.push(pdfPage(px.pixels, px.width, px.height));
 		}
 	}
 	// A 16:9 page 13.333 inches wide (960 points), the common widescreen slide size.
 	if (pages.length) files.push({ path: join(dir, 'deck.pdf'), data: imagesToPdf(pages, 960), format: 'pdf' });
 	mkdirSync(dir, { recursive: true });
 	for (const f of files) writeFileSync(f.path, f.data);
-	const doc = { ok: true, slides: slides.length, width, height, files: files.map((f) => ({ path: show(f.path), format: f.format, bytes: f.data.length, sha256: sha256(f.data) })) };
-	emit({ json: !!flags.json }, doc, () => [`Wrote ${slides.length} slide${slides.length === 1 ? '' : 's'} (${width} by ${height}).`, ...doc.files.map((f) => `  ${f.path}`)].join('\n'));
+	const doc = { ok: true, warnings, slides: slides.length, width, height, files: files.map((f) => ({ path: show(f.path), format: f.format, bytes: f.data.length, sha256: sha256(f.data) })) };
+	emit({ json: !!flags.json }, doc, () => [`Wrote ${slides.length} slide${slides.length === 1 ? '' : 's'} (${width} by ${height}).`, ...doc.files.map((f) => `  ${f.path}`), ...warnings.map((w) => `Note: ${w}`)].join('\n'));
 }
 
 export function registerDeck(program: Command) {
@@ -86,7 +88,8 @@ export function registerDeck(program: Command) {
 		.description('Slides at 1920 by 1080 from a JSON file: a PNG per slide and one PDF')
 		.option('-i, --input <file>', 'deck JSON: { "slides": [ { "type", ...slots } ] }; - reads stdin')
 		.option('--sample', 'render the sample deck (every slide type)')
-		.option('--format <formats>', 'png, svg, or png,svg for the slides (default png)')
+		.option('--format <formats>', 'png, svg, jpg, webp for the slides, comma-separated (default png); pdf is always written unless --no-pdf')
+		.option('--theme <theme>', 'the ground of every slide that does not set its own')
 		.option('--no-pdf', 'skip deck.pdf')
 		.option('-o, --out <dir>', 'directory to write (default ./deck)')
 		.option('--list', 'list slide types and their slots')

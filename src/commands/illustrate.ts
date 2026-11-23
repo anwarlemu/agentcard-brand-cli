@@ -20,7 +20,7 @@ export function illustrateCatalog() {
 		compositions: Object.entries(cfg.compositions).filter(([id]) => (COMPOSITIONS as readonly string[]).includes(id)).map(([id, about]) => ({ id, about })).concat([{ id: 'object', about: 'The object alone on a clear ground, cropped to its edges (a toon made from --image, or one subject).' }]),
 		sizes: Object.entries(cfg.sizes).map(([id, s]) => ({ id, ...s })),
 		grounds: cfg.grounds,
-		formats: ['svg', 'png'],
+		formats: ['svg', 'png', 'jpg', 'webp'],
 		rules: 'brand/illustration.md',
 		source: cfg.source,
 		note: 'The objects are rendered art (raster, with alpha), so the SVG carries them as embedded pictures over a vector ground; only the ground, scanlines and band are vector shapes.',
@@ -31,6 +31,7 @@ function sizeOf(value: string | undefined) {
 	if (!value) return {};
 	const cfg = illustrateConfig();
 	if (value in cfg.sizes) return { width: cfg.sizes[value]!.width, height: cfg.sizes[value]!.height };
+	if (value === 'landscape') return { width: cfg.sizes.wide!.width, height: cfg.sizes.wide!.height };
 	const m = /^(\d{2,4})x(\d{2,4})$/i.exec(value);
 	if (!m) throw unknownName('size', value, [...Object.keys(cfg.sizes), 'WIDTHxHEIGHT']);
 	const width = Number(m[1]);
@@ -67,8 +68,10 @@ export async function illustrate(subjects: string[], flags: Flags) {
 	}
 	const composition = flags.composition === undefined ? undefined : String(flags.composition);
 	if (composition && !(COMPOSITIONS as readonly string[]).includes(composition)) throw unknownName('composition', composition, [...COMPOSITIONS]);
-	const ground = flags.ground === undefined ? undefined : String(flags.ground);
-	if (ground && !(illustrateConfig().grounds as string[]).includes(ground)) throw unknownName('ground', ground, illustrateConfig().grounds);
+	if (flags.ground !== undefined && flags.theme !== undefined) throw new Error('--theme and --ground are the same. Pass one of them.');
+	const groundFlag = flags.theme ?? flags.ground;
+	const ground = groundFlag === undefined ? undefined : String(groundFlag);
+	if (ground && !(illustrateConfig().grounds as string[]).includes(ground)) throw unknownName('theme', ground, illustrateConfig().grounds);
 	const bandName = flags.band === undefined ? undefined : String(flags.band);
 	if (bandName && ![...SCENE_GROUNDS, 'none'].includes(bandName)) throw unknownName('band', bandName, [...SCENE_GROUNDS, 'none']);
 	const image = typeof flags.image === 'string' ? resolve(flags.image) : undefined;
@@ -101,14 +104,15 @@ export function registerIllustrate(program: Command) {
 		.option('--image <file>', 'PNG or JPEG to make into a toon object')
 		.option('--no-toon', 'use --image as it is, without the toon treatment')
 		.option('--composition <name>', 'object, single, row, preset or scatter')
-		.option('--size <size>', 'square, og, portrait, story, wide, or WIDTHxHEIGHT')
-		.option('--ground <ground>', 'blue, paper, white, ink or none (clear)')
+		.option('--size <size>', 'square, og, portrait, story, landscape (wide), or WIDTHxHEIGHT')
+		.option('--theme <theme>', 'blue, paper, white, ink or none (clear); also --ground')
+		.option('--ground <ground>', 'the same as --theme')
 		.option('--band <ground>', 'stepped band at the bottom toward a ground, or none')
 		.option('--no-scan', 'leave the scanlines off the blue ground')
 		.option('--seed <n>', 'scatter: the arrangement')
 		.option('--count <n>', 'scatter: how many objects')
 		.option('--rotate <deg>', 'single and row: the tilt')
-		.option('--format <formats>', 'svg, png, or svg,png (default both)')
+		.option('--format <formats>', 'svg, png, jpg, webp, comma-separated (default svg,png)')
 		.option('-o, --out <dir>', 'directory to write (default ./illustrations)')
 		.option('-n, --name <name>', 'file name')
 		.option('--list', 'list subjects, compositions, sizes and grounds')

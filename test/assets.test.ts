@@ -38,7 +38,8 @@ describe('image: the editor layouts', () => {
 	it('draws hero, window and cards at every size, the lockup clear of the words', () => {
 		for (const [size, s] of Object.entries(SIZES)) {
 			for (const template of ['hero', 'window'] as const) {
-				const scene = buildScene({ template, width: s.width, height: s.height, headline: 'Let agents buy anything online', eyebrow: 'Issuing' });
+				if (imageConfig().templates[template].notSizes?.includes(size)) continue;
+				const scene = buildScene({ template, width: s.width, height: s.height, headline: 'Let agents buy anything online', badge: 'Issuing', size });
 				const drawn = drawScene(scene);
 				expect(drawn.logo, `${template} ${size}`).not.toBeNull();
 				expect(overlap(drawn.logo!, drawn.text!), `${template} ${size}: logo over words`).toBe(false);
@@ -201,7 +202,7 @@ describe('manifest and help', () => {
 		for (const p of ['image render', 'video render', 'deck', 'merch', 'illustrate', 'figma']) expect(paths).toContain(p);
 		expect(m.illustrate.subjects.length).toBe(15);
 		expect(m.lockups.colors).toEqual(['blue', 'ink', 'white']);
-		expect(m.images.sizes.map((s: { id: string }) => s.id)).toEqual(Object.keys(imageConfig().sizes));
+		expect(m.images.sizes.map((s: { id: string }) => s.id)).toEqual([...Object.keys(imageConfig().sizes), 'custom']);
 		const d = run(['describe']);
 		expect(d.cli.length).toBe(m.cli.length);
 	});

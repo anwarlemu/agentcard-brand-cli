@@ -1,7 +1,9 @@
 import { resolve, join } from 'node:path';
 import type { Command } from 'commander';
 import { parseFormats, prepare, show, writeAll, type Prepared } from '../assets/io.js';
-import { checkItem, merchConfig, merchSvgs } from '../merch/render.js';
+import { imagesToPdf, pdfPage } from '../assets/pdf.js';
+import { rasterizeRgba } from '../image/render.js';
+import { checkItem, merchConfig, merchSlots, merchSvgs } from '../merch/render.js';
 import { cli } from '../lib/brand.js';
 import { unknownName } from '../lib/names.js';
 import { emit } from '../lib/output.js';
@@ -19,8 +21,10 @@ export function merchCatalog() {
 		note: cfg.$comment,
 		logo: cfg.logo,
 		variants: Object.entries(cfg.variants).map(([id, v]) => ({ id, ...v })),
-		items: cfg.items.map((i) => ({ id: i.id, name: i.name, trim: { width: i.size[0], height: i.size[1] }, bleed: i.bleed, safe: i.safe, method: i.method, variants: i.variants, cut: Boolean(i.cut), source: i.source })),
+		items: cfg.items.map((i) => ({ id: i.id, name: i.name, trim: { width: i.size[0], height: i.size[1] }, bleed: i.bleed, safe: i.safe, method: i.method, slots: merchSlots(i), variants: i.variants, cut: Boolean(i.cut), source: i.source })),
 		slots: Object.keys(cfg.copy).concat('url'),
+		formats: ['svg', 'png', 'pdf'],
+		copy: 'Only the headline you pass is drawn; the brand address stays on the poster. --sample fills sample copy.',
 	};
 }
 
@@ -45,10 +49,16 @@ export async function merch(itemsArg: string[], flags: Flags) {
 		if (!hit) throw unknownName('merch item', id, ids);
 		return hit;
 	});
-	const variantFlag = typeof flags.variant === 'string' ? flags.variant : undefined;
-	const formats = parseFormats(typeof flags.format === 'string' ? flags.format : undefined);
+	const pickFlag = flags.variant ?? flags.theme;
+	const variantFlag = typeof pickFlag === 'string' ? pickFlag : undefined;
+	const formats = parseFormats(typeof flags.format === 'string' ? flags.format : undefined, ['svg', 'png'], ['svg', 'png', 'pdf']);
 	const dir = resolve(typeof flags.out === 'string' ? flags.out : 'merch');
 	const prepared: Prepared[] = [];
+	const headline = typeof flags.headline === 'string' ? flags.headline : undefined;
+	const url = typeof flags.url === 'string' ? flags.url : undefined;
+	const everything = !itemsArg.length || itemsArg[0] === 'all';
+	// With every item asked for, copy goes where it has a place; somewhere it must.
+	for (const [key, v] of [['headline', headline], ['url', url]] as const) if (v && everything && !items.some((i) => merchSlots(i).includes(key))) throw new Error(`No item has a place for --${key}.`);
 	const made: { item: string; variant: string; inches: { width: number; height: number }; px: { width: number; height: number } }[] = [];
 	for (const item of items) {
 		const errors = checkItem(item);
@@ -56,12 +66,19 @@ export async function merch(itemsArg: string[], flags: Flags) {
 		const variants = !variantFlag ? [item.variants[0]!] : variantFlag === 'all' ? item.variants : variantFlag.split(',').map((v) => v.trim());
 		for (const v of variants) {
 			if (!item.variants.includes(v)) throw unknownName(`variant for ${item.id}`, v, item.variants);
-			const svgs = merchSvgs(item, v, { headline: typeof flags.headline === 'string' ? flags.headline : undefined, url: typeof flags.url === 'string' ? flags.url : undefined });
+			const takes = merchSlots(item);
+			const svgs = merchSvgs(item, v, { headline: everything && !takes.includes('headline') ? undefined : headline, url: everything && !takes.includes('url') ? undefined : url, sample: Boolean(flags.sample) });
 			const stem = `${item.id}-${v}`;
 			if (formats.includes('svg')) prepared.push({ path: join(dir, `${stem}.svg`), format: 'svg', width: svgs.width, height: svgs.height, data: Buffer.from(svgs.print) });
 			if (formats.includes('png')) {
 				const [png] = await prepare(dir, stem, svgs.raster, svgs.width, svgs.height, ['png']);
 				prepared.push({ ...png!, data: withDpi(png!.data, cfg.dpi) });
+			}
+			if (formats.includes('pdf')) {
+				const r = await rasterizeRgba(svgs.raster, svgs.width);
+				const b = item.bleed * 72;
+				const page = { ...pdfPage(r.pixels, r.width, r.height, true), widthPt: svgs.inches.width * 72, ...(item.bleed ? { trim: { x: b, y: b, w: item.size[0] * 72, h: item.size[1] * 72 } } : {}) };
+				prepared.push({ path: join(dir, `${stem}.pdf`), format: 'pdf', width: svgs.width, height: svgs.height, data: imagesToPdf([page], svgs.inches.width * 72) });
 			}
 			if (flags.proof !== false) {
 				// The proof is for looking at: a tenth of the print resolution's size is enough.
@@ -82,9 +99,11 @@ export function registerMerch(program: Command) {
 		.command('merch [items...]')
 		.description('Merch print files at real size with bleed and safe area: SVG, PNG at 300 dpi, a proof and cut lines')
 		.option('--variant <names>', 'a variant, several comma-separated, or all (default: each item\'s first)')
-		.option('--headline <text>', 'the line on items that carry one (tee back, poster)')
+		.option('--theme <names>', 'the same as --variant')
+		.option('--headline <text>', 'the line on items that carry one (tee back, poster); left off when you pass none')
 		.option('--url <text>', 'the address on the poster (default: the brand site host)')
-		.option('--format <formats>', 'svg, png, or svg,png (default both)')
+		.option('--format <formats>', 'svg, png, pdf, comma-separated (default svg,png)')
+		.option('--sample', 'fill the line you leave out with sample copy')
 		.option('--no-proof', 'skip the proof with trim, bleed and safe guides')
 		.option('-o, --out <dir>', 'directory to write (default ./merch)')
 		.option('--list', 'list items, sizes and variants')

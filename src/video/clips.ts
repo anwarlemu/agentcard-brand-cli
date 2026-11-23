@@ -1,22 +1,19 @@
-// A clip: frames of a scene (hero, window, cards) or of a first-generation template (social, announcement, product)
-// over time, encoded as MP4 or WebM through ffmpeg, or as Motion JPEG MP4 in process when ffmpeg is missing.
+// A clip: frames of any image layout over time, encoded as MP4 or WebM through ffmpeg, or as Motion JPEG MP4 in process
+// when ffmpeg is missing.
 
-import jpeg from 'jpeg-js';
-import { buildScene, type SceneFields } from '../image/compose.js';
-import { rasterizeRgba } from '../image/render.js';
-import { pictureArt, sceneSvg, type Art, type Scene } from '../image/scene.js';
+import { encodeJpg } from '../assets/encode.js';
 import { drawImage } from '../assets/raster.js';
-import { JPEG_QUALITY, VIDEO_FRAMES, type VideoJob as LegacyJob } from './catalog.js';
+import { buildScene, type SceneFields } from '../image/compose.js';
+import { pictureArt } from '../image/objects.js';
+import { rasterizeRgba } from '../image/render.js';
+import { layoutOf, sceneSvg, type Art, type Scene } from '../image/scene.js';
 import { encode, ffmpegPath, type Container } from './ffmpeg.js';
-import { frameSvg } from './frames.js';
 import { frameTimes, sceneMotion, videoConfig } from './motion.js';
 import { muxMjpeg } from './mp4.js';
 
+export const JPEG_QUALITY = 85;
 
-export const SCENE_CLIPS = ['hero', 'window', 'cards'] as const;
-export const LEGACY_CLIPS = ['social', 'announcement', 'product'] as const;
-
-export type Clip = { kind: 'scene'; scene: Scene; seconds: number } | { kind: 'legacy'; job: LegacyJob; seconds: number };
+export type Clip = { scene: Scene; seconds: number };
 
 /** Art at the size it is drawn, so each frame decodes small pictures instead of the full renders. */
 function fitArt(art: Art, width: number): Art {
@@ -29,23 +26,18 @@ function fitArt(art: Art, width: number): Art {
 export function sceneClip(fields: SceneFields, seconds: number): Clip {
 	const scene = buildScene(fields);
 	const short = Math.min(scene.width, scene.height);
-	scene.stickers = scene.stickers.map((st) => ({ ...st, art: fitArt(st.art, st.size * short) }));
-	return { kind: 'scene', scene, seconds };
+	const L = layoutOf(scene);
+	L.stickers = L.stickers.map((st) => ({ ...st, art: fitArt(st.art, st.size * short) }));
+	scene.stickers = L.stickers;
+	if (scene.picture && L.window) scene.picture = fitArt(scene.picture, L.window.w);
+	return { scene, seconds };
 }
 
-/** The SVG of a clip at time t. A first-generation template plays its twelve eased frames over its first second. */
-export function clipFrameSvg(clip: Clip, t: number): string {
-	if (clip.kind === 'scene') return sceneSvg(clip.scene, sceneMotion(clip.scene, t));
-	const frame = Math.min(VIDEO_FRAMES - 1, Math.floor(t * VIDEO_FRAMES));
-	return frameSvg(clip.job, frame);
-}
-
-function size(clip: Clip) {
-	return clip.kind === 'scene' ? { width: clip.scene.width, height: clip.scene.height } : { width: clip.job.width, height: clip.job.height };
-}
+/** The SVG of a clip at time t. */
+export const clipFrameSvg = (clip: Clip, t: number): string => sceneSvg(clip.scene, sceneMotion(clip.scene, t));
 
 async function* rgbaFrames(clip: Clip): AsyncGenerator<Uint8Array> {
-	const { width, height } = size(clip);
+	const { width, height } = clip.scene;
 	for (const t of frameTimes(clip.seconds)) {
 		const r = await rasterizeRgba(clipFrameSvg(clip, t), width);
 		if (r.width !== width || r.height !== height) throw new Error(`Rendered ${r.width} by ${r.height}. Expected ${width} by ${height}.`);
@@ -53,22 +45,11 @@ async function* rgbaFrames(clip: Clip): AsyncGenerator<Uint8Array> {
 	}
 }
 
-function opaque(pixels: Uint8Array) {
-	const out = new Uint8Array(pixels);
-	for (let i = 0; i < out.length; i += 4) {
-		const a = out[i + 3]! / 255;
-		if (a === 1) continue;
-		for (let c = 0; c < 3; c++) out[i + c] = Math.round(out[i + c]! * a + 255 * (1 - a));
-		out[i + 3] = 255;
-	}
-	return out;
-}
-
 export type Encoded = { data: Buffer; codec: string; container: Container; frames: number; fps: number };
 
 /** Encodes a clip once per container from one pass over the frames. */
 export async function encodeClip(clip: Clip, containers: Container[]): Promise<Encoded[]> {
-	const { width, height } = size(clip);
+	const { width, height } = clip.scene;
 	const fps = videoConfig().fps;
 	const frames = frameTimes(clip.seconds).length;
 	if (ffmpegPath()) {
@@ -77,6 +58,6 @@ export async function encodeClip(clip: Clip, containers: Container[]): Promise<E
 	}
 	if (containers.includes('webm')) throw new Error('WebM needs ffmpeg. Install it (https://ffmpeg.org), set DS_FFMPEG, or export mp4.');
 	const jpegs: Buffer[] = [];
-	for await (const px of rgbaFrames(clip)) jpegs.push(Buffer.from(jpeg.encode({ data: opaque(px), width, height }, JPEG_QUALITY).data));
+	for await (const px of rgbaFrames(clip)) jpegs.push(encodeJpg({ data: px, width, height }, JPEG_QUALITY));
 	return [{ data: muxMjpeg(jpegs, width, height, fps), codec: 'mjpeg', container: 'mp4', frames, fps }];
 }

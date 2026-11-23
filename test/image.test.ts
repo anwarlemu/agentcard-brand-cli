@@ -29,13 +29,14 @@ async function quiet(run: () => Promise<void>) {
 
 const copy: Record<TemplateId, Record<string, string>> = {
 	hero: { headline: 'Let agents buy anything online' },
-	window: { eyebrow: 'Issuing', headline: 'Create one-time and multi-use cards' },
+	window: { badge: 'Issuing', headline: 'Create one-time and multi-use cards' },
 	cards: { headline: 'How it works', cards: 'Save it once\nYour user adds their card a single time.\n\nEvery purchase is approved\nWith a passkey, tied to that exact cart.' },
 	headline: { headline: 'Let agents buy anything online' },
-	subtext: { headline: 'Powering payments for agentic startups', subtext: 'Teams run their agents purchases in one place.' },
-	screenshot: { headline: 'Issuing', subtext: 'One-time cards for an agent checkout.' },
+	subtext: { headline: 'Powering payments for agentic startups', body: 'Teams run their agents purchases in one place.' },
+	screenshot: { headline: 'Issuing', body: 'One-time cards for an agent checkout.' },
 	quote: { quote: 'The agent pauses the payment. The cardholder approves on their phone.', by: 'A checkout note' },
-	announcement: { eyebrow: 'New', headline: 'Checkout on more stores', subtext: 'Paste a product page and the agent shops it like any catalog item.' },
+	announcement: { badge: 'New', headline: 'Checkout on more stores', body: 'Paste a product page and the agent shops it like any catalog item.' },
+	logo: {},
 };
 
 describe('images', () => {
@@ -47,7 +48,7 @@ describe('images', () => {
 		try {
 			for (const template of Object.keys(TEMPLATES) as TemplateId[]) {
 				const out = join(dir, template);
-				await quiet(() => imageRender({ ...copy[template], template, size: 'all', out, export: 'png,svg', json: true, ...(template === 'screenshot' ? { image: shot } : {}) }));
+				await quiet(() => imageRender({ ...copy[template], template, size: 'all', out, format: 'png,svg', json: true, ...(template === 'screenshot' ? { image: shot } : {}) }));
 				for (const size of templateSizes(template)) {
 					const png = readFileSync(join(out, `${template}-${size}.png`));
 					const svg = readFileSync(join(out, `${template}-${size}.svg`), 'utf8');
@@ -74,12 +75,11 @@ describe('images', () => {
 			const svg = readFileSync(join(dir, 'from-json', 'quote-square.svg'), 'utf8');
 			expect(svg).toContain('width="1080"');
 			expect(svg).toContain('height="1080"');
-			await expect(quiet(() => imageRender({ template: 'subtext', headline: 'Only a title', out: dir, json: true }))).rejects.toThrow(/subtext/);
-			await expect(quiet(() => imageRender({ template: 'announcement', headline: 'Hello', ground: 'blue', out: dir, json: true }))).rejects.toThrow(/ground/);
+			await expect(quiet(() => imageRender({ template: 'subtext', headline: 'Only a title', out: dir, json: true }))).rejects.toThrow(/--body/);
+			await expect(quiet(() => imageRender({ template: 'announcement', headline: 'Hello', ground: 'paper', out: dir, json: true }))).rejects.toThrow(/theme/);
 			await quiet(() => imageRender({ template: 'headline', headline: 'Dry', out: join(dir, 'missing'), dryRun: true, json: true }));
 			expect(existsSync(join(dir, 'missing'))).toBe(false);
-			await quiet(() => imageRender({ template: 'screenshot', headline: 'Empty window', out: join(dir, 'empty'), export: 'png', json: true }));
-			expect(pngSize(readFileSync(join(dir, 'empty', 'screenshot-og.png')))).toEqual({ width: 1200, height: 630 });
+			await expect(quiet(() => imageRender({ template: 'screenshot', headline: 'Empty window', out: join(dir, 'empty'), export: 'png', json: true }))).rejects.toThrow(/empty window is not drawn/);
 			await quiet(() => imageRender({ template: 'Headline', headline: 'Case', size: 'OG', export: 'svg', out: join(dir, 'case'), json: true }));
 			expect(existsSync(join(dir, 'case', 'headline-og.svg'))).toBe(true);
 			const withFooter = join(dir, 'footer');

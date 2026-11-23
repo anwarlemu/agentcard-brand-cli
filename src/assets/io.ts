@@ -1,25 +1,26 @@
 import { createHash } from 'node:crypto';
 import { mkdirSync, writeFileSync } from 'node:fs';
 import { dirname, join, relative, resolve } from 'node:path';
-import { rasterize } from '../image/render.js';
 import { unknownName } from '../lib/names.js';
+import { encodeAll } from '../image/render.js';
 
 // Writing what the asset commands make: SVG and PNG from one SVG, with sizes and hashes, everything prepared before
 // anything is written so a failure leaves no partial set behind.
 
-export type Format = 'png' | 'svg';
+export type Format = 'png' | 'svg' | 'jpg' | 'webp' | 'pdf';
 export type Written = { path: string; format: string; width: number; height: number; bytes: number; sha256: string };
 
 export const sha256 = (buf: Buffer | string) => createHash('sha256').update(buf).digest('hex');
 
-export function parseFormats(value: string | undefined, fallback: Format[] = ['svg', 'png']): Format[] {
-	if (!value) return fallback;
+export function parseFormats(value: string | undefined, fallback: Format[] = ['svg', 'png'], pool: Format[] = ['svg', 'png', 'jpg', 'webp']): Format[] {
+	if (!value?.trim()) return fallback;
 	const out: Format[] = [];
 	for (const raw of value.split(',').map((v) => v.trim().toLowerCase()).filter(Boolean)) {
-		if (raw !== 'png' && raw !== 'svg') throw unknownName('format', raw, ['svg', 'png']);
-		if (!out.includes(raw)) out.push(raw);
+		const id = (raw === 'jpeg' ? 'jpg' : raw) as Format;
+		if (!pool.includes(id)) throw unknownName('format', raw, pool);
+		if (!out.includes(id)) out.push(id);
 	}
-	if (!out.length) throw new Error('Pick a format: svg, png, or both.');
+	if (!out.length) throw new Error(`Pick a format: ${pool.join(', ')}.`);
 	return out;
 }
 
@@ -29,10 +30,10 @@ export type Prepared = { path: string; format: string; width: number; height: nu
 export async function prepare(dir: string, stem: string, svg: string, width: number, height: number, formats: Format[], scale = 1): Promise<Prepared[]> {
 	const out: Prepared[] = [];
 	if (formats.includes('svg')) out.push({ path: join(dir, `${stem}.svg`), format: 'svg', width, height, data: Buffer.from(svg) });
-	if (formats.includes('png')) {
-		const png = await rasterize(svg, Math.round(width * scale));
-		out.push({ path: join(dir, `${stem}.png`), format: 'png', width: png.readUInt32BE(16), height: png.readUInt32BE(20), data: png });
-	}
+	const raster = formats.filter((f): f is 'png' | 'jpg' | 'webp' => f === 'png' || f === 'jpg' || f === 'webp');
+	const w = Math.round(width * scale);
+	const made = await encodeAll(svg, w, raster);
+	for (const f of raster) out.push({ path: join(dir, `${stem}.${f}`), format: f, width: w, height: f === 'png' ? made.png!.readUInt32BE(20) : Math.round(height * scale), data: made[f]! });
 	return out;
 }
 

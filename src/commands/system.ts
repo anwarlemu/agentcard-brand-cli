@@ -13,7 +13,7 @@ export function manifestCommand(opts: { json?: boolean }) {
 			`Commands: ${data.commands.length}. Token groups: ${data.tokens.groups.map((group) => group.id).join(', ')}.`,
 			`Images: ${data.images.templates.map((item) => item.id).join(', ')}.`,
 			`Videos: ${data.videos.templates.map((item) => item.id).join(', ')} at ${data.videos.sizes.map((item) => item.id).join(', ')}.`,
-			`Image sizes: ${data.images.sizes.map((item) => `${item.id} ${item.width}x${item.height}`).join(', ')}.`,
+			`Image sizes: ${data.images.sizes.map((item) => 'width' in item ? `${item.id} ${item.width}x${item.height}` : item.id).join(', ')}.`,
 			`Deck slides: ${data.decks.slides.map((item) => item.id).join(', ')}.`,
 			`Merch: ${data.merch.items.map((item) => item.id).join(', ')}.`,
 			`Illustration subjects: ${data.illustrate.subjects.map((item) => item.id).join(', ')}.`,

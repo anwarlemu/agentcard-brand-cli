@@ -10,8 +10,9 @@ import { componentEmit, componentInspect, componentList } from '../src/commands/
 import { imageRender } from '../src/commands/image.js';
 import { videoRender } from '../src/commands/video.js';
 import { contractOf, libraryItem } from '../src/library/contract.js';
-import { VIDEO_SIZES, VIDEO_TEMPLATES, type VideoSizeId, type VideoTemplateId } from '../src/video/catalog.js';
-import { frameProgress, frameSvg } from '../src/video/frames.js';
+import { sceneClip, clipFrameSvg } from '../src/video/clips.js';
+import { videoConfig } from '../src/video/motion.js';
+import { videoTemplate } from '../src/commands/video.js';
 import { muxMjpeg } from '../src/video/mp4.js';
 import { tokens } from '../src/lib/brand.js';
 
@@ -48,10 +49,10 @@ async function captureAsync(run: () => Promise<void>): Promise<string> {
 	return out;
 }
 
-const copy: Record<VideoTemplateId, Record<string, string>> = {
+const copy: Record<string, Record<string, string>> = {
 	social: { headline: 'Let agents buy anything online' },
-	announcement: { eyebrow: 'New', headline: 'Checkout on more stores', subtext: 'Paste a product page and the agent shops it like any catalog item.' },
-	product: { headline: 'Issuing', subtext: 'One-time cards for an agent checkout.' },
+	announcement: { badge: 'New', headline: 'Checkout on more stores', body: 'Paste a product page and the agent shops it like any catalog item.' },
+	product: { headline: 'Issuing', body: 'One-time cards for an agent checkout.', picture: 'checkout' },
 };
 
 describe('manifest', () => {
@@ -59,9 +60,10 @@ describe('manifest', () => {
 		const data = manifest();
 		expect(data.entry).toMatch(/manifest --json/);
 		expect(data.tokens.groups.map((group) => group.id)).toEqual(expect.arrayContaining(['color', 'type', 'space', 'radius', 'motion']));
-		expect(data.images.templates.map((item) => item.id).sort()).toEqual(['announcement', 'cards', 'headline', 'hero', 'quote', 'screenshot', 'subtext', 'window']);
-		expect(data.images.sizes.map((item) => item.id).sort()).toEqual(['landscape', 'linkedin-banner', 'og', 'portrait', 'square', 'story', 'x-banner']);
-		expect(data.videos.templates.map((item) => item.id).sort()).toEqual(['announcement', 'cards', 'hero', 'product', 'social', 'window']);
+		expect(data.images.templates.map((item) => item.id).sort()).toEqual(['announcement', 'cards', 'headline', 'hero', 'logo', 'quote', 'screenshot', 'subtext', 'window']);
+		expect(data.images.sizes.map((item) => item.id).sort()).toEqual(['avatar', 'custom', 'email', 'landscape', 'linkedin', 'linkedin-banner', 'linkedin-page', 'og', 'portrait', 'square', 'story', 'x-banner', 'youtube', 'youtube-thumbnail']);
+		expect(data.videos.templates.map((item) => item.id).sort()).toEqual(['announcement', 'cards', 'headline', 'hero', 'logo', 'quote', 'screenshot', 'subtext', 'window']);
+		expect(data.videos.aliases).toEqual({ social: 'headline', product: 'screenshot' });
 		expect(data.videos.sizes.map((item) => item.id)).toEqual(['square', 'vertical', 'landscape', 'portrait', 'og']);
 		expect(data.videos.renderer.fps).toBe(30);
 		expect(data.decks.slides.map((item) => item.id)).toEqual(expect.arrayContaining(['cover', 'section', 'statement', 'bullets', 'stat', 'quote', 'image', 'end']));
@@ -144,7 +146,7 @@ describe('images stay strict', () => {
 		const dir = mkdtempSync(join(tmpdir(), 'ds-image-strict-'));
 		try {
 			await expect(captureAsync(() => imageRender({ template: 'poster', headline: 'Hello', out: dir, json: true }))).rejects.toThrow(/Unknown template/);
-			await expect(captureAsync(() => imageRender({ template: 'headline', headline: 'Hello', subtext: 'Not used', out: dir, json: true }))).rejects.toThrow(/does not take --subtext/);
+			await expect(captureAsync(() => imageRender({ template: 'headline', headline: 'Hello', subtext: 'Not used', out: dir, json: true }))).rejects.toThrow(/does not take --body/);
 			await expect(captureAsync(() => imageRender({ headline: 'Hello', out: dir, json: true }))).rejects.toThrow(/Missing template/);
 			writeFileSync(join(dir, 'card.json'), JSON.stringify({ template: 'headline', headline: 'Hello', palette: 'neon' }));
 			await expect(captureAsync(() => imageRender({ input: join(dir, 'card.json'), out: dir, json: true }))).rejects.toThrow(/Unknown image file field/);
@@ -157,20 +159,16 @@ describe('images stay strict', () => {
 describe('video', () => {
 	it('draws every template at every size from tokens and rejects bad input', () => {
 		const blue = tokens().site['--ds-color-brand'];
-		const steps = Array.from({ length: 12 }, (_, frame) => frameProgress(frame));
-		expect(steps[0]).toBe(0);
-		expect(steps.at(-1)).toBe(1);
-		for (let i = 1; i < steps.length; i++) expect(steps[i]).toBeGreaterThanOrEqual(steps[i - 1]);
-		for (const template of Object.keys(VIDEO_TEMPLATES) as VideoTemplateId[]) {
-			for (const size of Object.keys(VIDEO_SIZES) as VideoSizeId[]) {
-				const svg = frameSvg({ ...copy[template], template, footer: 'example.test', size, width: VIDEO_SIZES[size].width, height: VIDEO_SIZES[size].height }, 11);
-				expect(svg, `${template} ${size}`).toContain(`width="${VIDEO_SIZES[size].width}"`);
-				expect(svg).toContain(`height="${VIDEO_SIZES[size].height}"`);
-				expect(svg).toContain(blue);
-				expect(svg).not.toContain('NaN');
+		for (const [name, fields] of Object.entries(copy))
+			for (const [size, spec] of Object.entries(videoConfig().sizes)) {
+				const clip = sceneClip({ ...fields, template: videoTemplate(name), size: spec.as, width: spec.width, height: spec.height }, 2);
+				const last = clipFrameSvg(clip, 1.9);
+				expect(last, `${name} ${size}`).toContain(`width="${spec.width}"`);
+				expect(last).toContain(`height="${spec.height}"`);
+				expect(last).toContain(blue);
+				expect(last.replace(/data:image\/[a-z]+;base64,[^"]+/g, '')).not.toContain('NaN');
+				expect(clipFrameSvg(clip, 0)).not.toBe(last);
 			}
-		}
-		expect(frameSvg({ ...copy.social, template: 'social', footer: '', size: 'square', width: 1080, height: 1080 }, 0)).not.toBe(frameSvg({ ...copy.social, template: 'social', footer: '', size: 'square', width: 1080, height: 1080 }, 11));
 		const jpeg = Buffer.from([0xff, 0xd8, 0xff, 0xd9]);
 		const left = muxMjpeg([jpeg, jpeg], 16, 16, 12);
 		const right = muxMjpeg([jpeg, Buffer.from(jpeg)], 16, 16, 12);
@@ -195,7 +193,7 @@ describe('video', () => {
 			await expect(captureAsync(() => videoRender({ template: 'trailer', headline: 'One line', size: 'square', out: dir, json: true }))).rejects.toThrow(/Unknown template/);
 			await expect(captureAsync(() => videoRender({ template: 'social', size: 'square', out: dir, json: true }))).rejects.toThrow(/headline/);
 			await expect(captureAsync(() => videoRender({ template: 'social', headline: 'One line', eyebrow: 'Now', window: 'nope', size: 'square', out: dir, json: true }))).rejects.toThrow(/does not take --window/);
-			await captureAsync(() => videoRender({ template: 'product', headline: 'Dry', size: 'square', out: join(dir, 'missing'), dryRun: true, json: true }));
+			await captureAsync(() => videoRender({ template: 'product', headline: 'Dry', picture: 'checkout', size: 'square', out: join(dir, 'missing'), dryRun: true, json: true }));
 			expect(existsSync(join(dir, 'missing'))).toBe(false);
 			expect(readFileSync(join(dir, 'a', 'social-square.mp4')).subarray(4, 8).toString()).toBe('ftyp');
 		} finally {
@@ -209,7 +207,7 @@ describe('cli catalog', () => {
 		const out = execFileSync(process.execPath, [BIN, 'manifest', '--json'], { cwd: ROOT, encoding: 'utf8' });
 		const data = JSON.parse(out) as { components: { name: string }[]; videos: { templates: { id: string }[] } };
 		expect(data.components.some((item) => item.name === 'button')).toBe(true);
-		expect(data.videos.templates.map((item) => item.id)).toContain('social');
+		expect(data.videos.templates.map((item) => item.id)).toContain('headline');
 		const failed = (args: string[]) => {
 			try {
 				execFileSync(process.execPath, [BIN, ...args], { cwd: ROOT, encoding: 'utf8' });

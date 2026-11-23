@@ -14,7 +14,9 @@ export type VideoConfig = {
 	enter: { start: number; duration: string; easing: string; lift: string; stagger: number; fromScale: number };
 	drift: { easing: string; periodMin: number; periodSpread: number };
 	grain: { interval: number; jumps: [number, number][] };
-	sizes: Record<string, { width: number; height: number }>;
+	sizes: Record<string, { width: number; height: number; as: string; aliases?: string[] }>;
+	/** The first clips' names, and the layouts they are now. */
+	templates: { aliases: Record<string, string> };
 };
 
 let videoCfg: VideoConfig | undefined;

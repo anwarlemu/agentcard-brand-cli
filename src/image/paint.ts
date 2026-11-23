@@ -162,6 +162,23 @@ function placeGlyphs(font: Font, glyphs: Glyph[], size: number, tracking: number
 	return { stops, advance };
 }
 
+/** Characters that draw nothing on their own (joiners, variation selectors, byte order marks): they never count as missing. */
+const INVISIBLE = /[\u200B-\u200F\u2060\uFE00-\uFE0F\uFEFF\u00AD\u202A-\u202E]/gu;
+
+/** The characters of `text` the shipped font cannot draw (emoji, Chinese, Arabic and so on). */
+export function missingGlyphs(text: string, font: Font = brandFonts().medium): string[] {
+	const out = new Set<string>();
+	for (const ch of text.normalize('NFC').replace(INVISIBLE, '')) if (!/\s/u.test(ch) && font.charToGlyph(ch).index === 0) out.add(ch);
+	return [...out];
+}
+
+/** Text ready to draw: composed letters, no invisible characters. Throws when a character has no glyph, so nothing is drawn as an empty box. */
+export function drawable(text: string, what = 'text'): string {
+	const bad = missingGlyphs(text);
+	if (bad.length) throw new Error(`The brand font has no character for ${bad.slice(0, 8).join(' ')}${bad.length > 8 ? ` and ${bad.length - 8} more` : ''} (in the ${what}). Remove ${bad.length === 1 ? 'it' : 'them'} or write the words in Latin, Greek or Cyrillic letters.`);
+	return text.normalize('NFC').replace(INVISIBLE, '');
+}
+
 function inkAdvance(font: Font, text: string, size: number, tracking: number) {
 	const { glyphs, round } = lineGlyphs(font, text);
 	if (!round) return font.getAdvanceWidth(text, size, { letterSpacing: tracking, kerning: true });
@@ -175,10 +192,18 @@ function inkPath(font: Font, text: string, x: number, baseline: number, size: nu
 	return glyphs.map((glyph, index) => glyph.getPath(x + stops[index], baseline, size).toPathData(1)).join('');
 }
 
+const widths = new WeakMap<Font, Map<string, number>>();
+
 /** Width of the ink. `tracking` is a fraction of the em. opentype.js adds one extra letter-spacing after the last glyph; that gap is not ink. */
 export function measure(font: Font, text: string, size: number, tracking: number): number {
 	if (!text) return 0;
-	return inkAdvance(font, text, size, tracking) - tracking * size;
+	// Advances, kerning and tracking all scale with the size, so one measurement per line serves every size it is tried at.
+	let cache = widths.get(font);
+	if (!cache || cache.size > 20000) widths.set(font, (cache = new Map()));
+	const key = `${tracking} ${text}`;
+	let unit = cache.get(key);
+	if (unit === undefined) cache.set(key, (unit = (inkAdvance(font, text, 1000, tracking) - tracking * 1000) / 1000));
+	return unit * size;
 }
 
 export type Block = { font: Font; size: number; tracking: number; leading: number; lines: string[]; height: number };
@@ -190,39 +215,98 @@ function blockHeight(font: Font, size: number, leading: number, count: number) {
 	return asc + (count - 1) * size * leading + desc;
 }
 
-export function wrap(font: Font, text: string, size: number, tracking: number, maxWidth: number): string[] {
+/** Lines of text within a width. `soft` marks a line that ends inside a long word (after a slash, dot, dash and the like). */
+export type Wrapped = { lines: string[]; soft: boolean[] };
+
+const SOFT = /(?<=[/\-_.?&=:@+~#,])/u;
+
+/** Wraps words to a width. A word too long for a line breaks only after its own punctuation; null when it still does not fit. */
+export function wrapFit(font: Font, text: string, size: number, tracking: number, maxWidth: number): Wrapped | null {
 	const lines: string[] = [];
+	const soft: boolean[] = [];
+	const push = (line: string, isSoft = false) => {
+		lines.push(line);
+		soft.push(isSoft);
+	};
+	const fits = (line: string) => measure(font, line, size, tracking) <= maxWidth + 0.01;
 	for (const paragraph of text.split('\n')) {
 		const words = paragraph.split(/\s+/).filter(Boolean);
 		if (!words.length) {
-			lines.push('');
+			push('');
 			continue;
 		}
 		let line = '';
-		const pushWord = (word: string) => {
-			if (measure(font, word, size, tracking) <= maxWidth) return word;
-			let chunk = '';
-			for (const char of word) {
-				const next = chunk + char;
-				if (measure(font, next, size, tracking) <= maxWidth) chunk = next;
-				else {
-					if (chunk) lines.push(chunk);
-					chunk = char;
-				}
-			}
-			return chunk;
-		};
 		for (const word of words) {
 			const next = line ? `${line} ${word}` : word;
-			if (measure(font, next, size, tracking) <= maxWidth) line = next;
-			else {
-				if (line) lines.push(line);
-				line = pushWord(word);
+			if (fits(next)) {
+				line = next;
+				continue;
+			}
+			if (line) push(line);
+			line = '';
+			if (fits(word)) {
+				line = word;
+				continue;
+			}
+			for (const piece of word.split(SOFT)) {
+				if (fits(line + piece)) line += piece;
+				else {
+					if (!line || !fits(piece)) return null;
+					push(line, true);
+					line = piece;
+				}
 			}
 		}
-		if (line) lines.push(line);
+		if (line) push(line);
 	}
-	return lines.length ? lines : [''];
+	return { lines: lines.length ? lines : [''], soft: soft.length ? soft : [false] };
+}
+
+/** The words as drawn, read back from the wrapped lines. */
+export const readBack = (w: Wrapped) => w.lines.map((l, i) => l + (i === w.lines.length - 1 || w.soft[i] ? '' : ' ')).join('').replace(/\s+/g, ' ').trim();
+
+/** The same number of lines, as even as they go: no single word left alone on the last line. */
+export function wrapEven(font: Font, text: string, size: number, tracking: number, maxWidth: number): Wrapped | null {
+	const first = wrapFit(font, text, size, tracking, maxWidth);
+	if (!first || first.lines.length < 2 || first.soft.some(Boolean)) return first;
+	let lo = maxWidth / first.lines.length;
+	let hi = maxWidth;
+	let best = first;
+	for (let i = 0; i < 9; i++) {
+		const mid = (lo + hi) / 2;
+		const w = wrapFit(font, text, size, tracking, mid);
+		if (w && w.lines.length === first.lines.length && !w.soft.some(Boolean)) {
+			best = w;
+			hi = mid;
+		} else lo = mid;
+	}
+	return best;
+}
+
+export function wrap(font: Font, text: string, size: number, tracking: number, maxWidth: number): string[] {
+	const w = wrapFit(font, text, size, tracking, maxWidth);
+	if (!w) throw new Error(`"${text.split(/\s+/).sort((a, b) => b.length - a.length)[0]}" is too long for this size. Shorten it.`);
+	return w.lines;
+}
+
+/** The exact bounds of a drawn line: its ink, not its advance. */
+export function lineInk(font: Font, text: string, x: number, baseline: number, size: number, tracking: number): { x: number; y: number; w: number; h: number } {
+	const { glyphs } = lineGlyphs(font, text);
+	const { stops } = placeGlyphs(font, glyphs, size, tracking);
+	let x0 = Infinity;
+	let y0 = Infinity;
+	let x1 = -Infinity;
+	let y1 = -Infinity;
+	glyphs.forEach((g, i) => {
+		const b = g.getPath(x + stops[i]!, baseline, size).getBoundingBox();
+		if (b.x2 <= b.x1 && b.y2 <= b.y1) return;
+		x0 = Math.min(x0, b.x1);
+		y0 = Math.min(y0, b.y1);
+		x1 = Math.max(x1, b.x2);
+		y1 = Math.max(y1, b.y2);
+	});
+	if (x1 < x0) return { x, y: baseline, w: 0, h: 0 };
+	return { x: x0, y: y0, w: x1 - x0, h: y1 - y0 };
 }
 
 function tryFit(font: Font, text: string, maxWidth: number, maxHeight: number, opts: { start: number; min: number; leading: number; maxLines: number }): Block | undefined {
@@ -230,7 +314,11 @@ function tryFit(font: Font, text: string, maxWidth: number, maxHeight: number, o
 	const min = Math.max(8, Math.floor(opts.min));
 	while (size >= min) {
 		const tracking = trackingFor(size);
-		const lines = wrap(font, text, size, tracking, maxWidth);
+		const lines = wrapEven(font, text, size, tracking, maxWidth)?.lines;
+		if (!lines) {
+			size -= 1;
+			continue;
+		}
 		const height = blockHeight(font, size, opts.leading, lines.length);
 		const fits = lines.length <= opts.maxLines && height <= maxHeight + 0.5 && lines.every((line) => !line || measure(font, line, size, tracking) <= maxWidth + 0.5);
 		if (fits) return { font, size, tracking, leading: opts.leading, lines, height };
@@ -260,14 +348,10 @@ export function drawText(block: Block, x: number, top: number, align: 'left' | '
 	return parts.join('');
 }
 
-/** One line, cut with an ellipsis when the bar is narrower than the label. */
+/** One line. It never cuts: a line wider than its room is an error. */
 export function drawLine(font: Font, text: string, x: number, baseline: number, size: number, tracking: number, maxWidth: number, fill: string): string {
-	let line = text;
-	if (measure(font, line, size, tracking) > maxWidth) {
-		while (line.length > 1 && measure(font, `${line}…`, size, tracking) > maxWidth) line = line.slice(0, -1);
-		line = `${line.trimEnd()}…`;
-	}
-	const data = inkPath(font, line, x, baseline, size, tracking);
+	if (measure(font, text, size, tracking) > maxWidth + 0.5) throw new Error(`"${text}" is too long for this size. Shorten it.`);
+	const data = inkPath(font, text, x, baseline, size, tracking);
 	return data ? `<path d="${data}" fill="${fill}"/>` : '';
 }
 

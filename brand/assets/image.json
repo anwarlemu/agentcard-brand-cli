@@ -1,34 +1,404 @@
 {
 	"$comment": "Share images and social posts. The hero, window and cards layouts are the brand's image editor's (agd-playground src/components/agentcard-og/draw.ts, Editor.tsx, context-og/cards.ts), measured in units of the 1200 by 630 link preview's pixels and grown with the image's area (unit = sqrt(w*h / (1200*630))). Every color, radius, shadow, tracking and leading is read from brand/tokens.css; where the editor and the tokens disagree the tokens win and the disagreement is listed in notes.",
 	"source": "agd-playground src/components/agentcard-og (draw.ts, Editor.tsx), src/components/context-og/cards.ts; routes /agentcard-og-image-playground (share) and /agentcard-social-post (social)",
-	"unit": { "width": 1200, "height": 630 },
+	"unit": {
+		"width": 1200,
+		"height": 630
+	},
 	"sizes": {
-		"og": { "width": 1200, "height": 630, "label": "Open Graph", "use": "Link previews, 1200 by 630" },
-		"square": { "width": 1080, "height": 1080, "label": "Square", "use": "Feed posts, 1080 by 1080" },
-		"portrait": { "width": 1080, "height": 1350, "label": "Portrait", "use": "Portrait posts (4:5), 1080 by 1350" },
-		"landscape": { "width": 1200, "height": 675, "label": "Landscape", "use": "X and LinkedIn posts (16:9), 1200 by 675", "aliases": ["wide"] },
-		"story": { "width": 1080, "height": 1920, "label": "Story", "use": "Stories and reels (9:16), 1080 by 1920" },
-		"x-banner": { "width": 1500, "height": 500, "label": "X banner", "use": "X profile header, 1500 by 500", "aliases": ["banner"] },
-		"linkedin-banner": { "width": 1584, "height": 396, "label": "LinkedIn banner", "use": "LinkedIn profile or page cover, 1584 by 396" }
+		"og": {
+			"width": 1200,
+			"height": 630,
+			"label": "Open Graph",
+			"use": "Link previews, 1200 by 630",
+			"shown": 560,
+			"limit": {
+				"bytes": 5000000,
+				"where": "X card images"
+			}
+		},
+		"square": {
+			"width": 1080,
+			"height": 1080,
+			"label": "Square",
+			"use": "Feed posts, 1080 by 1080",
+			"shown": 500,
+			"limit": {
+				"bytes": 8000000,
+				"where": "Instagram"
+			}
+		},
+		"portrait": {
+			"width": 1080,
+			"height": 1350,
+			"label": "Portrait",
+			"use": "Portrait posts (4:5), 1080 by 1350",
+			"shown": 470,
+			"limit": {
+				"bytes": 8000000,
+				"where": "Instagram"
+			}
+		},
+		"story": {
+			"width": 1080,
+			"height": 1920,
+			"label": "Story",
+			"use": "Stories and reels (9:16), 1080 by 1920",
+			"shown": 390,
+			"aliases": [
+				"9:16",
+				"vertical"
+			],
+			"limit": {
+				"bytes": 8000000,
+				"where": "Instagram"
+			},
+			"safe": {
+				"inset": [
+					270,
+					65,
+					384,
+					65
+				],
+				"basis": "published",
+				"note": "Keep the top 14 percent, the bottom 20 percent and 6 percent at each side clear (Meta's story ad guidance)."
+			}
+		},
+		"landscape": {
+			"width": 1200,
+			"height": 675,
+			"label": "Landscape",
+			"use": "X and LinkedIn posts (16:9), 1200 by 675",
+			"shown": 560,
+			"aliases": [
+				"wide",
+				"16:9"
+			],
+			"limit": {
+				"bytes": 5000000,
+				"where": "X"
+			}
+		},
+		"x-banner": {
+			"width": 1500,
+			"height": 500,
+			"label": "X banner",
+			"use": "X profile header, 1500 by 500",
+			"shown": 640,
+			"aliases": [
+				"banner",
+				"x-header",
+				"twitter-banner"
+			],
+			"limit": {
+				"bytes": 2000000,
+				"where": "X profile headers"
+			},
+			"safe": {
+				"inset": [
+					60,
+					40,
+					60,
+					40
+				],
+				"avoid": [
+					[
+						0,
+						310,
+						420,
+						190
+					]
+				],
+				"basis": "approximate",
+				"note": "X crops up to 60 px at the top and bottom on some screens (published); the profile picture covers about 420 by 190 px at the lower left (measured, it moves with the screen)."
+			}
+		},
+		"linkedin": {
+			"width": 1200,
+			"height": 627,
+			"label": "LinkedIn post",
+			"use": "LinkedIn link and image posts, 1200 by 627",
+			"shown": 552,
+			"aliases": [
+				"li-post"
+			],
+			"limit": {
+				"bytes": 5000000,
+				"where": "LinkedIn"
+			}
+		},
+		"linkedin-banner": {
+			"width": 1584,
+			"height": 396,
+			"label": "LinkedIn banner",
+			"use": "LinkedIn profile cover, 1584 by 396",
+			"shown": 800,
+			"aliases": [
+				"li-profile",
+				"linkedin-profile"
+			],
+			"limit": {
+				"bytes": 8000000,
+				"where": "LinkedIn"
+			},
+			"safe": {
+				"inset": [
+					24,
+					40,
+					24,
+					40
+				],
+				"avoid": [
+					[
+						0,
+						150,
+						500,
+						246
+					]
+				],
+				"basis": "approximate",
+				"note": "The profile photo covers about 500 by 246 px at the lower left across desktop and phone (measured, LinkedIn publishes no number)."
+			}
+		},
+		"linkedin-page": {
+			"width": 1128,
+			"height": 191,
+			"label": "LinkedIn page",
+			"use": "LinkedIn company page cover, 1128 by 191",
+			"shown": 1000,
+			"aliases": [
+				"li-page"
+			],
+			"limit": {
+				"bytes": 3000000,
+				"where": "LinkedIn pages"
+			},
+			"safe": {
+				"inset": [
+					14,
+					24,
+					14,
+					24
+				],
+				"avoid": [
+					[
+						0,
+						88,
+						200,
+						103
+					]
+				],
+				"basis": "approximate",
+				"note": "The page's logo covers about 200 by 103 px at the lower left (measured)."
+			}
+		},
+		"youtube": {
+			"width": 2560,
+			"height": 1440,
+			"label": "YouTube channel art",
+			"use": "YouTube channel banner, 2560 by 1440",
+			"shown": 760,
+			"aliases": [
+				"yt",
+				"youtube-banner"
+			],
+			"limit": {
+				"bytes": 6000000,
+				"where": "YouTube channel art"
+			},
+			"safe": {
+				"inset": [
+					509,
+					508,
+					509,
+					508
+				],
+				"unit": "safe",
+				"basis": "published",
+				"note": "Only the middle 1546 by 423 px shows on every device (YouTube's published safe area); the words, logo and art stay in it and the ground fills the rest."
+			}
+		},
+		"youtube-thumbnail": {
+			"width": 1280,
+			"height": 720,
+			"label": "YouTube thumbnail",
+			"use": "YouTube video thumbnail, 1280 by 720",
+			"shown": 400,
+			"aliases": [
+				"yt-thumbnail",
+				"thumbnail"
+			],
+			"limit": {
+				"bytes": 2000000,
+				"where": "YouTube thumbnails"
+			},
+			"safe": {
+				"inset": [
+					24,
+					24,
+					24,
+					24
+				],
+				"avoid": [
+					[
+						1090,
+						610,
+						190,
+						110
+					]
+				],
+				"basis": "approximate",
+				"note": "The duration label covers the lower right corner (measured, about 190 by 110 px)."
+			}
+		},
+		"email": {
+			"width": 1200,
+			"height": 300,
+			"label": "Email header",
+			"use": "Email header, 1200 by 300 (shown at 600)",
+			"shown": 600,
+			"aliases": [
+				"email-header"
+			],
+			"limit": {
+				"bytes": 1000000,
+				"where": "email headers (a common guideline)"
+			}
+		},
+		"avatar": {
+			"width": 800,
+			"height": 800,
+			"label": "Profile picture",
+			"use": "Profile picture, 800 by 800, shown in a circle",
+			"shown": 128,
+			"aliases": [
+				"profile",
+				"profile-picture"
+			],
+			"limit": {
+				"bytes": 2000000,
+				"where": "X profile pictures"
+			},
+			"safe": {
+				"inset": [
+					96,
+					96,
+					96,
+					96
+				],
+				"circle": true,
+				"basis": "published",
+				"note": "X, LinkedIn and YouTube cut profile pictures to a circle: everything sits inside it."
+			}
+		}
 	},
 	"grounds": {
-		"blue": { "token": "--ds-color-brand", "dark": true },
-		"paper": { "token": "--ds-color-paper", "dark": false },
-		"white": { "token": "--ds-color-white", "dark": false },
-		"ink": { "token": "--ds-color-ink", "dark": true }
+		"blue": {
+			"token": "--ds-color-brand",
+			"dark": true
+		},
+		"paper": {
+			"token": "--ds-color-paper",
+			"dark": false
+		},
+		"white": {
+			"token": "--ds-color-white",
+			"dark": false
+		},
+		"ink": {
+			"token": "--ds-color-ink",
+			"dark": true
+		}
 	},
 	"scene": {
 		"margin": 40,
-		"logo": 30,
+		"logo": 34,
 		"wideRatio": 1.25,
-		"eyebrow": { "size": 15, "gap": 20, "tracking": "--ds-tracking-caps", "caps": true },
-		"headline": { "leading": "--ds-leading-heading", "gap": 0.3, "maxLines": 4, "min": 26 },
-		"body": { "min": 15, "ratio": 0.27, "width": 0.86, "gap": 30, "leading": "--ds-leading-snug" },
-		"key": { "height": 46, "size": 17, "padX": 22, "radius": "--ds-radius-control", "onBlue": "--ds-shadow-key", "onLight": "--ds-shadow-key-brand" },
-		"band": { "step": 9, "minStep": 6, "steps": 6 },
-		"scan": { "line": "--ds-color-ink", "lineAlpha": 0.16, "every": 3, "vignetteAlpha": 0.38, "vignetteClear": 0.55, "sidesAlpha": 0.34, "sidesStop": 0.16 },
-		"grain": { "baseFrequency": 0.95, "octaves": 2, "opacity": 0.85, "blend": "soft-light" },
-		"window": { "radius": "--ds-radius-card", "bar": 34, "name": 13, "inset": 12, "pictureFit": 0.78, "shadow": "--ds-shadow-plan", "rule": "--ds-color-border-window", "edge": "--ds-color-border-hairline", "arrowAlpha": 0.45 }
+		"eyebrow": {
+			"size": 19,
+			"gap": 20,
+			"tracking": "--ds-tracking-caps",
+			"caps": true
+		},
+		"headline": {
+			"leading": "--ds-leading-heading",
+			"gap": 0.3,
+			"maxLines": 4,
+			"min": 26,
+			"maxLinesTight": 8
+		},
+		"body": {
+			"min": 21,
+			"ratio": 0.3,
+			"width": 0.86,
+			"gap": 30,
+			"leading": "--ds-leading-snug",
+			"max": 40
+		},
+		"key": {
+			"height": 54,
+			"size": 20,
+			"padX": 26,
+			"radius": "--ds-radius-control",
+			"onBlue": "--ds-shadow-key",
+			"onLight": "--ds-shadow-key-brand"
+		},
+		"band": {
+			"step": 9,
+			"minStep": 6,
+			"steps": 6
+		},
+		"scan": {
+			"line": "--ds-color-ink",
+			"lineAlpha": 0.16,
+			"every": 3,
+			"vignetteAlpha": 0.38,
+			"vignetteClear": 0.55,
+			"sidesAlpha": 0.34,
+			"sidesStop": 0.16
+		},
+		"grain": {
+			"baseFrequency": 0.95,
+			"octaves": 2,
+			"opacity": 0.85,
+			"blend": "soft-light"
+		},
+		"window": {
+			"radius": "--ds-radius-card",
+			"bar": 36,
+			"name": 15,
+			"inset": 12,
+			"pictureFit": 0.78,
+			"shadow": "--ds-shadow-plan",
+			"rule": "--ds-color-border-window",
+			"edge": "--ds-color-border-hairline",
+			"arrowAlpha": 0.45,
+			"maxAspect": 1.75,
+			"minAspect": 0.72,
+			"pictureMin": 0.5,
+			"pictureMax": 2.6
+		},
+		"logoRule": {
+			"clear": 0.5,
+			"min": 22,
+			"scale": [
+				0.65,
+				2.2
+			],
+			"note": "The brand defines no minimum size or clear space. The CLI keeps a convention (the same one merch uses): clear space of half the lockup's height, and no smaller than 22 px high at the 1200 by 630 scale."
+		},
+		"small": {
+			"size": 18,
+			"shown": 8,
+			"note": "The floor for small words: 8 px at the width a size is usually shown at (sizes[].shown), never under 14 px at the 1200 by 630 scale."
+		},
+		"footer": 20,
+		"flatBand": {
+			"step": 9,
+			"share": 0.01,
+			"maxShare": 0.028,
+			"steps": 4
+		}
 	},
 	"templates": {
 		"hero": {
@@ -37,21 +407,36 @@
 			"scan": true,
 			"band": "none",
 			"textSize": 84,
-			"textWidth": { "wide": 0.66, "tall": 0.84 },
+			"textWidth": {
+				"wide": 0.66,
+				"tall": 0.84
+			},
 			"textX": 0.5,
 			"textY": 0.48,
-			"stickers": "preset"
+			"stickers": "preset",
+			"notSizes": [
+				"avatar"
+			]
 		},
 		"window": {
 			"label": "Window, words beside it",
 			"ground": "paper",
 			"scan": true,
 			"band": "none",
-			"textSize": { "wide": 54, "tall": 66 },
-			"textWidth": { "wide": 0.4, "tall": 0.84 },
-			"window": "issuing.product",
+			"textSize": {
+				"wide": 54,
+				"tall": 66
+			},
+			"textWidth": {
+				"wide": 0.4,
+				"tall": 0.84
+			},
 			"windowBody": "blue",
-			"picture": "card"
+			"picture": "card",
+			"notSizes": [
+				"avatar",
+				"linkedin-page"
+			]
 		},
 		"cards": {
 			"label": "Numbered cards",
@@ -59,21 +444,209 @@
 			"scan": true,
 			"band": "none",
 			"textSize": 38,
-			"cards": { "pad": 30, "badge": 13, "heading": 25, "body": 17, "gapX": 30, "gapY": 18, "radius": "--ds-radius-card", "shadow": "--ds-shadow-card", "edge": "--ds-color-border-default", "footer": 21, "titleLeading": 1.15, "maxCards": 8 }
+			"cards": {
+				"pad": 30,
+				"badge": 15,
+				"heading": 28,
+				"body": 21,
+				"gapX": 30,
+				"gapY": 18,
+				"radius": "--ds-radius-card",
+				"shadow": "--ds-shadow-card",
+				"edge": "--ds-color-border-default",
+				"footer": 21,
+				"titleLeading": 1.15,
+				"maxCards": 8
+			},
+			"notSizes": [
+				"avatar",
+				"linkedin-page",
+				"youtube"
+			]
+		},
+		"headline": {
+			"label": "Headline",
+			"ground": "blue",
+			"scan": false,
+			"band": "contrast",
+			"textSize": 96,
+			"textWidth": {
+				"wide": 0.86,
+				"tall": 0.86
+			},
+			"textX": 0.5,
+			"textY": 0.5,
+			"stickers": "none",
+			"notSizes": [
+				"avatar"
+			],
+			"flatBand": true
+		},
+		"subtext": {
+			"label": "Headline and body",
+			"ground": "paper",
+			"scan": false,
+			"band": "contrast",
+			"textSize": 72,
+			"textWidth": {
+				"wide": 0.74,
+				"tall": 0.86
+			},
+			"textX": 0.5,
+			"textY": 0.5,
+			"stickers": "none",
+			"notSizes": [
+				"avatar"
+			],
+			"flatBand": true
+		},
+		"screenshot": {
+			"label": "Screenshot",
+			"ground": "blue",
+			"scan": false,
+			"band": "contrast",
+			"textSize": {
+				"wide": 56,
+				"tall": 66
+			},
+			"textWidth": {
+				"wide": 0.4,
+				"tall": 0.86
+			},
+			"windowBody": "white",
+			"notSizes": [
+				"avatar",
+				"linkedin-page"
+			],
+			"flatBand": true
+		},
+		"quote": {
+			"label": "Quote",
+			"ground": "paper",
+			"scan": false,
+			"band": "contrast",
+			"textSize": {
+				"wide": 48,
+				"tall": 60
+			},
+			"notSizes": [
+				"avatar",
+				"linkedin-banner",
+				"linkedin-page",
+				"email"
+			],
+			"flatBand": true
+		},
+		"announcement": {
+			"label": "Announcement",
+			"ground": "blue",
+			"scan": false,
+			"band": "none",
+			"textSize": 78,
+			"textWidth": {
+				"wide": 0.78,
+				"tall": 0.86
+			},
+			"textX": 0.5,
+			"textY": 0.5,
+			"stickers": "none",
+			"cap": [
+				"blue",
+				"ink"
+			],
+			"body": "paper",
+			"notSizes": [
+				"avatar"
+			],
+			"flatBand": true
+		},
+		"logo": {
+			"label": "Logo",
+			"ground": "blue",
+			"scan": true,
+			"band": "none",
+			"textSize": 0,
+			"share": {
+				"lockup": 0.62,
+				"mark": 0.5,
+				"height": 0.5
+			}
 		}
 	},
 	"stickers": {
 		"preset": [
-			{ "subject": "card", "x": 0.14, "y": 0.24, "size": 0.27, "rotate": -12 },
-			{ "subject": "cart", "x": 0.87, "y": 0.22, "size": 0.25, "rotate": 10 },
-			{ "subject": "coins", "x": 0.1, "y": 0.78, "size": 0.2, "rotate": 8 },
-			{ "subject": "gift", "x": 0.9, "y": 0.78, "size": 0.21, "rotate": -8 },
-			{ "subject": "sale-tag", "x": 0.5, "y": 0.1, "size": 0.12, "rotate": 14 },
-			{ "subject": "phone", "x": 0.31, "y": 0.9, "size": 0.12, "rotate": -10 },
-			{ "subject": "wallet", "x": 0.69, "y": 0.9, "size": 0.16, "rotate": 6 }
+			{
+				"subject": "card",
+				"x": 0.14,
+				"y": 0.24,
+				"size": 0.27,
+				"rotate": -12
+			},
+			{
+				"subject": "cart",
+				"x": 0.87,
+				"y": 0.22,
+				"size": 0.25,
+				"rotate": 10
+			},
+			{
+				"subject": "coins",
+				"x": 0.1,
+				"y": 0.78,
+				"size": 0.2,
+				"rotate": 8
+			},
+			{
+				"subject": "gift",
+				"x": 0.9,
+				"y": 0.78,
+				"size": 0.21,
+				"rotate": -8
+			},
+			{
+				"subject": "sale-tag",
+				"x": 0.5,
+				"y": 0.1,
+				"size": 0.12,
+				"rotate": 14
+			},
+			{
+				"subject": "phone",
+				"x": 0.31,
+				"y": 0.9,
+				"size": 0.12,
+				"rotate": -10
+			},
+			{
+				"subject": "wallet",
+				"x": 0.69,
+				"y": 0.9,
+				"size": 0.16,
+				"rotate": 6
+			}
 		],
-		"under": { "subject": "cart", "textY": 0.32, "rotate": -6, "maxSize": 0.62 },
-		"scatter": { "count": 7, "max": 14, "seed": 2, "minSize": 0.13, "spread": 0.11, "tilt": 16, "gap": 14 }
+		"under": {
+			"subject": "cart",
+			"textY": 0.32,
+			"rotate": -6,
+			"maxSize": 0.62
+		},
+		"scatter": {
+			"count": 7,
+			"max": 14,
+			"seed": 2,
+			"minSize": 0.13,
+			"spread": 0.11,
+			"tilt": 16,
+			"gap": 14,
+			"tries": 60
+		},
+		"fit": {
+			"gap": 12,
+			"clear": 18,
+			"minScale": 0.62,
+			"maxShift": 0.42
+		}
 	},
 	"notes": [
 		"Display type: the editor sets headings, labels and keys in Neue Haas Grotesk Display or the installed Helvetica Neue. Neither ships (licence), so rendered images set them in Inter Medium, which is shipped in brand/fonts; tracking follows the tokens (--ds-tracking-display at 72px and up, --ds-tracking-tighter at 36px and up, --ds-tracking-tight below), not the editor's -0.05 and -0.035em.",
@@ -81,6 +654,70 @@
 		"Cards: the editor's card corner is 14px and its drop is 0 8px 24px ink at 18 percent; neither is a token, so cards use --ds-radius-card (12px) and --ds-shadow-card.",
 		"Footer address: the editor defaults to agentcard.com; images default to the host of brand.json site (agentcard.sh).",
 		"The editor's band divider reads a seeded value-noise tile for its grain; images use the library's grain (fractal noise at 0.95, two octaves, gray, soft-light), as registry/components/visuals/band-divider.tsx draws it.",
-		"Stickers are the editor's own art (public/agentcard-og/*.webp), converted to PNG in brand/illustration/objects because the renderer reads PNG and JPEG only."
-	]
+		"Stickers are the editor's own art (public/agentcard-og/*.webp), converted to PNG in brand/illustration/objects because the renderer reads PNG and JPEG only.",
+		"Window bar labels are the user's to pass: the site's own labels (issuing.product) are not drawn by default.",
+		"Safe areas come from each platform's published numbers where it has any; the ones marked approximate were measured on the platform and move a little with the screen.",
+		"Characters the shipped Inter cannot draw (emoji, Chinese, Arabic and so on) are refused, never drawn as empty boxes."
+	],
+	"custom": {
+		"min": 160,
+		"max": 4096
+	},
+	"bandContrast": {
+		"blue": "paper",
+		"ink": "paper",
+		"paper": "blue",
+		"white": "blue"
+	},
+	"samples": {
+		"hero": {
+			"headline": "Let agents buy anything online"
+		},
+		"window": {
+			"badge": "Issuing",
+			"headline": "Create one-time and multi-use cards"
+		},
+		"cards": {
+			"headline": "How it works",
+			"cards": [
+				{
+					"title": "Save it once",
+					"body": "Your user adds their card a single time."
+				},
+				{
+					"title": "The agent asks to buy",
+					"body": "It never sees the number."
+				},
+				{
+					"title": "Every purchase is approved",
+					"body": "With a passkey, tied to that exact cart."
+				},
+				{
+					"title": "It is still their card",
+					"body": "Disputes go through their bank."
+				}
+			]
+		},
+		"headline": {
+			"headline": "Let agents buy anything online"
+		},
+		"subtext": {
+			"headline": "Let agents buy anything online",
+			"body": "Cards your agent can use, with every purchase approved."
+		},
+		"screenshot": {
+			"headline": "Every purchase is approved",
+			"picture": "checkout"
+		},
+		"quote": {
+			"quote": "Our agents finally buy what people ask for, and every purchase is approved.",
+			"by": "Head of product, Acme"
+		},
+		"announcement": {
+			"badge": "New",
+			"headline": "Checkout on more stores",
+			"body": "Paste a product page and the agent shops it like any catalog item."
+		},
+		"logo": {}
+	}
 }

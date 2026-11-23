@@ -3,7 +3,23 @@ import { deflateSync } from 'node:zlib';
 // A minimal PDF writer: one page per image (8-bit RGB, Flate), no metadata dates, so the same pages give the same
 // bytes. Pages are sized in points from the image's pixel size and a physical width.
 
-export type PdfPage = { rgb: Buffer; width: number; height: number };
+/** `alpha` keeps a clear ground clear; `trim` is the cut size in points, inside the page's bleed. */
+export type PdfPage = { rgb: Buffer; width: number; height: number; alpha?: Buffer; widthPt?: number; trim?: { x: number; y: number; w: number; h: number } };
+
+/** RGBA pixels as a page: color flattened on white, with the alpha kept beside it when `keepAlpha` and any is clear. */
+export function pdfPage(pixels: Uint8Array, width: number, height: number, keepAlpha = false): PdfPage {
+	const n = width * height;
+	const rgb = Buffer.alloc(n * 3);
+	const alpha = Buffer.alloc(n);
+	let clear = false;
+	for (let i = 0; i < n; i++) {
+		const a = pixels[i * 4 + 3]!;
+		alpha[i] = a;
+		if (a < 255) clear = true;
+		for (let c = 0; c < 3; c++) rgb[i * 3 + c] = keepAlpha ? pixels[i * 4 + c]! : Math.round((pixels[i * 4 + c]! * a) / 255 + 255 * (1 - a / 255));
+	}
+	return { rgb, width, height, ...(keepAlpha && clear ? { alpha } : {}) };
+}
 
 export function imagesToPdf(pages: PdfPage[], pageWidthPt: number): Buffer {
 	if (!pages.length) throw new Error('A PDF needs at least one page.');
@@ -17,13 +33,18 @@ export function imagesToPdf(pages: PdfPage[], pageWidthPt: number): Buffer {
 	add('');
 	const kids: number[] = [];
 	for (const page of pages) {
-		const ptW = pageWidthPt;
-		const ptH = Math.round((pageWidthPt * page.height) / page.width * 100) / 100;
+		const ptW = page.widthPt ?? pageWidthPt;
+		const ptH = Math.round((ptW * page.height) / page.width * 100) / 100;
 		const data = deflateSync(page.rgb, { level: 6 });
-		const img = add(Buffer.concat([Buffer.from(`<< /Type /XObject /Subtype /Image /Width ${page.width} /Height ${page.height} /ColorSpace /DeviceRGB /BitsPerComponent 8 /Filter /FlateDecode /Length ${data.length} >>\nstream\n`, 'latin1'), data, Buffer.from('\nendstream', 'latin1')]));
+		let mask = '';
+		if (page.alpha) {
+			const a = deflateSync(page.alpha, { level: 6 });
+			mask = ` /SMask ${add(Buffer.concat([Buffer.from(`<< /Type /XObject /Subtype /Image /Width ${page.width} /Height ${page.height} /ColorSpace /DeviceGray /BitsPerComponent 8 /Filter /FlateDecode /Length ${a.length} >>\nstream\n`, 'latin1'), a, Buffer.from('\nendstream', 'latin1')]))} 0 R`;
+		}
+		const img = add(Buffer.concat([Buffer.from(`<< /Type /XObject /Subtype /Image${mask} /Width ${page.width} /Height ${page.height} /ColorSpace /DeviceRGB /BitsPerComponent 8 /Filter /FlateDecode /Length ${data.length} >>\nstream\n`, 'latin1'), data, Buffer.from('\nendstream', 'latin1')]));
 		const content = `q ${ptW} 0 0 ${ptH} 0 0 cm /Im0 Do Q`;
 		const contents = add(`<< /Length ${content.length} >>\nstream\n${content}\nendstream`);
-		kids.push(add(`<< /Type /Page /Parent 2 0 R /MediaBox [0 0 ${ptW} ${ptH}] /Resources << /XObject << /Im0 ${img} 0 R >> >> /Contents ${contents} 0 R >>`));
+		kids.push(add(`<< /Type /Page /Parent 2 0 R /MediaBox [0 0 ${ptW} ${ptH}]${page.trim ? ` /BleedBox [0 0 ${ptW} ${ptH}] /TrimBox [${page.trim.x} ${page.trim.y} ${page.trim.x + page.trim.w} ${page.trim.y + page.trim.h}]` : ''} /Resources << /XObject << /Im0 ${img} 0 R >> >> /Contents ${contents} 0 R >>`));
 	}
 	objects[1] = Buffer.from(`<< /Type /Pages /Kids [${kids.map((k) => `${k} 0 R`).join(' ')}] /Count ${kids.length} >>`, 'latin1');
 	const parts: Buffer[] = [Buffer.from('%PDF-1.4\n%\xE2\xE3\xCF\xD3\n', 'latin1')];

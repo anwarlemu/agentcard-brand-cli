@@ -5,8 +5,9 @@
 
 import { readFileSync } from 'node:fs';
 import { band, Ids, scan } from '../image/effects.js';
-import { bandMixes, brandFonts, document, drawLine, drawLogo, logoBox, measure, rect, tokenColor, trackingFor, wrap } from '../image/paint.js';
+import { bandMixes, brandFonts, document, drawLogo, logoBox, rect, tokenColor } from '../image/paint.js';
 import { imageConfig, type SceneGround } from '../image/scene.js';
+import { drawBlock, fitBlock, Layers } from '../image/words.js';
 import { brand } from '../lib/brand.js';
 import { pkgPath } from '../lib/paths.js';
 
@@ -50,7 +51,17 @@ function siteHost() {
 	}
 }
 
-export type MerchOpts = { headline?: string; url?: string };
+export type MerchOpts = { headline?: string; url?: string; sample?: boolean };
+
+/** The copy slots an item draws. */
+export const merchSlots = (item: MerchItem) => item.layers.flatMap((l) => (l.type === 'text' ? [l.slot] : []));
+
+/** What is drawn in each slot: only what was passed, the brand's own address, and sample copy when asked for. */
+function copyFor(item: MerchItem, opts: MerchOpts): Record<string, string> {
+	const given = { headline: opts.headline?.trim(), url: opts.url?.trim() };
+	for (const key of ['headline', 'url'] as const) if (given[key] && !merchSlots(item).includes(key)) throw new Error(`The ${item.name} has no place for --${key}.`);
+	return { url: given.url || siteHost(), headline: given.headline || (opts.sample ? (merchConfig().copy.headline ?? '') : '') };
+}
 
 /** The print file (no guides), the proof (with guides) and the cut path, as SVG strings, plus the size in pixels. */
 export function merchSvgs(item: MerchItem, variantId: string, opts: MerchOpts = {}) {
@@ -65,6 +76,7 @@ export function merchSvgs(item: MerchItem, variantId: string, opts: MerchOpts = 
 	const ox = px(item.bleed);
 	const oy = px(item.bleed);
 	const ids = new Ids('m');
+	let logos = 0;
 	const parts: string[] = [];
 	const ground = variant.ground;
 	const bandLayer = item.layers.find((l): l is Extract<MerchLayer, { type: 'band' }> => l.type === 'band');
@@ -74,7 +86,9 @@ export function merchSvgs(item: MerchItem, variantId: string, opts: MerchOpts = 
 		return tokenColor(g ? INK_ON[g] : variant.ink === 'brand' ? 'brand' : variant.ink);
 	};
 	if (ground) parts.push(rect(0, 0, W, H, tokenColor(GROUND_TOKEN[ground])));
-	const copy: Record<string, string> = { ...cfg.copy, url: siteHost(), ...(opts.headline ? { headline: opts.headline } : {}), ...(opts.url ? { url: opts.url } : {}) };
+	const copy = copyFor(item, opts);
+	const layers = new Layers();
+	const groundHex = (g: SceneGround | undefined) => (g ? [tokenColor(GROUND_TOKEN[g])] : []);
 	const { medium } = brandFonts();
 	for (const layer of item.layers) {
 		if (layer.type === 'scan') {
@@ -85,32 +99,22 @@ export function merchSvgs(item: MerchItem, variantId: string, opts: MerchOpts = 
 			parts.push(scan(ids, 0, 0, W, room, spec, true).replace(/height="1" fill/, `height="${Math.round(dpi / 100)}" fill`));
 		} else if (layer.type === 'band') {
 			if (!ground) continue;
+			layers.add({ id: 'band', kind: 'panel', box: { x: 0, y: oy + px(layer.at), w: W, h: H - oy - px(layer.at) }, bleeds: true, can: {} });
 			parts.push(band(ids, W, oy + px(layer.at), px(layer.step), H, tokenColor(GROUND_TOKEN[ground]), tokenColor(GROUND_TOKEN[CONTRAST[ground]]), bandMixes()));
 		} else if (layer.type === 'logo') {
 			const p = logoPlacement(layer);
+			const box = logoBox(layer.kind);
+			layers.add({ id: logos++ ? `logo-${logos}` : 'logo', kind: 'logo', box: { x: ox + px(p.x), y: oy + px(p.y), w: px(p.w), h: px(p.h) }, logo: { clear: px(p.h / 2), min: (px(cfg.logo.minWidth[layer.kind]) * box.height) / box.width }, can: {} });
 			parts.push(`<g id="logo-${layer.kind}">${drawLogo(layer.kind, ox + px(p.x), oy + px(p.y), px(p.h), inkFor(p.y))}</g>`);
 		} else {
 			const value = copy[layer.slot] ?? '';
 			if (!value) continue;
 			const [bx, by, bw, bh] = layer.box;
-			let size = px(layer.size);
-			let lines: string[] = [];
-			for (;;) {
-				lines = wrap(medium, value, size, trackingFor(size / (dpi / 96)), px(bw));
-				if ((lines.length <= layer.maxLines && lines.length * size * 1.05 <= px(bh)) || size < px(0.15)) break;
-				size *= 0.94;
-			}
-			if (lines.length > layer.maxLines) throw new Error(`The ${layer.slot} does not fit the ${item.name}. Shorten it.`);
-			const tracking = trackingFor(size / (dpi / 96));
-			const fill = inkFor(by);
-			const svg = lines
-				.map((l, i) => {
-					const w = measure(medium, l, size, tracking);
-					const left = layer.align === 'center' ? px(bx) + (px(bw) - w) / 2 : layer.align === 'right' ? px(bx + bw) - w : px(bx);
-					return drawLine(medium, l, ox + left, oy + px(by) + size * 0.86 + i * size * 1.05, size, tracking, w + size, fill);
-				})
-				.join('');
-			parts.push(`<g id="text-${layer.slot}">${svg}</g>`);
+			// Tracking steps are screen sizes; a print inch reads as 96 of them.
+			const unit = dpi / 96;
+			const fit = fitBlock(medium, value, { what: layer.slot, w: px(bw), h: px(bh), size: px(layer.size), floor: Math.max(px(0.2), px(layer.size) * 0.3), leading: 1.05, maxLines: layer.maxLines, k: unit });
+			const x = ox + px(layer.align === 'center' ? bx + bw / 2 : layer.align === 'right' ? bx + bw : bx);
+			parts.push(`<g id="text-${layer.slot}">${drawBlock(layers, layer.slot, medium, fit, x, oy + px(by), layer.align, inkFor(by), groundHex(groundAt(by)), value)}</g>`);
 		}
 	}
 	const cutPath = item.cut ? `<rect id="CutContour" x="${ox}" y="${oy}" width="${px(item.size[0])}" height="${px(item.size[1])}" rx="${px(item.cut.radius)}" fill="none" stroke="#EC008C" stroke-width="${dpi / 72}"/>` : '';
@@ -126,7 +130,7 @@ export function merchSvgs(item: MerchItem, variantId: string, opts: MerchOpts = 
 	].join('');
 	const checker = ground ? '' : `<defs><pattern id="mchk" width="${dpi / 4}" height="${dpi / 4}" patternUnits="userSpaceOnUse"><rect width="${dpi / 4}" height="${dpi / 4}" fill="#DDDDDD"/><rect width="${dpi / 8}" height="${dpi / 8}" fill="#BBBBBB"/><rect x="${dpi / 8}" y="${dpi / 8}" width="${dpi / 8}" height="${dpi / 8}" fill="#BBBBBB"/></pattern></defs><rect width="${W}" height="${H}" fill="url(#mchk)"/>`;
 	const proof = document(W, H, `${title}, proof`, `${checker}${parts.join('')}${guides}${cutPath}`);
-	return { print: printWithCut, raster: print, proof, cut: cutPath ? document(W, H, `${title}, cut`, cutPath) : undefined, width: W, height: H, inches: { width: fullW, height: fullH } };
+	return { print: printWithCut, raster: print, proof, cut: cutPath ? document(W, H, `${title}, cut`, cutPath) : undefined, width: W, height: H, inches: { width: fullW, height: fullH }, layers: layers.list };
 }
 
 /** The logo conventions (merch.json logo): minimum width, inside the safe area, clear space from the trim and from other parts. */

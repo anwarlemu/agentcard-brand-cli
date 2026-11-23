@@ -7,96 +7,112 @@ import { unknownName } from '../lib/names.js';
 import { parseSchema } from '../lib/schema.js';
 import { parseCards, SCENE_GROUNDS, STICKER_MODES, subjectNames, WINDOW_BODIES, type StickerMode } from './compose.js';
 import { imageConfig, type Card, type SceneGround, type WindowBody } from './scene.js';
+import type { Edits } from './words.js';
 
-type Size = { width: number; height: number; label: string; use: string; aliases?: string[] };
+export const SIZES = imageConfig().sizes;
 
-export const SIZES: Record<string, Size> = imageConfig().sizes;
-
-const SCENE_COMMON = ['eyebrow', 'subtext', 'button', 'ground', 'band', 'scan', 'logo', 'stickers', 'subjects', 'seed', 'count'] as const;
+const OBJECTS = ['stickers', 'subjects', 'seed', 'count'] as const;
+const SCENE_COMMON = ['badge', 'body', 'button', 'theme', 'band', 'scan', 'logo', ...OBJECTS] as const;
+const label = (id: keyof ReturnType<typeof imageConfig>['templates']) => imageConfig().templates[id].label;
+const ground = (id: keyof ReturnType<typeof imageConfig>['templates']) => imageConfig().templates[id].ground;
 
 export const TEMPLATES = {
 	hero: {
-		label: imageConfig().templates.hero.label,
-		ground: imageConfig().templates.hero.ground,
+		label: label('hero'),
+		ground: ground('hero') as Ground,
 		needs: ['headline'],
-		optional: [...SCENE_COMMON, 'image', 'toon'],
+		optional: [...SCENE_COMMON, 'image', 'toon', 'number'],
 		summary: 'The editor\'s hero: words in the middle of the blue ground with its scanlines, the lockup at the top left, and the brand\'s toon objects round the words (preset, under, scatter). --image puts your picture in as the object (--toon makes it one).',
 	},
 	window: {
-		label: imageConfig().templates.window.label,
-		ground: imageConfig().templates.window.ground,
+		label: label('window'),
+		ground: ground('window') as Ground,
 		needs: ['headline'],
-		optional: [...SCENE_COMMON, 'window', 'windowBody', 'picture', 'image', 'toon'],
+		optional: ['badge', 'body', 'button', 'theme', 'band', 'scan', 'logo', 'window', 'windowBody', 'picture', 'image', 'toon', 'number', ...OBJECTS],
 		summary: 'The editor\'s window: words beside a sky-barred window on paper (above it on tall sizes). The window holds a toon object (--picture) or your picture (--image).',
 	},
 	cards: {
-		label: imageConfig().templates.cards.label,
-		ground: imageConfig().templates.cards.ground,
+		label: label('cards'),
+		ground: ground('cards') as Ground,
 		needs: ['headline', 'cards'],
-		optional: ['ground', 'band', 'scan', 'logo', 'footer', 'stickers', 'subjects', 'seed', 'count'],
+		optional: ['theme', 'band', 'scan', 'logo', 'footer', 'number', ...OBJECTS],
 		summary: 'The editor\'s numbered cards: a title, up to eight white cards (number, heading, a few lines) and a footer with the lockup and the address.',
 	},
 	headline: {
-		label: 'Headline',
-		ground: 'blue',
+		label: label('headline'),
+		ground: ground('headline') as Ground,
 		needs: ['headline'],
-		optional: ['eyebrow', 'footer', 'ground'],
+		optional: ['badge', 'button', 'footer', 'theme', 'band', 'logo', 'number'],
 		summary: 'Centered headline on the blue ground, lockup at the top left, stepped band along the bottom.',
 	},
 	subtext: {
-		label: 'Headline and subtext',
-		ground: 'paper',
-		needs: ['headline', 'subtext'],
-		optional: ['eyebrow', 'footer', 'ground'],
+		label: label('subtext'),
+		ground: ground('subtext') as Ground,
+		needs: ['headline', 'body'],
+		optional: ['badge', 'button', 'footer', 'theme', 'band', 'logo', 'number'],
 		summary: 'Centered headline with a supporting line on the paper ground, and the stepped band below.',
 	},
 	screenshot: {
-		label: 'Screenshot',
-		ground: 'blue',
+		label: label('screenshot'),
+		ground: ground('screenshot') as Ground,
 		needs: ['headline'],
-		optional: ['subtext', 'image', 'window', 'footer', 'ground'],
-		summary: 'Headline beside or above a window. Pass --image with a PNG or JPEG to fill the window.',
+		oneOf: ['image', 'picture'],
+		optional: ['badge', 'body', 'image', 'picture', 'window', 'windowBody', 'footer', 'theme', 'band', 'logo', 'number'],
+		summary: 'Headline beside or above a window that takes the shape of your screenshot, shown whole. Needs --image (a PNG or JPEG), or --picture for a toon object in its place.',
 	},
 	quote: {
-		label: 'Quote',
-		ground: 'paper',
+		label: label('quote'),
+		ground: ground('quote') as Ground,
 		needs: ['quote'],
-		optional: ['by', 'window', 'footer', 'ground'],
-		notSizes: ['linkedin-banner'],
+		optional: ['by', 'window', 'footer', 'theme', 'band', 'logo', 'number'],
 		summary: 'A quote inside a window on the paper ground, with an optional attribution.',
 	},
 	announcement: {
-		label: 'Announcement',
-		ground: 'split',
+		label: label('announcement'),
+		ground: 'split' as const,
 		needs: ['headline'],
-		optional: ['eyebrow', 'subtext', 'footer'],
-		summary: 'A blue cap with the eyebrow, then the stepped band, then the headline on paper. Ground is fixed.',
+		optional: ['badge', 'body', 'button', 'footer', 'logo', 'number', 'theme'],
+		summary: 'A blue (or ink) cap with the badge, then the stepped band, then the headline on paper. The page under the cap stays paper.',
+	},
+	logo: {
+		label: label('logo'),
+		ground: ground('logo') as Ground,
+		needs: [],
+		optional: ['theme', 'band', 'scan', 'mark'],
+		summary: 'The lockup alone in the middle of a ground (or the mark, with --mark; the profile picture always uses the mark). Takes no copy.',
 	},
 } as const;
 
 export type SizeId = string;
 
+export const IMAGE_FORMATS = ['png', 'svg', 'jpg', 'webp'] as const;
+
 /** Sizes a template is drawn at: every size, less any its layout cannot hold. */
 export function templateSizes(id: TemplateId): string[] {
-	const skip = ((TEMPLATES[id] as { notSizes?: readonly string[] }).notSizes ?? []) as readonly string[];
+	const skip = imageConfig().templates[id].notSizes ?? [];
 	return Object.keys(SIZES).filter((s) => !skip.includes(s));
 }
 export type TemplateId = keyof typeof TEMPLATES;
 export type Ground = SceneGround;
-export const isScene = (id: TemplateId): id is 'hero' | 'window' | 'cards' => id === 'hero' || id === 'window' || id === 'cards';
+
+/** Names that changed, and the names other brands use, for the same fields. */
+export const ALIASES: Record<string, string> = { subtext: 'body', subtitle: 'body', eyebrow: 'badge', kicker: 'badge', ground: 'theme', title: 'headline' };
 
 export type ImageFields = {
 	template: TemplateId;
 	headline?: string;
-	subtext?: string;
-	eyebrow?: string;
+	body?: string;
+	badge?: string;
 	quote?: string;
 	by?: string;
 	image?: string;
 	window?: string;
 	footer: string;
+	footerOptional?: boolean;
+	number?: string;
 	ground?: Ground;
 	button?: string;
+	mark?: boolean;
 	band?: Ground | 'none';
 	scan?: boolean;
 	logo?: boolean;
@@ -110,9 +126,9 @@ export type ImageFields = {
 	cards?: Card[];
 };
 
-export type ImageJob = ImageFields & { size: SizeId; width: number; height: number };
+export type ImageJob = ImageFields & { size: SizeId; width: number; height: number; edits?: Edits; headlineSize?: number };
 
-const LIMITS: Record<string, number> = { headline: 280, subtext: 500, eyebrow: 80, quote: 600, by: 80, footer: 80, window: 48, button: 32 };
+const LIMITS: Record<string, number> = { headline: 280, body: 500, badge: 80, quote: 600, by: 80, footer: 80, window: 48, button: 32, number: 12 };
 
 /** Turn a CLI or JSON value into a single line of copy, keeping intentional line breaks. */
 export function cleanText(value: unknown, field: string): string | undefined {
@@ -131,7 +147,7 @@ export function sizeId(raw: string): SizeId {
 	if (id in SIZES) return id;
 	const alias = Object.entries(SIZES).find(([, s]) => s.aliases?.includes(id));
 	if (alias) return alias[0];
-	throw unknownName('size', id, [...Object.keys(SIZES), 'all']);
+	throw unknownName('size', id, [...Object.keys(SIZES), 'custom', 'all']);
 }
 
 export function parseSizes(value: string | undefined): SizeId[] {
@@ -146,60 +162,67 @@ export function parseSizes(value: string | undefined): SizeId[] {
 	return ids;
 }
 
-export function parseExports(value: string | undefined): ('png' | 'svg')[] {
-	const raw = (value ?? 'png,svg').split(',').map((s) => s.trim().toLowerCase()).filter(Boolean);
-	const out: ('png' | 'svg')[] = [];
-	for (const id of raw) {
-		if (id !== 'png' && id !== 'svg') throw unknownName('export', id, ['png', 'svg']);
-		if (!out.includes(id)) out.push(id);
-	}
-	if (!out.length) throw new Error('Pick an export: png, svg, or both.');
-	return out;
-}
-
 export function safeName(value: string): string {
 	const name = value.trim().toLowerCase().replace(/[^a-z0-9-_]+/g, '-').replace(/^-+|-+$/g, '');
 	if (!name) throw new Error('The file name needs a letter or a number.');
 	return name;
 }
 
-export const IMAGE_FIELDS = ['template', 'headline', 'subtext', 'eyebrow', 'quote', 'by', 'image', 'window', 'footer', 'ground', 'noFooter', 'size', 'sizes', 'button', 'band', 'scan', 'logo', 'windowBody', 'picture', 'toon', 'stickers', 'subjects', 'seed', 'count', 'cards'] as const;
+export const IMAGE_FIELDS = ['template', 'headline', 'body', 'badge', 'quote', 'by', 'image', 'window', 'footer', 'theme', 'noFooter', 'size', 'sizes', 'width', 'height', 'button', 'band', 'scan', 'logo', 'mark', 'windowBody', 'picture', 'toon', 'stickers', 'subjects', 'seed', 'count', 'cards', 'number', 'sample'] as const;
 
+const text = z.string().optional();
+const count = z.union([z.number(), z.string()]).optional();
 export const imageInputSchema = z
 	.object({
-		template: z.string().optional(),
-		headline: z.string().optional(),
-		subtext: z.string().optional(),
-		eyebrow: z.string().optional(),
-		quote: z.string().optional(),
-		by: z.string().optional(),
-		image: z.string().optional(),
-		window: z.string().optional(),
-		footer: z.string().optional(),
-		ground: z.string().optional(),
+		template: text,
+		headline: text,
+		body: text,
+		badge: text,
+		quote: text,
+		by: text,
+		image: text,
+		window: text,
+		footer: text,
+		theme: text,
 		noFooter: z.boolean().optional(),
-		size: z.string().optional(),
-		sizes: z.string().optional(),
-		button: z.string().optional(),
-		band: z.string().optional(),
+		size: text,
+		sizes: text,
+		width: count,
+		height: count,
+		button: text,
+		band: text,
 		scan: z.boolean().optional(),
 		logo: z.boolean().optional(),
-		windowBody: z.string().optional(),
-		picture: z.string().optional(),
+		mark: z.boolean().optional(),
+		windowBody: text,
+		picture: text,
 		toon: z.boolean().optional(),
-		stickers: z.string().optional(),
+		stickers: text,
 		subjects: z.union([z.string(), z.array(z.string())]).optional(),
-		seed: z.union([z.number(), z.string()]).optional(),
-		count: z.union([z.number(), z.string()]).optional(),
+		seed: count,
+		count,
 		cards: z.union([z.string(), z.array(z.union([z.string(), z.object({ title: z.string(), body: z.string().optional() }).strict()]))]).optional(),
+		number: text,
+		sample: z.boolean().optional(),
 	})
 	.strict();
 
 export type RawImageInput = z.infer<typeof imageInputSchema>;
 
-export function assertImageInput(value: unknown, label = 'image'): RawImageInput {
-	if (!value || typeof value !== 'object' || Array.isArray(value)) throw new Error(`${label} input must be a JSON object.`);
-	return parseSchema(imageInputSchema, value, label, IMAGE_FIELDS);
+/** Other names for a field to its own name. A field given under two names is an error. */
+export function canonical(value: Record<string, unknown>): Record<string, unknown> {
+	const out: Record<string, unknown> = {};
+	for (const [key, v] of Object.entries(value)) {
+		const name = ALIASES[key] ?? key;
+		if (name in out) throw new Error(`${key} and ${name} are the same field. Pass one of them.`);
+		out[name] = v;
+	}
+	return out;
+}
+
+export function assertImageInput(value: unknown, what = 'image'): RawImageInput {
+	if (!value || typeof value !== 'object' || Array.isArray(value)) throw new Error(`${what} input must be a JSON object.`);
+	return parseSchema(imageInputSchema, canonical(value as Record<string, unknown>), what, IMAGE_FIELDS);
 }
 
 function oneOf<T extends string>(what: string, value: string | undefined, pool: readonly T[]): T | undefined {
@@ -216,6 +239,8 @@ function wholeNumber(value: unknown, field: string): number | undefined {
 	return n;
 }
 
+const FLAG: Record<string, string> = { windowBody: 'window-body' };
+
 /** Check one set of fields. Size is applied by the caller, once per requested size. */
 export function resolveFields(raw: RawImageInput, defaults: { footer: string }): ImageFields {
 	const ids = Object.keys(TEMPLATES);
@@ -224,27 +249,37 @@ export function resolveFields(raw: RawImageInput, defaults: { footer: string }):
 	if (!(template in TEMPLATES)) throw unknownName('template', template, ids);
 	const id = template as TemplateId;
 	const spec = TEMPLATES[id];
-	const scene = isScene(id);
-	const groundRaw = cleanText(raw.ground, 'ground')?.toLowerCase();
-	const grounds = scene ? SCENE_GROUNDS : (['blue', 'paper', 'white', 'ink'] as const);
-	const ground = oneOf('ground', groundRaw, grounds);
-	if (id === 'announcement' && groundRaw) throw new Error('The announcement template keeps its blue cap and paper body. Leave ground off.');
+	const config = imageConfig();
+	if (raw.sample) {
+		// Sample copy fills only what was left empty, and only when asked for.
+		const given = new Set(Object.keys(raw).filter((k) => raw[k as keyof RawImageInput] !== undefined));
+		const sample = config.samples[id] as Record<string, unknown>;
+		raw = { ...Object.fromEntries(Object.entries(sample).filter(([k]) => !given.has(k) && !(k === 'picture' && given.has('image')))), ...raw } as RawImageInput;
+	}
+	const themeRaw = cleanText(raw.theme, 'theme')?.toLowerCase();
+	const themes = id === 'announcement' ? config.templates.announcement.cap! : SCENE_GROUNDS;
+	const theme = oneOf(id === 'announcement' ? 'theme for the announcement cap' : 'theme', themeRaw, themes);
 	const subjects = raw.subjects === undefined ? undefined : (Array.isArray(raw.subjects) ? raw.subjects : raw.subjects.split(',')).map((s) => s.trim()).filter(Boolean);
+	const allowed = new Set<string>([...spec.needs, ...spec.optional]);
+	const takesFooter = allowed.has('footer');
 	const fields: ImageFields = {
 		template: id,
 		headline: cleanText(raw.headline, 'headline'),
-		subtext: cleanText(raw.subtext, 'subtext'),
-		eyebrow: cleanText(raw.eyebrow, 'eyebrow'),
+		body: cleanText(raw.body, 'body'),
+		badge: cleanText(raw.badge, 'badge'),
 		quote: cleanText(raw.quote, 'quote'),
 		by: cleanText(raw.by, 'by'),
 		image: typeof raw.image === 'string' && raw.image.trim() ? raw.image.trim() : undefined,
 		window: cleanText(raw.window, 'window'),
-		footer: raw.noFooter ? '' : cleanText(raw.footer, 'footer') ?? defaults.footer,
-		ground: ground ?? (spec.ground === 'split' ? undefined : (spec.ground as Ground)),
+		footer: raw.noFooter || !takesFooter ? '' : (cleanText(raw.footer, 'footer') ?? defaults.footer),
+		footerOptional: cleanText(raw.footer, 'footer') === undefined,
+		number: cleanText(raw.number, 'number'),
+		ground: (theme ?? (spec.ground === 'split' ? config.templates.announcement.ground : spec.ground)) as Ground,
 		button: cleanText(raw.button, 'button'),
 		band: oneOf('band', raw.band, [...SCENE_GROUNDS, 'none'] as const),
 		scan: raw.scan,
 		logo: raw.logo,
+		mark: raw.mark,
 		windowBody: oneOf('window body', raw.windowBody, WINDOW_BODIES),
 		picture: raw.picture === undefined ? undefined : raw.picture.trim() === 'none' ? 'none' : oneOf('picture', raw.picture, subjectNames()),
 		toon: raw.toon,
@@ -254,34 +289,80 @@ export function resolveFields(raw: RawImageInput, defaults: { footer: string }):
 		count: wholeNumber(raw.count, 'count'),
 		cards: raw.cards === undefined ? undefined : parseCards(raw.cards),
 	};
-	if (fields.image && !(spec.optional as readonly string[]).includes('image')) throw new Error(`Pass --image only with the ${Object.entries(TEMPLATES).filter(([, t]) => (t.optional as readonly string[]).includes('image')).map(([k]) => k).join(', ')} templates.`);
-	const allowed = new Set<string>([...spec.needs, ...spec.optional]);
-	const given: [keyof ImageFields, string][] = [['headline', 'headline'], ['subtext', 'subtext'], ['eyebrow', 'eyebrow'], ['quote', 'quote'], ['by', 'by'], ['window', 'window'], ['button', 'button'], ['band', 'band'], ['scan', 'scan'], ['logo', 'logo'], ['windowBody', 'window-body'], ['picture', 'picture'], ['toon', 'toon'], ['stickers', 'stickers'], ['subjects', 'subjects'], ['seed', 'seed'], ['count', 'count'], ['cards', 'cards']];
-	for (const [key, flag] of given) {
-		if (fields[key] !== undefined && !allowed.has(key)) throw new Error(`The ${id} template does not take --${flag}.`);
+	for (const key of ['badge', 'window', 'footer', 'by', 'button', 'number'] as const) if (fields[key]?.includes('\n')) throw new Error(`${key} is one line. Take the line break out.`);
+	if (!takesFooter && cleanText(raw.footer, 'footer')) throw new Error(`The ${id} template does not take --footer.`);
+	if (fields.image && !allowed.has('image')) throw new Error(`The ${id} template does not take --image. Use it with ${Object.entries(TEMPLATES).filter(([, t]) => (t.optional as readonly string[]).includes('image')).map(([k]) => k).join(', ')}, the screenshot template among them.`);
+	for (const key of Object.keys(fields) as (keyof ImageFields)[]) {
+		if (key === 'template' || key === 'footer' || key === 'footerOptional' || key === 'ground' || fields[key] === undefined) continue;
+		if (!allowed.has(key)) throw new Error(`The ${id} template does not take --${FLAG[key] ?? key}.`);
 	}
 	if (fields.toon && !fields.image) throw new Error('--toon turns your --image into a toon object. Pass --image too.');
-	const missing = spec.needs.filter((key) => {
+	if (fields.image && fields.picture) throw new Error('--image and --picture both fill the window. Pass one of them.');
+	if (fields.seed !== undefined || fields.count !== undefined) {
+		// A seed or a count asks for a scatter.
+		fields.stickers ??= 'scatter';
+		if (fields.stickers !== 'scatter') throw new Error('--seed and --count arrange a scatter. Use them with --stickers scatter.');
+	}
+	const missing = (spec.needs as readonly string[]).filter((key) => {
 		const v = fields[key as keyof ImageFields];
 		return Array.isArray(v) ? !v.length : !v;
 	});
 	if (missing.length) throw new Error(`The ${id} template needs ${missing.map((key) => `--${key}`).join(' and ')}.`);
+	const either = (spec as { oneOf?: readonly string[] }).oneOf;
+	if (either && !either.some((key) => fields[key as keyof ImageFields] && fields[key as keyof ImageFields] !== 'none')) throw new Error(`The ${id} template needs ${either.map((key) => `--${key}`).join(' or ')}: an empty window is not drawn.`);
 	return fields;
+}
+
+export type SizeChoice = { id: SizeId; width: number; height: number };
+
+/** The sizes to draw: ids (with custom as --width and --height), each checked against what the template can hold. */
+export function chooseSizes(template: TemplateId, value: string | undefined, width?: unknown, height?: unknown): SizeChoice[] {
+	const w = wholeNumber(width, 'width');
+	const h = wholeNumber(height, 'height');
+	const requested = value?.trim().toLowerCase() || (w || h ? 'custom' : 'og');
+	const allowed = templateSizes(template);
+	if (requested === 'all') return allowed.map((id) => ({ id, width: SIZES[id]!.width, height: SIZES[id]!.height }));
+	const out: SizeChoice[] = [];
+	for (const raw of requested.split(',').map((s) => s.trim()).filter(Boolean)) {
+		const literal = /^(\d{2,5})x(\d{2,5})$/.exec(raw);
+		if (raw === 'custom' || literal) {
+			const cw = literal ? Number(literal[1]) : w;
+			const ch = literal ? Number(literal[2]) : h;
+			if (!cw || !ch) throw new Error('A custom size needs --width and --height.');
+			const { min, max } = imageConfig().custom;
+			if (cw < min || ch < min || cw > max || ch > max) throw new Error(`Width and height must be ${min} to ${max} pixels.`);
+			if (cw / ch > 8 || ch / cw > 4) throw new Error('That shape is too thin to lay out. Keep it between 8:1 and 1:4.');
+			out.push({ id: literal ? raw : 'custom', width: cw, height: ch });
+			continue;
+		}
+		const id = sizeId(raw);
+		if (!allowed.includes(id)) throw new Error(`The ${template} template is not drawn at ${id}. Use ${allowed.join(', ')}.`);
+		if (!out.some((s) => s.id === id)) out.push({ id, width: SIZES[id]!.width, height: SIZES[id]!.height });
+	}
+	if (!out.length) throw new Error(`Pick a size: ${Object.keys(SIZES).join(', ')}, or custom with --width and --height.`);
+	if ((w || h) && !out.some((s) => s.id === 'custom')) throw new Error('--width and --height are for --size custom.');
+	return out;
 }
 
 export function catalog() {
 	const cfg = imageConfig();
 	return {
 		ok: true,
-		sizes: Object.entries(SIZES).map(([id, size]) => ({ id, ...size })),
-		templates: Object.entries(TEMPLATES).map(([id, template]) => ({ id, ...template, sizes: templateSizes(id as TemplateId) })),
-		exports: ['png', 'svg'],
+		sizes: [...Object.entries(SIZES).map(([id, size]) => ({ id, ...size })), { id: 'custom', label: 'Custom', use: `--width and --height, ${cfg.custom.min} to ${cfg.custom.max} pixels (or --size 1600x400)` }],
+		templates: Object.entries(TEMPLATES).map(([id, template]) => ({ id, ...template, sizes: templateSizes(id as TemplateId), themes: id === 'announcement' ? cfg.templates.announcement.cap : [...SCENE_GROUNDS] })),
+		exports: [...IMAGE_FORMATS],
+		formats: [...IMAGE_FORMATS],
 		fields: IMAGE_FIELDS,
+		aliases: ALIASES,
+		themes: [...SCENE_GROUNDS],
 		grounds: [...SCENE_GROUNDS],
 		bands: [...SCENE_GROUNDS, 'none'],
 		windowBodies: [...WINDOW_BODIES],
 		stickerModes: [...STICKER_MODES],
 		subjects: subjectNames(),
+		copy: 'Only the copy you pass is drawn (the lockup and the brand address may stay: --no-logo, --no-footer). --sample fills sample copy on purpose.',
+		logo: cfg.scene.logoRule,
+		smallText: cfg.scene.small.note,
 		source: cfg.source,
 		notes: cfg.notes,
 		type: { note: typeNote() },

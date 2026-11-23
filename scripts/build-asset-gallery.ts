@@ -8,12 +8,12 @@ import { join } from 'node:path';
 import { sampleDeck, slideSvg } from '../src/deck/slides.js';
 import { parseCards } from '../src/image/compose.js';
 import { renderSvg } from '../src/image/layout.js';
-import { TEMPLATES } from '../src/image/catalog.js';
+import { assertImageInput, resolveFields, SIZES, type TemplateId } from '../src/image/catalog.js';
 import { rasterizeRgba } from '../src/image/render.js';
 import { illustrateConfig } from '../src/image/scene.js';
 import { buildIllustration, illustrationSvg } from '../src/illustrate/render.js';
 import { brand, cli } from '../src/lib/brand.js';
-import { merchConfig, merchSvgs } from '../src/merch/render.js';
+import { merchConfig, merchSlots, merchSvgs } from '../src/merch/render.js';
 
 const root = new URL('..', import.meta.url).pathname;
 const out = join(root, 'apps', 'www', 'public', 'assets');
@@ -38,23 +38,25 @@ async function save(group: string, file: string, svg: string, width: number, hei
 	entries.push({ file: `/assets/${file}`, title, command, width, height, group });
 }
 
-const SIZES = { og: [1200, 630], square: [1080, 1080], portrait: [1080, 1350], landscape: [1200, 675], story: [1080, 1920], 'x-banner': [1500, 500], 'linkedin-banner': [1584, 396] } as const;
 const cards = parseCards('Save it once, not in the chat\nYour user adds their card a single time. It is stored encrypted, never pasted into a conversation.\n\nThe agent never sees the number\nIt asks to buy. The card pays at checkout.\n\nEvery purchase is approved\nWith a passkey, Face ID or their voice, tied to that exact cart.\n\nIt is still their card\nPoints land as usual. Disputes go through their bank.');
-const images: [string, keyof typeof SIZES, Record<string, unknown>, string][] = [
+const images: [TemplateId, string, Record<string, unknown>, string][] = [
 	['hero', 'og', { headline: 'Let agents buy anything online' }, '--template hero --headline "Let agents buy anything online"'],
-	['window', 'og', { eyebrow: 'Issuing', headline: 'Create one-time and multi-use cards' }, '--template window --eyebrow Issuing --headline "Create one-time and multi-use cards"'],
+	['window', 'og', { badge: 'Issuing', headline: 'Create one-time and multi-use cards' }, '--template window --badge Issuing --headline "Create one-time and multi-use cards"'],
 	['cards', 'landscape', { headline: 'How to safely share your users’ cards with an agent', cards }, '--template cards --input cards.json --size landscape'],
-	['hero', 'story', { eyebrow: 'New', headline: 'Purchase Agent', subtext: 'Integrate our agent into yours and enable purchases from the stores people already use.', stickers: 'under' }, '--template hero --eyebrow New --headline "Purchase Agent" --subtext "..." --stickers under --size story'],
-	['window', 'square', { eyebrow: 'Vault', headline: 'Store customers’ cards and make purchases with agents safely', picture: 'wallet', windowBody: 'sky', window: 'vault.product' }, '--template window --eyebrow Vault --headline "..." --picture wallet --window-body sky --window vault.product --size square'],
+	['hero', 'story', { badge: 'New', headline: 'Purchase Agent', body: 'Integrate our agent into yours and enable purchases from the stores people already use.', stickers: 'under' }, '--template hero --badge New --headline "Purchase Agent" --body "..." --stickers under --size story'],
+	['window', 'square', { badge: 'Vault', headline: 'Store customers’ cards and make purchases with agents safely', picture: 'wallet', windowBody: 'sky', window: 'vault.product' }, '--template window --badge Vault --headline "..." --picture wallet --window-body sky --window vault.product --size square'],
 	['hero', 'x-banner', { headline: 'Let agents buy anything online' }, '--template hero --headline "..." --size x-banner'],
 	['hero', 'linkedin-banner', { headline: 'Let agents buy anything online', ground: 'ink' }, '--template hero --headline "..." --ground ink --size linkedin-banner'],
 	['hero', 'portrait', { headline: 'Every purchase is approved', ground: 'ink', stickers: 'scatter', seed: 8, count: 6 }, '--template hero --headline "..." --ground ink --stickers scatter --seed 8 --count 6 --size portrait'],
-	['subtext', 'og', { headline: 'Let agents buy anything online', subtext: 'Cards your agent can use, with every purchase approved.' }, '--template subtext --headline "..." --subtext "..."'],
+	['subtext', 'og', { headline: 'Let agents buy anything online', body: 'Cards your agent can use, with every purchase approved.' }, '--template subtext --headline "..." --body "..."'],
 	['quote', 'square', { quote: 'Our agents finally buy what people ask for, and every purchase is approved.', by: 'Head of product, Acme' }, '--template quote --quote "..." --by "Head of product, Acme" --size square'],
 ];
 for (const [i, [template, size, fields, flags]] of images.entries()) {
-	const [width, height] = SIZES[size];
-	await save('image', `image-${i + 1}-${template}-${size}.jpg`, renderSvg({ template: template as never, size, width, height, footer: host, ground: (TEMPLATES as Record<string, { ground: string }>)[template]!.ground === 'split' ? undefined : (TEMPLATES as Record<string, { ground: string }>)[template]!.ground, ...fields } as never), width, height, `${template}, ${size} (${width} by ${height})`, `${cli()} image render ${flags}${size === 'og' || flags.includes('--size') ? '' : ` --size ${size}`}`);
+	const { width, height } = SIZES[size]!;
+	const { ground, ...rest } = fields as { ground?: string };
+	const resolved = resolveFields(assertImageInput({ template, ...rest, ...(ground ? { theme: ground } : {}) }), { footer: host });
+	const command = `${cli()} image ${flags.replace('--template ', '').replace('--ground', '--theme')}`;
+	await save('image', `image-${i + 1}-${template}-${size}.jpg`, renderSvg({ ...resolved, size, width, height }), width, height, `${template}, ${size} (${width} by ${height})`, `${command}${size === 'og' || flags.includes('--size') ? '' : ` --size ${size}`}`);
 }
 
 for (const [i, slide] of sampleDeck().entries()) await save('deck', `deck-${String(i + 1).padStart(2, '0')}-${slide.type}.jpg`, slideSvg(slide, i), 1920, 1080, `${slide.type}`, `${cli()} deck --sample`, 640);
@@ -78,13 +80,13 @@ for (const id of Object.keys(illustrateConfig().subjects)) {
 
 for (const item of merchConfig().items) {
 	const variant = item.variants[0]!;
-	const svgs = merchSvgs(item, variant);
-	await save('merch', `merch-${item.id}-${variant}.jpg`, svgs.proof, svgs.width, svgs.height, `${item.name} (${item.size[0]} by ${item.size[1]} in, ${variant})`, `${cli()} merch ${item.id} --variant ${variant}`, 600);
+	const svgs = merchSvgs(item, variant, { sample: true });
+	await save('merch', `merch-${item.id}-${variant}.jpg`, svgs.proof, svgs.width, svgs.height, `${item.name} (${item.size[0]} by ${item.size[1]} in, ${variant})`, `${cli()} merch ${item.id} --variant ${variant}${merchSlots(item).includes('headline') ? ' --headline "..."' : ''}`, 600);
 }
 
 // One clip, rendered through the CLI itself so the gallery shows exactly what an app gets.
-execFileSync(process.execPath, [join(root, 'bin.js'), 'video', 'render', '--template', 'hero', '--headline', 'Let agents buy anything online', '--size', 'og', '--seconds', '4', '--export', 'mp4', '--out', out, '--name', 'clip'], { stdio: 'inherit' });
-entries.push({ file: '/assets/clip-og.mp4', title: 'hero clip, og', command: `${cli()} video render --template hero --headline "Let agents buy anything online" --size og --export mp4,webm`, width: 1200, height: 630, group: 'video' });
+execFileSync(process.execPath, [join(root, 'bin.js'), 'video', 'hero', '--headline', 'Let agents buy anything online', '--size', 'og', '--seconds', '4', '--format', 'mp4', '--out', out, '--name', 'clip'], { stdio: 'inherit' });
+entries.push({ file: '/assets/clip-og.mp4', title: 'hero clip, og', command: `${cli()} video hero --headline "Let agents buy anything online" --size og --format mp4,webm`, width: 1200, height: 630, group: 'video' });
 
 writeFileSync(join(out, 'gallery.json'), `${JSON.stringify(entries, null, '\t')}\n`);
 console.log(`gallery: ${entries.length} entries in apps/www/public/assets`);

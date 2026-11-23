@@ -1,13 +1,15 @@
-// From an image job (copy, size and choices) to a scene for the hero, window and cards layouts: the editor's defaults
-// per template and size, the objects arranged (preset, under, scatter or none), and the user's picture placed.
+// From an image job (copy, size and choices) to a scene: the layout's defaults per template and size, the objects to
+// arrange (preset, under, scatter or none), and the user's picture read and scaled to what is drawn.
 
-import { resolve } from 'node:path';
+import { drawImage } from '../assets/raster.js';
 import { readPicture } from '../assets/picture.js';
 import { toonify } from '../assets/toon.js';
 import { unknownName } from '../lib/names.js';
-import { bandOf, drawScene, illustrateConfig, imageConfig, layoutFor, logoRect, pictureArt, scatter, subjectArt, underneath, wordsRect, type Art, type Card, type Scene, type SceneGround, type SceneTemplate, type Sticker, type WindowBody } from './scene.js';
+import { resolve } from 'node:path';
+import { illustrateConfig, imageConfig, layoutOf, layoutFor, pictureArt, subjectArt, type Art, type Card, type Scene, type SceneGround, type SceneTemplate, type WindowBody } from './scene.js';
+import type { Edits } from './words.js';
 
-export const SCENE_TEMPLATES = ['hero', 'window', 'cards'] as const;
+export const SCENE_TEMPLATES = ['hero', 'window', 'cards', 'headline', 'subtext', 'screenshot', 'quote', 'announcement', 'logo'] as const;
 export const STICKER_MODES = ['preset', 'under', 'scatter', 'none'] as const;
 export type StickerMode = (typeof STICKER_MODES)[number];
 export const WINDOW_BODIES = ['blue', 'sky', 'white'] as const;
@@ -17,14 +19,18 @@ export type SceneFields = {
 	template: SceneTemplate;
 	width: number;
 	height: number;
+	size?: string;
 	ground?: SceneGround;
 	band?: SceneGround | 'none';
 	scan?: boolean;
 	logo?: boolean;
-	eyebrow?: string;
+	mark?: boolean;
+	badge?: string;
 	headline?: string;
-	subtext?: string;
+	body?: string;
 	button?: string;
+	quote?: string;
+	by?: string;
 	window?: string;
 	windowBody?: WindowBody;
 	picture?: string;
@@ -36,6 +42,11 @@ export type SceneFields = {
 	count?: number;
 	cards?: Card[];
 	footer?: string;
+	footerOptional?: boolean;
+	number?: string;
+	edits?: Edits;
+	/** A ceiling for the headline, so a carousel's slides share one size. */
+	headlineSize?: number;
 };
 
 export function subjectNames() {
@@ -73,64 +84,90 @@ export function parseCards(value: unknown): Card[] {
 		});
 }
 
+/** The user's picture, no larger than twice what any layout draws, so a huge photo does not make a huge file. */
 function userArt(path: string, toon: boolean): Art {
 	const pic = readPicture(resolve(path), 'image');
-	return toon ? pictureArt(toonify(pic), 'toon') : pictureArt(pic, 'image');
+	if (toon) return pictureArt(toonify(pic), 'toon');
+	const long = Math.max(pic.width, pic.height);
+	const max = 2400;
+	if (long <= max) return pictureArt(pic, 'image');
+	const w = Math.max(1, Math.round((pic.width * max) / long));
+	const h = Math.max(1, Math.round((pic.height * max) / long));
+	return pictureArt(drawImage(pic, w, h, 0, 0, w, h), 'image');
 }
 
-/** The scene for a job, with the editor's opening choices filled in. */
+/** The scene for a job, with the layout's opening choices filled in. Only copy that was passed is drawn. */
 export function buildScene(f: SceneFields): Scene {
 	const cfg = imageConfig();
 	const t = cfg.templates[f.template];
-	const lay = layoutFor(f.template, f.width, f.height);
+	const lay = layoutFor(f.template, f.width, f.height, f.size);
 	const maxCards = t.cards?.maxCards ?? 8;
 	if (f.cards && f.cards.length > maxCards) throw new Error(`Use at most ${maxCards} cards.`);
+	const ground = f.ground ?? t.ground;
+	const bandTo = f.band ?? t.band;
 	const scene: Scene = {
 		template: f.template,
 		width: f.width,
 		height: f.height,
-		ground: f.ground ?? t.ground,
+		size: f.size,
+		ground,
 		scan: f.scan ?? t.scan,
-		band: f.band ?? t.band,
+		band: bandTo === 'contrast' ? cfg.bandContrast[ground] : bandTo,
 		logo: f.logo ?? true,
-		eyebrow: f.eyebrow ?? '',
+		mark: f.mark,
+		badge: f.badge ?? '',
 		headline: f.headline ?? '',
-		body: f.subtext ?? '',
+		body: f.body ?? '',
 		button: f.button ?? '',
+		quote: f.quote ?? '',
+		by: f.by ?? '',
 		...lay,
-		window: f.window ?? t.window ?? 'screen.preview',
+		...(f.headlineSize ? { textSize: Math.min(lay.textSize, f.headlineSize) } : {}),
+		window: f.window ?? '',
 		windowBody: f.windowBody ?? t.windowBody ?? 'blue',
 		picture: null,
+		fill: false,
+		objects: { mode: 'none', targets: [], names: [], count: 0, seed: 0 },
 		stickers: [],
 		cards: f.cards ?? [],
 		footer: f.footer ?? '',
+		footerOptional: f.footerOptional ?? false,
+		number: f.number ?? '',
+		edits: f.edits ?? {},
+		notes: [],
 	};
-	if (f.template === 'window') {
-		if (f.image) scene.picture = userArt(f.image, Boolean(f.toon));
-		else if (f.picture !== 'none') scene.picture = subjectArt(checkSubject(f.picture ?? t.picture ?? subjectNames()[0]!));
+	if (f.template === 'window' || f.template === 'screenshot') {
+		if (f.image) {
+			scene.picture = userArt(f.image, Boolean(f.toon));
+			scene.fill = !f.toon;
+		} else if (f.picture !== 'none') {
+			const subject = f.picture ?? t.picture;
+			if (subject) scene.picture = subjectArt(checkSubject(subject));
+		}
+		if (scene.fill && !f.windowBody) scene.windowBody = 'white';
+		else if (f.template === 'screenshot' && !scene.fill && !f.windowBody) scene.windowBody = 'sky';
 	}
-	const mode: StickerMode = f.stickers ?? (f.template === 'hero' ? (f.image ? 'under' : (t.stickers as StickerMode) ?? 'preset') : 'none');
+	const mode: StickerMode = f.stickers ?? (f.template === 'hero' ? (f.image ? 'under' : ((t.stickers as StickerMode) ?? 'preset')) : 'none');
 	const names = f.subjects?.length ? f.subjects.map(checkSubject) : undefined;
 	if (mode === 'preset') {
 		const list = cfg.stickers.preset.filter((p) => !names || names.includes(p.subject));
-		if (!list.length) throw new Error(`None of ${names!.join(', ')} is in the preset. Use --stickers scatter to place them.`);
-		scene.stickers = list.map((p) => ({ art: subjectArt(p.subject), x: p.x, y: p.y, size: p.size, rotate: p.rotate }));
+		const missing = names?.filter((n) => !cfg.stickers.preset.some((p) => p.subject === n)) ?? [];
+		if (missing.length) throw new Error(`${missing.join(', ')} ${missing.length === 1 ? 'is' : 'are'} not in the preset. Use --stickers scatter to place ${missing.length === 1 ? 'it' : 'them'}.`);
+		scene.objects = { mode, targets: list.map((p) => ({ art: subjectArt(p.subject), x: p.x, y: p.y, size: p.size, rotate: p.rotate })), names: list.map((p) => p.subject), count: list.length, seed: 0 };
 	} else if (mode === 'under') {
-		const under = cfg.stickers.under;
-		const art = f.image && f.template !== 'window' ? userArt(f.image, Boolean(f.toon)) : subjectArt(names?.[0] ?? under.subject);
-		if (f.template === 'hero') scene.textY = under.textY;
-		const text = f.template === 'hero' ? wordsRect(scene) : { x: 0, y: 0, w: f.width, h: f.height * 0.4 };
-		scene.stickers = [underneath(scene, text, art, under.rotate, under.maxSize) satisfies Sticker];
+		if (f.template !== 'hero') throw new Error('The under arrangement is for the hero. Use scatter or preset.');
+		if (names && names.length > 1) throw new Error('The under arrangement draws one object. Name one subject, or use scatter.');
+		const art = f.image ? userArt(f.image, Boolean(f.toon)) : subjectArt(names?.[0] ?? cfg.stickers.under.subject);
+		scene.objects = { mode, targets: [], names: [art.name], count: 1, seed: 0, under: { art, rotate: cfg.stickers.under.rotate } };
 	} else if (mode === 'scatter') {
 		const sc = cfg.stickers.scatter;
-		const count = f.count ?? sc.count;
+		const count = f.count ?? (names ? Math.min(names.length, sc.max) : sc.count);
 		if (!Number.isInteger(count) || count < 1 || count > sc.max) throw new Error(`count must be a whole number from 1 to ${sc.max}.`);
-		const seed = f.seed ?? sc.seed;
-		// Keep clear of everything already drawn: the words, the logo, the window or the cards.
-		const drawn = drawScene({ ...scene, stickers: [] });
-		const keep = [drawn.text, drawn.logo ?? logoRect(scene), drawn.window, ...drawn.keep].filter((r): r is NonNullable<typeof r> => Boolean(r));
-		const room = f.height - bandOf(scene).h;
-		scene.stickers = scatter(f.width, f.height, room, keep, count, seed, names ?? subjectNames()).map((p) => ({ art: subjectArt(p.subject), x: p.x, y: p.y, size: p.size, rotate: p.rotate }));
+		scene.objects = { mode, targets: [], names: names ?? subjectNames(), count, seed: f.seed ?? sc.seed };
 	}
+	const L = layoutOf(scene);
+	// Objects a person named by name are asked for: leaving one out is an error, not a note.
+	if (names && L.notes.some((n) => n.startsWith('Left out'))) throw new Error(`${L.notes.find((n) => n.startsWith('Left out'))} Name fewer subjects, shorten the words or pick a larger size.`);
+	scene.stickers = L.stickers;
 	return scene;
 }

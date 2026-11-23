@@ -5,10 +5,10 @@ import { review, snapshot } from './commands/review.js';
 import { run } from './commands/run.js';
 import { guide } from './commands/guide.js';
 import { workflow } from './commands/workflow.js';
-import { imageList, imageRender } from './commands/image.js';
+import { registerImage } from './commands/image.js';
 import { componentEmit, componentInspect, componentList } from './commands/component.js';
 import { brandCommand, brandFonts, brandLogos, brandTokens, brandVoice, manifestCommand, principlesCommand } from './commands/system.js';
-import { videoList, videoRender } from './commands/video.js';
+import { registerVideo } from './commands/video.js';
 import { registerIllustrate } from './commands/illustrate.js';
 import { registerDeck } from './commands/deck.js';
 import { registerMerch } from './commands/merch.js';
@@ -69,83 +69,9 @@ program.command('look [target]').description('The brand styling (CSS, Tailwind, 
 program.command('check [files...]').description('Check that every style value is a brand token (used by hooks, pre-commit and CI)').option('--fix', 'replace exact matches with their token').option('--changed', 'only files changed in git').option('--json', 'JSON output').action((files, _opts, command) => check(files ?? [], command.optsWithGlobals()));
 program.command('tokens [term]').description('Find a brand token by name or value').option('--json', 'JSON output').action((term, _opts, command) => tokensCommand(term, command.optsWithGlobals()));
 
-const image = program.command('image').description('Render on-brand Open Graph and social images from content');
-image.action(() => image.help());
-image.command('list').description('List sizes, templates and the fields each template takes').option('--json', 'JSON output').action((_opts, command) => imageList(command.optsWithGlobals()));
-image
-	.command('render')
-	.description('Write PNG and SVG images for one template')
-	.option('-t, --template <id>', 'hero, window, cards, headline, subtext, screenshot, quote or announcement')
-	.option('-s, --size <sizes>', 'og, square, portrait, landscape, story, x-banner, linkedin-banner, or all (comma-separated)')
-	.option('--headline <text>', 'main line (the title on cards)')
-	.option('--subtext <text>', 'supporting line')
-	.option('--eyebrow <text>', 'short label above the headline')
-	.option('--button <text>', 'hero and window: a key under the words')
-	.option('--quote <text>', 'quote text, for the quote template')
-	.option('--by <text>', 'who said the quote')
-	.option('--cards <text>', 'cards: blank-line-separated cards, heading on the first line')
-	.option('--image <file>', 'PNG or JPEG: the screenshot or window picture, or the hero object')
-	.option('--toon', 'make --image a toon object (cut out, plastic, lit, with thickness)')
-	.option('--picture <subject>', 'window: the toon object in the window, or none')
-	.option('--window <name>', 'window bar label, such as issuing.product')
-	.option('--window-body <body>', 'window: blue, sky or white')
-	.option('--stickers <mode>', 'preset, under, scatter or none')
-	.option('--subjects <names>', 'toon objects to use, comma-separated')
-	.option('--seed <n>', 'scatter: the arrangement (same seed, same picture)')
-	.option('--count <n>', 'scatter: how many objects, 1 to 14')
-	.option('--ground <ground>', 'blue, paper, white or ink')
-	.option('--band <ground>', 'stepped band at the bottom toward a ground, or none')
-	.option('--no-scan', 'leave the scanlines off the blue ground')
-	.option('--no-logo', 'leave the lockup off')
-	.option('--footer <text>', 'small line; default is the brand site host')
-	.option('--no-footer', 'leave the footer line off')
-	.option('-o, --out <dir>', 'directory to write', 'images')
-	.option('-n, --name <name>', 'file name prefix; default is the template')
-	.option('--export <formats>', 'png, svg, or png,svg')
-	.option('-i, --input <file>', 'JSON object of the same fields; flags override it; - reads stdin')
-	.option('--dry-run', 'list the files and write nothing')
-	.option('--json', 'JSON output')
-	.addHelpText('after', '\nExamples:\n  image render --template hero --headline "Let agents buy anything online" --size all\n  image render --template window --eyebrow Issuing --headline "..." --picture card\n  image render --template cards --input cards.json --size landscape\n  image render --template hero --stickers scatter --seed 4 --headline "..."\n  image render --template hero --image ./photo.jpg --toon --headline "..."\n  image render --template screenshot --image ./screen.png --headline "..."\n')
-	.action((_opts, command) => imageRender(command.optsWithGlobals()));
+registerImage(program);
 
-const video = program.command('video').description('Render on-brand short videos from content');
-video.action(() => video.help());
-video.command('list').description('List sizes, templates, the frame count and the renderer').option('--json', 'JSON output').action((_opts, command) => videoList(command.optsWithGlobals()));
-video
-	.command('render')
-	.description('Write an MP4 or WebM clip for one template, or one frame with --still')
-	.option('-t, --template <id>', 'hero, window, cards, social, announcement or product')
-	.option('-s, --size <sizes>', 'square, vertical, landscape, portrait, og, or all (comma-separated)')
-	.option('--seconds <n>', 'clip length, 2 to 12 (default 4)')
-	.option('--still [seconds]', 'write the frame at this time (or the end) as PNG and SVG')
-	.option('--headline <text>', 'main line (the title on cards)')
-	.option('--subtext <text>', 'supporting line')
-	.option('--eyebrow <text>', 'short label above the headline')
-	.option('--button <text>', 'hero and window: a key under the words')
-	.option('--cards <text>', 'cards: blank-line-separated cards, heading first')
-	.option('--image <file>', 'PNG or JPEG: the window picture or the hero object')
-	.option('--toon', 'make --image a toon object')
-	.option('--picture <subject>', 'window: the toon object in the window, or none')
-	.option('--window <name>', 'window bar label')
-	.option('--window-body <body>', 'window: blue, sky or white')
-	.option('--stickers <mode>', 'preset, under, scatter or none')
-	.option('--subjects <names>', 'toon objects to use, comma-separated')
-	.option('--seed <n>', 'scatter: the arrangement')
-	.option('--count <n>', 'scatter: how many objects')
-	.option('--ground <ground>', 'blue, paper, white or ink')
-	.option('--band <ground>', 'stepped band at the bottom toward a ground, or none')
-	.option('--no-scan', 'leave the scanlines off the blue ground')
-	.option('--no-logo', 'leave the lockup off')
-	.option('--footer <text>', 'small line; default is the brand site host')
-	.option('--no-footer', 'leave the footer line off')
-	.option('-o, --out <dir>', 'directory to write', 'videos')
-	.option('-n, --name <name>', 'file name prefix; default is the template')
-	.option('--export <formats>', 'mp4, webm, or mp4,webm (default mp4)')
-	.option('-i, --input <file>', 'JSON object of the same fields; flags override it; - reads stdin')
-	.option('--dry-run', 'list the files and write nothing')
-	.option('--json', 'JSON output')
-	.addHelpText('after', '\nExamples:\n  video render --template hero --headline "Let agents buy anything online" --size square,vertical --export mp4,webm\n  video render --template cards --input cards.json --size landscape --seconds 6\n  video render --template hero --headline "..." --still end\n')
-	.action((_opts, command) => videoRender(command.optsWithGlobals()));
+registerVideo(program);
 program.command('approve').description('Approve ds-override comments (a person, in a terminal)').option('--all', 'approve every pending override').action((opts) => approve(opts));
 program.command('snapshot [url]').description('Save how each main screen looks before hand edits (run once, with the app running); reviews compare against it').action((url) => snapshot(url));
 program.command('skip <screen>').description('Leave a screen as it is when it cannot pass without changing words or elements; the person sees the reason').requiredOption('--reason <text>', 'why').action((id, opts) => skip(id, opts.reason));
