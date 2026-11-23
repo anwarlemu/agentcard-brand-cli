@@ -88,5 +88,38 @@ for (const item of merchConfig().items) {
 execFileSync(process.execPath, [join(root, 'bin.js'), 'video', 'hero', '--headline', 'Let agents buy anything online', '--size', 'og', '--seconds', '4', '--format', 'mp4', '--out', out, '--name', 'clip'], { stdio: 'inherit' });
 entries.push({ file: '/assets/clip-og.mp4', title: 'hero clip, og', command: `${cli()} video hero --headline "Let agents buy anything online" --size og --format mp4,webm`, width: 1200, height: 630, group: 'video' });
 
+// A real design session: made, revised in plain words, edited exactly, undone, and an off-brand ask refused.
+{
+	const { adapter, paint } = await import('../src/design/adapter.js');
+	const { runDesign } = await import('../src/design/index.js');
+	const { mkdtempSync, readFileSync } = await import('node:fs');
+	const { tmpdir } = await import('node:os');
+	const cwd = mkdtempSync(join(tmpdir(), 'gallery-design-'));
+	const steps: [string, string[]][] = [
+		['New X banner', ['new', 'hero', '--size', 'x-banner', '--headline', 'Let agents buy anything online', '-o', 'banner.design.json']],
+		['bigger headline, logo top right', ['revise', 'banner.design.json', 'bigger headline, logo top right']],
+		['darker theme', ['revise', 'banner.design.json', 'darker theme']],
+		['add a badge and a line', ['revise', 'banner.design.json', 'add a badge "New", body "Every purchase is approved."']],
+		['another version', ['revise', 'banner.design.json', 'another version']],
+		['a key, words on the left', ['edit', 'banner.design.json', '--set', 'button=Start free', '--layer', 'headline.align=left']],
+		['undo', ['undo', 'banner.design.json']],
+	];
+	let n = 0;
+	for (const [title, argv] of steps) {
+		const said: string[] = [];
+		const code = await runDesign(argv, adapter(), { cwd, bin: cli(), out: (t) => said.push(t), err: (t) => said.push(t), paint });
+		if (code) throw new Error(`design ${argv.join(' ')} failed: ${said.join(' ')}`);
+		n++;
+		const svgFree = readFileSync(join(cwd, 'banner.png'));
+		const file = `design-${n}.png`;
+		writeFileSync(join(out, file), svgFree);
+		const shown = argv.map((a) => (/\s/.test(a) ? `"${a.replace(/"/g, '\\"')}"` : a)).join(' ');
+		entries.push({ file: `/assets/${file}`, title, command: `${cli()} design ${shown}`, width: 1500, height: 500, group: 'design' });
+	}
+	const refused: string[] = [];
+	await runDesign(['revise', 'banner.design.json', 'make the logo neon green'], adapter(), { cwd, bin: cli(), out: (t) => refused.push(t), err: (t) => refused.push(t), paint });
+	entries.push({ file: '', title: refused.join(' ').split('\n')[0]!, command: `${cli()} design revise banner.design.json "make the logo neon green"`, width: 0, height: 0, group: 'design-refused' });
+}
+
 writeFileSync(join(out, 'gallery.json'), `${JSON.stringify(entries, null, '\t')}\n`);
 console.log(`gallery: ${entries.length} entries in apps/www/public/assets`);

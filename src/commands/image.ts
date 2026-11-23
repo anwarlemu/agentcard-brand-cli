@@ -155,6 +155,7 @@ export function carouselJobs(opts: ImageRenderOpts): { jobs: ImageJob[]; stems: 
 	});
 	const index: number[] = [];
 	for (const { id, width, height } of chooseSizes(perSlide[0]!.template, size, opts.width, opts.height)) {
+		if (id !== 'custom' && !/^\d+x\d+$/.test(id) && !CAROUSEL_SIZES.includes(id)) throw new Error(`A carousel is ${CAROUSEL_SIZES.join(', ')} (or a custom size), not ${id}.`);
 		const set: ImageJob[] = perSlide.map((fields, i) => {
 			chooseSizes(fields.template, id === 'custom' ? `${width}x${height}` : id);
 			index.push(i);

@@ -69,6 +69,8 @@ export type Words = {
 	eyeText: string;
 	eyeW: number;
 	h: number;
+	/** Room over the first line for marks that stand taller than capitals (stacked accents). */
+	lead: number;
 	w: number;
 	leading: number;
 	bodyLeading: number;
@@ -112,9 +114,11 @@ function measureWords(words: WordsIn, edits: Edits, stage: Stage, max: number, S
 	if (body.lines.length) parts.push({ h: body.lines.length * bodyS * bodyLeading, gap: gaps.body });
 	const keyH = cfg.key.height * keyR;
 	if (keyW) parts.push({ h: keyH, gap: 0 });
-	const h = parts.reduce((n, p, i) => n + p.h + (i < parts.length - 1 ? p.gap : 0), 0);
+	const first = eyeW ? '' : (head.lines[0] ?? '');
+	const lead = first ? Math.max(0, -lineInk(medium, first, 0, 0, S, track).y - S * 0.86) : 0;
+	const h = lead + parts.reduce((n, p, i) => n + p.h + (i < parts.length - 1 ? p.gap : 0), 0);
 	const w = Math.max(1, eyeW, keyW, ...head.lines.map((l) => measure(medium, l, S, track)), ...body.lines.map((l) => measure(regular, l, bodyS, 0)));
-	return { S, eye, bodyS, keyS, keyH, keyW, head, body, eyeText, eyeW, h, w, leading, bodyLeading, track, asked: words, gaps };
+	return { S, eye, bodyS, keyS, keyH, keyW, head, body, eyeText, eyeW, h, lead, w, leading, bodyLeading, track, asked: words, gaps };
 }
 
 /** The floor for a headline: 26 px at the base scale, and always a step over the small words. */
@@ -223,7 +227,7 @@ export function drawWords(ids: Ids, p: Placed, ground: SceneGround, scan: boolea
 	const flat = groundColor(ground);
 	const grounds = groundColors(ground, scan);
 	const out: string[] = [];
-	let y = p.top;
+	let y = p.top + m.lead;
 	let part = 0;
 	const wrapPart = (svg: string) => {
 		const mo = motion?.[part];

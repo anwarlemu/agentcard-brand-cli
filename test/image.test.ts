@@ -3,6 +3,7 @@ import { existsSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'no
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
+import { encodePng } from '../src/assets/png.js';
 import { imageRender } from '../src/commands/image.js';
 import { SIZES, TEMPLATES, templateSizes, type TemplateId } from '../src/image/catalog.js';
 import { brandFonts, drawText, fitText } from '../src/image/paint.js';
@@ -10,7 +11,7 @@ import { tokens } from '../src/lib/brand.js';
 
 const ROOT = join(import.meta.dirname, '..');
 const BIN = join(ROOT, 'bin.js');
-const TINY_PNG = Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==', 'base64');
+const TINY_PNG = encodePng({ width: 64, height: 40, data: new Uint8ClampedArray(64 * 40 * 4).fill(200) });
 
 function pngSize(buf: Buffer) {
 	expect(buf.subarray(0, 8).toString('hex')).toBe('89504e470d0a1a0a');

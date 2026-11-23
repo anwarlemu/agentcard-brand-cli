@@ -67,20 +67,39 @@ The component reference states its source. `{{registry}}/r/audit.json` records t
 Use this when the brief needs an Open Graph image, a social post or a profile banner. The command reads the brand tokens, the shipped logo, the shipped Inter files and the brand's toon objects. It does not open a browser. The same content always writes the same bytes, so it can run in CI or a sandbox.
 
 ```sh
-{{cli}} image list --json
-{{cli}} image render --template hero --headline "Let agents buy anything online" --size all --json
-{{cli}} image render --template window --eyebrow "Issuing" --headline "Create one-time and multi-use cards" --picture card --json
-{{cli}} image render --template cards --input cards.json --size landscape --json
-{{cli}} image render --template hero --headline "A title" --stickers scatter --seed 4 --size square --json
-{{cli}} image render --template hero --headline "A title" --image ./photo.jpg --toon --size story --json
-{{cli}} image render --template screenshot --headline "A feature" --image ./screen.png --json
+{{cli}} image --list --json
+{{cli}} image hero --headline "Let agents buy anything online" --size all --json
+{{cli}} image hero --headline "Let agents buy anything online" --size x-banner --out banner.png --json
+{{cli}} image window --badge "Issuing" --headline "Create one-time and multi-use cards" --picture card --json
+{{cli}} image cards --input cards.json --size landscape --json
+{{cli}} image hero --headline "A title" --seed 4 --size square --json
+{{cli}} image hero --headline "A title" --image ./photo.jpg --toon --size story --json
+{{cli}} image screenshot --headline "A feature" --image ./screen.png --json
+{{cli}} image logo --size avatar --json
+{{cli}} image carousel --input carousel.json --size portrait --json
 ```
 
-Templates: `hero`, `window` and `cards` are the brand's image editor layouts (the hero with toon objects round the words, words beside a sky-barred window, numbered cards); `headline`, `subtext`, `screenshot`, `quote` and `announcement` are the first templates. Sizes: `og` (1200 by 630), `square` (1080 by 1080), `portrait` (1080 by 1350), `landscape` (1200 by 675), `story` (1080 by 1920), `x-banner` (1500 by 500) and `linkedin-banner` (1584 by 396), or `all`. `image list --json` lists each template's fields and sizes.
+Templates: `hero`, `window` and `cards` are the brand's image editor layouts (the hero with toon objects round the words, words beside a sky-barred window, numbered cards); `headline`, `subtext`, `screenshot`, `quote` and `announcement` are the first templates; `logo` is the lockup alone (the mark on the profile picture). `image <template>` and `image render --template <template>` are the same. Sizes are the shared platform sizes: `og`, `square`, `portrait`, `story`, `landscape`, `x-banner`, `linkedin`, `linkedin-banner`, `linkedin-page`, `youtube` (channel art), `youtube-thumbnail`, `email` and `avatar`, or `custom` with `--width` and `--height`, several comma-separated, or `all`. Each keeps clear of what its platform covers (the profile picture on a banner, a story's bars, YouTube's safe area); `image --list --json` lists them with their sources.
 
-Pass copy as flags, or as a JSON object with `--input` (flags override it). Cards are a list of `{ "title", "body" }`, or text with a blank line between cards. `--stickers` arranges the toon objects: `preset` (the hero's seven), `under` (one large object under the words), `scatter` (seeded: the same `--seed` gives the same picture) or `none`; `--subjects` picks which objects. `--image` puts your PNG or JPEG in the window or, on the hero, in as the object; `--toon` makes it a toon object first. Grounds are `blue`, `paper`, `white` and `ink`; `--band` adds the stepped band toward another ground. `--dry-run` lists files and writes nothing. The default export is PNG and SVG; SVG text is outlined.
+Pass copy as flags (`--headline --body --badge --button`; `--subtext` and `--eyebrow` still work), or as a JSON object with `--input` (flags override it). Only the copy you pass is drawn: nothing is made up, and a slot a template cannot draw is an error. `--sample` fills the empty slots with sample copy on purpose. Words are drawn whole: they shrink to a readable floor and re-wrap, and when they still do not fit, the command fails and says what to shorten. Characters the shipped font cannot draw (emoji, Chinese, Arabic) are refused, never drawn as boxes. Cards are a list of `{ "title", "body" }`, or text with a blank line between cards. `--stickers` arranges the toon objects: `preset` (the hero's seven), `under` (one large object beside or under the words), `scatter` (seeded: `--seed` alone asks for it) or `none`; objects never touch the words, the logo, each other or the edge, and one with no room is left out and named. `--image` puts your PNG or JPEG in the window (the window takes its shape and shows it whole) or, on the hero, in as the object; `--toon` makes it a toon object first. Themes are `blue`, `paper`, `white` and `ink` (`--theme`, or `--ground`); `--band` adds the stepped band toward another ground. Formats are `png`, `svg`, `jpg` and `webp` (`--format`, default png and svg); `--out banner.png` names one file; `--scale 2` doubles the pixels. A PNG over the platform's upload limit is named in the result. `image carousel --input carousel.json` makes a numbered set (square, portrait or story) that shares one headline size. `--dry-run` checks everything and writes nothing.
 
 The display face named in the tokens is not included, so images set it in the shipped Inter. Do not download a stand-in, do not redraw the logo, and never put a third-party logo, a real person's name or a real quote into an image: use Acme for samples. An unknown template, size, subject, ground or field exits 1 and names the closest choice.
+
+## Revising a design
+
+When a person wants a graphic they can adjust (a banner, a post, a slide, a print file), make a design file instead of a one-off picture, and change that file until they are happy:
+
+```sh
+{{cli}} design new hero --size x-banner --headline "Let agents buy anything online" -o banner.design.json
+{{cli}} design revise banner.design.json "bigger headline, logo top right, darker theme"
+{{cli}} design edit banner.design.json --set body="Every purchase is approved." --layer headline.align=left
+{{cli}} design undo banner.design.json
+{{cli}} design variants banner.design.json --by theme
+{{cli}} design sizes banner.design.json --to og,square,story,linkedin-banner
+{{cli}} design check banner.design.json --json
+```
+
+Make it, look at the PNG beside the file, change it, check it, and repeat. `revise` takes plain words and refuses any part it does not understand (nothing changes, and it lists what you can say); agents that reason should use `edit`. Every write is checked: off-brand colors, lost words, overlaps, the logo's clear space, contrast, small text and the parts a platform covers are errors and change nothing. `--allow <rule>` accepts a composition rule for one design; brand rules can never be allowed. Never edit the PNG or SVG by hand: change the design and draw it again. `design templates` lists what a design can start from (images, slides as `slide-*`, merch as `merch-*`, illustrations as `illustration-*`, clips as `video-*`).
 
 ## Make slides
 
@@ -90,7 +109,7 @@ The display face named in the tokens is not included, so images set it in the sh
 {{cli}} deck --sample --out deck
 ```
 
-A deck file is `{ "slides": [ { "type": "cover", "title": "...", "body": "..." } ] }`. Types: `cover`, `section`, `statement`, `bullets`, `stat`, `quote`, `image`, `cards` and `end`; `deck --list --json` lists each type's slots. Slides are 1920 by 1080: one PNG per slide (`--format png,svg` for SVG too) and one `deck.pdf`. An unknown type or slot exits 1 with the closest name.
+A deck file is `{ "slides": [ { "type": "cover", "headline": "...", "body": "..." } ] }` (`title` still works for `headline`). Types: `cover`, `section`, `statement`, `bullets`, `stat`, `quote`, `image`, `cards` and `end`; `deck --list --json` lists each type's slots. Slides are 1920 by 1080: one PNG per slide (`--format png,svg,jpg,webp`) and one `deck.pdf`. Each slide may set a `theme`; `--theme` sets it for the rest. Copy is fitted or refused, never cut. An unknown type or slot exits 1 with the closest name.
 
 ## Make illustrations
 
@@ -114,7 +133,7 @@ Subjects are the fifteen objects (`card`, `cart`, `coins`, `gift`, `wallet`, `ba
 {{cli}} merch poster sticker --json
 ```
 
-Items: `tee-front`, `tee-back`, `hoodie-front`, `cap-front`, `tote`, `mug-wrap`, `sticker`, `sticker-mark` and `poster`. Each writes an SVG at real size in inches, a PNG at 300 dpi, a proof with the trim, bleed and safe guides, and for stickers a CutContour line. Only the approved lockup and mark in blue, ink or white are used. The sizes are common vendor conventions, not brand rules: tell the person to confirm them against the vendor's template.
+Items: `tee-front`, `tee-back`, `hoodie-front`, `cap-front`, `tote`, `mug-wrap`, `sticker`, `sticker-mark` and `poster`. Each writes an SVG at real size in inches, a PNG at 300 dpi (`--format pdf` adds a print PDF with its trim box), a proof with the trim, bleed and safe guides, and for stickers a CutContour line. Only a headline you pass is printed (`--sample` fills one); the poster keeps the brand's address. Only the approved lockup and mark in blue, ink or white are used. The sizes are common vendor conventions, not brand rules: tell the person to confirm them against the vendor's template.
 
 ## Read the brand system
 
@@ -135,12 +154,12 @@ Use this for a short clip that moves the way the brand does: words and objects a
 
 ```sh
 {{cli}} video list --json
-{{cli}} video render --template hero --headline "Let agents buy anything online" --size square,vertical --export mp4,webm --json
-{{cli}} video render --template cards --input cards.json --size landscape --seconds 6 --json
-{{cli}} video render --template hero --headline "A title" --still end --json
+{{cli}} video hero --headline "Let agents buy anything online" --size square,vertical --format mp4,webm --json
+{{cli}} video cards --input cards.json --size landscape --seconds 6 --json
+{{cli}} video hero --headline "A title" --still end --json
 ```
 
-Templates: `hero`, `window` and `cards` (the image layouts, with the image fields) and `social`, `announcement` and `product` (the first clips). Sizes: `square`, `vertical`, `landscape`, `portrait` and `og`. Clips run 2 to 12 seconds (default 4) at 30 fps. MP4 is H.264 and WebM is VP9 through ffmpeg, single-threaded and bit-exact, so the same input writes the same bytes on the same ffmpeg. Without ffmpeg, MP4 falls back to Motion JPEG and WebM is refused. `--still <seconds>` (or `end`) writes one frame as PNG and SVG.
+Templates: every image layout, with its fields (`social` and `product` are the older names of `headline` and `screenshot`). `video render --template <id>` still works. Sizes: `square`, `vertical`, `landscape`, `portrait` and `og`. Clips run 2 to 12 seconds (default 4) at 30 fps. MP4 is H.264 and WebM is VP9 through ffmpeg, single-threaded and bit-exact, so the same input writes the same bytes on the same ffmpeg. Without ffmpeg, MP4 falls back to Motion JPEG and WebM is refused. `--still <seconds>` (or `end`) writes one frame as PNG and SVG.
 
 ## Work in Figma
 
@@ -192,8 +211,8 @@ The site object is the website rules, the do list, the don't list, the element r
 
 `init` and conversion install AGENTS.md and a local `.ds/agent-guide.md`, plus supported agent instruction files and hook configuration. Agents that do not load those files automatically should read them explicitly. Hooks support Claude Code, Codex and Cursor when enabled by that tool; other agents run the CLI checks directly. Codex hook activation may require the user's `/hooks` trust step. No hook integration is required to use the components correctly.
 
-Read-only commands: `manifest`, `describe`, `guide`, `brand`, `principles`, `component list`, `component inspect`, `component emit`, `list`, `show`, `look`, `tokens`, `check` without `--fix`, `image list` and `video list`.
-Commands that write project files: `init`, `add`, `apply`, the legacy bare conversion command, `check --fix`, review/snapshot state updates, `image render` (image files only, to `--out`) and `video render` (video files only, to `--out`). Use `--dry-run` with `init`, `add`, conversion, `image render` or `video render` to inspect planned writes. JSON goes to stdout and progress goes to stderr. Installation/build failures return a nonzero exit code.
+Read-only commands: `manifest`, `describe`, `guide`, `brand`, `principles`, `component list`, `component inspect`, `component emit`, `list`, `show`, `look`, `tokens`, `check` without `--fix`, `image --list` and `video --list`, and `design show`, `history` and `check`.
+Commands that write project files: `init`, `add`, `apply`, the legacy bare conversion command, `check --fix`, review/snapshot state updates, `image` (image files only, to `--out`), `video` (video files only, to `--out`) and `design` (the design file and its pictures). Use `--dry-run` with `init`, `add`, conversion, `image`, `video` or `design new|revise|edit` to inspect planned writes. JSON goes to stdout and progress goes to stderr. Installation/build failures return a nonzero exit code.
 
 ## Project configuration and agent handoff
 

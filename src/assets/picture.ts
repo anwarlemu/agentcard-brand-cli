@@ -21,10 +21,24 @@ export function readPicture(path: string, label = 'picture'): Picture {
 		throw new Error(`Could not read the ${label} at ${path}.`);
 	}
 	if (bytes.length > MAX_PICTURE_BYTES) throw new Error(`The ${label} is larger than 15MB.`);
-	if (isPng(bytes)) return { ...decodePng(bytes), kind: 'png', bytes };
-	if (isJpeg(bytes)) {
+	const decode = (): Picture | undefined => {
+		if (isPng(bytes)) return { ...decodePng(bytes), kind: 'png', bytes };
+		if (!isJpeg(bytes)) return undefined;
 		const raw = jpeg.decode(bytes, { useTArray: true, formatAsRGBA: true, maxMemoryUsageInMB: 1024 });
 		return { width: raw.width, height: raw.height, data: new Uint8ClampedArray(raw.data.buffer, raw.data.byteOffset, raw.data.byteLength), kind: 'jpeg', bytes };
+	};
+	let pic: Picture | undefined;
+	try {
+		pic = decode();
+	} catch (error) {
+		throw new Error(`The ${label} at ${path} could not be read: the file is damaged (${(error as Error).message}). Save it again as a PNG or JPEG.`);
+	}
+	if (pic) {
+		if (pic.width < 8 || pic.height < 8) throw new Error(`The ${label} at ${path} is ${pic.width} by ${pic.height} pixels, too small to draw.`);
+		let seen = false;
+		for (let i = 3; i < pic.data.length && !seen; i += 4) seen = pic.data[i]! >= 8;
+		if (!seen) throw new Error(`The ${label} at ${path} is completely clear, so there is nothing to draw.`);
+		return pic;
 	}
 	throw new Error(`The ${label} must be a PNG or JPEG (${path}).`);
 }

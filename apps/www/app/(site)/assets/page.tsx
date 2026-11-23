@@ -56,7 +56,7 @@ export default function AssetsPage() {
   ]
 }`}
           />
-          <Command command={`${CLI_COMMAND} image render --input cards.json --size all`} />
+          <Command command={`${CLI_COMMAND} image cards --input cards.json --size all`} />
         </Block>
 
         <Block id="deck" title="Slides" description="Cover, section, statement, bullets, stat, quote, image, cards and end card at 1920 by 1080, from one JSON file: a PNG per slide and one PDF.">
@@ -87,7 +87,7 @@ export default function AssetsPage() {
               <figcaption className="px-3 py-2 text-caption text-fg-muted">{clip.title}, 4 seconds at 30 fps</figcaption>
             </figure>
           )}
-          <Command command={`${CLI_COMMAND} video render --template hero --headline "Let agents buy anything online" --size square,vertical --export mp4,webm`} />
+          <Command command={`${CLI_COMMAND} video hero --headline "Let agents buy anything online" --size square,vertical --format mp4,webm`} />
         </Block>
 
         <Block id="merch" title="Merch" description="Print files at real size with bleed and safe area: SVG in inches, PNG at 300 dpi, a proof with the guides (shown here) and a cut line for stickers. Sizes are common vendor conventions; confirm with the vendor's template.">

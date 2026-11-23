@@ -22,6 +22,7 @@ const PAGES = [
   { href: "/components", label: "All components" },
   { href: "/theme", label: "Theme" },
   { href: "/assets", label: "Assets" },
+  { href: "/designs", label: "Designs" },
   { href: "/illustrations", label: "Illustrations" },
   { href: "/figma", label: "Figma" },
 ];

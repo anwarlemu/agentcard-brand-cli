@@ -7,6 +7,6 @@
 - Use component variants and brand tokens. `{{cli}} look <file>` gives element guidance; `{{cli}} tokens <term>` finds values.
 - Connect controls to state, validation and real actions. Test keyboard controls, focus, invalid/disabled/loading states, and phone and desktop layouts.
 - Run the project's checks and build, then `{{cli}} check --json`. Token checks alone do not verify appearance or behavior.
-- Make images (`image render`), clips (`video render`), slides (`deck`), illustrations (`illustrate`), merch (`merch`) and Figma files (`figma`) with the CLI, never by hand; `manifest --json` lists every template, size and subject. Brand data: `brand --json`, `principles --json`.
+- Make images (`image <template>`), clips (`video`), slides (`deck`), illustrations (`illustrate`), merch (`merch`) and Figma files (`figma`) with the CLI, never by hand; revise one with `design new|revise|edit|undo|check` on its design file, never by editing the PNG. `manifest --json` lists every template, size and subject. Brand data: `brand --json`, `principles --json`.
 - Review screenshots against the library. `{{cli}} review <url> --any` captures and reviews an untracked page; report manual review honestly when no reviewer is available.
 - A `ds-override: <reason>` comment only counts after the user approves it with `{{cli}} approve`.

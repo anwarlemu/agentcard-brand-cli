@@ -14,6 +14,8 @@ import { illustrateCatalog } from '../commands/illustrate.js';
 import { merchCatalog } from '../commands/merch.js';
 import { FIGMA_ACTIONS, PUSH_KINDS } from '../commands/figma.js';
 import { imageConfig } from '../image/scene.js';
+import { adapter } from '../design/adapter.js';
+import { designManifest } from '../design/index.js';
 
 let program: Command | undefined;
 /** The CLI hands its command tree over, so the manifest lists every command and flag from the definitions themselves. */
@@ -40,10 +42,14 @@ export const COMMANDS = [
 	{ path: ['brand', 'logos'], summary: 'Logo files and the usage rules stored with the logo component.', reads: true, writes: false, json: true },
 	{ path: ['brand', 'voice'], summary: 'Voice and the quoted words the principle file tells agents to avoid.', reads: true, writes: false, json: true },
 	{ path: ['principles'], summary: 'Website rules, do and dont lists, element rules, and the product gap when product is not defined.', reads: true, writes: false, json: true },
-	{ path: ['image', 'list'], summary: 'Open Graph and social sizes, templates and fields.', reads: true, writes: false, json: true },
-	{ path: ['image', 'render'], summary: 'Write a PNG and SVG. Unknown templates, sizes, exports and JSON fields error.', reads: false, writes: true, json: true },
+	{ path: ['image'], summary: 'image <template>: a share image, post, banner or profile picture in PNG, SVG, JPG or WebP at any platform size. Only the copy passed is drawn; words that do not fit fail. image --list for the catalog.', reads: false, writes: true, json: true },
+	{ path: ['image', 'list'], summary: 'Platform sizes (with what each covers), templates and fields.', reads: true, writes: false, json: true },
+	{ path: ['image', 'render'], summary: 'The same as image <template>, with --template.', reads: false, writes: true, json: true },
+	{ path: ['image', 'carousel'], summary: 'A numbered set of square, portrait or story images from one JSON file, one headline size.', reads: false, writes: true, json: true },
+	{ path: ['design'], summary: 'Make a design file and revise it: new, revise (plain words), edit (exact), undo, redo, history, show, variants, sizes, compare, render, check. Every write is checked; errors change nothing.', reads: false, writes: true, json: true },
+	{ path: ['video'], summary: 'video <template>: a clip of any image layout. video --list for the catalog.', reads: false, writes: true, json: true },
 	{ path: ['video', 'list'], summary: 'Video sizes, templates, frame count and renderer.', reads: true, writes: false, json: true },
-	{ path: ['video', 'render'], summary: 'Write an MP4 or WebM clip (ffmpeg; Motion JPEG MP4 without it), or one frame with --still. Unknown templates, sizes and fields error.', reads: false, writes: true, json: true },
+	{ path: ['video', 'render'], summary: 'The same as video <template>, with --template. Writes an MP4 or WebM clip (ffmpeg; Motion JPEG MP4 without it), or one frame with --still. Unknown templates, sizes and fields error.', reads: false, writes: true, json: true },
 	{ path: ['deck'], summary: 'Slides at 1920 by 1080 from a JSON file: a PNG per slide and one PDF. --list names the slide types and slots.', reads: false, writes: true, json: true },
 	{ path: ['merch'], summary: 'Merch print files at real size with bleed and safe area (SVG, 300 dpi PNG, proof, cut line). --list names items and variants.', reads: false, writes: true, json: true },
 	{ path: ['illustrate'], summary: 'Toon object illustrations from the brand\'s objects or any picture (SVG and PNG). --list names subjects and compositions.', reads: false, writes: true, json: true },
@@ -120,6 +126,7 @@ export function manifest() {
 		decks: deckCatalog(),
 		merch: merchCatalog(),
 		illustrate: illustrateCatalog(),
+		design: designManifest(adapter(), cli()),
 		figma: { actions: [...FIGMA_ACTIONS], pushKinds: [...PUSH_KINDS], note: 'The CLI never calls Figma: each action writes files and prints the Figma MCP tool calls to make, in order.', workflow: 'brand/agent-guide.md (Figma)' },
 		themes: Object.keys(imageConfig().grounds),
 		lockups: { files: ['brand/logo/lockup.svg', 'brand/logo/mark.svg'], colors: ['blue', 'ink', 'white'], merchVariants: merchCatalog().variants.map((v) => v.id), rules: merchCatalog().logo.note },

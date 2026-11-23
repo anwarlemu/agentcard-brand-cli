@@ -214,3 +214,61 @@ describe('manifest and help', () => {
 		}
 	});
 });
+
+describe('the gaps closed', () => {
+	it('takes image <template>, the old subcommands, every format, a named file, custom sizes and the shared size names', () => {
+		const a = run(['image', 'hero', '--headline', 'Hello', '--size', 'twitter-header', '--format', 'png,jpg,webp', '-o', 'gap-a']);
+		expect(a.files.map((f: { format: string; width: number }) => `${f.format} ${f.width}`)).toEqual(['png 1500', 'jpg 1500', 'webp 1500']);
+		const webp = readFileSync(join(dir, a.files[2].path));
+		expect(webp.subarray(0, 4).toString()).toBe('RIFF');
+		expect(webp.subarray(8, 12).toString()).toBe('WEBP');
+		expect(readFileSync(join(dir, a.files[1].path)).subarray(0, 2).toString('hex')).toBe('ffd8');
+		const b = run(['image', 'render', '--template', 'hero', '--headline', 'Hello', '--size', 'twitter-header', '--format', 'png', '-o', 'gap-b']);
+		expect(b.files[0].sha256).toBe(a.files[0].sha256);
+		const one = run(['image', 'headline', '--headline', 'Hello', '--out', 'banner.png', '--size', 'x-banner']);
+		expect(one.files.map((f: { path: string }) => f.path)).toEqual(['banner.png']);
+		const custom = run(['image', 'headline', '--headline', 'Hello', '--size', 'custom', '--width', '1600', '--height', '400', '--format', 'png', '-o', 'gap-c']);
+		expect(png(join(dir, custom.files[0].path))).toMatchObject({ width: 1600, height: 400 });
+		const sizes = run(['image', 'logo', '--size', 'all', '--format', 'png', '-o', 'gap-d']);
+		expect(sizes.files.length).toBe(13);
+		expect(run(['image', '--list']).sizes.map((s: { id: string }) => s.id)).toContain('youtube-thumbnail');
+	}, 120000);
+
+	it('draws only what was passed, and refuses what it cannot draw whole', () => {
+		const svg = (args: string[]) => {
+			const r = run(['image', ...args, '--format', 'svg', '-o', 'gap-e']);
+			return readFileSync(join(dir, r.files[0].path), 'utf8');
+		};
+		expect(svg(['headline', '--headline', 'Hello', '--no-footer'])).not.toBe(svg(['headline', '--headline', 'Hello']));
+		expect(fails(['image', 'headline', '--headline', 'Ship faster 🚀']).text).toMatch(/no character for 🚀/);
+		expect(fails(['image', 'headline', '--headline', 'Donaudampfschifffahrtselektrizitätenhauptbetriebswerkbauunterbeamtengesellschaft', '--size', 'square']).text).toMatch(/too long/);
+		expect(fails(['image', 'logo', '--headline', 'x']).text).toMatch(/does not take --headline/);
+		expect(fails(['image', 'hero', '--headline', 'x', '--footer', 'y']).text).toMatch(/does not take --footer/);
+		expect(fails(['image', 'screenshot', '--headline', 'x']).text).toMatch(/empty window/);
+		expect(fails(['image', 'cards', '--headline', 'x', '--cards', 'a\n\nb', '--size', 'avatar']).text).toMatch(/not drawn at avatar/);
+		const merch = run(['merch', 'tee-back', '--format', 'svg', '--no-proof', '-o', 'gap-m']);
+		expect(readFileSync(join(dir, merch.files[0].path), 'utf8')).not.toContain('id="text-headline"');
+		expect(fails(['merch', 'cap-front', '--headline', 'x']).text).toMatch(/no place for --headline/);
+		writeFileSync(join(dir, 'long.json'), JSON.stringify({ slides: [{ type: 'stat', stat: '1,234,567,890,123,456,789,012,345,678,901,234,567,890,123,456,789,012,345,678,901', title: 'x' }] }));
+		expect(fails(['deck', '-i', 'long.json']).text).toMatch(/Slide 1 \(stat\).*Shorten/);
+	}, 120000);
+
+	it('makes a numbered carousel with one headline size', () => {
+		writeFileSync(join(dir, 'carousel.json'), JSON.stringify({ template: 'headline', theme: 'paper', slides: [{ headline: 'Save it once' }, { headline: 'Every purchase is approved by the person who pays for it, whatever it is' }, { template: 'logo' }] }));
+		const out = run(['image', 'carousel', '-i', 'carousel.json', '--size', 'portrait', '--format', 'svg', '-o', 'gap-f']);
+		expect(out.files.map((f: { path: string }) => f.path.split('/').pop())).toEqual(['carousel-portrait-01.svg', 'carousel-portrait-02.svg', 'carousel-portrait-03.svg']);
+		expect(fails(['image', 'carousel', '-i', 'carousel.json', '--size', 'x-banner']).status).toBe(1);
+	}, 120000);
+
+	it('revises a design in plain words, undoes it, and refuses what is off brand', () => {
+		const made = run(['design', 'new', 'hero', '--size', 'x-banner', '--headline', 'Let agents buy anything online', '-o', 'b.design.json']);
+		expect(made.ok).toBe(true);
+		const first = readFileSync(join(dir, 'b.png'));
+		expect(first.equals(readFileSync(join(dir, run(['image', 'hero', '--headline', 'Let agents buy anything online', '--size', 'x-banner', '--format', 'png', '-o', 'gap-g']).files[0].path)))).toBe(true);
+		expect(run(['design', 'revise', 'b.design.json', 'bigger headline, logo top right, darker theme']).changes.sort()).toEqual(['headline 20% bigger', 'logo top right', 'theme ink']);
+		run(['design', 'undo', 'b.design.json']);
+		expect(readFileSync(join(dir, 'b.png')).equals(first)).toBe(true);
+		expect(fails(['design', 'revise', 'b.design.json', 'make the logo neon green']).text).toMatch(/Nothing was changed/);
+		expect(fails(['design', 'edit', 'b.design.json', '--layer', 'headline.scale=3']).text).toMatch(/0.5 to 1.6/);
+	}, 120000);
+});
