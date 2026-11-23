@@ -388,7 +388,7 @@ function windowSize(s: Scene, stage: Stage, maxW: number, maxH: number): { w: nu
 		const a = Math.max(wc.pictureMin, Math.min(wc.pictureMax, s.picture.width / s.picture.height));
 		w = Math.min(maxW, (maxH - bar) * a);
 		h = w / a + bar;
-	} else {
+	} else if (!stage.wide) {
 		w = Math.min(w, h * wc.maxAspect);
 		h = Math.min(h, w / wc.minAspect);
 	}
@@ -543,25 +543,42 @@ export function layoutOf(s: Scene): Layout {
 		} else if (stage.wide) {
 			// Words put on the right send the window to the left.
 			const onLeft = edit.anchor === 'left' || (!edit.anchor && Boolean(s.edits.headline?.anchor?.includes('right')));
-			const share = Math.min(0.62, (s.template === 'screenshot' ? 0.54 : 0.48) * Math.max(1, edit.scale ?? 1));
-			const wz = windowSize(s, stage, frame.w * share, frame.h - sc.window.bar * k * 0.2);
-			const x = onLeft ? frame.x : right(frame) - wz.w;
-			L.window = { x: x + (edit.dx ?? 0) * W, y: frame.y + (frame.h - wz.h) / 2 + (edit.dy ?? 0) * H, w: wz.w, h: wz.h };
-			const blocked = [...stage.avoid, ...clearOf(L.logo)];
-			for (const a of [...stage.avoid, ...clearOf(L.logo)]) if (hit(L.window, a)) {
-				// A window over a covered corner moves up and gets smaller to stay whole and clear of it.
-				const free = freeRects(frame, blocked).filter((f) => (onLeft ? f.x <= frame.x + frame.w * 0.5 : right(f) >= right(frame) - 1)).sort((p, q) => windowSize(s, stage, Math.min(q.w, frame.w * share), q.h).w - windowSize(s, stage, Math.min(p.w, frame.w * share), p.h).w)[0];
-				if (!free) break;
-				const z = windowSize(s, stage, Math.min(free.w, frame.w * share), free.h);
-				L.window = { x: (onLeft ? free.x : right(free) - z.w) + (edit.dx ?? 0) * W, y: free.y + (free.h - z.h) / 2 + (edit.dy ?? 0) * H, w: z.w, h: z.h };
-				break;
+			// The editor's window: half the width, the full height of the frame. Where that leaves the words too little room
+			// (a banner whose corner the profile picture covers), the window gives way before the words shrink.
+			const S0 = S * (s.edits.headline?.scale ?? 1);
+			const first = Math.min(0.62, (s.template === 'screenshot' ? 0.54 : 0.5) * Math.max(1, edit.scale ?? 1));
+			const shares = edit.scale !== undefined ? [first] : [first, first * 0.86, first * 0.74];
+			let best: { window: Rect; words: Placed | null; footer: SmallLine | null; number: SmallLine | null } | undefined;
+			let failed: unknown;
+			for (const share of shares) {
+				try {
+					const wz = windowSize(s, stage, frame.w * share, frame.h - sc.window.bar * k * 0.2);
+					const x = onLeft ? frame.x : right(frame) - wz.w;
+					L.window = { x: x + (edit.dx ?? 0) * W, y: frame.y + (frame.h - wz.h) / 2 + (edit.dy ?? 0) * H, w: wz.w, h: wz.h };
+					const blocked = [...stage.avoid, ...clearOf(L.logo)];
+					for (const a of [...stage.avoid, ...clearOf(L.logo)]) if (hit(L.window, a)) {
+						// A window over a covered corner moves up and gets smaller to stay whole and clear of it.
+						const free = freeRects(frame, blocked).filter((f) => (onLeft ? f.x <= frame.x + frame.w * 0.5 : right(f) >= right(frame) - 1)).sort((p, q) => windowSize(s, stage, Math.min(q.w, frame.w * share), q.h).w - windowSize(s, stage, Math.min(p.w, frame.w * share), p.h).w)[0];
+						if (!free) break;
+						const z = windowSize(s, stage, Math.min(free.w, frame.w * share), free.h);
+						L.window = { x: (onLeft ? free.x : right(free) - z.w) + (edit.dx ?? 0) * W, y: free.y + (free.h - z.h) / 2 + (edit.dy ?? 0) * H, w: z.w, h: z.h };
+						break;
+					}
+					const wall = inflate(L.window, 0);
+					// The words keep to their side of the window.
+					const col: Rect = onLeft ? { x: right(wall) + gap, y: frame.y, w: right(frame) - right(wall) - gap, h: frame.h } : { x: frame.x, y: frame.y, w: wall.x - gap - frame.x, h: frame.h };
+					small(s.ground, [], col);
+					const maxW = s.edits.headline?.align === 'center' ? s.textWidth * stage.box.w : Math.max(s.textWidth * stage.box.w, col.w * 0.94);
+					L.words = placeWords(words, s.edits, stage, col, [...covered, ...clearOf(L.logo), ...lines()], opts({ align: 'left', ax: col.x, ay: frame.y + frame.h / 2, maxW }));
+					const got = { window: L.window!, words: L.words, footer: L.footer, number: L.number };
+					if (!best || (got.words?.m.S ?? 0) > (best.words?.m.S ?? 0) + 0.5) best = got;
+					if (!words.headline || (got.words?.m.S ?? 0) >= S0 * 0.92) break;
+				} catch (error) {
+					failed = error;
+				}
 			}
-			const wall = inflate(L.window, 0);
-			// The words keep to their side of the window.
-			const col: Rect = onLeft ? { x: right(wall) + gap, y: frame.y, w: right(frame) - right(wall) - gap, h: frame.h } : { x: frame.x, y: frame.y, w: wall.x - gap - frame.x, h: frame.h };
-			small(s.ground, [], col);
-			const maxW = s.edits.headline?.align === 'center' ? s.textWidth * stage.box.w : Math.max(s.textWidth * stage.box.w, col.w * 0.94);
-			L.words = placeWords(words, s.edits, stage, col, [...covered, ...clearOf(L.logo), ...lines()], opts({ align: 'left', ax: col.x, ay: frame.y + frame.h / 2, maxW }));
+			if (!best) throw failed;
+			Object.assign(L, best);
 		} else {
 			small(s.ground);
 			// On a tall size the window is under the words, or over them when it is moved to the other side.

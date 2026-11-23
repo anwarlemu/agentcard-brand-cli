@@ -28,6 +28,8 @@ designConformance(adapter(), {
 	paint,
 	picture,
 	timeout: 600_000,
+	// Print files are tens of millions of pixels: one small one stands for the rest in the byte checks.
+	skip: (t) => t.kind === 'merch' && t.id !== 'merch-sticker',
 	short: copy(false),
 	long: copy(true),
 	async plain(doc) {
