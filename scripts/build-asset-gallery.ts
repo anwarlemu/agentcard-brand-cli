@@ -118,7 +118,7 @@ entries.push({ file: '/assets/clip-og.mp4', title: 'hero clip, og', command: `${
 	}
 	const refused: string[] = [];
 	await runDesign(['revise', 'banner.design.json', 'make the logo neon green'], adapter(), { cwd, bin: cli(), out: (t) => refused.push(t), err: (t) => refused.push(t), paint });
-	entries.push({ file: '', title: refused.join(' ').split('\n')[0]!, command: `${cli()} design revise banner.design.json "make the logo neon green"`, width: 0, height: 0, group: 'design-refused' });
+	entries.push({ file: '', title: refused.join(' ').replace(/\s+/g, ' ').trim(), command: `${cli()} design revise banner.design.json "make the logo neon green"`, width: 0, height: 0, group: 'design-refused' });
 }
 
 writeFileSync(join(out, 'gallery.json'), `${JSON.stringify(entries, null, '\t')}\n`);

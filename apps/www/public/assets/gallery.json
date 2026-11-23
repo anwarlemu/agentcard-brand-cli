@@ -457,7 +457,7 @@
 	},
 	{
 		"file": "",
-		"title": "Nothing was changed.",
+		"title": "Nothing was changed. \"make the logo neon green\": Effects are not part of the brand. Things you can say here: move the logo up; nudge the logo left 2%; hide the logo. Copy goes in quotes. For exact edits use `design edit`.",
 		"command": "npx agentcard-ds design revise banner.design.json \"make the logo neon green\"",
 		"width": 0,
 		"height": 0,
