@@ -114,7 +114,7 @@ export function merchSvgs(item: MerchItem, variantId: string, opts: MerchOpts = 
 			const unit = dpi / 96;
 			const fit = fitBlock(medium, value, { what: layer.slot, w: px(bw), h: px(bh), size: px(layer.size), floor: Math.max(px(0.2), px(layer.size) * 0.3), leading: 1.05, maxLines: layer.maxLines, k: unit });
 			const x = ox + px(layer.align === 'center' ? bx + bw / 2 : layer.align === 'right' ? bx + bw : bx);
-			parts.push(`<g id="text-${layer.slot}">${drawBlock(layers, layer.slot, medium, fit, x, oy + px(by), layer.align, inkFor(by), groundHex(groundAt(by)), value)}</g>`);
+			parts.push(`<g id="text-${layer.slot}">${drawBlock(layers, layer.slot, medium, fit, x, oy + px(by), layer.align, inkFor(by), groundHex(groundAt(by)), value, {}, layer.slot === 'url' && !opts.url?.trim())}</g>`);
 		}
 	}
 	const cutPath = item.cut ? `<rect id="CutContour" x="${ox}" y="${oy}" width="${px(item.size[0])}" height="${px(item.size[1])}" rx="${px(item.cut.radius)}" fill="none" stroke="#EC008C" stroke-width="${dpi / 72}"/>` : '';

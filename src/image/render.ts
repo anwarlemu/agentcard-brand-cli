@@ -6,6 +6,7 @@ import { createRequire } from 'node:module';
 import { basename, dirname, extname, join, relative, resolve } from 'node:path';
 import { initWasm, Resvg } from '@resvg/resvg-wasm';
 import { encodeJpg, encodeWebp, type ImageFormat } from '../assets/encode.js';
+import { assertClean } from './check.js';
 import { SIZES, type ImageJob, type SizeId } from './catalog.js';
 import { renderJob, type Rendered } from './layout.js';
 
@@ -22,6 +23,21 @@ const rasterOptions = (width: number) => ({ fitTo: { mode: 'width' as const, val
 export function rasterize(svg: string, width: number): Promise<Buffer> {
 	return startWasm().then(() => {
 		const renderer = new Resvg(svg, rasterOptions(width));
+		try {
+			const png = renderer.render();
+			const bytes = Buffer.from(png.asPng());
+			png.free();
+			return bytes;
+		} finally {
+			renderer.free();
+		}
+	});
+}
+
+/** Text left as text (a contact sheet's labels), set in the fonts passed in. */
+export function rasterizeWithFont(svg: string, width: number, fonts: Uint8Array[]): Promise<Buffer> {
+	return startWasm().then(() => {
+		const renderer = new Resvg(svg, { ...rasterOptions(width), font: { loadSystemFonts: false, fontBuffers: fonts } });
 		try {
 			const png = renderer.render();
 			const bytes = Buffer.from(png.asPng());
@@ -99,6 +115,7 @@ export async function writeImages(jobs: ImageJob[], opts: { out: string; name: s
 	const prepared: { job: ImageJob; data: Partial<Record<ImageFormat, Buffer>>; rendered: Rendered }[] = [];
 	for (const job of jobs) {
 		const rendered = renderJob(job);
+		assertClean({ template: job.template, kind: 'image', size: { id: job.size, width: job.width, height: job.height }, copy: { headline: job.headline, body: job.body, badge: job.badge, button: job.button, quote: job.quote, by: job.by, 'window-bar': job.window, footer: job.footerOptional ? undefined : job.footer, number: job.number, cards: job.cards?.map((c) => `${c.title}\n${c.body}`).join('\n\n') }, layers: rendered.layers }, `The ${job.template} at ${job.size}`);
 		const width = Math.round(job.width * scale);
 		const data = await encodeAll(rendered.svg, width, opts.formats);
 		if (data.png) {

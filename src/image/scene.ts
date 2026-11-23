@@ -57,7 +57,7 @@ export type Scene = {
 	/** The picture fills the window, which takes its shape. */
 	fill: boolean;
 	/** Where objects go before they are settled round the words. */
-	objects: { mode: 'none' | 'preset' | 'scatter' | 'under'; targets: Sticker[]; names: string[]; count: number; seed: number; under?: { art: Art; rotate: number } };
+	objects: { mode: 'none' | 'preset' | 'scatter' | 'under'; targets: Sticker[]; names: string[]; count: number; seed: number; asked?: boolean; under?: { art: Art; rotate: number } };
 	stickers: Sticker[];
 	cards: Card[];
 	footer: string;
@@ -144,7 +144,7 @@ function drawWindow(ids: Ids, s: Pick<Scene, 'windowBody' | 'picture' | 'window'
 		if (measure(medium, name, fs, 0) > r.w - (inset + fs * 2.4) * 2) throw new Error(`The window label "${name}" is too long for the window. Shorten it.`);
 		const base = cy + fs * 0.35;
 		parts.push(lineAt(medium, name, r.x + r.w / 2, base, fs, 0, 'center', mark));
-		layers?.text('window', medium, [{ text: name, x: r.x + r.w / 2, baseline: base }], fs, 0, 'center', mark, [tokenColor('window-bar')], s.window, name, {}, ['picture']);
+		layers?.text('window-bar', medium, [{ text: name, x: r.x + r.w / 2, baseline: base }], fs, 0, 'center', mark, [tokenColor('window-bar')], s.window, name, {}, ['picture']);
 	}
 	parts.push(windowMark(r.x + r.w - inset, cy, fs, mark));
 	parts.push('</g>');
@@ -152,6 +152,8 @@ function drawWindow(ids: Ids, s: Pick<Scene, 'windowBody' | 'picture' | 'window'
 	return parts.join('');
 }
 
+export const ART_CAN: DrawnLayer['can'] = { scale: [0.6, 1.5], hide: true };
+export const PICTURE_CAN: DrawnLayer['can'] = { move: true, scale: [0.6, 1.25], hide: true, anchors: ['right', 'left'] };
 const TOPS: Anchor[] = ['top-left', 'top', 'top-right'];
 const NINE: Anchor[] = ['top-left', 'top', 'top-right', 'left', 'center', 'right', 'bottom-left', 'bottom', 'bottom-right'];
 
@@ -191,7 +193,7 @@ export function drawLogoAt(l: LogoAt, layers: Layers, opacity = 1, over?: string
 	return opacity < 1 ? `<g opacity="${num(opacity)}">${svg}</g>` : svg;
 }
 
-type SmallLine = { id: string; text: string; asked: string; fs: number; x: number; baseline: number; box: Rect; color: string; ground: string[]; can: DrawnLayer['can'] };
+type SmallLine = { id: string; own: boolean; text: string; asked: string; fs: number; x: number; baseline: number; box: Rect; color: string; ground: string[]; can: DrawnLayer['can'] };
 
 /** A small line (the footer, a carousel's number) at an anchor, clear of what a platform covers. */
 function smallLine(s: Scene, stage: Stage, frame: Rect, id: string, value: string, anchor: string, ground: SceneGround, obstacles: Rect[], optional = false): SmallLine | null {
@@ -212,7 +214,7 @@ function smallLine(s: Scene, stage: Stage, frame: Rect, id: string, value: strin
 		const baseline = r.y + h * 0.8;
 		// 4.5:1 on every ground: the muted white reads on blue and ink, the muted ink on paper and white.
 		const color = isDark(ground) ? tokenColor('white') : tokenColor('text-secondary');
-		return { id, text: textValue, asked: value.trim(), fs, x: r.x, baseline, box: lineBox(medium, textValue, r.x, baseline, fs, 0, 'left'), color, ground: groundColors(ground, s.scan), can: { hide: true, anchors: ['bottom-left', 'bottom', 'bottom-right', 'top', 'top-right'] } };
+		return { id, own: optional || id === 'number', text: textValue, asked: value.trim(), fs, x: r.x, baseline, box: lineBox(medium, textValue, r.x, baseline, fs, 0, 'left'), color, ground: groundColors(ground, s.scan), can: { hide: true } };
 	}
 	if (optional) return null;
 	throw new Error(`There is no room for the ${id} at this size. Leave it off or pick a larger size.`);
@@ -220,7 +222,7 @@ function smallLine(s: Scene, stage: Stage, frame: Rect, id: string, value: strin
 
 function drawSmall(l: SmallLine, layers: Layers) {
 	const { medium } = brandFonts();
-	layers.text(l.id, medium, [{ text: l.text, x: l.x, baseline: l.baseline }], l.fs, 0, 'left', l.color, l.ground, l.asked, l.text, l.can);
+	layers.text(l.id, medium, [{ text: l.text, x: l.x, baseline: l.baseline }], l.fs, 0, 'left', l.color, l.ground, l.asked, l.text, l.can, undefined, l.own);
 	return lineAt(medium, l.text, l.x, l.baseline, l.fs, 0, 'left', l.color);
 }
 
@@ -238,7 +240,7 @@ function layoutCards(sc: Scene, stage: Stage, frame: Rect): CardsLayout {
 	const logo = logoAt(sc, stage, frame, sc.ground, { anchor: 'bottom-left', anchors: ['bottom-left', 'bottom-right', 'top-left', 'top-right'], move: false, scale: [0.8, 1.6] });
 	const gap = 24 * k;
 	const obstacles = [...stage.avoid, ...(logo ? [inflate(logo.rect, logo.clear + 4 * k)] : [])];
-	const footer = smallLine(sc, stage, frame, 'footer', sc.footer, logo?.rect && logo.rect.x > frame.x + frame.w / 2 ? 'bottom-left' : 'bottom-right', sc.ground, logo ? [inflate(logo.rect, logo.clear)] : []);
+	const footer = smallLine(sc, stage, frame, 'footer', sc.footer, logo?.rect && logo.rect.x > frame.x + frame.w / 2 ? 'bottom-left' : 'bottom-right', sc.ground, logo ? [inflate(logo.rect, logo.clear)] : [], sc.footerOptional);
 	const number = smallLine(sc, stage, frame, 'number', sc.number, 'top-right', sc.ground, logo ? [inflate(logo.rect, logo.clear)] : []);
 	const foot = { x: frame.x, y: bottom(frame) - footH, w: frame.w, h: footH };
 	for (const o of [footer, number]) if (o) obstacles.push(inflate(o.box, 10 * k));
@@ -266,7 +268,7 @@ function layoutCards(sc: Scene, stage: Stage, frame: Rect): CardsLayout {
 					const cw = (area.w - gapX * (cols - 1)) / cols;
 					const ch = (bottom(area) - top - gapY * (rows - 1)) / rows;
 					if (ch < 40 * k || cw < 120 * k) continue;
-					for (let q = 1.15; q >= 0.5; q *= 0.94) {
+					for (let q = Math.max(1.15, (floorBody * 1.001) / (spec.body * k)); q >= 0.5; q *= 0.94) {
 						const bs = spec.body * k * q;
 						if (bs < floorBody - 0.01) break;
 						const pad = spec.pad * k * Math.min(1, q);
@@ -539,7 +541,8 @@ export function layoutOf(s: Scene): Layout {
 			small(s.ground);
 			L.words = placeWords(words, s.edits, stage, frame, [...covered, ...clearOf(L.logo), ...lines()], opts({}));
 		} else if (stage.wide) {
-			const onLeft = edit.anchor === 'left';
+			// Words put on the right send the window to the left.
+			const onLeft = edit.anchor === 'left' || (!edit.anchor && Boolean(s.edits.headline?.anchor?.includes('right')));
 			const share = Math.min(0.62, (s.template === 'screenshot' ? 0.54 : 0.48) * Math.max(1, edit.scale ?? 1));
 			const wz = windowSize(s, stage, frame.w * share, frame.h - sc.window.bar * k * 0.2);
 			const x = onLeft ? frame.x : right(frame) - wz.w;
@@ -561,7 +564,8 @@ export function layoutOf(s: Scene): Layout {
 			L.words = placeWords(words, s.edits, stage, col, [...covered, ...clearOf(L.logo), ...lines()], opts({ align: 'left', ax: col.x, ay: frame.y + frame.h / 2, maxW }));
 		} else {
 			small(s.ground);
-			const below = edit.anchor !== 'top';
+			// On a tall size the window is under the words, or over them when it is moved to the other side.
+			const below = edit.anchor !== 'left';
 			const blocked = [...covered, ...clearOf(L.logo), ...lines()];
 			// Words over the window (or under it), the pair centered in the free height.
 			const area = freeRects(frame, blocked).sort((p, q) => q.w * q.h - p.w * p.h).find((r) => r.w > frame.w * 0.8) ?? frame;
@@ -591,15 +595,15 @@ export function layoutOf(s: Scene): Layout {
 			const U = cfg.stickers.under;
 			const shortSide = Math.min(stage.box.w, stage.box.h);
 			const inkA = (under.art.width * under.art.ink.w) / (under.art.height * under.art.ink.h);
-			const anchor = art.anchor ?? (stage.wide ? 'right' : 'bottom');
-			const across = anchor === 'right' || anchor === 'left';
+			const anchor = stage.wide ? 'right' : 'bottom';
+			const across = anchor === 'right';
 			const zone: Rect = across
-				? { x: anchor === 'right' ? frame.x + frame.w * 0.62 : frame.x, y: frame.y, w: frame.w * 0.38, h: frame.h }
-				: { x: frame.x, y: anchor === 'top' ? frame.y : frame.y + frame.h * 0.5, w: frame.w, h: frame.h * 0.5 };
-			const wordZone: Rect = across ? { x: anchor === 'right' ? frame.x : right(zone), y: frame.y, w: frame.w - zone.w - 20 * k, h: frame.h } : { x: frame.x, y: anchor === 'top' ? bottom(zone) : frame.y, w: frame.w, h: frame.h * 0.48 };
-			L.words = placeWords(words, s.edits, stage, wordZone, obstacles, opts(across ? { align: 'left', ax: wordZone.x, ay: frame.y + frame.h / 2, maxW: wordZone.w } : { ax: frame.x + frame.w / 2, ay: anchor === 'top' ? wordZone.y + wordZone.h / 2 : stage.box.y + stage.box.h * U.textY }));
+				? { x: frame.x + frame.w * 0.62, y: frame.y, w: frame.w * 0.38, h: frame.h }
+				: { x: frame.x, y: frame.y + frame.h * 0.5, w: frame.w, h: frame.h * 0.5 };
+			const wordZone: Rect = across ? { x: frame.x, y: frame.y, w: frame.w - zone.w - 20 * k, h: frame.h } : { x: frame.x, y: frame.y, w: frame.w, h: frame.h * 0.48 };
+			L.words = placeWords(words, s.edits, stage, wordZone, obstacles, opts(across ? { align: 'left', ax: wordZone.x, ay: frame.y + frame.h / 2, maxW: wordZone.w } : { ax: frame.x + frame.w / 2, ay: stage.box.y + stage.box.h * U.textY }));
 			const keep = [...obstacles, ...(L.words ? [inflate(L.words.box, 22 * k)] : [])];
-			const spot = freeRects(across ? zone : frame, keep).filter((r) => across || (anchor === 'top' ? true : r.y > (L.words ? L.words.box.y : 0))).map((r) => ({ r, w: Math.min(r.w * 0.94, r.h * 0.94 * inkA, U.maxSize * shortSide * Math.min(1.6, art.scale ?? 1) * (inkA < 1 ? inkA : 1)) })).sort((p, q) => q.w - p.w)[0];
+			const spot = freeRects(across ? zone : frame, keep).filter((r) => across || r.y > (L.words ? L.words.box.y : 0)).map((r) => ({ r, w: Math.min(r.w * 0.94, r.h * 0.94 * inkA, U.maxSize * shortSide * Math.min(1.6, art.scale ?? 1) * (inkA < 1 ? inkA : 1)) })).sort((p, q) => q.w - p.w)[0];
 			if (spot && spot.w > 40 * k) {
 				const inkW = spot.w * Math.min(1, art.scale ?? 1);
 				let rotate = under.rotate;
@@ -611,7 +615,7 @@ export function layoutOf(s: Scene): Layout {
 				const ox = b1.x + b1.w / 2 - W / 2;
 				const oy = b1.y + b1.h / 2 - H / 2;
 				const cx = across ? spot.r.x + spot.r.w / 2 : Math.max(spot.r.x + b1.w / 2, Math.min(right(spot.r) - b1.w / 2, frame.x + frame.w / 2));
-				L.stickers = [{ ...st, x: (cx - ox) / W + (art.dx ?? 0), y: (spot.r.y + spot.r.h / 2 - oy) / H + (art.dy ?? 0) }];
+				L.stickers = [{ ...st, x: (cx - ox) / W, y: (spot.r.y + spot.r.h / 2 - oy) / H }];
 			} else L.notes.push(`Left out ${under.art.name}: there is no room for it beside these words.`);
 		} else L.words = placeWords(words, s.edits, stage, frame, obstacles, opts({}));
 	}
@@ -633,8 +637,8 @@ export function layoutOf(s: Scene): Layout {
 		if (stage.frame.x - stage.box.x > sc.margin * k * 1.2) Object.assign(open, frame);
 		const scale = art.scale ?? 1;
 		const got = s.objects.mode === 'preset'
-			? settle(s.objects.targets.map((o) => ({ ...o, size: (o.size * scale * Math.min(stage.box.w, stage.box.h)) / Math.min(W, H), x: (stage.box.x + (o.x + (art.dx ?? 0)) * stage.box.w) / W, y: (stage.box.y + (o.y + (art.dy ?? 0)) * Math.min(stage.box.h, room - stage.box.y)) / H })), W, H, open, keep, fit.gap * k)
-			: scatter(W, H, open, keep, s.objects.count, s.objects.seed, s.objects.names, cfg.stickers.scatter.gap * k, scale);
+			? settle(s.objects.targets.map((o) => ({ ...o, size: (o.size * scale * Math.min(stage.box.w, stage.box.h)) / Math.min(W, H), x: (stage.box.x + o.x * stage.box.w) / W, y: (stage.box.y + o.y * Math.min(stage.box.h, room - stage.box.y)) / H })), W, H, open, keep, fit.gap * k)
+			: scatter(W, H, open, keep, s.objects.count, s.objects.seed, s.objects.names, cfg.stickers.scatter.gap * k, scale, s.objects.asked);
 		L.stickers = got.stickers;
 		if (got.left.length) L.notes.push(`Left out ${got.left.join(', ')}: no room clear of the words and the logo.`);
 	}
@@ -686,7 +690,8 @@ export function drawScene(s: Scene, motion?: Motion, ids = new Ids('s')): Drawn 
 		const list = L.stickers;
 		if (!list.length) return;
 		const boxes = list.map((st) => stickerBox(st, W, H));
-		layers.add({ id: 'art', kind: 'art', box: union(boxes), ink: boxes, can: { move: true, scale: [0.5, 1.6], hide: true, ...(s.objects.mode === 'under' ? { anchors: ['left', 'right', 'top', 'bottom'] } : {}) } });
+		// One layer per object; an edit to the first (art) is an edit to all of them.
+		boxes.forEach((box, i) => layers.add({ id: i ? `art-${i + 1}` : 'art', kind: 'art', box, can: i ? {} : ART_CAN }));
 		out.push(
 			...list.map((st, i) => {
 				const mo = motion?.stickers?.[i];
@@ -695,7 +700,7 @@ export function drawScene(s: Scene, motion?: Motion, ids = new Ids('s')): Drawn 
 			}),
 		);
 	};
-	const windowLayer = (r: Rect, can: DrawnLayer['can']) => layers.add({ id: 'picture', kind: 'picture', box: r, can });
+	const windowLayer = (r: Rect, kind: 'key' | 'panel', can: DrawnLayer['can']) => layers.add({ id: 'picture', kind, box: r, can });
 	const moved = (svg: string) => {
 		const wm = motion?.window;
 		return wm ? `<g opacity="${num(wm.opacity)}" transform="translate(0 ${num(wm.dy)})">${svg}</g>` : svg;
@@ -717,7 +722,7 @@ export function drawScene(s: Scene, motion?: Motion, ids = new Ids('s')): Drawn 
 		if (L.quote) {
 			const q = L.quote;
 			const { medium, regular } = brandFonts();
-			windowLayer(q.rect, {});
+			windowLayer(q.rect, 'panel', {});
 			const face = tokenColor('white');
 			const rows = q.quote.w.lines.map((text, i) => ({ text, x: q.quote.x, baseline: q.quote.baseline + i * q.quote.size * q.quote.leading }));
 			const byRows = q.by ? q.by.w.lines.map((text, i) => ({ text, x: q.by!.x, baseline: q.by!.baseline + i * q.by!.size * 1.3 })) : [];
@@ -735,7 +740,7 @@ export function drawScene(s: Scene, motion?: Motion, ids = new Ids('s')): Drawn 
 			layers.text('quote', medium, rows, q.quote.size, trackingFor(q.quote.size / k), 'left', tokenColor('ink'), [face], s.quote.trim(), readBack(q.quote.w), { scale: [0.6, 1.5] }, ['picture']);
 			if (q.by) layers.text('by', regular, byRows, q.by.size, 0, 'left', tokenColor('brand'), [face], s.by.trim(), readBack(q.by.w), { hide: true }, ['picture']);
 		} else if (L.window) {
-			windowLayer(L.window, { move: true, scale: [0.5, 1.3], hide: true, anchors: L.stage.wide ? ['left', 'right'] : ['top', 'bottom'] });
+			windowLayer(L.window, 'key', PICTURE_CAN);
 			out.push(moved(drawWindow(ids, s, L.window, k, small, layers)));
 		}
 		if (L.words) out.push(drawWords(ids, L.words, wordGround, s.scan && !L.cap, k, layers, L.badgeLine ? motion?.words?.slice(1) : motion?.words));

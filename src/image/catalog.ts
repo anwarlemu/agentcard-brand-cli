@@ -8,6 +8,7 @@ import { parseSchema } from '../lib/schema.js';
 import { parseCards, SCENE_GROUNDS, STICKER_MODES, subjectNames, WINDOW_BODIES, type StickerMode } from './compose.js';
 import { imageConfig, type Card, type SceneGround, type WindowBody } from './scene.js';
 import type { Edits } from './words.js';
+import { sizeAlias } from '../design/platforms.js';
 
 export const SIZES = imageConfig().sizes;
 
@@ -145,8 +146,8 @@ export function cleanText(value: unknown, field: string): string | undefined {
 export function sizeId(raw: string): SizeId {
 	const id = raw.trim().toLowerCase();
 	if (id in SIZES) return id;
-	const alias = Object.entries(SIZES).find(([, s]) => s.aliases?.includes(id));
-	if (alias) return alias[0];
+	const alias = imageConfig().sizeAliases[id] ?? sizeAlias(id);
+	if (alias) return alias;
 	throw unknownName('size', id, [...Object.keys(SIZES), 'custom', 'all']);
 }
 

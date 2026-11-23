@@ -4,7 +4,7 @@ import type { Command } from 'commander';
 import { parseFormats, sha256, show } from '../assets/io.js';
 import type { ImageFormat } from '../assets/encode.js';
 import { imagesToPdf, pdfPage } from '../assets/pdf.js';
-import { checkSlide, deckConfig, drawSlide, sampleDeck, type Slide } from '../deck/slides.js';
+import { checkDrawn, checkSlide, deckConfig, drawSlide, sampleDeck, type Slide } from '../deck/slides.js';
 import { encodeAll, rasterizeRgba } from '../image/render.js';
 import { cli } from '../lib/brand.js';
 import { unknownName } from '../lib/names.js';
@@ -64,6 +64,7 @@ export async function deck(flags: Flags) {
 		// --theme is the ground of every slide that does not set its own.
 		const slide = theme && raw.theme === undefined && deckConfig().themes[raw.type].includes(theme as never) ? { ...raw, theme } : raw;
 		const drawn = drawSlide(slide, i);
+		checkDrawn(slide, i, drawn);
 		const svg = drawn.svg;
 		warnings.push(...drawn.notes.map((n) => `Slide ${i + 1}: ${n}`));
 		const stem = `slide-${String(i + 1).padStart(2, '0')}-${slide.type}`;

@@ -5,293 +5,6 @@
 		"width": 1200,
 		"height": 630
 	},
-	"sizes": {
-		"og": {
-			"width": 1200,
-			"height": 630,
-			"label": "Open Graph",
-			"use": "Link previews, 1200 by 630",
-			"shown": 560,
-			"limit": {
-				"bytes": 5000000,
-				"where": "X card images"
-			}
-		},
-		"square": {
-			"width": 1080,
-			"height": 1080,
-			"label": "Square",
-			"use": "Feed posts, 1080 by 1080",
-			"shown": 500,
-			"limit": {
-				"bytes": 8000000,
-				"where": "Instagram"
-			}
-		},
-		"portrait": {
-			"width": 1080,
-			"height": 1350,
-			"label": "Portrait",
-			"use": "Portrait posts (4:5), 1080 by 1350",
-			"shown": 470,
-			"limit": {
-				"bytes": 8000000,
-				"where": "Instagram"
-			}
-		},
-		"story": {
-			"width": 1080,
-			"height": 1920,
-			"label": "Story",
-			"use": "Stories and reels (9:16), 1080 by 1920",
-			"shown": 390,
-			"aliases": [
-				"9:16",
-				"vertical"
-			],
-			"limit": {
-				"bytes": 8000000,
-				"where": "Instagram"
-			},
-			"safe": {
-				"inset": [
-					270,
-					65,
-					384,
-					65
-				],
-				"basis": "published",
-				"note": "Keep the top 14 percent, the bottom 20 percent and 6 percent at each side clear (Meta's story ad guidance)."
-			}
-		},
-		"landscape": {
-			"width": 1200,
-			"height": 675,
-			"label": "Landscape",
-			"use": "X and LinkedIn posts (16:9), 1200 by 675",
-			"shown": 560,
-			"aliases": [
-				"wide",
-				"16:9"
-			],
-			"limit": {
-				"bytes": 5000000,
-				"where": "X"
-			}
-		},
-		"x-banner": {
-			"width": 1500,
-			"height": 500,
-			"label": "X banner",
-			"use": "X profile header, 1500 by 500",
-			"shown": 640,
-			"aliases": [
-				"banner",
-				"x-header",
-				"twitter-banner"
-			],
-			"limit": {
-				"bytes": 2000000,
-				"where": "X profile headers"
-			},
-			"safe": {
-				"inset": [
-					60,
-					40,
-					60,
-					40
-				],
-				"avoid": [
-					[
-						0,
-						310,
-						420,
-						190
-					]
-				],
-				"basis": "approximate",
-				"note": "X crops up to 60 px at the top and bottom on some screens (published); the profile picture covers about 420 by 190 px at the lower left (measured, it moves with the screen)."
-			}
-		},
-		"linkedin": {
-			"width": 1200,
-			"height": 627,
-			"label": "LinkedIn post",
-			"use": "LinkedIn link and image posts, 1200 by 627",
-			"shown": 552,
-			"aliases": [
-				"li-post"
-			],
-			"limit": {
-				"bytes": 5000000,
-				"where": "LinkedIn"
-			}
-		},
-		"linkedin-banner": {
-			"width": 1584,
-			"height": 396,
-			"label": "LinkedIn banner",
-			"use": "LinkedIn profile cover, 1584 by 396",
-			"shown": 800,
-			"aliases": [
-				"li-profile",
-				"linkedin-profile"
-			],
-			"limit": {
-				"bytes": 8000000,
-				"where": "LinkedIn"
-			},
-			"safe": {
-				"inset": [
-					24,
-					40,
-					24,
-					40
-				],
-				"avoid": [
-					[
-						0,
-						150,
-						500,
-						246
-					]
-				],
-				"basis": "approximate",
-				"note": "The profile photo covers about 500 by 246 px at the lower left across desktop and phone (measured, LinkedIn publishes no number)."
-			}
-		},
-		"linkedin-page": {
-			"width": 1128,
-			"height": 191,
-			"label": "LinkedIn page",
-			"use": "LinkedIn company page cover, 1128 by 191",
-			"shown": 1000,
-			"aliases": [
-				"li-page"
-			],
-			"limit": {
-				"bytes": 3000000,
-				"where": "LinkedIn pages"
-			},
-			"safe": {
-				"inset": [
-					14,
-					24,
-					14,
-					24
-				],
-				"avoid": [
-					[
-						0,
-						88,
-						200,
-						103
-					]
-				],
-				"basis": "approximate",
-				"note": "The page's logo covers about 200 by 103 px at the lower left (measured)."
-			}
-		},
-		"youtube": {
-			"width": 2560,
-			"height": 1440,
-			"label": "YouTube channel art",
-			"use": "YouTube channel banner, 2560 by 1440",
-			"shown": 760,
-			"aliases": [
-				"yt",
-				"youtube-banner"
-			],
-			"limit": {
-				"bytes": 6000000,
-				"where": "YouTube channel art"
-			},
-			"safe": {
-				"inset": [
-					509,
-					508,
-					509,
-					508
-				],
-				"unit": "safe",
-				"basis": "published",
-				"note": "Only the middle 1546 by 423 px shows on every device (YouTube's published safe area); the words, logo and art stay in it and the ground fills the rest."
-			}
-		},
-		"youtube-thumbnail": {
-			"width": 1280,
-			"height": 720,
-			"label": "YouTube thumbnail",
-			"use": "YouTube video thumbnail, 1280 by 720",
-			"shown": 400,
-			"aliases": [
-				"yt-thumbnail",
-				"thumbnail"
-			],
-			"limit": {
-				"bytes": 2000000,
-				"where": "YouTube thumbnails"
-			},
-			"safe": {
-				"inset": [
-					24,
-					24,
-					24,
-					24
-				],
-				"avoid": [
-					[
-						1090,
-						610,
-						190,
-						110
-					]
-				],
-				"basis": "approximate",
-				"note": "The duration label covers the lower right corner (measured, about 190 by 110 px)."
-			}
-		},
-		"email": {
-			"width": 1200,
-			"height": 300,
-			"label": "Email header",
-			"use": "Email header, 1200 by 300 (shown at 600)",
-			"shown": 600,
-			"aliases": [
-				"email-header"
-			],
-			"limit": {
-				"bytes": 1000000,
-				"where": "email headers (a common guideline)"
-			}
-		},
-		"avatar": {
-			"width": 800,
-			"height": 800,
-			"label": "Profile picture",
-			"use": "Profile picture, 800 by 800, shown in a circle",
-			"shown": 128,
-			"aliases": [
-				"profile",
-				"profile-picture"
-			],
-			"limit": {
-				"bytes": 2000000,
-				"where": "X profile pictures"
-			},
-			"safe": {
-				"inset": [
-					96,
-					96,
-					96,
-					96
-				],
-				"circle": true,
-				"basis": "published",
-				"note": "X, LinkedIn and YouTube cut profile pictures to a circle: everything sits inside it."
-			}
-		}
-	},
 	"grounds": {
 		"blue": {
 			"token": "--ds-color-brand",
@@ -389,8 +102,7 @@
 		},
 		"small": {
 			"size": 18,
-			"shown": 8,
-			"note": "The floor for small words: 8 px at the width a size is usually shown at (sizes[].shown), never under 14 px at the 1200 by 630 scale."
+			"note": "The floor for small words: 8 px at the width a size is usually shown at, never under 13 px at the 1200 by 630 scale."
 		},
 		"footer": 20,
 		"flatBand": {
@@ -639,7 +351,8 @@
 			"spread": 0.11,
 			"tilt": 16,
 			"gap": 14,
-			"tries": 60
+			"tries": 60,
+			"air": 0.055
 		},
 		"fit": {
 			"gap": 12,
@@ -656,12 +369,12 @@
 		"The editor's band divider reads a seeded value-noise tile for its grain; images use the library's grain (fractal noise at 0.95, two octaves, gray, soft-light), as registry/components/visuals/band-divider.tsx draws it.",
 		"Stickers are the editor's own art (public/agentcard-og/*.webp), converted to PNG in brand/illustration/objects because the renderer reads PNG and JPEG only.",
 		"Window bar labels are the user's to pass: the site's own labels (issuing.product) are not drawn by default.",
-		"Safe areas come from each platform's published numbers where it has any; the ones marked approximate were measured on the platform and move a little with the screen.",
-		"Characters the shipped Inter cannot draw (emoji, Chinese, Arabic and so on) are refused, never drawn as empty boxes."
+		"Characters the shipped Inter cannot draw (emoji, Chinese, Arabic and so on) are refused, never drawn as empty boxes.",
+		"Safe areas, shown widths and upload limits are in the shared platform table (src/design/platforms.ts): each number is marked official (read on the platform's page) or approximate."
 	],
 	"custom": {
-		"min": 160,
-		"max": 4096
+		"min": 200,
+		"max": 4000
 	},
 	"bandContrast": {
 		"blue": "paper",
@@ -719,5 +432,12 @@
 			"body": "Paste a product page and the agent shops it like any catalog item."
 		},
 		"logo": {}
-	}
+	},
+	"sizeAliases": {
+		"banner": "x-banner",
+		"li-profile": "linkedin-banner",
+		"linkedin-profile": "linkedin-banner",
+		"yt": "youtube"
+	},
+	"$sizes": "Sizes, the parts a platform covers or crops, the width each is shown at and upload limits are the shared table every brand uses (src/design/platforms.ts, with sources)."
 }

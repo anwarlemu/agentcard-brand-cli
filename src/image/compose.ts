@@ -163,7 +163,7 @@ export function buildScene(f: SceneFields): Scene {
 		const sc = cfg.stickers.scatter;
 		const count = f.count ?? (names ? Math.min(names.length, sc.max) : sc.count);
 		if (!Number.isInteger(count) || count < 1 || count > sc.max) throw new Error(`count must be a whole number from 1 to ${sc.max}.`);
-		scene.objects = { mode, targets: [], names: names ?? subjectNames(), count, seed: f.seed ?? sc.seed };
+		scene.objects = { mode, targets: [], names: names ?? subjectNames(), count, seed: f.seed ?? sc.seed, asked: f.count !== undefined || Boolean(names) };
 	}
 	const L = layoutOf(scene);
 	// Objects a person named by name are asked for: leaving one out is an error, not a note.

@@ -6,6 +6,7 @@ import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import type { DrawnLayer } from '../design/types.js';
 import { buildScene, parseCards, type SceneFields } from '../image/compose.js';
+import { assertClean } from '../image/check.js';
 import { stageFor, type SceneGround } from '../image/config.js';
 import { band, Ids, scan } from '../image/effects.js';
 import { bandMixes, brandFonts, document, drawable, flatten, rect, tokenColor } from '../image/paint.js';
@@ -159,7 +160,7 @@ function end(slide: Slide, W: number, H: number, edits: Edits) {
 		f.out.push(drawBlock(f.layers, 'headline', medium, title, W / 2 + s.dx, y + s.dy, 'center', strong(f.ground), groundColors(f.ground, f.scan), headline, CAN));
 		y += title.h + gaps[1]!;
 	}
-	if (address) f.out.push(drawBlock(f.layers, 'url', regular, address, W / 2, y, 'center', isDark(f.ground) ? flatten(tokenColor('text-on-brand-muted'), groundColor(f.ground)) : tokenColor('text-secondary'), groundColors(f.ground), text(slide.url) || siteHost(), { hide: true }));
+	if (address) f.out.push(drawBlock(f.layers, 'url', regular, address, W / 2, y, 'center', isDark(f.ground) ? flatten(tokenColor('text-on-brand-muted'), groundColor(f.ground)) : tokenColor('text-secondary'), groundColors(f.ground), text(slide.url) || siteHost(), { hide: true }, !text(slide.url)));
 	return f;
 }
 
@@ -216,6 +217,13 @@ export function drawSlide(slide: Slide, index: number, edits: Edits = {}): Drawn
 	} catch (error) {
 		throw new Error(`Slide ${index + 1} (${slide.type}): ${(error as Error).message}`);
 	}
+}
+
+/** Throws when a drawn slide breaks a rule (the same ones `design` checks). */
+export function checkDrawn(slide: Slide, index: number, drawn: DrawnSlide) {
+	const { width, height } = deckConfig();
+	const copy = Object.fromEntries(Object.entries(slide).filter(([k]) => !['type', 'image', 'picture', 'theme'].includes(k)).map(([k, v]) => [k, k === 'items' ? items(v).map((c) => `${c.title}\n${c.body}`).join('\n\n') : text(v)]));
+	assertClean({ template: slide.type, kind: 'slide', size: { id: 'slide', width, height }, copy, layers: drawn.layers }, `Slide ${index + 1} (${slide.type})`);
 }
 
 export const slideSvg = (slide: Slide, index: number): string => drawSlide(slide, index).svg;

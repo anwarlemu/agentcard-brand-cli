@@ -2,6 +2,8 @@
 // the safe frame a platform leaves, and the smallest words that still read at the width the size is shown at.
 
 import { readFileSync } from 'node:fs';
+import { SMALL_FLOOR } from '../design/check.js';
+import { PLATFORMS, platformOf, zonePx } from '../design/platforms.js';
 import type { Rect } from '../design/types.js';
 import { pkgPath } from '../lib/paths.js';
 import type { GrainSpec, ScanSpec } from './effects.js';
@@ -13,8 +15,7 @@ export type Card = { title: string; body: string };
 
 export type Fraction = number | { wide: number; tall: number };
 
-export type SafeSpec = { inset: [number, number, number, number]; avoid?: [number, number, number, number][]; circle?: boolean; unit?: 'safe'; basis: 'published' | 'approximate'; note: string };
-export type SizeSpec = { width: number; height: number; label: string; use: string; shown: number; aliases?: string[]; limit?: { bytes: number; where: string }; safe?: SafeSpec };
+export type SizeSpec = { width: number; height: number; label: string; use: string; shown: number; aliases: string[]; limit?: { bytes: number; where: string; official: boolean }; zones?: { name: string; official: boolean; rect: Rect }[]; source?: string; note?: string };
 
 export type TemplateSpec = {
 	label: string;
@@ -39,7 +40,9 @@ export type TemplateSpec = {
 
 export type ImageConfig = {
 	unit: { width: number; height: number };
+	/** The shared platform sizes (src/design/platforms.ts), with this brand's older names. */
 	sizes: Record<string, SizeSpec>;
+	sizeAliases: Record<string, string>;
 	custom: { min: number; max: number };
 	grounds: Record<SceneGround, { token: string; dark: boolean }>;
 	bandContrast: Record<SceneGround, SceneGround>;
@@ -47,7 +50,7 @@ export type ImageConfig = {
 		margin: number;
 		logo: number;
 		logoRule: { clear: number; min: number; scale: [number, number]; note: string };
-		small: { size: number; shown: number; note: string };
+		small: { size: number; note: string };
 		footer: number;
 		wideRatio: number;
 		eyebrow: { size: number; gap: number; tracking: string; caps: boolean };
@@ -64,7 +67,7 @@ export type ImageConfig = {
 	stickers: {
 		preset: { subject: string; x: number; y: number; size: number; rotate: number }[];
 		under: { subject: string; textY: number; rotate: number; maxSize: number };
-		scatter: { count: number; max: number; seed: number; minSize: number; spread: number; tilt: number; gap: number; tries: number };
+		scatter: { count: number; max: number; seed: number; minSize: number; spread: number; tilt: number; gap: number; tries: number; air: number };
 		fit: { gap: number; clear: number; minScale: number; maxShift: number };
 	};
 	samples: Record<SceneTemplate, Record<string, unknown>>;
@@ -83,7 +86,27 @@ export type IllustrateConfig = {
 
 let imageCfg: ImageConfig | undefined;
 export function imageConfig(): ImageConfig {
-	imageCfg ??= JSON.parse(readFileSync(pkgPath('brand', 'assets', 'image.json'), 'utf8')) as ImageConfig;
+	if (!imageCfg) {
+		imageCfg = JSON.parse(readFileSync(pkgPath('brand', 'assets', 'image.json'), 'utf8')) as ImageConfig;
+		const older = Object.entries(imageCfg.sizeAliases);
+		imageCfg.sizes = Object.fromEntries(
+			PLATFORMS.map((p) => [
+				p.id,
+				{
+					width: p.width,
+					height: p.height,
+					label: p.label,
+					use: `${p.label}, ${p.width} by ${p.height}`,
+					shown: p.shown,
+					aliases: [...p.aliases, ...older.filter(([, to]) => to === p.id).map(([name]) => name)],
+					...(p.limit ? { limit: { bytes: p.limit.bytes, where: p.label, official: p.limit.official } } : {}),
+					...(p.avoid.length || p.safe ? { zones: [...p.avoid, ...(p.safe ? [p.safe] : [])] } : {}),
+					...(p.source ? { source: p.source } : {}),
+					...(p.note ? { note: p.note } : {}),
+				},
+			]),
+		);
+	}
 	return imageCfg;
 }
 
@@ -117,21 +140,39 @@ export type Stage = {
 /** The stage for a canvas. `size` is a size id whose platform rules apply; without one the whole canvas is open. */
 export function stageFor(W: number, H: number, size?: string): Stage {
 	const cfg = imageConfig();
-	const spec = size ? cfg.sizes[size] : undefined;
+	const found = size ? PLATFORMS.find((p) => p.id === size) : undefined;
 	// A size's platform rules hold at that size's shape only (a deck or a custom canvas passes none).
-	const safe = spec && Math.abs(spec.width / spec.height - W / H) < 0.02 ? spec.safe : undefined;
-	const r = spec ? W / spec.width : 1;
-	const inset = (safe?.inset ?? [0, 0, 0, 0]).map((v) => v * r) as [number, number, number, number];
-	const box: Rect = safe?.unit === 'safe' ? { x: inset[3], y: inset[0], w: W - inset[1] - inset[3], h: H - inset[0] - inset[2] } : { x: 0, y: 0, w: W, h: H };
+	const platform = found && Math.abs(found.width / found.height - W / H) < 0.02 ? found : undefined;
+	const zones = (platform?.avoid ?? []).map((z) => zonePx(z, W, H));
+	// A zone across a whole side is a margin; the rest are parts to lay out around.
+	const inset = { top: 0, right: 0, bottom: 0, left: 0 };
+	const avoid: Rect[] = [];
+	for (const z of zones) {
+		const across = z.x <= 0.5 && z.x + z.w >= W - 0.5;
+		const down = z.y <= 0.5 && z.y + z.h >= H - 0.5;
+		if (across && z.y <= 0.5) inset.top = Math.max(inset.top, z.h);
+		else if (across) inset.bottom = Math.max(inset.bottom, H - z.y);
+		else if (down && z.x <= 0.5) inset.left = Math.max(inset.left, z.w);
+		else if (down) inset.right = Math.max(inset.right, W - z.x);
+		else avoid.push(z);
+	}
+	const circle = size === 'avatar' && Boolean(platform);
+	const safe = platform?.safe ? zonePx(platform.safe, W, H) : undefined;
+	const box: Rect = safe && !circle ? safe : { x: 0, y: 0, w: W, h: H };
 	const k = unitOf(box.w, box.h);
 	const m = cfg.scene.margin * k;
-	const edge = (v: number) => (safe?.unit === 'safe' ? v + m * 0.4 : Math.max(v, v > m * 0.6 ? v : m));
-	const x = edge(inset[3]);
-	const y = edge(inset[0]);
-	const frame: Rect = { x, y, w: W - x - edge(inset[1]), h: H - y - edge(inset[2]) };
-	const avoid = (safe?.avoid ?? []).map(([ax, ay, aw, ah]) => ({ x: ax * r, y: ay * r, w: aw * r, h: ah * r }));
-	const small = spec ? Math.max(14 * k, (cfg.scene.small.shown * W) / spec.shown) : cfg.scene.small.size * 0.9 * k;
-	return { k, box, frame, avoid, circle: Boolean(safe?.circle), wide: isWide(box.w, box.h), small };
+	const edge = (v: number) => (v > 0 ? Math.max(v + 4 * k, v > m * 0.6 ? 0 : m) : m);
+	let frame: Rect;
+	if (safe) {
+		const pad = circle ? 4 * k : m * 0.4;
+		frame = { x: safe.x + pad, y: safe.y + pad, w: safe.w - pad * 2, h: safe.h - pad * 2 };
+	} else {
+		const [x, y] = [edge(inset.left), edge(inset.top)];
+		frame = { x, y, w: W - x - edge(inset.right), h: H - y - edge(inset.bottom) };
+	}
+	const shown = platformOf(platform ? size! : 'custom', W, H).shown;
+	const small = Math.max(13 * k, (SMALL_FLOOR * 1.01 * W) / shown);
+	return { k, box, frame, avoid, circle, wide: isWide(box.w, box.h), small };
 }
 
 export const pick = (f: Fraction | undefined, wide: boolean, fallback: number) => (f === undefined ? fallback : typeof f === 'number' ? f : wide ? f.wide : f.tall);

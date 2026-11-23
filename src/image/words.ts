@@ -47,10 +47,11 @@ export class Layers {
 	add(layer: DrawnLayer) {
 		this.list.push(layer);
 	}
-	text(id: string, font: Font, rows: { text: string; x: number; baseline: number }[], size: number, tracking: number, align: Align, color: string, ground: string[], asked: string, drawn: string, can: DrawnLayer['can'] = {}, over?: string[]) {
+	/** `own` marks the brand's own words (its address) and numbering, which nobody passed. */
+	text(id: string, font: Font, rows: { text: string; x: number; baseline: number }[], size: number, tracking: number, align: Align, color: string, ground: string[], asked: string, drawn: string, can: DrawnLayer['can'] = {}, over?: string[], own = false) {
 		const ink = rows.filter((r) => r.text).map((r) => lineBox(font, r.text, r.x, r.baseline, size, tracking, align));
 		if (!ink.length) return;
-		this.add({ id, kind: 'text', box: union(ink), ink, ...(over ? { over } : {}), text: { asked, drawn, size, color, ground }, can });
+		this.add({ id, kind: 'text', box: union(ink), ink, ...(over ? { over } : {}), text: { asked, drawn, size, color, ground, ...(own ? { own } : {}) }, can });
 	}
 }
 
@@ -83,7 +84,7 @@ const scaleOf = (edits: Edits, id: string) => edits[id]?.scale ?? 1;
 
 export function readable(words: WordsIn, edits: Edits): WordsIn {
 	const keep = (id: string, v: string, what: string) => (edits[id]?.hidden ? '' : v.trim() ? drawable(v.trim(), what) : '');
-	return { badge: keep('badge', words.badge, 'badge'), headline: keep('headline', words.headline, 'headline'), body: keep('body', words.body, 'body'), button: keep('key', words.button, 'button') };
+	return { badge: keep('badge', words.badge, 'badge'), headline: keep('headline', words.headline, 'headline'), body: keep('body', words.body, 'body'), button: keep('button', words.button, 'button') };
 }
 
 function measureWords(words: WordsIn, edits: Edits, stage: Stage, max: number, S: number, bodyMax: number, squeeze: number): Words | null {
@@ -95,7 +96,7 @@ function measureWords(words: WordsIn, edits: Edits, stage: Stage, max: number, S
 	const bodyLeading = tokenNumber(cfg.body.leading);
 	const eye = Math.max(small, cfg.eyebrow.size * k * scaleOf(edits, 'badge'));
 	const bodyS = Math.max(small * 1.08, Math.min(cfg.body.max * k, Math.max(cfg.body.min * k, S * cfg.body.ratio)) * scaleOf(edits, 'body') * squeeze);
-	const keyS = Math.max(small, cfg.key.size * k * scaleOf(edits, 'key') * squeeze);
+	const keyS = Math.max(small, cfg.key.size * k * scaleOf(edits, 'button') * squeeze);
 	const keyR = keyS / cfg.key.size;
 	const head = words.headline ? wrapEven(medium, words.headline, S, track, max) : NONE;
 	const body = words.body ? wrapEven(regular, words.body, bodyS, 0, Math.min(max, bodyMax)) : NONE;
@@ -194,9 +195,9 @@ export function placeWords(words: WordsIn, edits: Edits, stage: Stage, frame: Re
 
 export const WORD_CAN: Record<string, DrawnLayer['can']> = {
 	badge: { scale: [0.9, 1.6], hide: true },
-	headline: { move: true, scale: [0.5, 1.6], align: true, anchors: ['top-left', 'top', 'top-right', 'left', 'center', 'right', 'bottom-left', 'bottom', 'bottom-right'] },
+	headline: { move: true, scale: [0.5, 1.6], align: true, anchors: ['center', 'top-left', 'top', 'top-right', 'left', 'right', 'bottom-left', 'bottom', 'bottom-right'] },
 	body: { scale: [0.8, 1.6], hide: true },
-	key: { scale: [0.9, 1.4], hide: true },
+	button: { scale: [0.9, 1.4], hide: true },
 };
 
 function drawKey(ids: Ids, label: string, m: Words, x: number, y: number, k: number, onBlue: boolean, align: Align, layers: Layers) {
@@ -209,7 +210,7 @@ function drawKey(ids: Ids, label: string, m: Words, x: number, y: number, k: num
 	const sh = boxShadow(ids, left, y, m.keyW, m.keyH, r, shadowToken(onBlue ? cfg.onBlue : cfg.onLight), k);
 	const cx = left + m.keyW / 2;
 	const base = y + m.keyH / 2 + m.keyS * 0.35;
-	layers.add({ id: 'key', kind: 'key', box: { x: left, y, w: m.keyW, h: m.keyH }, text: { asked: label, drawn: label, size: m.keyS, color: ink, ground: [face] }, can: WORD_CAN.key! });
+	layers.add({ id: 'button', kind: 'key', box: { x: left, y, w: m.keyW, h: m.keyH }, text: { asked: label, drawn: label, size: m.keyS, color: ink, ground: [face] }, can: WORD_CAN.button! });
 	return `<defs>${sh.defs}</defs>${sh.under}${rect(left, y, m.keyW, m.keyH, face, r)}${sh.over}${lineAt(medium, label, cx, base, m.keyS, 0, 'center', ink)}`;
 }
 
@@ -267,8 +268,8 @@ export function fitBlock(font: Font, text: string, o: { what: string; w: number;
 }
 
 /** Draws a fitted block with its first line's top at y, and reports it. */
-export function drawBlock(layers: Layers, id: string, font: Font, b: ReturnType<typeof fitBlock>, x: number, y: number, align: Align, color: string, ground: string[], asked: string, can: DrawnLayer['can'] = {}): string {
+export function drawBlock(layers: Layers, id: string, font: Font, b: ReturnType<typeof fitBlock>, x: number, y: number, align: Align, color: string, ground: string[], asked: string, can: DrawnLayer['can'] = {}, own = false): string {
 	const rows = b.w.lines.map((text, i) => ({ text, x, baseline: y + b.size * 0.86 + i * b.size * b.leading }));
-	layers.text(id, font, rows, b.size, b.tracking, align, color, ground, asked, readBack(b.w), can);
+	layers.text(id, font, rows, b.size, b.tracking, align, color, ground, asked, readBack(b.w), can, undefined, own);
 	return rows.map((r) => lineAt(font, r.text, r.x, r.baseline, b.size, b.tracking, align, color)).join('');
 }

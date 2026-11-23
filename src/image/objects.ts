@@ -96,8 +96,10 @@ export function random(seed: number) {
  * A seeded scatter over the free room: every object takes, of a handful of random spots, the one farthest from what is
  * already there, so the same seed gives the same even spread and none piles up on another.
  */
-export function scatter(W: number, H: number, frame: Rect, keep: Rect[], count: number, seed: number, names: string[], gap: number, scale = 1): { stickers: Sticker[]; left: string[] } {
+export function scatter(W: number, H: number, frame: Rect, keep: Rect[], count: number, seed: number, names: string[], gap: number, scale = 1, asked = true): { stickers: Sticker[]; left: string[] } {
 	const cfg = imageConfig().stickers.scatter;
+	// Nobody asked for a number: fewer objects with air round them, rather than a crowd in what room is left.
+	const air = asked ? gap : Math.max(gap, Math.min(frame.w, frame.h) * cfg.air);
 	const short = Math.min(frame.w, frame.h) / Math.min(W, H);
 	const rnd = random(seed);
 	const order = names.map((name) => ({ name, r: rnd() })).sort((a, b) => a.r - b.r).map((o) => o.name);
@@ -118,9 +120,12 @@ export function scatter(W: number, H: number, frame: Rect, keep: Rect[], count: 
 				const size = (cfg.minSize + rnd() * cfg.spread) * short * shrink * scale * 1.12;
 				const st: Sticker = { art, size, rotate: Math.round(rnd() * cfg.tilt * 2 - cfg.tilt), x: (frame.x + rnd() * frame.w) / W, y: (frame.y + rnd() * frame.h) / H };
 				const box = stickerBox(st, W, H);
-				if (!contains(frame, box, 0) || keep.some((o) => hit(box, o)) || boxes.some((o) => hit(box, o, gap))) continue;
+				if (!contains(frame, box, 0) || keep.some((o) => hit(box, o)) || boxes.some((o) => hit(box, o, air))) continue;
 				const others = boxes.map((o) => near(box, o));
-				const score = others.length ? Math.min(...others) : rnd();
+				// The emptier half of the picture first, then the spot farthest from the rest.
+				const half = (b: Rect) => Number(b.x + b.w / 2 > frame.x + frame.w / 2);
+				const lean = boxes.filter((o) => half(o) === half(box)).length - boxes.filter((o) => half(o) !== half(box)).length;
+				const score = others.length ? Math.min(...others) - Math.max(0, lean) * frame.w * 0.06 : rnd();
 				if (!best || score > best.score) best = { st, box, score };
 			}
 			if (best) break;
@@ -129,6 +134,6 @@ export function scatter(W: number, H: number, frame: Rect, keep: Rect[], count: 
 		boxes.push(best.box);
 		stickers.push(best.st);
 	}
-	if (stickers.length < Math.min(count, order.length)) left.push(`${Math.min(count, order.length) - stickers.length} of ${Math.min(count, order.length)} objects`);
+	if (asked && stickers.length < Math.min(count, order.length)) left.push(`${Math.min(count, order.length) - stickers.length} of ${Math.min(count, order.length)} objects`);
 	return { stickers, left };
 }

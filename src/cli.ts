@@ -13,6 +13,7 @@ import { registerIllustrate } from './commands/illustrate.js';
 import { registerDeck } from './commands/deck.js';
 import { registerMerch } from './commands/merch.js';
 import { registerFigma } from './commands/figma.js';
+import { designFrom, registerDesign } from './commands/design.js';
 import { approve, check, done, look, skip, tokensCommand } from './commands/small.js';
 import { type HookResult, cursorPreToolUse, cursorStop, preToolUse, sessionStart, stop, userPromptSubmit } from './hooks/handlers.js';
 import { readHookInput } from './hooks/payload.js';
@@ -111,6 +112,7 @@ registerIllustrate(program);
 registerDeck(program);
 registerMerch(program);
 registerFigma(program);
+registerDesign(program);
 
 // An unknown command exits 1 with the nearest names, instead of commander's "too many arguments".
 {
@@ -131,7 +133,7 @@ registerFigma(program);
 	// A group (image, video, component, brand) takes no arguments of its own: its next word must be one of its commands.
 	const next = group && group.commands.length && !group.registeredArguments.length ? args.slice(args.indexOf(first!) + 1).find((a) => !a.startsWith('-')) : undefined;
 	const subs = group ? group.commands.flatMap((c) => [c.name(), ...c.aliases()]) : [];
-	const bad = first && !names.includes(first) ? unknownName('command', first, names.filter((n) => n !== 'help')) : next && !subs.includes(next) && next !== 'help' ? unknownName(`${first} command`, next, subs) : undefined;
+	const bad = first === 'design' ? undefined : first && !names.includes(first) ? unknownName('command', first, names.filter((n) => n !== 'help')) : next && !subs.includes(next) && next !== 'help' ? unknownName(`${first} command`, next, subs) : undefined;
 	if (bad) {
 		const error = bad;
 		if (args.includes('--json')) process.stdout.write(`${JSON.stringify({ ok: false, error: error.message })}\n`);
@@ -142,7 +144,10 @@ registerFigma(program);
 
 attachProgram(program);
 
-program.parseAsync().catch((error: Error) => {
+const start = async () => {
+	if (!(await designFrom(process.argv.slice(2)))) await program.parseAsync();
+};
+start().catch((error: Error) => {
 	if (program.opts().json || process.argv.includes('--json')) process.stdout.write(`${JSON.stringify({ ok: false, error: error.message })}\n`);
 	else process.stderr.write(`${error.message}\n`);
 	process.exit(1);
