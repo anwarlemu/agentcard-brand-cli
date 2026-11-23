@@ -398,5 +398,69 @@
 		"width": 1200,
 		"height": 630,
 		"group": "video"
+	},
+	{
+		"file": "/assets/design-1.png",
+		"title": "New X banner",
+		"command": "npx agentcard-ds design new hero --size x-banner --headline \"Let agents buy anything online\" -o banner.design.json",
+		"width": 1500,
+		"height": 500,
+		"group": "design"
+	},
+	{
+		"file": "/assets/design-2.png",
+		"title": "bigger headline, logo top right",
+		"command": "npx agentcard-ds design revise banner.design.json \"bigger headline, logo top right\"",
+		"width": 1500,
+		"height": 500,
+		"group": "design"
+	},
+	{
+		"file": "/assets/design-3.png",
+		"title": "darker theme",
+		"command": "npx agentcard-ds design revise banner.design.json \"darker theme\"",
+		"width": 1500,
+		"height": 500,
+		"group": "design"
+	},
+	{
+		"file": "/assets/design-4.png",
+		"title": "add a badge and a line",
+		"command": "npx agentcard-ds design revise banner.design.json \"add a badge \\\"New\\\", body \\\"Every purchase is approved.\\\"\"",
+		"width": 1500,
+		"height": 500,
+		"group": "design"
+	},
+	{
+		"file": "/assets/design-5.png",
+		"title": "another version",
+		"command": "npx agentcard-ds design revise banner.design.json \"another version\"",
+		"width": 1500,
+		"height": 500,
+		"group": "design"
+	},
+	{
+		"file": "/assets/design-6.png",
+		"title": "a key, words on the left",
+		"command": "npx agentcard-ds design edit banner.design.json --set \"button=Start free\" --layer headline.align=left",
+		"width": 1500,
+		"height": 500,
+		"group": "design"
+	},
+	{
+		"file": "/assets/design-7.png",
+		"title": "undo",
+		"command": "npx agentcard-ds design undo banner.design.json",
+		"width": 1500,
+		"height": 500,
+		"group": "design"
+	},
+	{
+		"file": "",
+		"title": "Nothing was changed.",
+		"command": "npx agentcard-ds design revise banner.design.json \"make the logo neon green\"",
+		"width": 0,
+		"height": 0,
+		"group": "design-refused"
 	}
 ]
