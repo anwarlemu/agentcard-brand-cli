@@ -125,18 +125,20 @@ export function fitWords(words: WordsIn, edits: Edits, stage: Stage, room: { w: 
 	const floor = headFloor(stage);
 	const top = Math.max(floor, opts.S);
 	const lines = (n: number, m: Words) => m.head.lines.length <= n;
-	for (const pass of [
-		{ n: cfg.maxLines, w: Math.min(room.w, opts.maxW), q: 1 },
-		{ n: cfg.maxLinesTight, w: room.w, q: 1 },
-		{ n: cfg.maxLinesTight, w: room.w, q: 0.72 },
-	]) {
+	const tryPass = (pass: { n: number; w: number; q: number }): Words | null => {
 		for (let S = top; ; S = Math.max(floor, S * 0.95)) {
 			const m = measureWords(words, edits, stage, pass.w, S, Math.max(opts.bodyMax, pass.q < 1 ? room.w : 0), pass.q);
 			if (m && lines(pass.n, m) && m.h <= room.h + 0.5 && m.w <= room.w + 0.5) return m;
-			if (S <= floor) break;
+			if (S <= floor) return null;
 		}
-	}
-	return null;
+	};
+	const first = tryPass({ n: cfg.maxLines, w: Math.min(room.w, opts.maxW), q: 1 });
+	if (first && first.S > top * 0.7) return first;
+	// A long line gets more lines, or a wider column, when that keeps it clearly larger.
+	const wide = Math.min(room.w, opts.maxW * 1.2);
+	const second = [tryPass({ n: cfg.maxLines + 2, w: Math.min(room.w, opts.maxW), q: 1 }), tryPass({ n: cfg.maxLines, w: wide, q: 1 }), tryPass({ n: cfg.maxLines + 2, w: wide, q: 1 })].filter((m): m is Words => Boolean(m)).sort((p, q) => q.S - p.S)[0];
+	if (second && second.S > (first?.S ?? 0) * 1.18) return second;
+	return first ?? tryPass({ n: cfg.maxLinesTight, w: room.w, q: 1 }) ?? tryPass({ n: cfg.maxLinesTight, w: room.w, q: 0.72 });
 }
 
 /** What to say when the words do not fit: the word that is too long, or how long the copy is. */

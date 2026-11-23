@@ -114,7 +114,7 @@ export function buildIllustration(input: IllustrateInput): Illustration {
 			put(a, W / 2, H / 2, w, rotate);
 			center.push(inflate(turnedBox(W / 2, H / 2, w, (w * a.height) / a.width, rotate), 16 * k));
 		}
-		const got = scatter(W, H, { x: m, y: m, w: W - m * 2, h: H - bandH - m * 2 }, center, count, input.seed ?? sc.seed, names, sc.gap * k);
+		const got = scatter(W, H, { x: m, y: m, w: W - m * 2, h: H - bandH - m * 2 }, center, count, input.seed ?? sc.seed, names, sc.gap * k, 1.4);
 		if (input.subjects.length && got.left.length) throw new Error(`There is no room for ${got.left.join(', ')} at this size. Name fewer subjects or pick a larger size.`);
 		for (const st of got.stickers) put(st.art, st.x * W, st.y * H, st.size * short, st.rotate);
 	}

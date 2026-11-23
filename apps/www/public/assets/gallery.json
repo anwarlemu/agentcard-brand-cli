@@ -2,7 +2,7 @@
 	{
 		"file": "/assets/image-1-hero-og.jpg",
 		"title": "hero, og (1200 by 630)",
-		"command": "npx agentcard-ds image render --template hero --headline \"Let agents buy anything online\"",
+		"command": "npx agentcard-ds image hero --headline \"Let agents buy anything online\"",
 		"width": 1200,
 		"height": 630,
 		"group": "image"
@@ -10,7 +10,7 @@
 	{
 		"file": "/assets/image-2-window-og.jpg",
 		"title": "window, og (1200 by 630)",
-		"command": "npx agentcard-ds image render --template window --eyebrow Issuing --headline \"Create one-time and multi-use cards\"",
+		"command": "npx agentcard-ds image window --badge Issuing --headline \"Create one-time and multi-use cards\"",
 		"width": 1200,
 		"height": 630,
 		"group": "image"
@@ -18,7 +18,7 @@
 	{
 		"file": "/assets/image-3-cards-landscape.jpg",
 		"title": "cards, landscape (1200 by 675)",
-		"command": "npx agentcard-ds image render --template cards --input cards.json --size landscape",
+		"command": "npx agentcard-ds image cards --input cards.json --size landscape",
 		"width": 1200,
 		"height": 675,
 		"group": "image"
@@ -26,7 +26,7 @@
 	{
 		"file": "/assets/image-4-hero-story.jpg",
 		"title": "hero, story (1080 by 1920)",
-		"command": "npx agentcard-ds image render --template hero --eyebrow New --headline \"Purchase Agent\" --subtext \"...\" --stickers under --size story",
+		"command": "npx agentcard-ds image hero --badge New --headline \"Purchase Agent\" --body \"...\" --stickers under --size story",
 		"width": 1080,
 		"height": 1920,
 		"group": "image"
@@ -34,7 +34,7 @@
 	{
 		"file": "/assets/image-5-window-square.jpg",
 		"title": "window, square (1080 by 1080)",
-		"command": "npx agentcard-ds image render --template window --eyebrow Vault --headline \"...\" --picture wallet --window-body sky --window vault.product --size square",
+		"command": "npx agentcard-ds image window --badge Vault --headline \"...\" --picture wallet --window-body sky --window vault.product --size square",
 		"width": 1080,
 		"height": 1080,
 		"group": "image"
@@ -42,7 +42,7 @@
 	{
 		"file": "/assets/image-6-hero-x-banner.jpg",
 		"title": "hero, x-banner (1500 by 500)",
-		"command": "npx agentcard-ds image render --template hero --headline \"...\" --size x-banner",
+		"command": "npx agentcard-ds image hero --headline \"...\" --size x-banner",
 		"width": 1500,
 		"height": 500,
 		"group": "image"
@@ -50,7 +50,7 @@
 	{
 		"file": "/assets/image-7-hero-linkedin-banner.jpg",
 		"title": "hero, linkedin-banner (1584 by 396)",
-		"command": "npx agentcard-ds image render --template hero --headline \"...\" --ground ink --size linkedin-banner",
+		"command": "npx agentcard-ds image hero --headline \"...\" --theme ink --size linkedin-banner",
 		"width": 1584,
 		"height": 396,
 		"group": "image"
@@ -58,7 +58,7 @@
 	{
 		"file": "/assets/image-8-hero-portrait.jpg",
 		"title": "hero, portrait (1080 by 1350)",
-		"command": "npx agentcard-ds image render --template hero --headline \"...\" --ground ink --stickers scatter --seed 8 --count 6 --size portrait",
+		"command": "npx agentcard-ds image hero --headline \"...\" --theme ink --stickers scatter --seed 8 --count 6 --size portrait",
 		"width": 1080,
 		"height": 1350,
 		"group": "image"
@@ -66,7 +66,7 @@
 	{
 		"file": "/assets/image-9-subtext-og.jpg",
 		"title": "subtext, og (1200 by 630)",
-		"command": "npx agentcard-ds image render --template subtext --headline \"...\" --subtext \"...\"",
+		"command": "npx agentcard-ds image subtext --headline \"...\" --body \"...\"",
 		"width": 1200,
 		"height": 630,
 		"group": "image"
@@ -74,7 +74,7 @@
 	{
 		"file": "/assets/image-10-quote-square.jpg",
 		"title": "quote, square (1080 by 1080)",
-		"command": "npx agentcard-ds image render --template quote --quote \"...\" --by \"Head of product, Acme\" --size square",
+		"command": "npx agentcard-ds image quote --quote \"...\" --by \"Head of product, Acme\" --size square",
 		"width": 1080,
 		"height": 1080,
 		"group": "image"
@@ -330,7 +330,7 @@
 	{
 		"file": "/assets/merch-tee-back-brand.jpg",
 		"title": "T-shirt back (12 by 16 in, brand)",
-		"command": "npx agentcard-ds merch tee-back --variant brand",
+		"command": "npx agentcard-ds merch tee-back --variant brand --headline \"...\"",
 		"width": 3600,
 		"height": 4800,
 		"group": "merch"
@@ -386,7 +386,7 @@
 	{
 		"file": "/assets/merch-poster-blue.jpg",
 		"title": "Poster (18 by 24 in, blue)",
-		"command": "npx agentcard-ds merch poster --variant blue",
+		"command": "npx agentcard-ds merch poster --variant blue --headline \"...\"",
 		"width": 5475,
 		"height": 7275,
 		"group": "merch"
@@ -394,7 +394,7 @@
 	{
 		"file": "/assets/clip-og.mp4",
 		"title": "hero clip, og",
-		"command": "npx agentcard-ds video render --template hero --headline \"Let agents buy anything online\" --size og --export mp4,webm",
+		"command": "npx agentcard-ds video hero --headline \"Let agents buy anything online\" --size og --format mp4,webm",
 		"width": 1200,
 		"height": 630,
 		"group": "video"
