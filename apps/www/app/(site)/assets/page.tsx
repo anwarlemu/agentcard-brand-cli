@@ -10,6 +10,9 @@ export const metadata = { title: "Assets" };
 const images = galleryOf("image");
 const deck = galleryOf("deck");
 const merch = galleryOf("merch");
+const data = galleryOf("data");
+const ads = galleryOf("ads");
+const print = galleryOf("print");
 const clip = galleryOf("video")[0];
 
 const SIZES = [
@@ -97,6 +100,31 @@ export default function AssetsPage() {
             ))}
           </div>
           <Command command={`${CLI_COMMAND} merch tee-front --variant all`} />
+        </Block>
+
+        <Block id="data" title="Stats, charts and plans" description="A stat, bar, line and donut charts, pricing plans, a comparison and a flow of steps, built only from the brand's cards, badge, window and blues (the brand has no chart style of its own).">
+          <div className="grid grid-cols-1 items-start gap-4 sm:grid-cols-3">
+            {data.map((e) => (
+              <Shot key={e.file} entry={e} />
+            ))}
+          </div>
+        </Block>
+
+        <Block id="ads" title="Ads and backgrounds" description="The IAB display sizes, with shallow ones in one row (logo, words, key), and a video call background that keeps the middle clear.">
+          <div className="grid grid-cols-2 items-start gap-4 sm:grid-cols-4">
+            {ads.map((e) => (
+              <Shot key={e.file} entry={e} />
+            ))}
+          </div>
+        </Block>
+
+        <Block id="print" title="Print documents" description="Business cards, letterheads, report covers, a one-pager and case study, a certificate, a name tag and an event badge, at real size with bleed. Only the words you pass (--set name=...) are printed.">
+          <div className="grid grid-cols-2 items-start gap-4 sm:grid-cols-4">
+            {print.map((e) => (
+              <Shot key={e.file} entry={e} />
+            ))}
+          </div>
+          <Command command={`${CLI_COMMAND} print business-card-back --set name="Sam Acme" --set role="Head of product"`} />
         </Block>
       </PageBody>
     </>

@@ -28,3 +28,5 @@ Render clips with `video <template> --json` (MP4 and WebM through ffmpeg, 2 to 1
 The standard shadcn registry is `{{registry}}/r/shadcn/{name}.json`, under `@{{bin}}` in components.json. Use `npx shadcn@4.22.1 add @{{bin}}/theme @{{bin}}/<name>` for shadcn's workspace routing and ecosystem integrations. The same registry works with its MCP server. Component references are at `{{registry}}/components`.
 
 With the upstream installer, include the theme explicitly so existing shadcn font and color aliases are updated. Native add applies it automatically.
+
+Everything else: `compose` designs for layouts no template has (`design new compose`, `design compose add`), whole pages (`design page compose outline.json`), print documents (`print <item> --set name=...`), icons (`icons favicon`, `icons set`), emails (`email <template>`), GIFs and walkthroughs (`video ... --format gif`, `video walkthrough`). The agent guide has a table: I need X, run Y.

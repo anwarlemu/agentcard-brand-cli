@@ -16,6 +16,8 @@ import { FIGMA_ACTIONS, PUSH_KINDS } from '../commands/figma.js';
 import { imageConfig } from '../image/scene.js';
 import { adapter } from '../design/adapter.js';
 import { designManifest } from '../design/index.js';
+import { iconsCatalog } from '../commands/icons.js';
+import { EMAILS } from '../commands/email.js';
 
 let program: Command | undefined;
 /** The CLI hands its command tree over, so the manifest lists every command and flag from the definitions themselves. */
@@ -53,6 +55,9 @@ export const COMMANDS = [
 	{ path: ['deck'], summary: 'Slides at 1920 by 1080 from a JSON file: a PNG per slide and one PDF. --list names the slide types and slots.', reads: false, writes: true, json: true },
 	{ path: ['merch'], summary: 'Merch print files at real size with bleed and safe area (SVG, 300 dpi PNG, proof, cut line). --list names items and variants.', reads: false, writes: true, json: true },
 	{ path: ['illustrate'], summary: 'Toon object illustrations from the brand\'s objects or any picture (SVG and PNG). --list names subjects and compositions.', reads: false, writes: true, json: true },
+	{ path: ['icons'], summary: 'icons favicon: the favicon and app icon set from the mark; icons set: the icons the components use (lucide, ISC) as SVG and PNG.', reads: false, writes: true, json: true },
+	{ path: ['email'], summary: 'HTML emails that survive email clients (newsletter, announcement, receipt, password-reset) and a signature.', reads: false, writes: true, json: true },
+	{ path: ['print'], summary: 'The same as merch: print documents (business cards, letterheads, report covers, one-pager, case study, certificate, name tag, event badge) and merch, with --set slot=value.', reads: false, writes: true, json: true },
 	{ path: ['figma', 'tokens'], summary: 'The tokens as Figma variables: tokens.json and use_figma scripts, plus the MCP steps.', reads: false, writes: true, json: true },
 	{ path: ['figma', 'push'], summary: 'An illustration, image, slide, component or page as Figma-ready files, plus the MCP steps.', reads: false, writes: true, json: true },
 	{ path: ['figma', 'pull'], summary: 'The MCP read steps for a Figma node and where to save each result.', reads: true, writes: false, json: true },
@@ -127,6 +132,8 @@ export function manifest() {
 		merch: merchCatalog(),
 		illustrate: illustrateCatalog(),
 		design: designManifest(adapter(), cli()),
+		icons: iconsCatalog(),
+		emails: Object.entries(EMAILS).map(([id, e]) => ({ id, ...e })),
 		figma: { actions: [...FIGMA_ACTIONS], pushKinds: [...PUSH_KINDS], note: 'The CLI never calls Figma: each action writes files and prints the Figma MCP tool calls to make, in order.', workflow: 'brand/agent-guide.md (Figma)' },
 		themes: Object.keys(imageConfig().grounds),
 		lockups: { files: ['brand/logo/lockup.svg', 'brand/logo/mark.svg'], colors: ['blue', 'ink', 'white'], merchVariants: merchCatalog().variants.map((v) => v.id), rules: merchCatalog().logo.note },

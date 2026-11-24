@@ -81,7 +81,26 @@ for (const id of Object.keys(illustrateConfig().subjects)) {
 for (const item of merchConfig().items) {
 	const variant = item.variants[0]!;
 	const svgs = merchSvgs(item, variant, { sample: true });
-	await save('merch', `merch-${item.id}-${variant}.jpg`, svgs.proof, svgs.width, svgs.height, `${item.name} (${item.size[0]} by ${item.size[1]} in, ${variant})`, `${cli()} merch ${item.id} --variant ${variant}${merchSlots(item).includes('headline') ? ' --headline "..."' : ''}`, 600);
+	await save(item.group === 'document' ? 'print' : 'merch', `merch-${item.id}-${variant}.jpg`, svgs.proof, svgs.width, svgs.height, `${item.name} (${item.size[0]} by ${item.size[1]} in, ${variant})`, `${cli()} merch ${item.id} --variant ${variant}${merchSlots(item).includes('headline') ? ' --headline "..."' : ''}`, 600);
+}
+
+// The data layouts and the ads, through the same engine as the image command.
+const more: [TemplateId, string, Record<string, unknown>, string, string][] = [
+	['stat', 'square', { stat: '40%', headline: 'fewer abandoned carts at Acme' }, '--stat 40% --headline "fewer abandoned carts at Acme" --size square', 'data'],
+	['chart', 'og', { headline: 'Purchases approved', data: 'Jan: 120, Feb: 180, Mar: 260, Apr: 310' }, '--headline "Purchases approved" --data "Jan: 120, Feb: 180, Mar: 260, Apr: 310"', 'data'],
+	['chart', 'square', { headline: 'Where purchases come from', data: 'Agents: 62, Voice: 23, Web: 15', chart: 'donut' }, '--headline "..." --data "Agents: 62, Voice: 23, Web: 15" --chart donut --size square', 'data'],
+	['pricing', 'og', { headline: 'Pricing', plans: 'Starter\n$0\nOne agent\nPay per purchase\n\nPro\n$49 / month\nTen agents\nVoice approvals' }, '--headline Pricing --plans "..."', 'data'],
+	['compare', 'og', { headline: 'Pasting the card vs Agentcard', columns: 'Pasting the card\nThe number sits in the chat\nNo approval per purchase\n\nAgentcard\nThe agent never sees the number\nEvery purchase approved' }, '--headline "..." --columns "..."', 'data'],
+	['flow', 'og', { headline: 'How it works', steps: 'Save it once\nThe card is stored encrypted.\n\nThe agent asks\nIt never sees the number.\n\nYou approve\nWith a passkey.' }, '--headline "How it works" --steps "..."', 'data'],
+	['headline', 'ad-300x250', { headline: 'Let agents buy anything online', button: 'Start free' }, '--headline "..." --button "Start free" --size ad-300x250', 'ads'],
+	['headline', 'ad-728x90', { headline: 'Let agents buy anything online', button: 'Start free' }, '--headline "..." --button "Start free" --size ad-728x90', 'ads'],
+	['hero', 'ad-300x600', { headline: 'Let agents buy anything online' }, '--headline "..." --size ad-300x600', 'ads'],
+	['hero', 'meeting', { headline: 'Acme' }, '--headline Acme --size meeting', 'ads'],
+];
+for (const [i, [template, size, fields, flags, group]] of more.entries()) {
+	const { width, height } = SIZES[size]!;
+	const resolved = resolveFields(assertImageInput({ template, ...fields }), { footer: host });
+	await save(group, `${group}-${i + 1}-${template}-${size}.jpg`, renderSvg({ ...resolved, size, width, height }), width, height, `${template}, ${size} (${width} by ${height})`, `${cli()} image ${template} ${flags}`);
 }
 
 // One clip, rendered through the CLI itself so the gallery shows exactly what an app gets.

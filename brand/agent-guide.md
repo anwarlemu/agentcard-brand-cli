@@ -4,6 +4,28 @@ Use this system to build {{brand}} pages and interfaces from the user's brief. T
 
 The first command is `{{cli}} manifest --json`. It lists every command, token group, font file, logo rule, image template, video template, component, and site or product principle. `{{cli}} describe --json` is the same command. Do not invent a name that is absent from that JSON. Unknown templates, sizes, components, tokens and JSON fields are errors. The CLI does not substitute a nearby name.
 
+## I need X: which command
+
+| I need | Run |
+| --- | --- |
+| A link preview, post, story, banner, ad, profile picture | `{{cli}} image <template> --size <id>` (`image --list` for templates and sizes: og, square, portrait, story, landscape, facebook, pinterest, x-banner, linkedin, linkedin-banner, linkedin-page, facebook-cover, youtube, youtube-thumbnail, email, avatar, ad-300x250 and the other ads, meeting, desktop, phone-wallpaper, custom) |
+| A stat, chart, pricing, comparison, flow or before and after card | `{{cli}} image stat|chart|pricing|compare|flow|before-after ...` |
+| A numbered carousel | `{{cli}} image carousel --input carousel.json --size square` |
+| A layout no template has | `{{cli}} design new compose --size <id>`, then `design compose add <file> <block> "words" --place top-left` (blocks: headline, body, badge, logo, picture, object, card, stat, quote, list, button, search, chart, divider, icon) |
+| To change a graphic with a person | `{{cli}} design new|revise|edit|undo|variants|sizes|check` |
+| A whole web page | `{{cli}} design page compose outline.json --flavor react|html` |
+| A component or section | `{{cli}} add <name>` (`list` to find one) |
+| Slides | `{{cli}} deck --input deck.json` (cover, section, statement, agenda, team, timeline, bullets, cards, stat, chart, comparison, quote, image, image-grid, qa, end) |
+| A clip or GIF | `{{cli}} video <template> --format mp4,webm,gif`; a screenshot walkthrough: `video walkthrough --images a.png,b.png` |
+| Print: business card, letterhead, report cover, one-pager, case study, certificate, name tag, event badge | `{{cli}} print <item> --set name=... --set role=...` (`print --list`) |
+| Merch: tee, hoodie, cap, tote, mug, notebook, lanyard, stickers, posters | `{{cli}} merch <item> --variant all` |
+| Favicons and app icons, or the library's icons | `{{cli}} icons favicon -o public`, `{{cli}} icons set <names> --color brand` |
+| An email (newsletter, announcement, receipt, password reset) or signature | `{{cli}} email <template> --headline ...` |
+| An illustration from the toon objects | `{{cli}} illustrate <subjects> --size <id>` |
+| Tokens, fonts, logos, voice | `{{cli}} brand --json` |
+
+Not made, because the brand has no source for them: product screens (dashboards, settings, sign-in; the brand has a site only), code images (no monospace font ships to outline), sock prints (each maker has its own template).
+
 ## Start here
 
 1. Read the project instructions and package.json. Identify the framework, package manager, stylesheet and import aliases. Use the user's requirements to decide whether to build new UI or restyle existing UI.
