@@ -14,6 +14,7 @@ import { registerDeck } from './commands/deck.js';
 import { registerMerch } from './commands/merch.js';
 import { registerFigma } from './commands/figma.js';
 import { designFrom, registerDesign } from './commands/design.js';
+import { registerIcons } from './commands/icons.js';
 import { approve, check, done, look, skip, tokensCommand } from './commands/small.js';
 import { type HookResult, cursorPreToolUse, cursorStop, preToolUse, sessionStart, stop, userPromptSubmit } from './hooks/handlers.js';
 import { readHookInput } from './hooks/payload.js';
@@ -113,6 +114,7 @@ registerDeck(program);
 registerMerch(program);
 registerFigma(program);
 registerDesign(program);
+registerIcons(program);
 
 // An unknown command exits 1 with the nearest names, instead of commander's "too many arguments".
 {
