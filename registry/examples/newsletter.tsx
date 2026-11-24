@@ -1,3 +1,5 @@
+"use client";
+
 import { Newsletter } from "@/components/site/newsletter";
 
 export function Site() {
