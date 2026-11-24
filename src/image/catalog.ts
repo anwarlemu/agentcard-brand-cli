@@ -146,7 +146,7 @@ export function cleanText(value: unknown, field: string): string | undefined {
 export function sizeId(raw: string): SizeId {
 	const id = raw.trim().toLowerCase();
 	if (id in SIZES) return id;
-	const alias = imageConfig().sizeAliases[id] ?? sizeAlias(id);
+	const alias = imageConfig().sizeAliases[id] ?? sizeAlias(id) ?? Object.entries(SIZES).find(([, s]) => s.aliases.includes(id))?.[0];
 	if (alias) return alias;
 	throw unknownName('size', id, [...Object.keys(SIZES), 'custom', 'all']);
 }

@@ -21,8 +21,9 @@ export function merchCatalog() {
 		note: cfg.$comment,
 		logo: cfg.logo,
 		variants: Object.entries(cfg.variants).map(([id, v]) => ({ id, ...v })),
-		items: cfg.items.map((i) => ({ id: i.id, name: i.name, trim: { width: i.size[0], height: i.size[1] }, bleed: i.bleed, safe: i.safe, method: i.method, slots: merchSlots(i), variants: i.variants, cut: Boolean(i.cut), source: i.source })),
-		slots: Object.keys(cfg.copy).concat('url'),
+		items: cfg.items.map((i) => ({ id: i.id, name: i.name, group: i.group ?? 'merch', trim: { width: i.size[0], height: i.size[1] }, bleed: i.bleed, safe: i.safe, method: i.method, slots: merchSlots(i), variants: i.variants, cut: Boolean(i.cut), source: i.source })),
+		slots: [...new Set(cfg.items.flatMap(merchSlots))],
+		impossible: (cfg as { impossible?: Record<string, string> }).impossible ?? {},
 		formats: ['svg', 'png', 'pdf'],
 		copy: 'Only the headline you pass is drawn; the brand address stays on the poster. --sample fills sample copy.',
 	};
@@ -56,6 +57,14 @@ export async function merch(itemsArg: string[], flags: Flags) {
 	const prepared: Prepared[] = [];
 	const headline = typeof flags.headline === 'string' ? flags.headline : undefined;
 	const url = typeof flags.url === 'string' ? flags.url : undefined;
+	// --set name=value for any slot an item has (name, role, email, date ...).
+	const set: Record<string, string> = {};
+	for (const pair of (flags.set as unknown as string[] | undefined) ?? []) {
+		const at = pair.indexOf('=');
+		if (at < 1) throw new Error(`--set takes slot=value, not "${pair}".`);
+		set[pair.slice(0, at).trim()] = pair.slice(at + 1).replace(/\\n/g, '\n');
+	}
+	for (const key of Object.keys(set)) if (!items.some((i) => merchSlots(i).includes(key))) throw new Error(`No item here has a place for ${key}. Slots: ${[...new Set(items.flatMap(merchSlots))].join(', ') || 'none'}.`);
 	const everything = !itemsArg.length || itemsArg[0] === 'all';
 	// With every item asked for, copy goes where it has a place; somewhere it must.
 	for (const [key, v] of [['headline', headline], ['url', url]] as const) if (v && everything && !items.some((i) => merchSlots(i).includes(key))) throw new Error(`No item has a place for --${key}.`);
@@ -67,7 +76,8 @@ export async function merch(itemsArg: string[], flags: Flags) {
 		for (const v of variants) {
 			if (!item.variants.includes(v)) throw unknownName(`variant for ${item.id}`, v, item.variants);
 			const takes = merchSlots(item);
-			const svgs = merchSvgs(item, v, { headline: everything && !takes.includes('headline') ? undefined : headline, url: everything && !takes.includes('url') ? undefined : url, sample: Boolean(flags.sample) });
+			const own = Object.fromEntries(Object.entries(set).filter(([k]) => !everything || takes.includes(k)));
+			const svgs = merchSvgs(item, v, { headline: everything && !takes.includes('headline') ? undefined : headline, url: everything && !takes.includes('url') ? undefined : url, copy: own, sample: Boolean(flags.sample) });
 			const stem = `${item.id}-${v}`;
 			if (formats.includes('svg')) prepared.push({ path: join(dir, `${stem}.svg`), format: 'svg', width: svgs.width, height: svgs.height, data: Buffer.from(svgs.print) });
 			if (formats.includes('png')) {
@@ -97,9 +107,11 @@ export async function merch(itemsArg: string[], flags: Flags) {
 export function registerMerch(program: Command) {
 	program
 		.command('merch [items...]')
+		.alias('print')
 		.description('Merch print files at real size with bleed and safe area: SVG, PNG at 300 dpi, a proof and cut lines')
 		.option('--variant <names>', 'a variant, several comma-separated, or all (default: each item\'s first)')
 		.option('--theme <names>', 'the same as --variant')
+		.option('--set <slot=value>', 'copy for any slot an item has (name, role, email, phone, date, event, body ...), repeatable', (v: string, prev: string[]) => [...prev, v], [] as string[])
 		.option('--headline <text>', 'the line on items that carry one (tee back, poster); left off when you pass none')
 		.option('--url <text>', 'the address on the poster (default: the brand site host)')
 		.option('--format <formats>', 'svg, png, pdf, comma-separated (default svg,png)')

@@ -69,7 +69,8 @@
 						1.43
 					]
 				}
-			]
+			],
+			"group": "merch"
 		},
 		{
 			"id": "tee-back",
@@ -111,7 +112,8 @@
 					"align": "center",
 					"maxLines": 2
 				}
-			]
+			],
+			"group": "merch"
 		},
 		{
 			"id": "hoodie-front",
@@ -140,7 +142,8 @@
 						1.7
 					]
 				}
-			]
+			],
+			"group": "merch"
 		},
 		{
 			"id": "cap-front",
@@ -169,7 +172,8 @@
 						0.59
 					]
 				}
-			]
+			],
+			"group": "merch"
 		},
 		{
 			"id": "tote",
@@ -208,7 +212,8 @@
 						1.07
 					]
 				}
-			]
+			],
+			"group": "merch"
 		},
 		{
 			"id": "mug-wrap",
@@ -253,7 +258,8 @@
 						0.57
 					]
 				}
-			]
+			],
+			"group": "merch"
 		},
 		{
 			"id": "sticker",
@@ -285,7 +291,8 @@
 						0.41
 					]
 				}
-			]
+			],
+			"group": "merch"
 		},
 		{
 			"id": "sticker-mark",
@@ -317,7 +324,8 @@
 						0.67
 					]
 				}
-			]
+			],
+			"group": "merch"
 		},
 		{
 			"id": "poster",
@@ -381,7 +389,1374 @@
 					"align": "right",
 					"maxLines": 1
 				}
+			],
+			"group": "merch"
+		},
+		{
+			"id": "business-card-front",
+			"name": "Business card, front",
+			"group": "document",
+			"size": [
+				3.5,
+				2
+			],
+			"bleed": 0.125,
+			"safe": 0.125,
+			"method": "digital or offset print",
+			"source": "US business card 3.5 by 2 in with 0.125 in bleed (the common print standard).",
+			"variants": [
+				"blue",
+				"ink",
+				"paper"
+			],
+			"layers": [
+				{
+					"type": "logo",
+					"kind": "lockup",
+					"box": [
+						0.6,
+						0.79,
+						2.3,
+						0.42
+					]
+				}
 			]
+		},
+		{
+			"id": "business-card-back",
+			"name": "Business card, back",
+			"group": "document",
+			"size": [
+				3.5,
+				2
+			],
+			"bleed": 0.125,
+			"safe": 0.125,
+			"method": "digital or offset print",
+			"source": "US business card 3.5 by 2 in with 0.125 in bleed.",
+			"variants": [
+				"paper",
+				"blue",
+				"ink"
+			],
+			"layers": [
+				{
+					"type": "logo",
+					"kind": "mark",
+					"box": [
+						0.25,
+						0.25,
+						0.5,
+						0.28
+					]
+				},
+				{
+					"type": "text",
+					"slot": "name",
+					"box": [
+						0.25,
+						0.82,
+						3.0,
+						0.26
+					],
+					"size": 0.17,
+					"align": "left",
+					"maxLines": 1
+				},
+				{
+					"type": "text",
+					"slot": "role",
+					"box": [
+						0.25,
+						1.1,
+						3.0,
+						0.2
+					],
+					"size": 0.11,
+					"align": "left",
+					"maxLines": 1,
+					"weight": "regular",
+					"tone": "muted"
+				},
+				{
+					"type": "text",
+					"slot": "email",
+					"box": [
+						0.25,
+						1.42,
+						3.0,
+						0.16
+					],
+					"size": 0.1,
+					"align": "left",
+					"maxLines": 1,
+					"weight": "regular"
+				},
+				{
+					"type": "text",
+					"slot": "phone",
+					"box": [
+						0.25,
+						1.6,
+						1.5,
+						0.16
+					],
+					"size": 0.1,
+					"align": "left",
+					"maxLines": 1,
+					"weight": "regular"
+				},
+				{
+					"type": "text",
+					"slot": "url",
+					"box": [
+						1.8,
+						1.6,
+						1.45,
+						0.16
+					],
+					"size": 0.1,
+					"align": "right",
+					"maxLines": 1,
+					"weight": "regular"
+				}
+			]
+		},
+		{
+			"id": "letterhead",
+			"name": "Letterhead, US Letter",
+			"group": "document",
+			"size": [
+				8.5,
+				11
+			],
+			"bleed": 0,
+			"safe": 0.5,
+			"method": "office or offset print on white paper",
+			"source": "US Letter 8.5 by 11 in; office printers do not print to the edge, so no bleed.",
+			"variants": [
+				"brand",
+				"ink-logo"
+			],
+			"layers": [
+				{
+					"type": "logo",
+					"kind": "lockup",
+					"box": [
+						0.75,
+						0.6,
+						2.2,
+						0.39
+					]
+				},
+				{
+					"type": "text",
+					"slot": "address",
+					"box": [
+						0.75,
+						10.0,
+						7.0,
+						0.18
+					],
+					"size": 0.11,
+					"align": "left",
+					"maxLines": 1,
+					"weight": "regular",
+					"tone": "muted"
+				},
+				{
+					"type": "text",
+					"slot": "url",
+					"box": [
+						0.75,
+						10.22,
+						7.0,
+						0.18
+					],
+					"size": 0.11,
+					"align": "left",
+					"maxLines": 1,
+					"weight": "regular"
+				}
+			]
+		},
+		{
+			"id": "letterhead-a4",
+			"name": "Letterhead, A4",
+			"group": "document",
+			"size": [
+				8.27,
+				11.69
+			],
+			"bleed": 0,
+			"safe": 0.5,
+			"method": "office or offset print on white paper",
+			"source": "ISO A4 210 by 297 mm; no bleed.",
+			"variants": [
+				"brand",
+				"ink-logo"
+			],
+			"layers": [
+				{
+					"type": "logo",
+					"kind": "lockup",
+					"box": [
+						0.75,
+						0.6,
+						2.2,
+						0.39
+					]
+				},
+				{
+					"type": "text",
+					"slot": "address",
+					"box": [
+						0.75,
+						10.7,
+						6.77,
+						0.18
+					],
+					"size": 0.11,
+					"align": "left",
+					"maxLines": 1,
+					"weight": "regular",
+					"tone": "muted"
+				},
+				{
+					"type": "text",
+					"slot": "url",
+					"box": [
+						0.75,
+						10.92,
+						6.77,
+						0.18
+					],
+					"size": 0.11,
+					"align": "left",
+					"maxLines": 1,
+					"weight": "regular"
+				}
+			]
+		},
+		{
+			"id": "report-cover",
+			"name": "Report cover, US Letter",
+			"group": "document",
+			"size": [
+				8.5,
+				11
+			],
+			"bleed": 0.125,
+			"safe": 0.5,
+			"method": "digital print",
+			"source": "US Letter with 0.125 in bleed.",
+			"variants": [
+				"blue",
+				"ink",
+				"paper"
+			],
+			"layers": [
+				{
+					"type": "scan"
+				},
+				{
+					"type": "text",
+					"slot": "headline",
+					"box": [
+						0.75,
+						2.6,
+						7.0,
+						3.2
+					],
+					"size": 0.85,
+					"align": "left",
+					"maxLines": 4
+				},
+				{
+					"type": "text",
+					"slot": "body",
+					"box": [
+						0.75,
+						6.1,
+						7.0,
+						1.4
+					],
+					"size": 0.2,
+					"align": "left",
+					"maxLines": 4,
+					"weight": "regular",
+					"tone": "muted"
+				},
+				{
+					"type": "band",
+					"to": "contrast",
+					"at": 9.3,
+					"step": 0.12
+				},
+				{
+					"type": "logo",
+					"kind": "lockup",
+					"box": [
+						0.75,
+						10.0,
+						2.4,
+						0.4
+					]
+				},
+				{
+					"type": "text",
+					"slot": "date",
+					"box": [
+						4.75,
+						10.06,
+						3.0,
+						0.3
+					],
+					"size": 0.14,
+					"align": "right",
+					"maxLines": 1,
+					"weight": "regular"
+				}
+			]
+		},
+		{
+			"id": "report-cover-a4",
+			"name": "Report cover, A4",
+			"group": "document",
+			"size": [
+				8.27,
+				11.69
+			],
+			"bleed": 0.125,
+			"safe": 0.5,
+			"method": "digital print",
+			"source": "ISO A4 with 0.125 in (3 mm) bleed.",
+			"variants": [
+				"blue",
+				"ink",
+				"paper"
+			],
+			"layers": [
+				{
+					"type": "scan"
+				},
+				{
+					"type": "text",
+					"slot": "headline",
+					"box": [
+						0.75,
+						2.8,
+						6.77,
+						3.2
+					],
+					"size": 0.85,
+					"align": "left",
+					"maxLines": 4
+				},
+				{
+					"type": "text",
+					"slot": "body",
+					"box": [
+						0.75,
+						6.3,
+						6.77,
+						1.4
+					],
+					"size": 0.2,
+					"align": "left",
+					"maxLines": 4,
+					"weight": "regular",
+					"tone": "muted"
+				},
+				{
+					"type": "band",
+					"to": "contrast",
+					"at": 9.9,
+					"step": 0.12
+				},
+				{
+					"type": "logo",
+					"kind": "lockup",
+					"box": [
+						0.75,
+						10.65,
+						2.4,
+						0.4
+					]
+				},
+				{
+					"type": "text",
+					"slot": "date",
+					"box": [
+						4.52,
+						10.71,
+						3.0,
+						0.3
+					],
+					"size": 0.14,
+					"align": "right",
+					"maxLines": 1,
+					"weight": "regular"
+				}
+			]
+		},
+		{
+			"id": "one-pager",
+			"name": "One-pager, US Letter",
+			"group": "document",
+			"size": [
+				8.5,
+				11
+			],
+			"bleed": 0,
+			"safe": 0.5,
+			"method": "office or digital print on white paper",
+			"source": "US Letter; the blue top runs to the edge only where the printer can (no bleed for office printing).",
+			"variants": [
+				"brand"
+			],
+			"layers": [
+				{
+					"type": "panel",
+					"box": [
+						0,
+						0,
+						8.5,
+						2.7
+					],
+					"ground": "blue"
+				},
+				{
+					"type": "logo",
+					"kind": "lockup",
+					"box": [
+						0.75,
+						0.55,
+						2.0,
+						0.36
+					]
+				},
+				{
+					"type": "text",
+					"slot": "headline",
+					"box": [
+						0.75,
+						1.25,
+						7.0,
+						1.1
+					],
+					"size": 0.42,
+					"align": "left",
+					"maxLines": 2
+				},
+				{
+					"type": "text",
+					"slot": "body",
+					"box": [
+						0.75,
+						3.1,
+						7.0,
+						6.5
+					],
+					"size": 0.13,
+					"align": "left",
+					"maxLines": 40,
+					"weight": "regular"
+				},
+				{
+					"type": "text",
+					"slot": "url",
+					"box": [
+						0.75,
+						10.2,
+						7.0,
+						0.2
+					],
+					"size": 0.12,
+					"align": "left",
+					"maxLines": 1,
+					"weight": "regular"
+				}
+			]
+		},
+		{
+			"id": "case-study",
+			"name": "Case study, US Letter",
+			"group": "document",
+			"size": [
+				8.5,
+				11
+			],
+			"bleed": 0,
+			"safe": 0.5,
+			"method": "office or digital print on white paper",
+			"source": "US Letter, no bleed. The customer is Acme in every sample.",
+			"variants": [
+				"brand"
+			],
+			"layers": [
+				{
+					"type": "panel",
+					"box": [
+						0,
+						0,
+						8.5,
+						2.7
+					],
+					"ground": "blue"
+				},
+				{
+					"type": "logo",
+					"kind": "lockup",
+					"box": [
+						0.75,
+						0.55,
+						2.0,
+						0.36
+					]
+				},
+				{
+					"type": "text",
+					"slot": "headline",
+					"box": [
+						0.75,
+						1.25,
+						7.0,
+						1.1
+					],
+					"size": 0.42,
+					"align": "left",
+					"maxLines": 2
+				},
+				{
+					"type": "text",
+					"slot": "stat",
+					"box": [
+						0.75,
+						3.05,
+						2.6,
+						0.9
+					],
+					"size": 0.7,
+					"align": "left",
+					"maxLines": 1
+				},
+				{
+					"type": "text",
+					"slot": "role",
+					"box": [
+						0.75,
+						4.0,
+						2.6,
+						0.5
+					],
+					"size": 0.13,
+					"align": "left",
+					"maxLines": 2,
+					"weight": "regular",
+					"tone": "muted"
+				},
+				{
+					"type": "text",
+					"slot": "body",
+					"box": [
+						3.6,
+						3.1,
+						4.15,
+						6.5
+					],
+					"size": 0.13,
+					"align": "left",
+					"maxLines": 40,
+					"weight": "regular"
+				},
+				{
+					"type": "text",
+					"slot": "url",
+					"box": [
+						0.75,
+						10.2,
+						7.0,
+						0.2
+					],
+					"size": 0.12,
+					"align": "left",
+					"maxLines": 1,
+					"weight": "regular"
+				}
+			]
+		},
+		{
+			"id": "certificate",
+			"name": "Certificate, US Letter landscape",
+			"group": "document",
+			"size": [
+				11,
+				8.5
+			],
+			"bleed": 0.125,
+			"safe": 0.5,
+			"method": "digital print",
+			"source": "US Letter landscape with 0.125 in bleed. The brand has no certificate; this is built from its grounds, band, lockup and type only.",
+			"variants": [
+				"paper",
+				"blue"
+			],
+			"layers": [
+				{
+					"type": "text",
+					"slot": "title",
+					"box": [
+						1,
+						1.3,
+						9,
+						0.6
+					],
+					"size": 0.42,
+					"align": "center",
+					"maxLines": 1
+				},
+				{
+					"type": "text",
+					"slot": "name",
+					"box": [
+						1,
+						2.7,
+						9,
+						1.0
+					],
+					"size": 0.75,
+					"align": "center",
+					"maxLines": 1
+				},
+				{
+					"type": "text",
+					"slot": "body",
+					"box": [
+						1.5,
+						4.1,
+						8,
+						1.0
+					],
+					"size": 0.18,
+					"align": "center",
+					"maxLines": 3,
+					"weight": "regular",
+					"tone": "muted"
+				},
+				{
+					"type": "band",
+					"to": "contrast",
+					"at": 6.0,
+					"step": 0.1
+				},
+				{
+					"type": "logo",
+					"kind": "lockup",
+					"box": [
+						0.8,
+						6.95,
+						2.6,
+						0.46
+					]
+				},
+				{
+					"type": "text",
+					"slot": "date",
+					"box": [
+						6.2,
+						7.0,
+						4.0,
+						0.35
+					],
+					"size": 0.16,
+					"align": "right",
+					"maxLines": 1,
+					"weight": "regular"
+				}
+			]
+		},
+		{
+			"id": "name-tag",
+			"name": "Name tag sticker",
+			"group": "document",
+			"size": [
+				4,
+				3
+			],
+			"bleed": 0.125,
+			"safe": 0.125,
+			"method": "adhesive label print",
+			"source": "4 by 3 in adhesive name badge (a common label size).",
+			"variants": [
+				"paper",
+				"white"
+			],
+			"layers": [
+				{
+					"type": "panel",
+					"box": [
+						0,
+						0,
+						4,
+						0.95
+					],
+					"ground": "blue"
+				},
+				{
+					"type": "logo",
+					"kind": "lockup",
+					"box": [
+						0.3,
+						0.33,
+						1.6,
+						0.29
+					]
+				},
+				{
+					"type": "text",
+					"slot": "name",
+					"box": [
+						0.3,
+						1.2,
+						3.4,
+						0.8
+					],
+					"size": 0.45,
+					"align": "left",
+					"maxLines": 2
+				},
+				{
+					"type": "text",
+					"slot": "role",
+					"box": [
+						0.3,
+						2.15,
+						3.4,
+						0.45
+					],
+					"size": 0.18,
+					"align": "left",
+					"maxLines": 1,
+					"weight": "regular",
+					"tone": "muted"
+				}
+			]
+		},
+		{
+			"id": "event-badge",
+			"name": "Event badge (lanyard)",
+			"group": "document",
+			"size": [
+				4,
+				6
+			],
+			"bleed": 0.125,
+			"safe": 0.25,
+			"method": "digital print, punched at the top",
+			"source": "4 by 6 in event badge (common lanyard insert); keep the top 0.6 in center clear for the punch.",
+			"variants": [
+				"blue",
+				"ink",
+				"paper"
+			],
+			"layers": [
+				{
+					"type": "scan"
+				},
+				{
+					"type": "logo",
+					"kind": "lockup",
+					"box": [
+						0.4,
+						0.75,
+						2.0,
+						0.36
+					]
+				},
+				{
+					"type": "text",
+					"slot": "event",
+					"box": [
+						0.4,
+						1.45,
+						3.2,
+						0.6
+					],
+					"size": 0.22,
+					"align": "left",
+					"maxLines": 2,
+					"weight": "regular",
+					"tone": "muted"
+				},
+				{
+					"type": "text",
+					"slot": "name",
+					"box": [
+						0.4,
+						2.4,
+						3.2,
+						1.3
+					],
+					"size": 0.5,
+					"align": "left",
+					"maxLines": 2
+				},
+				{
+					"type": "text",
+					"slot": "role",
+					"box": [
+						0.4,
+						3.8,
+						3.2,
+						0.5
+					],
+					"size": 0.2,
+					"align": "left",
+					"maxLines": 1,
+					"weight": "regular",
+					"tone": "muted"
+				},
+				{
+					"type": "band",
+					"to": "contrast",
+					"at": 4.75,
+					"step": 0.1
+				},
+				{
+					"type": "text",
+					"slot": "date",
+					"box": [
+						0.4,
+						5.3,
+						3.2,
+						0.3
+					],
+					"size": 0.16,
+					"align": "left",
+					"maxLines": 1,
+					"weight": "regular"
+				}
+			]
+		},
+		{
+			"id": "notebook-a5",
+			"name": "Notebook cover, A5",
+			"group": "merch",
+			"size": [
+				5.83,
+				8.27
+			],
+			"bleed": 0.125,
+			"safe": 0.25,
+			"method": "digital print or laminate",
+			"source": "ISO A5 148 by 210 mm with 3 mm bleed.",
+			"variants": [
+				"blue",
+				"ink",
+				"paper"
+			],
+			"layers": [
+				{
+					"type": "scan"
+				},
+				{
+					"type": "logo",
+					"kind": "mark",
+					"box": [
+						1.4,
+						2.9,
+						3.03,
+						1.7
+					]
+				},
+				{
+					"type": "band",
+					"to": "contrast",
+					"at": 7.2,
+					"step": 0.08
+				}
+			]
+		},
+		{
+			"id": "mug-15oz",
+			"name": "Mug wrap, 15 oz",
+			"group": "merch",
+			"size": [
+				8.5,
+				3.75
+			],
+			"bleed": 0.125,
+			"safe": 0.25,
+			"method": "sublimation",
+			"source": "15 oz mug wrap (8.5 by 3.75 in is common; vendors range to 9 by 4 in) with 0.125 in bleed.",
+			"variants": [
+				"blue",
+				"paper",
+				"ink"
+			],
+			"layers": [
+				{
+					"type": "band",
+					"to": "contrast",
+					"at": 3.2,
+					"step": 0.08
+				},
+				{
+					"type": "logo",
+					"kind": "lockup",
+					"box": [
+						0.55,
+						1.2,
+						3.0,
+						0.54
+					]
+				},
+				{
+					"type": "logo",
+					"kind": "lockup",
+					"box": [
+						4.95,
+						1.2,
+						3.0,
+						0.54
+					]
+				}
+			]
+		},
+		{
+			"id": "lanyard",
+			"name": "Lanyard strap",
+			"group": "merch",
+			"size": [
+				0.75,
+				36
+			],
+			"bleed": 0.0625,
+			"safe": 0.0625,
+			"method": "dye sublimation",
+			"source": "3/4 in by 36 in lanyard strap (a common vendor size); the lockup repeats with its clear space between.",
+			"variants": [
+				"blue",
+				"ink",
+				"paper"
+			],
+			"layers": [
+				{
+					"type": "repeat",
+					"kind": "lockup",
+					"box": [
+						0.16,
+						0.5,
+						0.43,
+						35
+					]
+				}
+			]
+		},
+		{
+			"id": "sticker-sheet",
+			"name": "Sticker sheet, kiss cut",
+			"group": "merch",
+			"size": [
+				8.5,
+				11
+			],
+			"bleed": 0,
+			"safe": 0.25,
+			"method": "kiss-cut vinyl sheet",
+			"source": "US Letter kiss-cut sheet with six 3.25 in rounded squares (the CutContour lines; the sheet's own edge is not cut).",
+			"variants": [
+				"brand"
+			],
+			"cuts": [
+				{
+					"box": [
+						0.75,
+						0.33,
+						3.25,
+						3.25
+					],
+					"radius": 0.35
+				},
+				{
+					"box": [
+						4.5,
+						0.33,
+						3.25,
+						3.25
+					],
+					"radius": 0.35
+				},
+				{
+					"box": [
+						0.75,
+						3.88,
+						3.25,
+						3.25
+					],
+					"radius": 0.35
+				},
+				{
+					"box": [
+						4.5,
+						3.88,
+						3.25,
+						3.25
+					],
+					"radius": 0.35
+				},
+				{
+					"box": [
+						0.75,
+						7.43,
+						3.25,
+						3.25
+					],
+					"radius": 0.35
+				},
+				{
+					"box": [
+						4.5,
+						7.43,
+						3.25,
+						3.25
+					],
+					"radius": 0.35
+				}
+			],
+			"layers": [
+				{
+					"type": "panel",
+					"box": [
+						0.75,
+						0.33,
+						3.25,
+						3.25
+					],
+					"ground": "blue"
+				},
+				{
+					"type": "panel",
+					"box": [
+						4.5,
+						0.33,
+						3.25,
+						3.25
+					],
+					"ground": "ink"
+				},
+				{
+					"type": "panel",
+					"box": [
+						0.75,
+						3.88,
+						3.25,
+						3.25
+					],
+					"ground": "paper"
+				},
+				{
+					"type": "panel",
+					"box": [
+						4.5,
+						3.88,
+						3.25,
+						3.25
+					],
+					"ground": "blue"
+				},
+				{
+					"type": "panel",
+					"box": [
+						0.75,
+						7.43,
+						3.25,
+						3.25
+					],
+					"ground": "ink"
+				},
+				{
+					"type": "panel",
+					"box": [
+						4.5,
+						7.43,
+						3.25,
+						3.25
+					],
+					"ground": "paper"
+				},
+				{
+					"type": "logo",
+					"kind": "mark",
+					"box": [
+						1.35,
+						1.4,
+						2.05,
+						1.15
+					]
+				},
+				{
+					"type": "logo",
+					"kind": "lockup",
+					"box": [
+						4.8,
+						1.73,
+						2.65,
+						0.47
+					]
+				},
+				{
+					"type": "logo",
+					"kind": "lockup",
+					"box": [
+						1.05,
+						5.28,
+						2.65,
+						0.47
+					]
+				},
+				{
+					"type": "logo",
+					"kind": "mark",
+					"box": [
+						5.1,
+						4.93,
+						2.05,
+						1.15
+					]
+				},
+				{
+					"type": "logo",
+					"kind": "mark",
+					"box": [
+						1.35,
+						8.48,
+						2.05,
+						1.15
+					]
+				},
+				{
+					"type": "logo",
+					"kind": "lockup",
+					"box": [
+						4.8,
+						8.83,
+						2.65,
+						0.47
+					]
+				}
+			]
+		},
+		{
+			"id": "poster-11x17",
+			"name": "Poster, 11 by 17 in",
+			"size": [
+				11,
+				17
+			],
+			"bleed": 0.125,
+			"safe": 0.5,
+			"method": "digital or offset print",
+			"source": "Tabloid 11 by 17 in with 0.125 in bleed.",
+			"variants": [
+				"blue",
+				"paper",
+				"ink"
+			],
+			"layers": [
+				{
+					"type": "scan"
+				},
+				{
+					"type": "text",
+					"slot": "headline",
+					"box": [
+						0.764,
+						1.771,
+						9.472,
+						6.375
+					],
+					"size": 1.833,
+					"align": "left",
+					"maxLines": 3
+				},
+				{
+					"type": "band",
+					"to": "contrast",
+					"at": 13.812,
+					"step": 0.177
+				},
+				{
+					"type": "logo",
+					"kind": "lockup",
+					"box": [
+						0.764,
+						15.3,
+						3.667,
+						0.654
+					]
+				},
+				{
+					"type": "text",
+					"slot": "url",
+					"box": [
+						6.722,
+						15.477,
+						3.514,
+						0.425
+					],
+					"size": 0.257,
+					"align": "right",
+					"maxLines": 1
+				}
+			],
+			"group": "merch"
+		},
+		{
+			"id": "poster-a2",
+			"name": "Poster, A2",
+			"size": [
+				16.54,
+				23.39
+			],
+			"bleed": 0.125,
+			"safe": 0.5,
+			"method": "digital or offset print",
+			"source": "ISO A2 420 by 594 mm with 3 mm bleed.",
+			"variants": [
+				"blue",
+				"paper",
+				"ink"
+			],
+			"layers": [
+				{
+					"type": "scan"
+				},
+				{
+					"type": "text",
+					"slot": "headline",
+					"box": [
+						1.149,
+						2.436,
+						14.243,
+						8.771
+					],
+					"size": 2.757,
+					"align": "left",
+					"maxLines": 3
+				},
+				{
+					"type": "band",
+					"to": "contrast",
+					"at": 19.004,
+					"step": 0.244
+				},
+				{
+					"type": "logo",
+					"kind": "lockup",
+					"box": [
+						1.149,
+						21.051,
+						5.513,
+						0.983
+					]
+				},
+				{
+					"type": "text",
+					"slot": "url",
+					"box": [
+						10.108,
+						21.295,
+						5.284,
+						0.585
+					],
+					"size": 0.386,
+					"align": "right",
+					"maxLines": 1
+				}
+			],
+			"group": "merch"
+		},
+		{
+			"id": "poster-24x36",
+			"name": "Poster, 24 by 36 in",
+			"size": [
+				24,
+				36
+			],
+			"bleed": 0.125,
+			"safe": 0.5,
+			"method": "digital or offset print",
+			"source": "24 by 36 in poster (a standard size) with 0.125 in bleed.",
+			"variants": [
+				"blue",
+				"paper",
+				"ink"
+			],
+			"layers": [
+				{
+					"type": "scan"
+				},
+				{
+					"type": "text",
+					"slot": "headline",
+					"box": [
+						1.667,
+						3.75,
+						20.667,
+						13.5
+					],
+					"size": 4.0,
+					"align": "left",
+					"maxLines": 3
+				},
+				{
+					"type": "band",
+					"to": "contrast",
+					"at": 29.25,
+					"step": 0.375
+				},
+				{
+					"type": "logo",
+					"kind": "lockup",
+					"box": [
+						1.667,
+						32.4,
+						8.0,
+						1.427
+					]
+				},
+				{
+					"type": "text",
+					"slot": "url",
+					"box": [
+						14.667,
+						32.775,
+						7.667,
+						0.9
+					],
+					"size": 0.56,
+					"align": "right",
+					"maxLines": 1
+				}
+			],
+			"group": "merch"
 		}
-	]
+	],
+	"samples": {
+		"name": "Sam Acme",
+		"role": "Head of product",
+		"email": "sam@acme.example",
+		"phone": "+1 555 0100",
+		"address": "1 Acme Street, Example City",
+		"date": "May 14, 2027",
+		"event": "Acme Summit 2027",
+		"body": "Acme runs its purchasing through agents. Every purchase is approved by the person who pays, with a passkey, tied to that exact cart. The agent never sees the card number, and the card still earns its points.",
+		"stat": "40%",
+		"title": "Certificate of completion"
+	},
+	"impossible": {
+		"socks": "Sock print areas are knit-pattern templates that differ by maker; there is no common size to draw to. Ask the maker for its template."
+	}
 }

@@ -178,10 +178,12 @@ export function logoAt(s: Pick<Scene, 'logo' | 'edits' | 'width' | 'height'>, st
 	const edit = s.edits.logo ?? {};
 	const kind = opts.kind ?? 'lockup';
 	const box = logoBox(kind);
-	const h = (opts.h ?? cfg.logo * stage.k) * (edit.scale ?? 1);
+	// On a shallow canvas the lockup is set by the height there is, not by the area.
+	const row = stage.row && !opts.anchors;
+	const h = (opts.h ?? (row ? Math.max(cfg.logo * stage.k, frame.h * 0.32) : cfg.logo * stage.k)) * (edit.scale ?? 1);
 	const w = (h * box.width) / box.height;
 	const clear = h * cfg.logoRule.clear;
-	const r = anchorBox(frame, w, h, edit.anchor ?? opts.anchor ?? 'top-left', stage.avoid, clear);
+	const r = anchorBox(frame, w, h, edit.anchor ?? opts.anchor ?? (row ? 'left' : 'top-left'), stage.avoid, clear);
 	r.x += (edit.dx ?? 0) * s.width;
 	r.y += (edit.dy ?? 0) * s.height;
 	return { kind, rect: r, clear, color: isDark(ground) ? tokenColor('white') : tokenColor('brand'), min: cfg.logoRule.min * stage.k, can: { move: opts.move ?? true, scale: opts.scale ?? cfg.logoRule.scale, hide: true, anchors: [...(opts.anchors ?? NINE)] } };
@@ -455,7 +457,8 @@ export function layoutOf(s: Scene): Layout {
 	const L: Layout = { stage, frame, band: b, room, cap: null, logo: null, words: null, window: null, quote: null, cards: null, footer: null, number: null, badgeLine: null, stickers: [], notes: [] };
 	const size = s.size ?? `${W} by ${H}`;
 	const words = readable({ badge: s.badge, headline: s.headline, body: s.body, button: s.button }, s.edits);
-	const S = s.textSize;
+	// Fill before shrinking: a shallow canvas starts its words at the height it has.
+	const S = stage.row && s.template !== 'cards' ? Math.max(s.textSize, frame.h * 0.42) : s.textSize;
 	const opts = (o: Partial<Parameters<typeof placeWords>[5]>) => ({ S, maxW: s.textWidth * stage.box.w, align: 'center' as Align, ax: stage.box.x + s.textX * stage.box.w, ay: stage.box.y + s.textY * stage.box.h, W, H, size, ...o });
 	// Words keep a little off a covered part: descenders reach below their line.
 	const covered = stage.avoid.map((r) => inflate(r, 12 * k));
@@ -485,6 +488,18 @@ export function layoutOf(s: Scene): Layout {
 			L.logo.clear *= z;
 			const c = { ...r, x: stage.box.x + (stage.box.w - r.w) / 2 + (s.edits.logo?.dx ?? 0) * W, y: Math.min(room, stage.box.y + stage.box.h) / 2 + stage.box.y / 2 - r.h / 2 + (s.edits.logo?.dy ?? 0) * H };
 			if (!stage.avoid.some((a) => hit(c, a, L.logo!.clear))) L.logo.rect = c;
+			else {
+				// A covered middle (a video call's person): the logo goes over it, in the room above, at a size that fits.
+				const blocked = stage.avoid.find((a) => hit(L.logo!.rect, a, L.logo!.clear));
+				if (blocked && blocked.y - frame.y > 40 * k) {
+					const room = blocked.y - frame.y - L.logo.clear * 1.2;
+					const z = Math.min(1, room / L.logo.rect.h, (frame.w * 0.4) / L.logo.rect.w);
+					const w = L.logo.rect.w * z;
+					const h = L.logo.rect.h * z;
+					L.logo.rect = { x: stage.box.x + (stage.box.w - w) / 2, y: frame.y + Math.max(0, (room - h) / 2), w, h };
+					L.logo.clear *= z;
+				}
+			}
 		}
 		small(s.ground);
 	} else if (s.template === 'announcement') {

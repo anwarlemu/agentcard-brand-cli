@@ -48,7 +48,7 @@ designConformance(adapter(), {
 		}
 		if (doc.kind === 'merch') {
 			const item = merchConfig().items.find((i) => `merch-${i.id}` === doc.template)!;
-			return rasterize(merchSvgs(item, item.variants[0]!, { headline: doc.copy.headline, url: doc.copy.url }).raster, size.width);
+			return rasterize(merchSvgs(item, item.variants[0]!, { copy: doc.copy }).raster, size.width);
 		}
 		if (doc.template === 'illustration-single') return rasterize(illustrationSvg(buildIllustration({ subjects: ['cart'], toon: true, composition: 'single' })), size.width);
 		return undefined;

@@ -147,7 +147,9 @@
 			"picture": "card",
 			"notSizes": [
 				"avatar",
-				"linkedin-page"
+				"linkedin-page",
+				"leaderboard",
+				"mobile-banner"
 			]
 		},
 		"cards": {
@@ -173,7 +175,9 @@
 			"notSizes": [
 				"avatar",
 				"linkedin-page",
-				"youtube"
+				"youtube",
+				"leaderboard",
+				"mobile-banner"
 			]
 		},
 		"headline": {
@@ -208,7 +212,9 @@
 			"textY": 0.5,
 			"stickers": "none",
 			"notSizes": [
-				"avatar"
+				"avatar",
+				"leaderboard",
+				"mobile-banner"
 			],
 			"flatBand": true
 		},
@@ -228,7 +234,9 @@
 			"windowBody": "white",
 			"notSizes": [
 				"avatar",
-				"linkedin-page"
+				"linkedin-page",
+				"leaderboard",
+				"mobile-banner"
 			],
 			"flatBand": true
 		},
@@ -245,7 +253,9 @@
 				"avatar",
 				"linkedin-banner",
 				"linkedin-page",
-				"email"
+				"email",
+				"leaderboard",
+				"mobile-banner"
 			],
 			"flatBand": true
 		},
@@ -268,7 +278,9 @@
 			],
 			"body": "paper",
 			"notSizes": [
-				"avatar"
+				"avatar",
+				"leaderboard",
+				"mobile-banner"
 			],
 			"flatBand": true
 		},
@@ -437,7 +449,275 @@
 		"banner": "x-banner",
 		"li-profile": "linkedin-banner",
 		"linkedin-profile": "linkedin-banner",
-		"yt": "youtube"
+		"yt": "youtube",
+		"threads": "portrait",
+		"threads-post": "portrait",
+		"facebook-post": "portrait",
+		"facebook-feed": "portrait",
+		"facebook-link": "og",
+		"meta-feed": "portrait",
+		"meta-story": "story",
+		"facebook-story": "story",
+		"tiktok-cover": "story",
+		"tiktok": "story",
+		"instagram-reel-cover": "story",
+		"linkedin-ad": "linkedin",
+		"facebook-profile": "avatar",
+		"instagram-profile": "avatar",
+		"threads-profile": "avatar",
+		"tiktok-profile": "avatar",
+		"youtube-profile": "avatar",
+		"linkedin-profile-picture": "avatar",
+		"x-profile": "avatar",
+		"pinterest-profile": "avatar"
 	},
-	"$sizes": "Sizes, the parts a platform covers or crops, the width each is shown at and upload limits are the shared table every brand uses (src/design/platforms.ts, with sources)."
+	"$sizes": "Sizes, the parts a platform covers or crops, the width each is shown at and upload limits are the shared table every brand uses (src/design/platforms.ts, with sources).",
+	"extraSizes": {
+		"$comment": "Sizes the shared table (src/design/platforms.ts) does not have yet. Same shape as its entries; they belong in the shared table and are kept here until it has them. official: read on the platform's own page; otherwise the common published size.",
+		"list": [
+			{
+				"id": "pinterest",
+				"label": "Pinterest pin",
+				"width": 1000,
+				"height": 1500,
+				"aliases": [
+					"pin",
+					"2:3"
+				],
+				"avoid": [],
+				"shown": 236,
+				"limit": {
+					"bytes": 20971520,
+					"official": false
+				},
+				"source": "https://help.pinterest.com/en/business/article/pinterest-product-specs",
+				"note": "2:3 at 1000 by 1500 is Pinterest's recommendation; pins are shown about 236 px wide in the grid."
+			},
+			{
+				"id": "facebook-cover",
+				"label": "Facebook page cover",
+				"width": 1640,
+				"height": 624,
+				"aliases": [
+					"facebook-banner",
+					"fb-cover"
+				],
+				"avoid": [
+					{
+						"name": "the profile picture, lower left",
+						"official": false,
+						"rect": {
+							"x": 0,
+							"y": 0.55,
+							"w": 0.25,
+							"h": 0.45
+						}
+					}
+				],
+				"shown": 820,
+				"limit": {
+					"bytes": 10485760,
+					"official": false
+				},
+				"source": "https://www.facebook.com/help/125379114252045",
+				"note": "Shown at 820 by 312 on a computer (drawn at twice that); phones crop the sides. The profile picture's place is approximate."
+			},
+			{
+				"id": "medium-rectangle",
+				"label": "Display ad 300x250",
+				"width": 300,
+				"height": 250,
+				"aliases": [
+					"300x250",
+					"iab-300x250",
+					"mpu"
+				],
+				"avoid": [],
+				"shown": 300,
+				"limit": {
+					"bytes": 153600,
+					"official": false
+				},
+				"source": "https://iabtechlab.com/standards/iab-new-ad-portfolio/",
+				"note": "IAB display size, shown at its own pixels; Google Ads takes 150 KB."
+			},
+			{
+				"id": "large-rectangle",
+				"label": "Display ad 336x280",
+				"width": 336,
+				"height": 280,
+				"aliases": [
+					"336x280",
+					"iab-336x280"
+				],
+				"avoid": [],
+				"shown": 336,
+				"limit": {
+					"bytes": 153600,
+					"official": false
+				},
+				"source": "https://iabtechlab.com/standards/iab-new-ad-portfolio/"
+			},
+			{
+				"id": "leaderboard",
+				"label": "Display ad 728x90",
+				"width": 728,
+				"height": 90,
+				"aliases": [
+					"728x90",
+					"iab-728x90"
+				],
+				"avoid": [],
+				"shown": 728,
+				"limit": {
+					"bytes": 153600,
+					"official": false
+				},
+				"source": "https://iabtechlab.com/standards/iab-new-ad-portfolio/"
+			},
+			{
+				"id": "half-page",
+				"label": "Display ad 300x600",
+				"width": 300,
+				"height": 600,
+				"aliases": [
+					"300x600",
+					"iab-300x600"
+				],
+				"avoid": [],
+				"shown": 300,
+				"limit": {
+					"bytes": 153600,
+					"official": false
+				},
+				"source": "https://iabtechlab.com/standards/iab-new-ad-portfolio/"
+			},
+			{
+				"id": "mobile-banner",
+				"label": "Display ad 320x50",
+				"width": 320,
+				"height": 50,
+				"aliases": [
+					"320x50",
+					"iab-320x50"
+				],
+				"avoid": [],
+				"shown": 320,
+				"limit": {
+					"bytes": 153600,
+					"official": false
+				},
+				"source": "https://iabtechlab.com/standards/iab-new-ad-portfolio/"
+			},
+			{
+				"id": "wide-skyscraper",
+				"label": "Display ad 160x600",
+				"width": 160,
+				"height": 600,
+				"aliases": [
+					"160x600",
+					"iab-160x600",
+					"skyscraper"
+				],
+				"avoid": [],
+				"shown": 160,
+				"limit": {
+					"bytes": 153600,
+					"official": false
+				},
+				"source": "https://iabtechlab.com/standards/iab-new-ad-portfolio/"
+			},
+			{
+				"id": "billboard",
+				"label": "Display ad 970x250",
+				"width": 970,
+				"height": 250,
+				"aliases": [
+					"970x250",
+					"iab-970x250"
+				],
+				"avoid": [],
+				"shown": 970,
+				"limit": {
+					"bytes": 153600,
+					"official": false
+				},
+				"source": "https://iabtechlab.com/standards/iab-new-ad-portfolio/"
+			},
+			{
+				"id": "video-background",
+				"label": "Video call background",
+				"width": 1920,
+				"height": 1080,
+				"aliases": [
+					"zoom-background",
+					"meet-background",
+					"teams-background",
+					"zoom",
+					"meet"
+				],
+				"avoid": [
+					{
+						"name": "the person in the middle",
+						"official": false,
+						"rect": {
+							"x": 0.25,
+							"y": 0.2,
+							"w": 0.5,
+							"h": 0.8
+						}
+					}
+				],
+				"shown": 960,
+				"note": "Zoom and Meet take 1920 by 1080. The middle is where the person sits, so words and art keep to the sides and the top."
+			},
+			{
+				"id": "desktop-wallpaper",
+				"label": "Desktop wallpaper",
+				"width": 2560,
+				"height": 1440,
+				"aliases": [
+					"wallpaper",
+					"desktop"
+				],
+				"avoid": [],
+				"shown": 1280,
+				"note": "A 16:9 wallpaper at 2560 by 1440; it scales to other screens."
+			},
+			{
+				"id": "phone-wallpaper",
+				"label": "Phone wallpaper",
+				"width": 1170,
+				"height": 2532,
+				"aliases": [
+					"phone-background",
+					"lock-screen"
+				],
+				"avoid": [
+					{
+						"name": "the clock at the top",
+						"official": false,
+						"rect": {
+							"x": 0,
+							"y": 0,
+							"w": 1,
+							"h": 0.28
+						}
+					},
+					{
+						"name": "the controls at the bottom",
+						"official": false,
+						"rect": {
+							"x": 0,
+							"y": 0.86,
+							"w": 1,
+							"h": 0.14
+						}
+					}
+				],
+				"shown": 390,
+				"note": "An iPhone screen at 1170 by 2532; the lock screen's clock and controls are approximate."
+			}
+		]
+	}
 }

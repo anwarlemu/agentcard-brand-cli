@@ -3,7 +3,7 @@
 
 import { readFileSync } from 'node:fs';
 import { SMALL_FLOOR } from '../design/check.js';
-import { PLATFORMS, platformOf, zonePx } from '../design/platforms.js';
+import { PLATFORMS, platformOf, zonePx, type Platform } from '../design/platforms.js';
 import type { Rect } from '../design/types.js';
 import { pkgPath } from '../lib/paths.js';
 import type { GrainSpec, ScanSpec } from './effects.js';
@@ -43,6 +43,7 @@ export type ImageConfig = {
 	/** The shared platform sizes (src/design/platforms.ts), with this brand's older names. */
 	sizes: Record<string, SizeSpec>;
 	sizeAliases: Record<string, string>;
+	extraSizes: { list: Platform[] };
 	custom: { min: number; max: number };
 	grounds: Record<SceneGround, { token: string; dark: boolean }>;
 	bandContrast: Record<SceneGround, SceneGround>;
@@ -85,12 +86,15 @@ export type IllustrateConfig = {
 };
 
 let imageCfg: ImageConfig | undefined;
+
+/** The shared sizes, then the ones only this table has so far. */
+export const allPlatforms = (cfg: Pick<ImageConfig, 'extraSizes'>): Platform[] => [...PLATFORMS, ...cfg.extraSizes.list.filter((p) => !PLATFORMS.some((q) => q.id === p.id))];
 export function imageConfig(): ImageConfig {
 	if (!imageCfg) {
 		imageCfg = JSON.parse(readFileSync(pkgPath('brand', 'assets', 'image.json'), 'utf8')) as ImageConfig;
 		const older = Object.entries(imageCfg.sizeAliases);
 		imageCfg.sizes = Object.fromEntries(
-			PLATFORMS.map((p) => [
+			allPlatforms(imageCfg).map((p) => [
 				p.id,
 				{
 					width: p.width,
@@ -133,6 +137,8 @@ export type Stage = {
 	avoid: Rect[];
 	circle: boolean;
 	wide: boolean;
+	/** So shallow that the logo, the words and a button sit in one row (a leaderboard ad, a page cover). */
+	row: boolean;
 	/** The smallest words that read at the width this size is shown at. */
 	small: number;
 };
@@ -140,7 +146,7 @@ export type Stage = {
 /** The stage for a canvas. `size` is a size id whose platform rules apply; without one the whole canvas is open. */
 export function stageFor(W: number, H: number, size?: string): Stage {
 	const cfg = imageConfig();
-	const found = size ? PLATFORMS.find((p) => p.id === size) : undefined;
+	const found = size ? allPlatforms(cfg).find((p) => p.id === size) : undefined;
 	// A size's platform rules hold at that size's shape only (a deck or a custom canvas passes none).
 	const platform = found && Math.abs(found.width / found.height - W / H) < 0.02 ? found : undefined;
 	const zones = (platform?.avoid ?? []).map((z) => zonePx(z, W, H));
@@ -170,9 +176,10 @@ export function stageFor(W: number, H: number, size?: string): Stage {
 		const [x, y] = [edge(inset.left), edge(inset.top)];
 		frame = { x, y, w: W - x - edge(inset.right), h: H - y - edge(inset.bottom) };
 	}
-	const shown = platformOf(platform ? size! : 'custom', W, H).shown;
+	// The shared check reads sizes it does not know yet at a default width: keep to the stricter of the two.
+	const shown = Math.min(platform ? platform.shown : Infinity, platformOf(platform && PLATFORMS.some((p) => p.id === size) ? size! : 'custom', W, H).shown);
 	const small = Math.max(13 * k, (SMALL_FLOOR * 1.01 * W) / shown);
-	return { k, box, frame, avoid, circle, wide: isWide(box.w, box.h), small };
+	return { k, box, frame, avoid, circle, wide: isWide(box.w, box.h), row: box.w / box.h >= 4.5, small };
 }
 
 export const pick = (f: Fraction | undefined, wide: boolean, fallback: number) => (f === undefined ? fallback : typeof f === 'number' ? f : wide ? f.wide : f.tall);

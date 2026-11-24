@@ -64,6 +64,9 @@ export type Words = {
 	keyS: number;
 	keyH: number;
 	keyW: number;
+	/** The button beside the words, not under them; textW is the words' own width. */
+	row: boolean;
+	textW: number;
 	head: Wrapped;
 	body: Wrapped;
 	eyeText: string;
@@ -98,10 +101,16 @@ function measureWords(words: WordsIn, edits: Edits, stage: Stage, max: number, S
 	const bodyLeading = tokenNumber(cfg.body.leading);
 	const eye = Math.max(small, cfg.eyebrow.size * k * scaleOf(edits, 'badge'));
 	const bodyS = Math.max(small * 1.08, Math.min(cfg.body.max * k, Math.max(cfg.body.min * k, S * cfg.body.ratio)) * scaleOf(edits, 'body') * squeeze);
-	const keyS = Math.max(small, cfg.key.size * k * scaleOf(edits, 'button') * squeeze);
+	const keyS = Math.max(small, cfg.key.size * k * scaleOf(edits, 'button') * squeeze, stage.row ? S * 0.36 * scaleOf(edits, 'button') : 0);
 	const keyR = keyS / cfg.key.size;
-	const head = words.headline ? wrapEven(medium, words.headline, S, track, max) : NONE;
-	const body = words.body ? wrapEven(regular, words.body, bodyS, 0, Math.min(max, bodyMax)) : NONE;
+	const keyR0 = keyS / cfg.key.size;
+	const keyW0 = words.button ? measure(medium, words.button, keyS, 0) + cfg.key.padX * 2 * keyR0 : 0;
+	const row = stage.row && keyW0 > 0;
+	const sideGap = 18 * k;
+	const textMax = row ? max - keyW0 - sideGap : max;
+	if (textMax <= 0) return null;
+	const head = words.headline ? wrapEven(medium, words.headline, S, track, textMax) : NONE;
+	const body = words.body ? wrapEven(regular, words.body, bodyS, 0, Math.min(textMax, bodyMax)) : NONE;
 	if (!head || !body) return null;
 	const eyeText = cfg.eyebrow.caps ? words.badge.toUpperCase() : words.badge;
 	const eyeW = eyeText ? measure(medium, eyeText, eye, trackingEm(cfg.eyebrow.tracking)) : 0;
@@ -113,12 +122,14 @@ function measureWords(words: WordsIn, edits: Edits, stage: Stage, max: number, S
 	if (head.lines.length) parts.push({ h: head.lines.length * S * leading, gap: gaps.head });
 	if (body.lines.length) parts.push({ h: body.lines.length * bodyS * bodyLeading, gap: gaps.body });
 	const keyH = cfg.key.height * keyR;
-	if (keyW) parts.push({ h: keyH, gap: 0 });
+	if (keyW && !row) parts.push({ h: keyH, gap: 0 });
 	const first = eyeW ? '' : (head.lines[0] ?? '');
 	const lead = first ? Math.max(0, -lineInk(medium, first, 0, 0, S, track).y - S * 0.86) : 0;
-	const h = lead + parts.reduce((n, p, i) => n + p.h + (i < parts.length - 1 ? p.gap : 0), 0);
-	const w = Math.max(1, eyeW, keyW, ...head.lines.map((l) => measure(medium, l, S, track)), ...body.lines.map((l) => measure(regular, l, bodyS, 0)));
-	return { S, eye, bodyS, keyS, keyH, keyW, head, body, eyeText, eyeW, h, lead, w, leading, bodyLeading, track, asked: words, gaps };
+	const textH = lead + parts.reduce((n, p, i) => n + p.h + (i < parts.length - 1 ? p.gap : 0), 0);
+	const textW = Math.max(1, eyeW, row ? 0 : keyW, ...head.lines.map((l) => measure(medium, l, S, track)), ...body.lines.map((l) => measure(regular, l, bodyS, 0)));
+	const h = row ? Math.max(textH, keyH) : textH;
+	const w = row ? textW + sideGap + keyW : textW;
+	return { S, eye, bodyS, keyS, keyH, keyW, row, textW, head, body, eyeText, eyeW, h, lead, w, leading, bodyLeading, track, asked: words, gaps };
 }
 
 /** The floor for a headline: 26 px at the base scale, and always a step over the small words. */
@@ -226,16 +237,31 @@ function drawKey(ids: Ids, label: string, m: Words, x: number, y: number, k: num
 	return `<defs>${sh.defs}</defs>${sh.under}${rect(left, y, m.keyW, m.keyH, face, r)}${sh.over}${lineAt(medium, label, cx, base, m.keyS, 0, 'center', ink)}`;
 }
 
+/** The height of the words alone (without a button beside them). */
+function textHeight(m: Words) {
+	const parts: number[] = [];
+	const gaps: number[] = [];
+	if (m.eyeText) parts.push(m.eye * 1.2), gaps.push(m.gaps.eye);
+	if (m.head.lines.length) parts.push(m.head.lines.length * m.S * m.leading), gaps.push(m.gaps.head);
+	if (m.body.lines.length) parts.push(m.body.lines.length * m.bodyS * m.bodyLeading), gaps.push(m.gaps.body);
+	return m.lead + parts.reduce((n, h, i) => n + h + (i < parts.length - 1 ? gaps[i]! : 0), 0);
+}
+
 /** The words in the brand's order, from `top`. Each part can carry its own motion. */
 export function drawWords(ids: Ids, p: Placed, ground: SceneGround, scan: boolean, k: number, layers: Layers, motion?: { opacity: number; dy: number }[], over?: string[]) {
 	const cfg = imageConfig().scene;
 	const { medium, regular } = brandFonts();
-	const { m, x, align } = p;
+	const { m } = p;
+	// In a row the words are a left-aligned block with the button beside them, the pair placed as one.
+	const align: Align = m.row ? 'left' : p.align;
+	const blockLeft = p.align === 'center' ? p.x - m.w / 2 : p.align === 'right' ? p.x - m.w : p.x;
+	const x = m.row ? blockLeft : p.x;
 	const dark = isDark(ground);
 	const flat = groundColor(ground);
 	const grounds = groundColors(ground, scan);
 	const out: string[] = [];
-	let y = p.top + m.lead;
+	const textTop = m.row ? p.top + (m.h - textHeight(m)) / 2 : p.top;
+	let y = textTop + m.lead;
 	let part = 0;
 	const wrapPart = (svg: string) => {
 		const mo = motion?.[part];
@@ -264,7 +290,7 @@ export function drawWords(ids: Ids, p: Placed, ground: SceneGround, scan: boolea
 		layers.text('body', regular, rows, m.bodyS, 0, align, color, grounds, m.asked.body, readBack(m.body), WORD_CAN.body, over);
 		y += m.body.lines.length * m.bodyS * m.bodyLeading + m.gaps.body;
 	}
-	if (m.keyW) out.push(wrapPart(drawKey(ids, m.asked.button, m, x, y, k, ground === 'blue', align, layers)));
+	if (m.keyW) out.push(wrapPart(m.row ? drawKey(ids, m.asked.button, m, blockLeft + m.textW + 18 * k, p.top + (m.h - m.keyH) / 2, k, ground === 'blue', 'left', layers) : drawKey(ids, m.asked.button, m, x, y, k, ground === 'blue', align, layers)));
 	return out.join('');
 }
 

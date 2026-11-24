@@ -340,7 +340,7 @@ export function adapter(): Adapter {
 			}
 			if (doc.template.startsWith(MERCH)) {
 				const item = itemOf(doc.template);
-				const svgs = merchSvgs(item, doc.theme ?? item.variants[0]!, { headline: doc.copy.headline, url: doc.copy.url });
+				const svgs = merchSvgs(item, doc.theme ?? item.variants[0]!, { copy: doc.copy });
 				const files = await encoded(svgs.raster, svgs.width, out.formats.filter((f) => f !== 'svg'), out.scale);
 				if (out.formats.includes('svg')) files.svg = Buffer.from(svgs.print);
 				const b = item.bleed * 72;
@@ -376,7 +376,10 @@ export function adapter(): Adapter {
 			const text = (v: unknown): string => (Array.isArray(v) ? v.map((c) => (typeof c === 'string' ? c : [c.title, c.body].filter(Boolean).join('\n'))).join('\n\n') : String(v));
 			if (isTemplate(id)) return Object.fromEntries(Object.entries(imageConfig().samples[id]).filter(([k]) => k !== 'picture').map(([k, v]) => [k, text(v)]));
 			if (id.startsWith(SLIDE)) return Object.fromEntries(Object.entries(deckConfig().slides[id.slice(SLIDE.length) as SlideType].sample).filter(([k]) => k !== 'picture').map(([k, v]) => [slideSlot(k), text(v)]));
-			if (id.startsWith(MERCH)) return merchSlots(itemOf(id)).includes('headline') ? { headline: merchConfig().copy.headline! } : {};
+			if (id.startsWith(MERCH)) {
+				const all: Record<string, string> = { ...merchConfig().samples, headline: merchConfig().copy.headline ?? '' };
+				return Object.fromEntries(merchSlots(itemOf(id)).filter((s) => s !== 'url' && all[s]).map((s) => [s, all[s]!]));
+			}
 			return {};
 		},
 		colors: wordColors,

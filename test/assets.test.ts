@@ -6,7 +6,7 @@ import { afterAll, describe, expect, it } from 'vitest';
 import { encodePng } from '../src/assets/png.js';
 import { toonify } from '../src/assets/toon.js';
 import { buildScene } from '../src/image/compose.js';
-import { SIZES } from '../src/image/catalog.js';
+import { SIZES, templateSizes as templateSizesOf } from '../src/image/catalog.js';
 import { drawScene, imageConfig } from '../src/image/scene.js';
 import { checkItem, logoPlacement, merchConfig } from '../src/merch/render.js';
 import { ffmpegPath } from '../src/video/ffmpeg.js';
@@ -230,7 +230,7 @@ describe('the gaps closed', () => {
 		const custom = run(['image', 'headline', '--headline', 'Hello', '--size', 'custom', '--width', '1600', '--height', '400', '--format', 'png', '-o', 'gap-c']);
 		expect(png(join(dir, custom.files[0].path))).toMatchObject({ width: 1600, height: 400 });
 		const sizes = run(['image', 'logo', '--size', 'all', '--format', 'png', '-o', 'gap-d']);
-		expect(sizes.files.length).toBe(13);
+		expect(sizes.files.length).toBe(templateSizesOf('logo').length);
 		expect(run(['image', '--list']).sizes.map((s: { id: string }) => s.id)).toContain('youtube-thumbnail');
 	}, 120000);
 

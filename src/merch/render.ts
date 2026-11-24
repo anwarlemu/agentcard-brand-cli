@@ -5,7 +5,7 @@
 
 import { readFileSync } from 'node:fs';
 import { band, Ids, scan } from '../image/effects.js';
-import { bandMixes, brandFonts, document, drawLogo, logoBox, rect, tokenColor } from '../image/paint.js';
+import { bandMixes, brandFonts, document, drawLogo, flatten, logoBox, rect, tokenColor } from '../image/paint.js';
 import { imageConfig, type SceneGround } from '../image/scene.js';
 import { drawBlock, fitBlock, Layers } from '../image/words.js';
 import { brand } from '../lib/brand.js';
@@ -14,12 +14,16 @@ import { pkgPath } from '../lib/paths.js';
 type Box = [x: number, y: number, w: number, h: number];
 export type MerchLayer =
 	| { type: 'logo'; kind: 'lockup' | 'mark'; box: Box }
-	| { type: 'text'; slot: string; box: Box; size: number; align: 'left' | 'center' | 'right'; maxLines: number }
+	| { type: 'text'; slot: string; box: Box; size: number; align: 'left' | 'center' | 'right'; maxLines: number; weight?: 'regular' | 'medium'; tone?: 'muted' }
 	| { type: 'band'; to: 'contrast'; at: number; step: number }
-	| { type: 'scan' };
-export type MerchItem = { id: string; name: string; size: [number, number]; bleed: number; safe: number; method: string; source: string; variants: string[]; cut?: { radius: number }; layers: MerchLayer[] };
+	| { type: 'scan' }
+	/** A block of a ground (the contrast of the item's own, or a named one): a name tag's blue top. */
+	| { type: 'panel'; box: Box; ground: SceneGround | 'contrast' }
+	/** The logo repeated along a strip, with its clear space between (a lanyard). */
+	| { type: 'repeat'; kind: 'lockup' | 'mark'; box: Box };
+export type MerchItem = { id: string; name: string; group?: 'merch' | 'document'; size: [number, number]; bleed: number; safe: number; method: string; source: string; variants: string[]; cut?: { radius: number }; cuts?: { box: Box; radius: number }[]; layers: MerchLayer[] };
 export type MerchVariant = { about: string; ground?: SceneGround; ink: 'white' | 'brand' | 'ink' };
-export type MerchConfig = { dpi: number; copy: Record<string, string>; variants: Record<string, MerchVariant>; logo: { minWidth: { lockup: number; mark: number }; clearSpace: string; note: string }; items: MerchItem[]; $comment: string };
+export type MerchConfig = { dpi: number; copy: Record<string, string>; samples: Record<string, string>; variants: Record<string, MerchVariant>; logo: { minWidth: { lockup: number; mark: number }; clearSpace: string; note: string }; items: MerchItem[]; $comment: string };
 
 let merchCfg: MerchConfig | undefined;
 export function merchConfig(): MerchConfig {
@@ -51,16 +55,18 @@ function siteHost() {
 	}
 }
 
-export type MerchOpts = { headline?: string; url?: string; sample?: boolean };
+export type MerchOpts = { headline?: string; url?: string; copy?: Record<string, string>; sample?: boolean };
 
 /** The copy slots an item draws. */
-export const merchSlots = (item: MerchItem) => item.layers.flatMap((l) => (l.type === 'text' ? [l.slot] : []));
+export const merchSlots = (item: MerchItem) => [...new Set(item.layers.flatMap((l) => (l.type === 'text' ? [l.slot] : [])))];
 
 /** What is drawn in each slot: only what was passed, the brand's own address, and sample copy when asked for. */
 function copyFor(item: MerchItem, opts: MerchOpts): Record<string, string> {
-	const given = { headline: opts.headline?.trim(), url: opts.url?.trim() };
-	for (const key of ['headline', 'url'] as const) if (given[key] && !merchSlots(item).includes(key)) throw new Error(`The ${item.name} has no place for --${key}.`);
-	return { url: given.url || siteHost(), headline: given.headline || (opts.sample ? (merchConfig().copy.headline ?? '') : '') };
+	const given: Record<string, string> = Object.fromEntries(Object.entries({ ...opts.copy, ...(opts.headline ? { headline: opts.headline } : {}), ...(opts.url ? { url: opts.url } : {}) }).map(([k, v]) => [k, String(v).trim()]).filter(([, v]) => v));
+	const slots = merchSlots(item);
+	for (const key of Object.keys(given)) if (!slots.includes(key)) throw new Error(`The ${item.name} has no place for --${key}. It takes ${slots.join(', ') || 'no copy'}.`);
+	const samples: Record<string, string> = opts.sample ? { ...merchConfig().samples, ...(merchConfig().copy.headline ? { headline: merchConfig().copy.headline } : {}) } : {};
+	return Object.fromEntries(slots.map((slot) => [slot, given[slot] ?? (slot === 'url' ? siteHost() : (samples[slot] ?? ''))]));
 }
 
 /** The print file (no guides), the proof (with guides) and the cut path, as SVG strings, plus the size in pixels. */
@@ -80,16 +86,23 @@ export function merchSvgs(item: MerchItem, variantId: string, opts: MerchOpts = 
 	const parts: string[] = [];
 	const ground = variant.ground;
 	const bandLayer = item.layers.find((l): l is Extract<MerchLayer, { type: 'band' }> => l.type === 'band');
-	const groundAt = (yInches: number): SceneGround | undefined => (ground && bandLayer && yInches >= bandLayer.at + bandLayer.step * 4 ? CONTRAST[ground] : ground);
-	const inkFor = (yInches: number) => {
-		const g = groundAt(yInches);
+	const panels = item.layers.filter((l): l is Extract<MerchLayer, { type: 'panel' }> => l.type === 'panel');
+	const panelGround = (p: Extract<MerchLayer, { type: 'panel' }>): SceneGround => (p.ground === 'contrast' ? CONTRAST[ground ?? 'white'] : p.ground);
+	const groundAt = (yInches: number, xInches = item.size[0] / 2): SceneGround | undefined => {
+		const panel = [...panels].reverse().find((p) => xInches >= p.box[0] && xInches <= p.box[0] + p.box[2] && yInches >= p.box[1] && yInches < p.box[1] + p.box[3]);
+		if (panel) return panelGround(panel);
+		return ground && bandLayer && yInches >= bandLayer.at + bandLayer.step * 4 ? CONTRAST[ground] : ground;
+	};
+	const inkFor = (yInches: number, xInches?: number, tone?: 'muted') => {
+		const g = groundAt(yInches, xInches);
+		if (tone === 'muted') return g && imageConfig().grounds[g].dark ? flatten(tokenColor('text-on-brand-muted'), tokenColor(GROUND_TOKEN[g])) : tokenColor('text-secondary');
 		return tokenColor(g ? INK_ON[g] : variant.ink === 'brand' ? 'brand' : variant.ink);
 	};
 	if (ground) parts.push(rect(0, 0, W, H, tokenColor(GROUND_TOKEN[ground])));
 	const copy = copyFor(item, opts);
 	const layers = new Layers();
 	const groundHex = (g: SceneGround | undefined) => (g ? [tokenColor(GROUND_TOKEN[g])] : []);
-	const { medium } = brandFonts();
+	const { medium, regular } = brandFonts();
 	for (const layer of item.layers) {
 		if (layer.type === 'scan') {
 			if (ground !== 'blue') continue;
@@ -101,23 +114,55 @@ export function merchSvgs(item: MerchItem, variantId: string, opts: MerchOpts = 
 			if (!ground) continue;
 			layers.add({ id: 'band', kind: 'panel', box: { x: 0, y: oy + px(layer.at), w: W, h: H - oy - px(layer.at) }, bleeds: true, can: {} });
 			parts.push(band(ids, W, oy + px(layer.at), px(layer.step), H, tokenColor(GROUND_TOKEN[ground]), tokenColor(GROUND_TOKEN[CONTRAST[ground]]), bandMixes()));
+		} else if (layer.type === 'panel') {
+			const [bx, by, bw, bh] = layer.box;
+			// A panel at the trim's edge runs on into the bleed.
+			const x0 = bx <= 0 ? 0 : ox + px(bx);
+			const y0 = by <= 0 ? 0 : oy + px(by);
+			const x1 = bx + bw >= item.size[0] ? W : ox + px(bx + bw);
+			const y1 = by + bh >= item.size[1] ? H : oy + px(by + bh);
+			parts.push(rect(x0, y0, x1 - x0, y1 - y0, tokenColor(GROUND_TOKEN[panelGround(layer)])));
+		} else if (layer.type === 'repeat') {
+			const [bx, by, bw, bh] = layer.box;
+			const b = logoBox(layer.kind);
+			const across = bw >= bh;
+			const h = across ? bh : bw;
+			const w = (h * b.width) / b.height;
+			const turn = across ? 0 : 90;
+			const step = (across ? w : w) + h;
+			const length = across ? bw : bh;
+			const n = Math.max(1, Math.floor((length + h) / step));
+			const start = (length - (n * step - h)) / 2;
+			const fill = inkFor(by + bh / 2, bx + bw / 2);
+			for (let i = 0; i < n; i++) {
+				const at = start + i * step;
+				if (across) parts.push(drawLogo(layer.kind, ox + px(bx + at), oy + px(by), px(h), fill));
+				else parts.push(`<g transform="rotate(${turn} ${ox + px(bx + bw / 2)} ${oy + px(by + at + w / 2)})">${drawLogo(layer.kind, ox + px(bx + bw / 2 - w / 2), oy + px(by + at + w / 2 - h / 2), px(h), fill)}</g>`);
+			}
+			layers.add({ id: 'logo-repeat', kind: 'art', box: { x: ox + px(bx), y: oy + px(by), w: px(bw), h: px(bh) }, can: {} });
 		} else if (layer.type === 'logo') {
 			const p = logoPlacement(layer);
 			const box = logoBox(layer.kind);
 			layers.add({ id: logos++ ? `logo-${logos}` : 'logo', kind: 'logo', box: { x: ox + px(p.x), y: oy + px(p.y), w: px(p.w), h: px(p.h) }, logo: { clear: px(p.h / 2), min: (px(cfg.logo.minWidth[layer.kind]) * box.height) / box.width }, can: {} });
-			parts.push(`<g id="logo-${layer.kind}">${drawLogo(layer.kind, ox + px(p.x), oy + px(p.y), px(p.h), inkFor(p.y))}</g>`);
+			parts.push(`<g id="logo-${layer.kind}">${drawLogo(layer.kind, ox + px(p.x), oy + px(p.y), px(p.h), inkFor(p.y + p.h / 2, p.x + p.w / 2))}</g>`);
 		} else {
 			const value = copy[layer.slot] ?? '';
 			if (!value) continue;
 			const [bx, by, bw, bh] = layer.box;
 			// Tracking steps are screen sizes; a print inch reads as 96 of them.
 			const unit = dpi / 96;
-			const fit = fitBlock(medium, value, { what: layer.slot, w: px(bw), h: px(bh), size: px(layer.size), floor: Math.max(px(0.2), px(layer.size) * 0.3), leading: 1.05, maxLines: layer.maxLines, k: unit });
+			const font = layer.weight === 'regular' ? regular : medium;
+			const leading = layer.weight === 'regular' ? 1.35 : 1.05;
+			// Body text may step down to a print floor of 7 pt; headings keep closer to their size.
+			const floor = layer.weight === 'regular' ? Math.min(px(layer.size), px(7 / 72)) : Math.max(px(0.1), px(layer.size) * 0.3);
+			const fit = fitBlock(font, value, { what: layer.slot, w: px(bw), h: px(bh), size: px(layer.size), floor, leading, maxLines: layer.maxLines, k: unit });
 			const x = ox + px(layer.align === 'center' ? bx + bw / 2 : layer.align === 'right' ? bx + bw : bx);
-			parts.push(`<g id="text-${layer.slot}">${drawBlock(layers, layer.slot, medium, fit, x, oy + px(by), layer.align, inkFor(by), groundHex(groundAt(by)), value, {}, layer.slot === 'url' && !opts.url?.trim())}</g>`);
+			const own = layer.slot === 'url' && !opts.url?.trim() && !opts.copy?.url?.trim();
+			parts.push(`<g id="text-${layer.slot}">${drawBlock(layers, layer.slot, font, fit, x, oy + px(by), layer.align, inkFor(by, bx + bw / 2, layer.tone), groundHex(groundAt(by, bx + bw / 2)), value, {}, own)}</g>`);
 		}
 	}
-	const cutPath = item.cut ? `<rect id="CutContour" x="${ox}" y="${oy}" width="${px(item.size[0])}" height="${px(item.size[1])}" rx="${px(item.cut.radius)}" fill="none" stroke="#EC008C" stroke-width="${dpi / 72}"/>` : '';
+	const cutRects = [...(item.cut ? [{ box: [0, 0, item.size[0], item.size[1]] as Box, radius: item.cut.radius }] : []), ...(item.cuts ?? [])];
+	const cutPath = cutRects.length ? `<g id="CutContour">${cutRects.map((c) => `<rect x="${ox + px(c.box[0])}" y="${oy + px(c.box[1])}" width="${px(c.box[2])}" height="${px(c.box[3])}" rx="${px(c.radius)}" fill="none" stroke="#EC008C" stroke-width="${dpi / 72}"/>`).join('')}</g>` : '';
 	const title = `${item.name}, ${variantId}`;
 	const sizeAttrs = (svg: string) => svg.replace(`width="${W}" height="${H}"`, `width="${fullW}in" height="${fullH}in"`);
 	const print = sizeAttrs(document(W, H, title, parts.join('')));
