@@ -24,6 +24,14 @@ export const EMAILS: Record<string, Spec> = {
 };
 
 const c = (name: string) => colorHex(name) ?? '#000000';
+/** A translucent brand token laid over a solid one, as one solid hex: Outlook drops rgba, so rules are flattened. */
+export function flatOver(name: string, over: string): string {
+	const top = c(name);
+	const under = c(over);
+	const a = top.length === 9 ? parseInt(top.slice(7), 16) / 255 : 1;
+	const ch = (h: string, i: number) => parseInt(h.slice(1 + i * 2, 3 + i * 2), 16);
+	return `#${[0, 1, 2].map((i) => Math.round(ch(top, i) * a + ch(under, i) * (1 - a)).toString(16).padStart(2, '0')).join('').toUpperCase()}`;
+}
 const px = (token: string) => {
 	const v = tokens().site[token] ?? '0';
 	return v.endsWith('rem') ? Number.parseFloat(v) * 16 : Number.parseFloat(v);
@@ -50,7 +58,8 @@ export function emailHtml(template: string, copy: Record<string, string>, logoUr
 	const blue = c('brand');
 	const white = c('white');
 	const paper = c('paper');
-	const line = '#E3E2DE';
+	// The site's hairline rule, flattened over the white card.
+	const line = flatOver('border-hairline', 'white');
 	const radius = px('--ds-radius-card');
 	const key = px('--ds-radius-control');
 	const onBlue = template === 'announcement';

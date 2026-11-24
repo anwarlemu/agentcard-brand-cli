@@ -652,7 +652,12 @@
 		"Window bar labels are the user's to pass: the site's own labels (issuing.product) are not drawn by default.",
 		"Characters the shipped Inter cannot draw (emoji, Chinese, Arabic and so on) are refused, never drawn as empty boxes.",
 		"Safe areas, shown widths and upload limits are in the shared platform table (src/design/platforms.ts): each number is marked official (read on the platform's page) or approximate.",
-		"Charts, pricing, comparison and flow layouts: the brand never published them, so they are built only from its parts (the white card with its corner, shadow and edge, the numbered badge, the window) and its colors: bars and lines in the brand blue (white on dark grounds), donut slices stepping from the blue through blue-mid and sky to ink."
+		"Charts, pricing, comparison and flow layouts: the brand never published them, so they are built only from its parts (the white card with its corner, shadow and edge, the numbered badge, the window) and its colors: bars and lines in the brand blue (white on dark grounds), donut slices stepping from the blue through blue-mid and sky to ink.",
+		"Ad and display sizes (IAB 300 by 250 to 970 by 250), wallpapers, video call backgrounds, Pinterest and Facebook covers: the brand never published these, so they reuse the hero, headline and logo layouts at the shared platform table's sizes; banners 4.5 times wider than tall set the words, the key and the lockup in one row, which is derived, not the brand's.",
+		"Compose blocks are the brand's own parts drawn alone (the lockup, the white card, the numbered badge, the window, the key, the search field, the toon objects, the band); the 12 by 12 grid and the gaps between blocks are derived from the safe area, not from a brand source.",
+		"Emails: tables with inline styles in the brand's color tokens; rules are the site's hairline token (ink at 16 percent) flattened over the white card, because Outlook drops rgba. Display type falls back to Helvetica Neue, Helvetica and Arial in inboxes, since web fonts do not load in most clients.",
+		"Print documents (business cards, letterheads, report covers, one-pager, case study, certificate, name tag, event badge, notebook, mug, lanyard, sticker sheet): the brand published none, so they place only the approved lockup or mark, the grounds and Inter Medium on common vendor trims; the layouts are derived.",
+		"Icons: the favicon and app icons are the brand mark (brand/logo) on the brand grounds; the component icons are lucide (ISC, the set the library imports), recolored to brand, ink or white, not drawn for the brand."
 	],
 	"custom": {
 		"min": 200,

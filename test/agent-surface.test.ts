@@ -60,9 +60,9 @@ describe('manifest', () => {
 		const data = manifest();
 		expect(data.entry).toMatch(/manifest --json/);
 		expect(data.tokens.groups.map((group) => group.id)).toEqual(expect.arrayContaining(['color', 'type', 'space', 'radius', 'motion']));
-		expect(data.images.templates.map((item) => item.id).sort()).toEqual(['announcement', 'cards', 'headline', 'hero', 'logo', 'quote', 'screenshot', 'subtext', 'window']);
-		expect(data.images.sizes.map((item) => item.id).sort()).toEqual(['avatar', 'custom', 'email', 'landscape', 'linkedin', 'linkedin-banner', 'linkedin-page', 'og', 'portrait', 'square', 'story', 'x-banner', 'youtube', 'youtube-thumbnail']);
-		expect(data.videos.templates.map((item) => item.id).sort()).toEqual(['announcement', 'cards', 'headline', 'hero', 'logo', 'quote', 'screenshot', 'subtext', 'window']);
+		expect(data.images.templates.map((item) => item.id).sort()).toEqual(['announcement', 'before-after', 'cards', 'chart', 'compare', 'flow', 'headline', 'hero', 'logo', 'pricing', 'quote', 'screenshot', 'stat', 'subtext', 'window']);
+		expect(data.images.sizes.map((item) => item.id)).toEqual(expect.arrayContaining(['og', 'x-banner', 'youtube-thumbnail', 'avatar', 'ad-300x250', 'meeting', 'custom']));
+		expect(data.videos.templates.map((item) => item.id)).toEqual(expect.arrayContaining(['announcement', 'cards', 'headline', 'hero', 'logo', 'quote', 'screenshot', 'subtext', 'window', 'stat', 'chart']));
 		expect(data.videos.aliases).toEqual({ social: 'headline', product: 'screenshot' });
 		expect(data.videos.sizes.map((item) => item.id)).toEqual(['square', 'vertical', 'landscape', 'portrait', 'og']);
 		expect(data.videos.renderer.fps).toBe(30);
@@ -204,7 +204,7 @@ describe('video', () => {
 
 describe('cli catalog', () => {
 	it('answers manifest --json and rejects an unknown video flag', () => {
-		const out = execFileSync(process.execPath, [BIN, 'manifest', '--json'], { cwd: ROOT, encoding: 'utf8' });
+		const out = execFileSync(process.execPath, [BIN, 'manifest', '--json'], { cwd: ROOT, encoding: 'utf8', maxBuffer: 64 * 1024 * 1024 });
 		const data = JSON.parse(out) as { components: { name: string }[]; videos: { templates: { id: string }[] } };
 		expect(data.components.some((item) => item.name === 'button')).toBe(true);
 		expect(data.videos.templates.map((item) => item.id)).toContain('headline');

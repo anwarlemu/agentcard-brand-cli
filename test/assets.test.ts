@@ -110,10 +110,10 @@ describe('deck', () => {
 	it('renders the sample deck to a PNG per slide and one PDF, the same bytes twice', () => {
 		const a = run(['deck', '--sample', '-o', 'deck-a']);
 		const b = run(['deck', '--sample', '-o', 'deck-b']);
-		expect(a.slides).toBe(9);
+		expect(a.slides).toBe(16);
 		const pdf = readFileSync(join(dir, 'deck-a', 'deck.pdf'));
 		expect(pdf.subarray(0, 5).toString()).toBe('%PDF-');
-		expect((pdf.toString('latin1').match(/\/Type \/Page\b/g) ?? []).length).toBe(9);
+		expect((pdf.toString('latin1').match(/\/Type \/Page\b/g) ?? []).length).toBe(16);
 		expect(a.files.map((f: { sha256: string }) => f.sha256)).toEqual(b.files.map((f: { sha256: string }) => f.sha256));
 		for (const f of readdirSync(join(dir, 'deck-a')).filter((n) => n.endsWith('.png'))) expect(png(join(dir, 'deck-a', f))).toMatchObject({ width: 1920, height: 1080 });
 	}, 180000);

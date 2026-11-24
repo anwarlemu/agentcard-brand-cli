@@ -13,6 +13,7 @@ import { plainWords, wordColors } from '../image/check.js';
 import { SCENE_GROUNDS, STICKER_MODES, subjectNames, WINDOW_BODIES, type SceneFields } from '../image/compose.js';
 import { illustrateConfig, imageConfig, type SceneGround } from '../image/config.js';
 import { renderScene } from '../image/layout.js';
+import { isPanel } from '../image/panels.js';
 import { composeBlocks, drawCompose } from '../image/blocks.js';
 import { recipeFor } from '../image/recipes.js';
 import { SECTIONS, writePage } from '../library/page.js';
@@ -57,8 +58,8 @@ function layersOf(id: TemplateId): TemplateInfo['layers'] {
 	const hide = { hide: true };
 	if (id === 'logo') add('logo', { move: true, scale: [0.3, 1.35], anchors: ['center', ...NINE.filter((a) => a !== 'center')] });
 	else if (id === 'cards') add('logo', { scale: [0.8, 1.6], hide: true, anchors: ['bottom-left', 'bottom-right', 'top-left', 'top-right'] });
-	else if (takes.has('logo')) add('logo', { move: true, scale: LOGO, hide: true, anchors: id === 'announcement' ? ['top-left', 'top', 'top-right'] : id === 'quote' ? ['top-left', 'top', 'top-right', 'bottom-left', 'bottom-right'] : ['top-left', ...NINE.filter((a) => a !== 'top-left')] });
-	if (takes.has('headline')) add('headline', id === 'cards' ? { scale: [0.6, 1.4], align: true } : WORD_CAN.headline!);
+	else if (takes.has('logo')) add('logo', { move: true, scale: LOGO, hide: true, anchors: id === 'announcement' || id === 'quote' ? ['top-left', 'top', 'top-right'] : takes.has('band') && imageConfig().templates[id].band !== 'none' ? ['top-left', 'top', 'top-right', 'left', 'center', 'right'] : ['top-left', ...NINE.filter((a) => a !== 'top-left')] });
+	if (takes.has('headline')) add('headline', id === 'cards' ? { scale: [0.6, 1.4], align: true } : isPanel(id) ? { move: true, scale: [0.5, 1.6], align: true } : WORD_CAN.headline!);
 	for (const key of ['badge', 'body', 'button'] as const) if (takes.has(key)) add(key, WORD_CAN[key]!);
 	if (takes.has('quote')) add('quote', { scale: [0.6, 1.5] });
 	if (takes.has('by')) add('by', hide);
@@ -92,6 +93,7 @@ function layersOf(id: TemplateId): TemplateInfo['layers'] {
 		add('picture-1', {});
 		add('picture-2', {});
 		add('window-bar', {});
+		add('window-bar-2', {});
 	}
 	if (id === 'announcement') {
 		add('cap', {});
@@ -135,6 +137,7 @@ function imageInfo(id: TemplateId, kind: 'image' | 'video'): TemplateInfo {
 		],
 		options: [...optionsOf(id), ...(kind === 'video' ? [{ id: 'seconds', range: [videoConfig().seconds.min, videoConfig().seconds.max] as [number, number], description: 'how long the clip runs' }] : [])],
 		layers: kind === 'image' ? layersOf(id) : [],
+		...(kind === 'image' ? { reflows: reflowsOf(layersOf(id)) } : {}),
 		grounds: grounds(themes),
 		formats: kind === 'image' ? ['png', 'svg', 'jpg', 'webp'] : ['png', 'mp4'],
 		...(kind === 'image' ? {} : { layouts: [`${id} clip`, `${id} video`] }),
@@ -175,6 +178,14 @@ export function imageFields(doc: DesignDoc, id: TemplateId, dir: string): ImageF
 
 const sceneFields = (doc: DesignDoc, id: TemplateId, dir: string, size: string | undefined): SceneFields => ({ ...imageFields(doc, id, dir), size, width: doc.size.width, height: doc.size.height, edits: doc.layers as Edits });
 
+/** What may give way when a layer changes: the words re-wrap, the objects re-settle and the window re-sizes round
+ * whatever moved, so every layer but the fixed parts (the band, the cap) may move with another. */
+function reflowsOf(layers: TemplateInfo['layers']): Record<string, string[]> {
+	const fixed = new Set(['band', 'cap']);
+	const ids = layers.map((l) => l.id).filter((x) => !fixed.has(x));
+	return Object.fromEntries(ids.map((x) => [x, ids.filter((y) => y !== x)]));
+}
+
 // Slides --------------------------------------------------------------------------------------------------------------
 
 const SLIDE = 'slide-';
@@ -196,6 +207,19 @@ function slideLayers(type: SlideType): TemplateInfo['layers'] {
 			return layersOf('cards').filter((l) => !/^art|^band|^number/.test(l.id));
 		case 'bullets':
 			return layersOf('cards').filter((l) => !/^art|^band|^number|^footer|^logo/.test(l.id));
+		case 'agenda':
+		case 'team':
+			return layersOf('cards').filter((l) => !/^art|^band|^number|^footer|^logo/.test(l.id));
+		case 'timeline':
+			return layersOf('flow').filter((l) => !/^number|^footer/.test(l.id));
+		case 'comparison':
+			return layersOf('compare').filter((l) => !/^number|^footer/.test(l.id));
+		case 'chart':
+			return layersOf('chart').filter((l) => !/^number|^footer/.test(l.id));
+		case 'qa':
+			return layersOf('hero').filter((l) => !/^art|^band|^number/.test(l.id));
+		case 'image-grid':
+			return [logo, { id: 'headline', can: plain }, ...[1, 2, 3, 4].flatMap((n) => [{ id: `picture-${n}`, can: {} }, { id: `window-bar-${n}`, can: {} }]), { id: 'band', can: {} }];
 		case 'section':
 			return [logo, { id: 'headline', can: plain }, { id: 'number', can: { ...plain, hide: true } }, { id: 'band', can: {} }];
 		case 'stat':
@@ -208,7 +232,7 @@ function slideLayers(type: SlideType): TemplateInfo['layers'] {
 function slideInfo(type: SlideType): TemplateInfo {
 	const cfg = deckConfig();
 	const spec = cfg.slides[type];
-	const slots = spec.slots.filter((s) => !['image', 'picture', 'theme'].includes(s));
+	const slots = spec.slots.filter((s) => !['image', 'picture', 'theme', 'images'].includes(s));
 	return {
 		id: `${SLIDE}${type}`,
 		kind: 'slide',
@@ -216,9 +240,10 @@ function slideInfo(type: SlideType): TemplateInfo {
 		sizes: ['slide'],
 		themes: [...cfg.themes[type]],
 		copy: slots.map((s) => ({ id: slideSlot(s), ...(spec.needs.includes(s) ? { required: true } : {}), ...(s === 'items' ? { description: COPY.cards } : {}) })),
-		images: spec.slots.includes('image') ? [{ id: 'picture', ...(spec.slots.includes('picture') ? { values: ['none', ...PICTURES()] } : {}) }] : [],
+		images: spec.slots.includes('images') ? [1, 2, 3, 4].map((n) => ({ id: n === 1 ? 'picture' : `picture${n}`, ...(n <= 2 ? { required: true } : {}), values: PICTURES() })) : spec.slots.includes('image') ? [{ id: 'picture', ...(spec.slots.includes('picture') ? { values: ['none', ...PICTURES()] } : {}) }] : [],
 		options: [],
 		layers: slideLayers(type),
+		reflows: reflowsOf(slideLayers(type)),
 		grounds: grounds(cfg.themes[type]),
 		formats: ['png', 'svg', 'jpg', 'webp', 'pdf'],
 		layouts: [`${type} slide`],
@@ -229,6 +254,10 @@ function slideOf(doc: DesignDoc, dir: string): Slide {
 	const type = doc.template.slice(SLIDE.length) as SlideType;
 	const pic = doc.images.picture;
 	const raw: Record<string, unknown> = { type, ...Object.fromEntries(Object.entries(doc.copy).map(([k, v]) => [k === 'window-bar' ? 'window' : k, v])), ...(doc.theme ? { theme: doc.theme } : {}) };
+	if (type === 'image-grid') {
+		raw.images = ['picture', 'picture2', 'picture3', 'picture4'].map((k) => doc.images[k]).filter((v): v is string => Boolean(v)).map((v) => (v.startsWith(OBJECT) ? v : resolve(dir, v)));
+		return checkSlide(raw, 0);
+	}
 	if (pic === 'none') raw.picture = 'none';
 	else if (pic?.startsWith(OBJECT)) raw.picture = pic.slice(OBJECT.length);
 	else if (pic) raw.image = resolve(dir, pic);

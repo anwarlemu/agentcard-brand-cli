@@ -183,7 +183,8 @@ function imageGrid(slide: Slide, W: number, H: number, edits: Edits) {
 	const headline = text(slide.headline);
 	if (headline) {
 		const b = fitBlock(medium, headline, { what: 'headline', w: f.frame.w, h: 200 * f.k, size: 64 * f.k * (edits.headline?.scale ?? 1), floor: f.small * 1.3, leading: 1.1, maxLines: 2, k: f.k });
-		f.out.push(drawBlock(f.layers, 'headline', medium, b, f.frame.x, top, 'left', strong(f.ground), groundColors(f.ground), headline, { move: true, scale: [0.5, 1.5] }));
+		const sh = shift(edits, 'headline', W, H);
+		f.out.push(drawBlock(f.layers, 'headline', medium, b, f.frame.x + sh.dx, top + sh.dy, 'left', strong(f.ground), groundColors(f.ground), headline, { move: true, scale: [0.5, 1.5] }));
 		top += b.h + 40 * f.k;
 	}
 	const area = { x: f.frame.x, y: top, w: f.frame.w, h: bottom(f.frame) - top };
@@ -193,15 +194,25 @@ function imageGrid(slide: Slide, W: number, H: number, edits: Edits) {
 	const cw = (area.w - gap * (cols - 1)) / cols;
 	const ch = (area.h - gap * (rows - 1)) / rows;
 	const ids = new Ids('g');
-	list.forEach((src, i) => {
-		const art = src.startsWith('object:') ? subjectArt(src.slice(7)) : pictureArt(readPicture(resolve(src), 'image'), 'image');
-		const bar = Math.max(imageConfig().scene.window.bar * f.k, f.small * 2.1);
+	// Every window is the same size, so the grid reads as one row of equals; each picture is fitted inside its window.
+	const arts = list.map((src) => (src.startsWith('object:') ? subjectArt(src.slice(7)) : pictureArt(readPicture(resolve(src), 'image'), 'image')));
+	const aspects = arts.map((art) => art.width / art.height).sort((x, y) => x - y);
+	const a0 = aspects[Math.floor(aspects.length / 2)]!;
+	const bar = Math.max(imageConfig().scene.window.bar * f.k, f.small * 2.1);
+	const w = Math.min(cw, (ch - bar) * a0);
+	const h = w / a0 + bar;
+	arts.forEach((art, i) => {
 		const a = art.width / art.height;
-		const w = Math.min(cw, (ch - bar) * a);
-		const h = w / a + bar;
 		const cell = { x: area.x + (i % cols) * (cw + gap) + (cw - w) / 2, y: area.y + Math.floor(i / cols) * (ch + gap) + (ch - h) / 2, w, h };
+		const fit = (r: { w: number; h: number }) => (a >= r.w / r.h ? { w: r.w, h: r.w / a } : { w: r.h * a, h: r.h });
 		f.layers.add({ id: `picture-${i + 1}`, kind: 'key', box: cell, can: {} });
-		f.out.push(windowFrame(ids, cell, f.k, labels[i] ?? '', 'white', (inside) => placed(art.href, inside.x + inside.w / 2, inside.y + inside.h / 2, inside.w, inside.h), f.small, f.layers, `picture-${i + 1}`));
+		f.out.push(windowFrame(ids, cell, f.k, labels[i] ?? '', 'white', (inside) => {
+			const d = fit(inside);
+			return placed(art.href, inside.x + inside.w / 2, inside.y + inside.h / 2, d.w, d.h);
+		}, f.small, f.layers, `picture-${i + 1}`));
+		// Each window's label is its own layer, so an edit or a theme names the one it means.
+		const last = f.layers.list.at(-1);
+		if (last?.id === 'window-bar') last.id = `window-bar-${i + 1}`;
 	});
 	return f;
 }

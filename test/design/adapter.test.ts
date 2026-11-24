@@ -21,7 +21,7 @@ const copy = (long: boolean) => (t: { id: string; copy: { id: string }[] }) =>
 	Object.fromEntries(
 		t.copy
 			.filter((c) => c.id !== 'footer' && c.id !== 'url')
-			.map((c) => [c.id, c.id === 'data' ? 'Jan: 120, Feb: 180, Mar: 260' : c.id === 'plans' ? 'Starter\n$0\nOne agent\n\nPro\n$49\nTen agents' : c.id === 'columns' ? 'Before\nThe number in the chat\n\nAfter\nThe agent never sees it' : c.id === 'steps' ? 'Save it once\nStored encrypted.\n\nYou approve\nWith a passkey.' : c.id === 'left' ? 'Before' : c.id === 'right' ? 'After' : c.id === 'cards' || c.id === 'items' ? CARDS : c.id === 'stat' ? '42%' : c.id === 'number' ? '01' : c.id === 'badge' ? 'New' : c.id === 'button' ? 'Start free' : c.id === 'by' ? 'Head of product, Acme' : c.id === 'window-bar' ? 'acme.app' : c.id === 'body' ? (long ? 'A second line that says a little more about it' : 'One line about it') : long ? 'Everything your agents need to search, buy and reply in one place' : 'Ship your next idea today']),
+			.map((c) => [c.id, c.id === 'data' ? 'Jan: 120, Feb: 180, Mar: 260' : c.id === 'plans' ? 'Starter\n$0\nOne agent\n\nPro\n$49\nTen agents' : c.id === 'columns' ? 'Before\nThe number in the chat\n\nAfter\nThe agent never sees it' : c.id === 'steps' ? 'Save it once\nStored encrypted.\n\nYou approve\nWith a passkey.' : c.id === 'labels' ? 'Checkout, Card' : c.id === 'left' ? 'Before' : c.id === 'right' ? 'After' : c.id === 'cards' || c.id === 'items' ? CARDS : c.id === 'stat' ? '42%' : c.id === 'number' ? '01' : c.id === 'badge' ? 'New' : c.id === 'button' ? 'Start free' : c.id === 'by' ? 'Head of product, Acme' : c.id === 'window-bar' ? 'acme.app' : c.id === 'body' ? (long ? 'A second line that says a little more about it' : 'One line about it') : long ? 'Everything your agents need to search, buy and reply in one place' : 'Ship your next idea today']),
 	);
 
 designConformance(adapter(), {
@@ -37,13 +37,15 @@ designConformance(adapter(), {
 		if (doc.kind === 'image') {
 			const { 'window-bar': window, ...rest } = doc.copy;
 			const pic = doc.images.picture;
-			const raw = { template: doc.template, ...rest, ...(window ? { window } : {}), ...(pic ? (pic.startsWith('object:') ? { picture: pic.slice(7) } : { image: pic }) : {}) };
+			const pic2 = doc.images.picture2;
+			const raw = { template: doc.template, ...rest, ...(window ? { window } : {}), ...(pic ? (pic.startsWith('object:') ? { picture: pic.slice(7) } : { image: pic }) : {}), ...(pic2 ? (pic2.startsWith('object:') ? { picture2: pic2.slice(7) } : { image2: pic2 }) : {}) };
 			const fields = resolveFields(raw as never, { footer: siteHost() });
 			return rasterize(renderJob({ ...fields, template: doc.template as TemplateId, size: id, ...size }).svg, size.width);
 		}
 		if (doc.kind === 'slide') {
 			const { 'window-bar': window, ...rest } = doc.copy;
-			const slide = checkSlide({ type: doc.template.slice(6), ...rest, ...(window ? { window } : {}) }, 0);
+			const grid = doc.template === 'slide-image-grid' ? { images: ['picture', 'picture2', 'picture3', 'picture4'].map((k) => doc.images[k]).filter(Boolean) } : {};
+			const slide = checkSlide({ type: doc.template.slice(6), ...rest, ...(window ? { window } : {}), ...grid }, 0);
 			return rasterize(drawSlide(slide, 0).svg, size.width);
 		}
 		if (doc.kind === 'merch') {

@@ -38,6 +38,12 @@ const copy: Record<TemplateId, Record<string, string>> = {
 	quote: { quote: 'The agent pauses the payment. The cardholder approves on their phone.', by: 'A checkout note' },
 	announcement: { badge: 'New', headline: 'Checkout on more stores', body: 'Paste a product page and the agent shops it like any catalog item.' },
 	logo: {},
+	stat: { stat: '40%', headline: 'fewer abandoned carts' },
+	chart: { headline: 'Purchases', data: 'Jan: 120, Feb: 180' },
+	pricing: { headline: 'Pricing', plans: 'Starter\n$0\nOne agent\n\nPro\n$49\nTen agents' },
+	compare: { headline: 'Compare', columns: 'Before\nThe number in chat\n\nAfter\nNever seen' },
+	flow: { headline: 'How it works', steps: 'Save it once\nStored.\n\nYou approve\nWith a passkey.' },
+	'before-after': { headline: 'Before and after', picture: 'checkout', picture2: 'card' },
 };
 
 describe('images', () => {

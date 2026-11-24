@@ -943,7 +943,7 @@
 				},
 				{
 					"type": "text",
-					"slot": "role",
+					"slot": "stat-label",
 					"box": [
 						0.75,
 						4.0,
@@ -1753,8 +1753,9 @@
 		"date": "May 14, 2027",
 		"event": "Acme Summit 2027",
 		"body": "Acme runs its purchasing through agents. Every purchase is approved by the person who pays, with a passkey, tied to that exact cart. The agent never sees the card number, and the card still earns its points.",
-		"stat": "40%",
-		"title": "Certificate of completion"
+		"stat": "3",
+		"title": "Certificate of completion",
+		"stat-label": "steps from cart to approved purchase"
 	},
 	"impossible": {
 		"socks": "Sock print areas are knit-pattern templates that differ by maker; there is no common size to draw to. Ask the maker for its template."

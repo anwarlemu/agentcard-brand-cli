@@ -808,7 +808,10 @@ export function drawScene(s: Scene, motion?: Motion, ids = new Ids('s')): Drawn 
 					const box = { x: r.x + (r.w - w) / 2, y: r.y + (r.h - h) / 2, w, h };
 					const id = `picture-${layers.list.filter((l) => /^picture-\d$/.test(l.id)).length + 1}`;
 					layers.add({ id, kind: 'key', box, can: {} });
-					return drawWindow(ids, { windowBody: 'white', picture: art, window: label, fill: true, under: id }, box, k, small, layers);
+					const svg = drawWindow(ids, { windowBody: 'white', picture: art, window: label, fill: true, under: id }, box, k, small, layers);
+					const top = layers.list.at(-1);
+					if (top?.id === 'window-bar' && id !== 'picture-1') top.id = `window-bar-${id.slice(8)}`;
+					return svg;
 				};
 				out.push(moved(drawPanel(s.template as PanelTemplate, ctx, s.panel, L.panel.rect, picture)));
 			}
