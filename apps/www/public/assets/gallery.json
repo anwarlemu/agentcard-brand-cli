@@ -152,6 +152,62 @@
 		"group": "deck"
 	},
 	{
+		"file": "/assets/deck-10-agenda.jpg",
+		"title": "agenda",
+		"command": "npx agentcard-ds deck --sample",
+		"width": 1920,
+		"height": 1080,
+		"group": "deck"
+	},
+	{
+		"file": "/assets/deck-11-team.jpg",
+		"title": "team",
+		"command": "npx agentcard-ds deck --sample",
+		"width": 1920,
+		"height": 1080,
+		"group": "deck"
+	},
+	{
+		"file": "/assets/deck-12-timeline.jpg",
+		"title": "timeline",
+		"command": "npx agentcard-ds deck --sample",
+		"width": 1920,
+		"height": 1080,
+		"group": "deck"
+	},
+	{
+		"file": "/assets/deck-13-chart.jpg",
+		"title": "chart",
+		"command": "npx agentcard-ds deck --sample",
+		"width": 1920,
+		"height": 1080,
+		"group": "deck"
+	},
+	{
+		"file": "/assets/deck-14-comparison.jpg",
+		"title": "comparison",
+		"command": "npx agentcard-ds deck --sample",
+		"width": 1920,
+		"height": 1080,
+		"group": "deck"
+	},
+	{
+		"file": "/assets/deck-15-image-grid.jpg",
+		"title": "image-grid",
+		"command": "npx agentcard-ds deck --sample",
+		"width": 1920,
+		"height": 1080,
+		"group": "deck"
+	},
+	{
+		"file": "/assets/deck-16-qa.jpg",
+		"title": "qa",
+		"command": "npx agentcard-ds deck --sample",
+		"width": 1920,
+		"height": 1080,
+		"group": "deck"
+	},
+	{
 		"file": "/assets/illustration-cart.jpg",
 		"title": "cart",
 		"command": "npx agentcard-ds illustrate cart",
@@ -392,6 +448,230 @@
 		"group": "merch"
 	},
 	{
+		"file": "/assets/merch-business-card-front-blue.jpg",
+		"title": "Business card, front (3.5 by 2 in, blue)",
+		"command": "npx agentcard-ds merch business-card-front --variant blue",
+		"width": 1125,
+		"height": 675,
+		"group": "print"
+	},
+	{
+		"file": "/assets/merch-business-card-back-paper.jpg",
+		"title": "Business card, back (3.5 by 2 in, paper)",
+		"command": "npx agentcard-ds merch business-card-back --variant paper",
+		"width": 1125,
+		"height": 675,
+		"group": "print"
+	},
+	{
+		"file": "/assets/merch-letterhead-brand.jpg",
+		"title": "Letterhead, US Letter (8.5 by 11 in, brand)",
+		"command": "npx agentcard-ds merch letterhead --variant brand",
+		"width": 2550,
+		"height": 3300,
+		"group": "print"
+	},
+	{
+		"file": "/assets/merch-letterhead-a4-brand.jpg",
+		"title": "Letterhead, A4 (8.27 by 11.69 in, brand)",
+		"command": "npx agentcard-ds merch letterhead-a4 --variant brand",
+		"width": 2481,
+		"height": 3507,
+		"group": "print"
+	},
+	{
+		"file": "/assets/merch-report-cover-blue.jpg",
+		"title": "Report cover, US Letter (8.5 by 11 in, blue)",
+		"command": "npx agentcard-ds merch report-cover --variant blue --headline \"...\"",
+		"width": 2625,
+		"height": 3375,
+		"group": "print"
+	},
+	{
+		"file": "/assets/merch-report-cover-a4-blue.jpg",
+		"title": "Report cover, A4 (8.27 by 11.69 in, blue)",
+		"command": "npx agentcard-ds merch report-cover-a4 --variant blue --headline \"...\"",
+		"width": 2556,
+		"height": 3582,
+		"group": "print"
+	},
+	{
+		"file": "/assets/merch-one-pager-brand.jpg",
+		"title": "One-pager, US Letter (8.5 by 11 in, brand)",
+		"command": "npx agentcard-ds merch one-pager --variant brand --headline \"...\"",
+		"width": 2550,
+		"height": 3300,
+		"group": "print"
+	},
+	{
+		"file": "/assets/merch-case-study-brand.jpg",
+		"title": "Case study, US Letter (8.5 by 11 in, brand)",
+		"command": "npx agentcard-ds merch case-study --variant brand --headline \"...\"",
+		"width": 2550,
+		"height": 3300,
+		"group": "print"
+	},
+	{
+		"file": "/assets/merch-certificate-paper.jpg",
+		"title": "Certificate, US Letter landscape (11 by 8.5 in, paper)",
+		"command": "npx agentcard-ds merch certificate --variant paper",
+		"width": 3375,
+		"height": 2625,
+		"group": "print"
+	},
+	{
+		"file": "/assets/merch-name-tag-paper.jpg",
+		"title": "Name tag sticker (4 by 3 in, paper)",
+		"command": "npx agentcard-ds merch name-tag --variant paper",
+		"width": 1275,
+		"height": 975,
+		"group": "print"
+	},
+	{
+		"file": "/assets/merch-event-badge-blue.jpg",
+		"title": "Event badge (lanyard) (4 by 6 in, blue)",
+		"command": "npx agentcard-ds merch event-badge --variant blue",
+		"width": 1275,
+		"height": 1875,
+		"group": "print"
+	},
+	{
+		"file": "/assets/merch-notebook-a5-blue.jpg",
+		"title": "Notebook cover, A5 (5.83 by 8.27 in, blue)",
+		"command": "npx agentcard-ds merch notebook-a5 --variant blue",
+		"width": 1824,
+		"height": 2556,
+		"group": "merch"
+	},
+	{
+		"file": "/assets/merch-mug-15oz-blue.jpg",
+		"title": "Mug wrap, 15 oz (8.5 by 3.75 in, blue)",
+		"command": "npx agentcard-ds merch mug-15oz --variant blue",
+		"width": 2625,
+		"height": 1200,
+		"group": "merch"
+	},
+	{
+		"file": "/assets/merch-lanyard-blue.jpg",
+		"title": "Lanyard strap (0.75 by 36 in, blue)",
+		"command": "npx agentcard-ds merch lanyard --variant blue",
+		"width": 263,
+		"height": 10838,
+		"group": "merch"
+	},
+	{
+		"file": "/assets/merch-sticker-sheet-brand.jpg",
+		"title": "Sticker sheet, kiss cut (8.5 by 11 in, brand)",
+		"command": "npx agentcard-ds merch sticker-sheet --variant brand",
+		"width": 2550,
+		"height": 3300,
+		"group": "merch"
+	},
+	{
+		"file": "/assets/merch-poster-11x17-blue.jpg",
+		"title": "Poster, 11 by 17 in (11 by 17 in, blue)",
+		"command": "npx agentcard-ds merch poster-11x17 --variant blue --headline \"...\"",
+		"width": 3375,
+		"height": 5175,
+		"group": "merch"
+	},
+	{
+		"file": "/assets/merch-poster-a2-blue.jpg",
+		"title": "Poster, A2 (16.54 by 23.39 in, blue)",
+		"command": "npx agentcard-ds merch poster-a2 --variant blue --headline \"...\"",
+		"width": 5037,
+		"height": 7092,
+		"group": "merch"
+	},
+	{
+		"file": "/assets/merch-poster-24x36-blue.jpg",
+		"title": "Poster, 24 by 36 in (24 by 36 in, blue)",
+		"command": "npx agentcard-ds merch poster-24x36 --variant blue --headline \"...\"",
+		"width": 7275,
+		"height": 10875,
+		"group": "merch"
+	},
+	{
+		"file": "/assets/data-1-stat-square.jpg",
+		"title": "stat, square (1080 by 1080)",
+		"command": "npx agentcard-ds image stat --stat 40% --headline \"fewer abandoned carts at Acme\" --size square",
+		"width": 1080,
+		"height": 1080,
+		"group": "data"
+	},
+	{
+		"file": "/assets/data-2-chart-og.jpg",
+		"title": "chart, og (1200 by 630)",
+		"command": "npx agentcard-ds image chart --headline \"Purchases approved\" --data \"Jan: 120, Feb: 180, Mar: 260, Apr: 310\"",
+		"width": 1200,
+		"height": 630,
+		"group": "data"
+	},
+	{
+		"file": "/assets/data-3-chart-square.jpg",
+		"title": "chart, square (1080 by 1080)",
+		"command": "npx agentcard-ds image chart --headline \"...\" --data \"Agents: 62, Voice: 23, Web: 15\" --chart donut --size square",
+		"width": 1080,
+		"height": 1080,
+		"group": "data"
+	},
+	{
+		"file": "/assets/data-4-pricing-og.jpg",
+		"title": "pricing, og (1200 by 630)",
+		"command": "npx agentcard-ds image pricing --headline Pricing --plans \"...\"",
+		"width": 1200,
+		"height": 630,
+		"group": "data"
+	},
+	{
+		"file": "/assets/data-5-compare-og.jpg",
+		"title": "compare, og (1200 by 630)",
+		"command": "npx agentcard-ds image compare --headline \"...\" --columns \"...\"",
+		"width": 1200,
+		"height": 630,
+		"group": "data"
+	},
+	{
+		"file": "/assets/data-6-flow-og.jpg",
+		"title": "flow, og (1200 by 630)",
+		"command": "npx agentcard-ds image flow --headline \"How it works\" --steps \"...\"",
+		"width": 1200,
+		"height": 630,
+		"group": "data"
+	},
+	{
+		"file": "/assets/ads-7-headline-ad-300x250.jpg",
+		"title": "headline, ad-300x250 (300 by 250)",
+		"command": "npx agentcard-ds image headline --headline \"...\" --button \"Start free\" --size ad-300x250",
+		"width": 300,
+		"height": 250,
+		"group": "ads"
+	},
+	{
+		"file": "/assets/ads-8-headline-ad-728x90.jpg",
+		"title": "headline, ad-728x90 (728 by 90)",
+		"command": "npx agentcard-ds image headline --headline \"...\" --button \"Start free\" --size ad-728x90",
+		"width": 728,
+		"height": 90,
+		"group": "ads"
+	},
+	{
+		"file": "/assets/ads-9-hero-ad-300x600.jpg",
+		"title": "hero, ad-300x600 (300 by 600)",
+		"command": "npx agentcard-ds image hero --headline \"...\" --size ad-300x600",
+		"width": 300,
+		"height": 600,
+		"group": "ads"
+	},
+	{
+		"file": "/assets/ads-10-hero-meeting.jpg",
+		"title": "hero, meeting (1920 by 1080)",
+		"command": "npx agentcard-ds image hero --headline Acme --size meeting",
+		"width": 1920,
+		"height": 1080,
+		"group": "ads"
+	},
+	{
 		"file": "/assets/clip-og.mp4",
 		"title": "hero clip, og",
 		"command": "npx agentcard-ds video hero --headline \"Let agents buy anything online\" --size og --format mp4,webm",
@@ -457,7 +737,7 @@
 	},
 	{
 		"file": "",
-		"title": "Nothing was changed. \"make the logo neon green\": Effects are not part of the brand. Things you can say here: move the logo up; nudge the logo left 2%; hide the logo. Copy goes in quotes. For exact edits use `design edit`.",
+		"title": "Nothing was changed. \"make the logo neon green\": Colors outside the brand palette are refused. The palette: #0000FF, #FFFFFF, #171818, #F2F1EC, #CCDBFF, #454646, #616262, #141534, #B8B8FF, #BEBEBE, in the themes blue, paper, white, ink. Things you can say here: move the logo up; nudge the logo left 2%; hide the logo. Copy goes in quotes. For exact edits use `design edit`.",
 		"command": "npx agentcard-ds design revise banner.design.json \"make the logo neon green\"",
 		"width": 0,
 		"height": 0,
