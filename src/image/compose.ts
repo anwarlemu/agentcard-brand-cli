@@ -8,8 +8,9 @@ import { unknownName } from '../lib/names.js';
 import { resolve } from 'node:path';
 import { illustrateConfig, imageConfig, layoutOf, layoutFor, pictureArt, subjectArt, type Art, type Card, type Scene, type SceneGround, type SceneTemplate, type WindowBody } from './scene.js';
 import type { Edits } from './words.js';
+import { isPanel, parseBlocks, parseData } from './panels.js';
 
-export const SCENE_TEMPLATES = ['hero', 'window', 'cards', 'headline', 'subtext', 'screenshot', 'quote', 'announcement', 'logo'] as const;
+export const SCENE_TEMPLATES = ['hero', 'window', 'cards', 'headline', 'subtext', 'screenshot', 'quote', 'announcement', 'logo', 'stat', 'chart', 'pricing', 'compare', 'flow', 'before-after'] as const;
 export const STICKER_MODES = ['preset', 'under', 'scatter', 'none'] as const;
 export type StickerMode = (typeof STICKER_MODES)[number];
 export const WINDOW_BODIES = ['blue', 'sky', 'white'] as const;
@@ -41,6 +42,16 @@ export type SceneFields = {
 	seed?: number;
 	count?: number;
 	cards?: Card[];
+	stat?: string;
+	data?: string | unknown[];
+	chart?: 'bar' | 'line' | 'donut';
+	plans?: string;
+	columns?: string;
+	steps?: string;
+	image2?: string;
+	picture2?: string;
+	left?: string;
+	right?: string;
 	footer?: string;
 	footerOptional?: boolean;
 	number?: string;
@@ -146,6 +157,24 @@ export function buildScene(f: SceneFields): Scene {
 		}
 		if (scene.fill && !f.windowBody) scene.windowBody = 'white';
 		else if (f.template === 'screenshot' && !scene.fill && !f.windowBody) scene.windowBody = 'sky';
+	}
+	if (isPanel(f.template)) {
+		const t2 = f.template;
+		const pic = (image?: string, subject?: string) => (image ? userArt(image, false) : subject && subject !== 'none' ? subjectArt(checkSubject(subject)) : undefined);
+		scene.panel = {
+			...(t2 === 'stat' ? { stat: f.stat ?? '' } : {}),
+			...(t2 === 'chart' ? { data: parseData(f.data), chart: f.chart ?? 'bar' } : {}),
+			...(t2 === 'pricing' ? { blocks: parseBlocks(f.plans, 'Pricing', 1, 3) } : {}),
+			...(t2 === 'compare' ? { blocks: parseBlocks(f.columns, 'A comparison', 2, 2) } : {}),
+			...(t2 === 'flow' ? { blocks: parseBlocks(f.steps, 'A flow', 2, 5) } : {}),
+			...(t2 === 'before-after' ? { left: f.left, right: f.right } : {}),
+		};
+		if (t2 === 'before-after') {
+			const a = pic(f.image, f.picture);
+			const b = pic(f.image2, f.picture2);
+			if (!a || !b) throw new Error('Before and after takes two pictures: --image (or --picture) and --image2 (or --picture2).');
+			scene.panel.pictures = [a, b];
+		}
 	}
 	const mode: StickerMode = f.stickers ?? (f.template === 'hero' ? (f.image ? 'under' : ((t.stickers as StickerMode) ?? 'preset')) : 'none');
 	const names = f.subjects?.length ? f.subjects.map(checkSubject) : undefined;

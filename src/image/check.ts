@@ -7,6 +7,9 @@ import { imageConfig, type SceneGround } from './config.js';
 import { flatten, hex, parseColor, tokenColor } from './paint.js';
 import { groundColor, groundColors } from './words.js';
 
+/** Copy as its words: the separators of a chart's points ("Jan: 120, Feb: 180") and a receipt's lines are not words. */
+export const plainWords = (text: string) => text.replace(/(^|\s)[|]\s/g, ' ').replace(/([^\s\d]):(?=\s|$)/g, '$1').replace(/,(?=\s|$)/g, '');
+
 /** Every color words are drawn in or on, as hex, from the tokens. */
 export function wordColors(): string[] {
 	const flat = (name: string) => hex(parseColor(tokenColor(name)));
@@ -23,7 +26,7 @@ type Drawn = { template: string; kind: DesignDoc['kind']; size: DesignDoc['size'
 
 export function findingsFor(d: Drawn): Finding[] {
 	const doc = { version: 1, brand: brand().bin, kind: d.kind, template: d.template, size: d.size, copy: Object.fromEntries(Object.entries(d.copy).filter((e): e is [string, string] => Boolean(e[1]?.trim()))), images: {}, options: {}, layers: {}, history: [], future: [] } as DesignDoc;
-	return checkDesign({ doc, info: { kind: d.kind } as TemplateInfo, layers: d.layers, adapter: { colors: wordColors } });
+	return checkDesign({ doc, info: { kind: d.kind } as TemplateInfo, layers: d.layers, adapter: { colors: wordColors, words: plainWords } });
 }
 
 /** Throws when what was drawn breaks a rule. Nothing has been written yet. */

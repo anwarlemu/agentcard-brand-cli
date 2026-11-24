@@ -8,16 +8,18 @@ import type { DrawnLayer } from '../design/types.js';
 import { buildScene, parseCards, type SceneFields } from '../image/compose.js';
 import { assertClean } from '../image/check.js';
 import { stageFor, type SceneGround } from '../image/config.js';
-import { band, Ids, scan } from '../image/effects.js';
+import { band, Ids, placed, scan } from '../image/effects.js';
+import { readPicture } from '../assets/picture.js';
+import { pictureArt, subjectArt } from '../image/objects.js';
 import { bandMixes, brandFonts, document, drawable, flatten, rect, tokenColor } from '../image/paint.js';
-import { bandOf, drawLogoAt, drawScene, groundColor, imageConfig, logoAt } from '../image/scene.js';
+import { bandOf, drawLogoAt, drawScene, groundColor, imageConfig, logoAt, windowFrame } from '../image/scene.js';
 import { bottom } from '../image/space.js';
 import { drawBlock, fitBlock, groundColors, isDark, Layers, type Edits } from '../image/words.js';
 import { brand } from '../lib/brand.js';
 import { unknownName } from '../lib/names.js';
 import { pkgPath } from '../lib/paths.js';
 
-export type SlideType = 'cover' | 'section' | 'statement' | 'bullets' | 'stat' | 'quote' | 'image' | 'cards' | 'end';
+export type SlideType = 'cover' | 'section' | 'statement' | 'bullets' | 'stat' | 'quote' | 'image' | 'cards' | 'end' | 'agenda' | 'team' | 'timeline' | 'chart' | 'comparison' | 'image-grid' | 'qa';
 export type Slide = { type: SlideType; [slot: string]: unknown };
 type SlideSpec = { name: string; about: string; slots: string[]; needs: string[]; sample: Record<string, unknown> };
 export type DeckConfig = { width: number; height: number; slides: Record<SlideType, SlideSpec>; themes: Record<SlideType, SceneGround[]>; aliases: Record<string, string> };
@@ -54,7 +56,7 @@ export function checkSlide(slide: unknown, index: number): Slide {
 		const key = cfg.aliases[raw] && spec.slots.includes(cfg.aliases[raw]!) ? cfg.aliases[raw]! : raw;
 		if (!spec.slots.includes(key)) throw unknownName(`${type} slot`, raw, [...spec.slots, ...Object.entries(cfg.aliases).filter(([, v]) => spec.slots.includes(v)).map(([k]) => k)]);
 		if (key in out) throw new Error(`Slide ${index + 1} (${type}): ${raw} and ${key} are the same slot. Pass one of them.`);
-		if (key === 'items' ? !Array.isArray(value) && typeof value !== 'string' : typeof value !== 'string') throw new Error(`Slide ${index + 1} (${type}): ${raw} must be ${key === 'items' ? 'a list or text' : 'text'}.`);
+		if (key === 'items' || key === 'images' || key === 'labels' ? !Array.isArray(value) && typeof value !== 'string' : typeof value !== 'string') throw new Error(`Slide ${index + 1} (${type}): ${raw} must be ${key === 'items' ? 'a list or text' : 'text'}.`);
 		out[key] = value;
 	}
 	if (out.theme !== undefined && !cfg.themes[type].includes(out.theme as SceneGround)) throw unknownName(`theme for ${type}`, String(out.theme), cfg.themes[type]);
@@ -164,6 +166,46 @@ function end(slide: Slide, W: number, H: number, edits: Edits) {
 	return f;
 }
 
+/** A list of blocks (or text) as blank-line-separated text. */
+const blockText = (v: unknown) => (Array.isArray(v) ? v.map((x) => String(x).replace(/\\n/g, '\n')).join('\n\n') : text(v));
+
+/** Two to four pictures in windows, in a row (or a two by two grid), each with its label in the bar. */
+function imageGrid(slide: Slide, W: number, H: number, edits: Edits) {
+	const f = slideFrame(slide, W, H, false);
+	const stage = stageFor(W, H);
+	const { medium } = brandFonts();
+	const logo = logoAt({ logo: true, edits, width: W, height: H }, stage, f.frame, f.ground, { anchors: ['top-left', 'top', 'top-right'] });
+	if (logo) f.out.push(drawLogoAt(logo, f.layers));
+	const list = (Array.isArray(slide.images) ? slide.images : String(slide.images).split(',')).map((v) => String(v).trim()).filter(Boolean);
+	if (list.length < 2 || list.length > 4) throw new Error('An image grid takes two to four pictures.');
+	const labels = (Array.isArray(slide.labels) ? slide.labels : slide.labels ? String(slide.labels).split(',') : []).map((v) => String(v).trim());
+	let top = logo ? bottom(logo.rect) + logo.clear * 2 : f.frame.y;
+	const headline = text(slide.headline);
+	if (headline) {
+		const b = fitBlock(medium, headline, { what: 'headline', w: f.frame.w, h: 200 * f.k, size: 64 * f.k * (edits.headline?.scale ?? 1), floor: f.small * 1.3, leading: 1.1, maxLines: 2, k: f.k });
+		f.out.push(drawBlock(f.layers, 'headline', medium, b, f.frame.x, top, 'left', strong(f.ground), groundColors(f.ground), headline, { move: true, scale: [0.5, 1.5] }));
+		top += b.h + 40 * f.k;
+	}
+	const area = { x: f.frame.x, y: top, w: f.frame.w, h: bottom(f.frame) - top };
+	const cols = list.length === 4 ? 2 : list.length;
+	const rows = list.length === 4 ? 2 : 1;
+	const gap = 36 * f.k;
+	const cw = (area.w - gap * (cols - 1)) / cols;
+	const ch = (area.h - gap * (rows - 1)) / rows;
+	const ids = new Ids('g');
+	list.forEach((src, i) => {
+		const art = src.startsWith('object:') ? subjectArt(src.slice(7)) : pictureArt(readPicture(resolve(src), 'image'), 'image');
+		const bar = Math.max(imageConfig().scene.window.bar * f.k, f.small * 2.1);
+		const a = art.width / art.height;
+		const w = Math.min(cw, (ch - bar) * a);
+		const h = w / a + bar;
+		const cell = { x: area.x + (i % cols) * (cw + gap) + (cw - w) / 2, y: area.y + Math.floor(i / cols) * (ch + gap) + (ch - h) / 2, w, h };
+		f.layers.add({ id: `picture-${i + 1}`, kind: 'key', box: cell, can: {} });
+		f.out.push(windowFrame(ids, cell, f.k, labels[i] ?? '', 'white', (inside) => placed(art.href, inside.x + inside.w / 2, inside.y + inside.h / 2, inside.w, inside.h), f.small, f.layers, `picture-${i + 1}`));
+	});
+	return f;
+}
+
 /** Items as cards: a string's first line is its heading, the rest its line; objects pass through. */
 function items(v: unknown) {
 	if (!Array.isArray(v)) return parseCards(v);
@@ -194,6 +236,17 @@ function sceneFields(slide: Slide, W: number, H: number, edits: Edits): SceneFie
 			return { template: 'window', ...base, image, picture: text(slide.picture) || undefined, window: text(slide.window) || undefined };
 		case 'quote':
 			return { template: 'quote', ...base, quote: text(slide.quote), by: text(slide.by), band: 'none' };
+		case 'agenda':
+		case 'team':
+			return { template: 'cards', ...base, cards: items(slide.items), ground: (slide.theme as SceneGround | undefined) ?? 'paper', logo: false };
+		case 'timeline':
+			return { template: 'flow', ...base, steps: blockText(slide.items) };
+		case 'comparison':
+			return { template: 'compare', ...base, columns: blockText(slide.items) };
+		case 'chart':
+			return { template: 'chart', ...base, data: text(slide.data), chart: (text(slide.chart) || 'bar') as 'bar' };
+		case 'qa':
+			return { template: 'hero', ...base, stickers: 'none' };
 		default:
 			return null;
 	}
@@ -212,7 +265,7 @@ export function drawSlide(slide: Slide, index: number, edits: Edits = {}): Drawn
 			const drawn = drawScene(buildScene(fields));
 			return { svg: doc(drawn.svg), layers: drawn.layers, notes: drawn.notes };
 		}
-		const f = slide.type === 'section' ? section(slide, W, H, edits) : slide.type === 'stat' ? stat(slide, W, H, edits) : end(slide, W, H, edits);
+		const f = slide.type === 'section' ? section(slide, W, H, edits) : slide.type === 'stat' ? stat(slide, W, H, edits) : slide.type === 'image-grid' ? imageGrid(slide, W, H, edits) : end(slide, W, H, edits);
 		return { svg: doc(f.out.join('')), layers: f.layers.list, notes: [] };
 	} catch (error) {
 		throw new Error(`Slide ${index + 1} (${slide.type}): ${(error as Error).message}`);
@@ -222,7 +275,7 @@ export function drawSlide(slide: Slide, index: number, edits: Edits = {}): Drawn
 /** Throws when a drawn slide breaks a rule (the same ones `design` checks). */
 export function checkDrawn(slide: Slide, index: number, drawn: DrawnSlide) {
 	const { width, height } = deckConfig();
-	const copy = Object.fromEntries(Object.entries(slide).filter(([k]) => !['type', 'image', 'picture', 'theme'].includes(k)).map(([k, v]) => [k, k === 'items' ? items(v).map((c) => `${c.title}\n${c.body}`).join('\n\n') : text(v)]));
+	const copy = Object.fromEntries(Object.entries(slide).filter(([k]) => !['type', 'image', 'picture', 'theme', 'images', 'chart'].includes(k)).map(([k, v]) => [k, k === 'items' ? (Array.isArray(v) ? v.map(String).join('\n\n') : text(v)) : k === 'labels' && Array.isArray(v) ? v.join(' ') : text(v)]));
 	assertClean({ template: slide.type, kind: 'slide', size: { id: 'slide', width, height }, copy, layers: drawn.layers }, `Slide ${index + 1} (${slide.type})`);
 }
 

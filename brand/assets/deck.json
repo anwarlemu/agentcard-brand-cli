@@ -162,6 +162,140 @@
 			"sample": {
 				"headline": "Let agents buy anything online"
 			}
+		},
+		"agenda": {
+			"name": "Agenda",
+			"about": "The parts of the talk as numbered cards.",
+			"slots": [
+				"headline",
+				"items",
+				"theme"
+			],
+			"needs": [
+				"items"
+			],
+			"sample": {
+				"headline": "Agenda",
+				"items": [
+					"Why agents need cards",
+					"How approval works",
+					"What it costs"
+				]
+			}
+		},
+		"team": {
+			"name": "Team",
+			"about": "People as cards: each a name and a role (no photos).",
+			"slots": [
+				"headline",
+				"items",
+				"theme"
+			],
+			"needs": [
+				"items"
+			],
+			"sample": {
+				"headline": "The team",
+				"items": [
+					"Sam Acme\nHead of product",
+					"Alex Acme\nEngineering",
+					"Kim Acme\nDesign"
+				]
+			}
+		},
+		"timeline": {
+			"name": "Timeline",
+			"about": "Two to five steps in order, joined by arrows.",
+			"slots": [
+				"headline",
+				"items",
+				"theme"
+			],
+			"needs": [
+				"items"
+			],
+			"sample": {
+				"headline": "Roadmap",
+				"items": [
+					"Q1\nVault",
+					"Q2\nIssuing",
+					"Q3\nVoice approvals"
+				]
+			}
+		},
+		"chart": {
+			"name": "Chart",
+			"about": "A bar, line or donut chart from data points.",
+			"slots": [
+				"headline",
+				"body",
+				"data",
+				"chart",
+				"theme"
+			],
+			"needs": [
+				"data"
+			],
+			"sample": {
+				"headline": "Purchases approved",
+				"data": "Jan: 120, Feb: 180, Mar: 260, Apr: 310"
+			}
+		},
+		"comparison": {
+			"name": "Comparison",
+			"about": "Two columns side by side, each a title and points.",
+			"slots": [
+				"headline",
+				"items",
+				"theme"
+			],
+			"needs": [
+				"items"
+			],
+			"sample": {
+				"headline": "Before and after",
+				"items": [
+					"Pasting the card\nThe number sits in the chat\nNo approval per purchase",
+					"Agentcard\nThe agent never sees the number\nEvery purchase approved"
+				]
+			}
+		},
+		"image-grid": {
+			"name": "Image grid",
+			"about": "Two to four pictures in windows, each with an optional label.",
+			"slots": [
+				"headline",
+				"images",
+				"labels",
+				"theme"
+			],
+			"needs": [
+				"images"
+			],
+			"sample": {
+				"headline": "In the product",
+				"images": [
+					"object:checkout",
+					"object:card",
+					"object:phone"
+				]
+			}
+		},
+		"qa": {
+			"name": "Questions",
+			"about": "One line for questions, and a contact line under it, on the blue ground.",
+			"slots": [
+				"headline",
+				"body",
+				"theme"
+			],
+			"needs": [
+				"headline"
+			],
+			"sample": {
+				"headline": "Questions?",
+				"body": "sam@acme.example"
+			}
 		}
 	},
 	"themes": {
@@ -214,6 +348,48 @@
 			"ink"
 		],
 		"end": [
+			"blue",
+			"ink",
+			"paper",
+			"white"
+		],
+		"agenda": [
+			"paper",
+			"white",
+			"blue",
+			"ink"
+		],
+		"team": [
+			"paper",
+			"white",
+			"blue",
+			"ink"
+		],
+		"timeline": [
+			"blue",
+			"paper",
+			"white",
+			"ink"
+		],
+		"chart": [
+			"paper",
+			"white",
+			"blue",
+			"ink"
+		],
+		"comparison": [
+			"paper",
+			"white",
+			"blue",
+			"ink"
+		],
+		"image-grid": [
+			"paper",
+			"white",
+			"blue",
+			"ink"
+		],
+		"qa": [
 			"blue",
 			"ink",
 			"paper",

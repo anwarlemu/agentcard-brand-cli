@@ -9,6 +9,7 @@ import { tokens } from '../lib/brand.js';
 import { imageConfig, isWide, pick, stageFor, unitOf, type Card, type SceneGround, type SceneTemplate, type Stage, type WindowBody } from './config.js';
 import { band, boxShadow, Ids, num, placed, radiusPx, rgbaOf, scan, shadowToken } from './effects.js';
 import { settle, scatter, stickerBox, type Art, type Sticker } from './objects.js';
+import { drawPanel, isPanel, type PanelInput, type PanelTemplate } from './panels.js';
 import { bandMixes, brandFonts, document, drawable, drawLine, drawLogo, logoBox, measure, readBack, rect, tokenColor, trackingFor, wrapEven, wrapFit, type Wrapped } from './paint.js';
 import { bottom, freeRects, hit, inflate, right, union } from './space.js';
 import { drawWords, fitWords, groundColor, groundColors, isDark, Layers, lineAt, lineBox, placeWords, readable, tokenNumber, tooLong, type Align, type Edits, type Placed, type Words } from './words.js';
@@ -54,6 +55,8 @@ export type Scene = {
 	window: string;
 	windowBody: WindowBody;
 	picture: Art | null;
+	/** The data layouts' content (stat, chart, pricing, compare, flow, before-after). */
+	panel?: PanelInput;
 	/** The picture fills the window, which takes its shape. */
 	fill: boolean;
 	/** Where objects go before they are settled round the words. */
@@ -105,14 +108,14 @@ function windowMark(right: number, cy: number, fs: number, color: string) {
 }
 
 /** A window frame with any inside: the same bar, corner, shadow and edge. */
-export function windowFrame(ids: Ids, r: Rect, k: number, name: string, body: WindowBody, inner: (inside: Rect) => string, small = 0, layers?: Layers) {
-	return drawWindow(ids, { windowBody: body, picture: null, window: name, fill: false }, r, k, small, layers, inner);
+export function windowFrame(ids: Ids, r: Rect, k: number, name: string, body: WindowBody, inner: (inside: Rect) => string, small = 0, layers?: Layers, under?: string) {
+	return drawWindow(ids, { windowBody: body, picture: null, window: name, fill: false, under }, r, k, small, layers, inner);
 }
 
 const barHeight = (k: number, small: number) => Math.max(imageConfig().scene.window.bar * k, small * 2.1);
 
 /** The window: a sky bar with blue marks over a body with the card corner, lifted by the plan window's hard shadow. */
-function drawWindow(ids: Ids, s: Pick<Scene, 'windowBody' | 'picture' | 'window' | 'fill'>, r: Rect, k: number, small: number, layers?: Layers, inner?: (inside: Rect) => string) {
+function drawWindow(ids: Ids, s: Pick<Scene, 'windowBody' | 'picture' | 'window' | 'fill'> & { under?: string }, r: Rect, k: number, small: number, layers?: Layers, inner?: (inside: Rect) => string) {
 	const cfg = imageConfig().scene;
 	const wc = cfg.window;
 	const { medium } = brandFonts();
@@ -144,7 +147,7 @@ function drawWindow(ids: Ids, s: Pick<Scene, 'windowBody' | 'picture' | 'window'
 		if (measure(medium, name, fs, 0) > r.w - (inset + fs * 2.4) * 2) throw new Error(`The window label "${name}" is too long for the window. Shorten it.`);
 		const base = cy + fs * 0.35;
 		parts.push(lineAt(medium, name, r.x + r.w / 2, base, fs, 0, 'center', mark));
-		layers?.text('window-bar', medium, [{ text: name, x: r.x + r.w / 2, baseline: base }], fs, 0, 'center', mark, [tokenColor('window-bar')], s.window, name, {}, ['picture']);
+		layers?.text('window-bar', medium, [{ text: name, x: r.x + r.w / 2, baseline: base }], fs, 0, 'center', mark, [tokenColor('window-bar')], s.window, name, {}, [s.under ?? 'picture']);
 	}
 	parts.push(windowMark(r.x + r.w - inset, cy, fs, mark));
 	parts.push('</g>');
@@ -372,6 +375,7 @@ type Layout = {
 	window: Rect | null;
 	quote: QuoteLayout | null;
 	cards: CardsLayout | null;
+	panel: { rect: Rect; stat?: { lines: string[]; size: number; x: number; top: number; align: Align } } | null;
 	footer: SmallLine | null;
 	number: SmallLine | null;
 	badgeLine: { text: string; size: number; x: number; baseline: number; align: Align } | null;
@@ -454,7 +458,7 @@ export function layoutOf(s: Scene): Layout {
 	const b = s.edits.band?.hidden ? { step: 0, h: 0 } : bandOf(s);
 	const room = H - b.h;
 	const frame: Rect = { ...stage.frame, h: Math.min(bottom(stage.frame), room - sc.margin * k * 0.55) - stage.frame.y };
-	const L: Layout = { stage, frame, band: b, room, cap: null, logo: null, words: null, window: null, quote: null, cards: null, footer: null, number: null, badgeLine: null, stickers: [], notes: [] };
+	const L: Layout = { stage, frame, band: b, room, cap: null, logo: null, words: null, window: null, quote: null, cards: null, panel: null, footer: null, number: null, badgeLine: null, stickers: [], notes: [] };
 	const size = s.size ?? `${W} by ${H}`;
 	const words = readable({ badge: s.badge, headline: s.headline, body: s.body, button: s.button }, s.edits);
 	// Fill before shrinking: a shallow canvas starts its words at the height it has.
@@ -542,6 +546,41 @@ export function layoutOf(s: Scene): Layout {
 		L.number = smallLine(s2, stage, page, 'number', s.number, 'bottom-right', bodyGround, []);
 		L.footer = smallLine(s2, stage, page, 'footer', s.footer, 'bottom-left', bodyGround, L.number ? [inflate(L.number.box, 8 * k)] : [], s.footerOptional);
 		L.words = placeWords({ ...words, badge: '' }, s.edits, stage, page, [...covered, ...lines()], opts({ ax: page.x + page.w / 2, ay: (cap + L.cap.bandH + Math.min(H, bottom(frame) + m)) / 2 }));
+	} else if (isPanel(s.template)) {
+		L.logo = logoAt(s, stage, frame, s.ground, {});
+		small(s.ground);
+		const obstacles = [...covered, ...clearOf(L.logo), ...lines()];
+		const area = freeRects(frame, obstacles).filter((r) => r.w > frame.w * 0.6)[0] ?? freeRects(frame, obstacles)[0] ?? frame;
+		const gap = 30 * k;
+		if (s.template === 'stat') {
+			// The number as large as the room allows, the words under it, the pair centered.
+			const { medium } = brandFonts();
+			const value = drawable(s.panel?.stat ?? '', 'stat');
+			let fit: { lines: string[]; size: number } | null = null;
+			for (let size = area.h * 0.5 * (s.edits.stat?.scale ?? 1); size >= stage.small * 2; size *= 0.94) {
+				const w = wrapEven(medium, value, size, trackingFor(size / k), area.w * 0.92);
+				if (w && w.lines.length <= 2 && w.lines.length * size <= area.h * 0.6) {
+					fit = { lines: w.lines, size };
+					break;
+				}
+			}
+			if (!fit) throw new Error(`The stat "${value}" is too long for ${size}. Shorten it.`);
+			const statH = fit.lines.length * fit.size * 0.98;
+			const m = words.headline || words.body || words.badge ? fitWords(words, s.edits, stage, { w: area.w, h: area.h - statH - gap }, { S: S * (s.edits.headline?.scale ?? 1), maxW: s.textWidth * stage.box.w, bodyMax: s.textWidth * stage.box.w * sc.body.width }) : null;
+			if ((words.headline || words.body || words.badge) && !m) throw tooLong(words, stage, { w: area.w, h: area.h - statH - gap }, size);
+			const total = statH + (m ? gap + m.h : 0);
+			const top = area.y + Math.max(0, (area.h - total) / 2);
+			L.panel = { rect: area, stat: { lines: fit.lines, size: fit.size, x: area.x + area.w / 2, top, align: 'center' } };
+			if (m) L.words = placeWords(words, s.edits, stage, { x: area.x, y: top + statH + gap, w: area.w, h: m.h + 1 }, [], opts({ ax: area.x + area.w / 2, ay: top + statH + gap + m.h / 2 }));
+		} else {
+			const tall = !stage.wide;
+			const zone = { x: area.x, y: area.y, w: area.w, h: area.h * (tall ? 0.3 : 0.34) };
+			const has = words.headline || words.body || words.badge || words.button;
+			if (has) L.words = placeWords(words, s.edits, stage, zone, [], opts({ align: tall ? 'center' : 'left', ax: tall ? zone.x + zone.w / 2 : zone.x, ay: zone.y }));
+			const y = L.words ? bottom(L.words.box) + gap : area.y;
+			L.panel = { rect: { x: area.x, y, w: area.w, h: bottom(area) - y } };
+			if (L.panel.rect.h < 120 * k) throw new Error(`There is no room for the ${s.template} at ${size}. Shorten the words or pick a taller size.`);
+		}
 	} else if (s.template === 'quote') {
 		L.logo = logoAt(s, stage, frame, s.ground, { anchors: [...TOPS, 'bottom-left', 'bottom-right'] });
 		small(s.ground);
@@ -750,6 +789,29 @@ export function drawScene(s: Scene, motion?: Motion, ids = new Ids('s')): Drawn 
 			const color = isDark(s.ground) ? tokenColor('text-on-brand-label') : tokenColor('text-label');
 			out.push(lineAt(medium, bl.text, bl.x, bl.baseline, bl.size, eyeTracking(), bl.align, color, motion?.words?.[0]?.opacity ?? 1));
 			layers.text('badge', medium, [{ text: bl.text, x: bl.x, baseline: bl.baseline }], bl.size, eyeTracking(), bl.align, color, [ground], s.badge.trim(), s.badge.trim(), { scale: [0.9, 1.6], hide: true }, over);
+		}
+		if (L.panel) {
+			const ctx = { stage: L.stage, ground: s.ground, layers, ids, k };
+			if (L.panel.stat) {
+				const st = L.panel.stat;
+				const { medium } = brandFonts();
+				const color = isDark(s.ground) ? tokenColor('white') : tokenColor('brand');
+				const rows = st.lines.map((text, i) => ({ text, x: st.x, baseline: st.top + st.size * 0.82 + i * st.size * 0.98 }));
+				out.push(rows.map((r) => lineAt(medium, r.text, r.x, r.baseline, st.size, trackingFor(st.size / k), 'center', color)).join(''));
+				layers.text('stat', medium, rows, st.size, trackingFor(st.size / k), 'center', color, groundColors(s.ground, s.scan), s.panel?.stat ?? '', st.lines.join(' '), { scale: [0.6, 1.2] });
+			} else if (s.panel) {
+				const picture = (art: Art, r: Rect, label: string) => {
+					const bar = barHeight(k, small);
+					const a = art.width / art.height;
+					const w = Math.min(r.w, (r.h - bar) * a);
+					const h = w / a + bar;
+					const box = { x: r.x + (r.w - w) / 2, y: r.y + (r.h - h) / 2, w, h };
+					const id = `picture-${layers.list.filter((l) => /^picture-\d$/.test(l.id)).length + 1}`;
+					layers.add({ id, kind: 'key', box, can: {} });
+					return drawWindow(ids, { windowBody: 'white', picture: art, window: label, fill: true, under: id }, box, k, small, layers);
+				};
+				out.push(moved(drawPanel(s.template as PanelTemplate, ctx, s.panel, L.panel.rect, picture)));
+			}
 		}
 		if (L.quote) {
 			const q = L.quote;

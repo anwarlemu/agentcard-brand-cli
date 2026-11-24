@@ -9,7 +9,7 @@ import { imagesToPdf, pdfPage } from '../assets/pdf.js';
 import { deckConfig, checkSlide, drawSlide, type Slide, type SlideType } from '../deck/slides.js';
 import { buildIllustration, COMPOSITIONS, illustrationSvg, type Composition, type IllGround } from '../illustrate/render.js';
 import { ALIASES, resolveFields, SIZES, TEMPLATES, templateSizes, type ImageFields, type RawImageInput, type TemplateId } from '../image/catalog.js';
-import { wordColors } from '../image/check.js';
+import { plainWords, wordColors } from '../image/check.js';
 import { SCENE_GROUNDS, STICKER_MODES, subjectNames, WINDOW_BODIES, type SceneFields } from '../image/compose.js';
 import { illustrateConfig, imageConfig, type SceneGround } from '../image/config.js';
 import { renderScene } from '../image/layout.js';
@@ -43,7 +43,7 @@ const YES = ['true', 'false'];
 // Images ------------------------------------------------------------------------------------------------------------
 
 /** The slots a layout draws, under the shared ids. */
-const COPY: Record<string, string> = { headline: 'the main line', body: 'the line under it', badge: 'a short label over it', button: 'a key under the words', quote: 'the quote', by: 'who said it', cards: 'cards, blank lines between them, each one\'s first line its heading', window: 'the label in the window\'s bar', footer: 'the small line (the brand\'s address when you leave it)' };
+const COPY: Record<string, string> = { headline: 'the main line', body: 'the line under it', badge: 'a short label over it', button: 'a key under the words', quote: 'the quote', by: 'who said it', cards: 'cards, blank lines between them, each one\'s first line its heading', window: 'the label in the window\'s bar', stat: 'the number', data: 'chart points: "Jan: 120, Feb: 180"', plans: 'plans, blank line between: name, price, features', columns: 'two columns, blank line between: title, points', steps: 'steps, blank line between: title, a line', left: 'the first window\'s label', right: 'the second window\'s label', footer: 'the small line (the brand\'s address when you leave it)' };
 const slotId = (key: string) => (key === 'window' ? 'window-bar' : key);
 const MAX_OBJECTS = () => imageConfig().stickers.scatter.max;
 
@@ -72,6 +72,24 @@ function layersOf(id: TemplateId): TemplateInfo['layers'] {
 		for (let i = 1; i <= (imageConfig().templates.cards.cards!.maxCards ?? 8); i++) for (const part of ['title', 'body']) add(`card-${i}-${part}`, {});
 	}
 	if (takes.has('number')) add('number', {});
+	if (id === 'stat') add('stat', { scale: [0.6, 1.2] });
+	if (id === 'chart') {
+		add('chart', {});
+		for (let i = 1; i <= 12; i++) for (const part of ['label', 'value']) add(`${part}-${i}`, {});
+	}
+	for (const [t, name, max] of [['pricing', 'plan', 3], ['compare', 'column', 2], ['flow', 'step', 5]] as const) {
+		if (id !== t) continue;
+		for (let i = 1; i <= max; i++) {
+			add(`${name}-${i}`, {});
+			for (const part of ['title', 'price']) add(`${name}-${i}-${part}`, {});
+			for (let j = 1; j <= 12; j++) add(`${name}-${i}-line-${j}`, {});
+		}
+	}
+	if (id === 'before-after') {
+		add('picture-1', {});
+		add('picture-2', {});
+		add('window-bar', {});
+	}
 	if (id === 'announcement') {
 		add('cap', {});
 		add('band', {});
@@ -92,6 +110,7 @@ function optionsOf(id: TemplateId): TemplateInfo['options'] {
 	if (takes.has('windowBody')) out.push({ id: 'window-body', values: [...WINDOW_BODIES], description: 'the window\'s inside' });
 	if (takes.has('toon')) out.push({ id: 'toon', values: YES, description: 'make your picture a toon object' });
 	if (takes.has('mark')) out.push({ id: 'mark', values: YES, description: 'the mark alone instead of the lockup' });
+	if (takes.has('chart')) out.push({ id: 'chart', values: ['bar', 'line', 'donut'], description: 'the kind of chart' });
 	return out;
 }
 
@@ -107,7 +126,10 @@ function imageInfo(id: TemplateId, kind: 'image' | 'video'): TemplateInfo {
 		sizes: kind === 'image' ? [...templateSizes(id), 'custom'] : Object.keys(videoConfig().sizes),
 		themes: [...themes],
 		copy: Object.keys(COPY).filter((c) => takes.includes(c)).map((c) => ({ id: slotId(c), ...((spec.needs as readonly string[]).includes(c) ? { required: true } : {}), description: COPY[c] })),
-		images: takes.includes('image') || takes.includes('picture') ? [{ id: 'picture', ...(needsPicture ? { required: true } : {}), ...(takes.includes('picture') ? { values: [...(needsPicture ? [] : ['none']), ...PICTURES()] } : {}) }] : [],
+		images: [
+			...(takes.includes('image') || takes.includes('picture') ? [{ id: 'picture', ...(needsPicture || id === 'before-after' ? { required: true } : {}), ...(takes.includes('picture') ? { values: [...(needsPicture || id === 'before-after' ? [] : ['none']), ...PICTURES()] } : {}) }] : []),
+			...(takes.includes('image2') ? [{ id: 'picture2', required: true, values: PICTURES() }] : []),
+		],
 		options: [...optionsOf(id), ...(kind === 'video' ? [{ id: 'seconds', range: [videoConfig().seconds.min, videoConfig().seconds.max] as [number, number], description: 'how long the clip runs' }] : [])],
 		layers: kind === 'image' ? layersOf(id) : [],
 		grounds: grounds(themes),
@@ -142,6 +164,8 @@ export function imageFields(doc: DesignDoc, id: TemplateId, dir: string): ImageF
 		count: scatter ? o.count : undefined,
 		image: pic && pic !== 'none' && !pic.startsWith(OBJECT) ? resolve(dir, pic) : undefined,
 		picture: pic === 'none' ? 'none' : pic?.startsWith(OBJECT) ? pic.slice(OBJECT.length) : undefined,
+		chart: o.chart,
+		...(doc.images.picture2 ? (doc.images.picture2.startsWith(OBJECT) ? { picture2: doc.images.picture2.slice(OBJECT.length) } : { image2: resolve(dir, doc.images.picture2) }) : {}),
 	};
 	return resolveFields(Object.fromEntries(Object.entries(raw).filter(([, v]) => v !== undefined)) as RawImageInput, { footer: host() });
 }
@@ -383,6 +407,7 @@ export function adapter(): Adapter {
 			return {};
 		},
 		colors: wordColors,
+		words: plainWords,
 		aliases: {
 			sizes: { ...imageConfig().sizeAliases, story: 'vertical', reel: 'vertical', '9:16': 'vertical', landscape: 'wide' },
 			themes: { dark: 'ink', black: 'ink', light: 'paper', cream: 'paper' },

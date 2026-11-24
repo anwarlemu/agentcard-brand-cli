@@ -70,6 +70,7 @@ export function jobsFrom(opts: ImageRenderOpts): ImageJob[] {
 	const checked = mergeInput(opts, assertImageInput(readInput(opts.input), 'image file'));
 	const fields = resolveFields(checked, { footer: siteHost() });
 	if (fields.image) fields.image = resolve(String(fields.image));
+	if (fields.image2) fields.image2 = resolve(String(fields.image2));
 	return chooseSizes(fields.template, checked.size, checked.width, checked.height).map(({ id, width, height }) => ({ ...fields, size: id, width, height }));
 }
 
@@ -148,6 +149,7 @@ export function carouselJobs(opts: ImageRenderOpts): { jobs: ImageJob[]; stems: 
 		try {
 			const fields = resolveFields(given, { footer: siteHost() });
 			if (fields.image) fields.image = resolve(fields.image);
+			if (fields.image2) fields.image2 = resolve(fields.image2);
 			return fields;
 		} catch (error) {
 			throw new Error(`Slide ${i + 1}: ${(error as Error).message}`);
@@ -219,6 +221,16 @@ function imageOptions(cmd: Command): Command {
 		.option('--footer <text>', 'small line; default is the brand site host')
 		.option('--no-footer', 'leave the footer line off')
 		.option('--number <text>', 'a small number, such as 2/5')
+		.option('--stat <text>', 'stat: the number, such as 40%')
+		.option('--data <points>', 'chart: "Jan: 120, Feb: 180, Mar: 260"')
+		.option('--chart <kind>', 'chart: bar, line or donut')
+		.option('--plans <text>', 'pricing: plans, blank line between, each its name, price, then features')
+		.option('--columns <text>', 'compare: two columns, blank line between, each its title then points')
+		.option('--steps <text>', 'flow: steps, blank line between, each its title then a line')
+		.option('--image2 <file>', 'before-after: the second picture')
+		.option('--picture2 <subject>', 'before-after: a toon object as the second picture')
+		.option('--left <text>', 'before-after: the first window\'s label')
+		.option('--right <text>', 'before-after: the second window\'s label')
 		.option('--sample', 'fill the copy you leave out with sample copy')
 		.option('-o, --out <path>', 'directory to write (default images), or one file such as banner.png')
 		.option('-n, --name <name>', 'file name prefix; default is the template')

@@ -8,7 +8,7 @@ import { SCENE_TEMPLATES, type SceneFields } from '../image/compose.js';
 import { cli } from '../lib/brand.js';
 import { unknownName } from '../lib/names.js';
 import { emit } from '../lib/output.js';
-import { clipFrameSvg, encodeClip, sceneClip, type Clip } from '../video/clips.js';
+import { clipFrameSvg, encodeClip, sceneClip, walkthroughClip, type Clip } from '../video/clips.js';
 import type { Container } from '../video/ffmpeg.js';
 import { ffmpegPath } from '../video/ffmpeg.js';
 import { videoConfig } from '../video/motion.js';
@@ -42,10 +42,11 @@ export function videoCatalog() {
 		},
 		motion: { source: cfg.source, enter: cfg.enter, drift: cfg.drift, grain: { interval: cfg.grain.interval, jumps: cfg.grain.jumps.length } },
 		sizes: Object.entries(cfg.sizes).map(([id, s]) => ({ id, ...s })),
+		walkthrough: 'video walkthrough --images a.png,b.png,c.png --headline "...": the screenshots in turn, each rising in.',
 		templates: VIDEO_TEMPLATES.map((id) => ({ id, aliases: Object.entries(cfg.templates.aliases).filter(([, to]) => to === id).map(([name]) => name), needs: TEMPLATES[id].needs, summary: MOVES[id] ?? 'The lockup and words rise in, one after another.', fields: 'the image fields for this template (image --list --json)' })),
 		aliases: cfg.templates.aliases,
-		exports: ['mp4', 'webm'],
-		formats: ['mp4', 'webm'],
+		exports: ['mp4', 'webm', 'gif'],
+		formats: ['mp4', 'webm', 'gif'],
 		still: '--still <seconds> writes that frame as PNG and SVG instead of a clip (--still end for the last frame).',
 	};
 }
@@ -88,7 +89,7 @@ export function videoSizes(value: string): string[] {
 /** The template a clip name means: an image layout, or one of the first clips' names. */
 export function videoTemplate(raw: unknown): TemplateId {
 	const aliases = videoConfig().templates.aliases;
-	const all = [...VIDEO_TEMPLATES, ...Object.keys(aliases)];
+	const all = [...VIDEO_TEMPLATES, ...Object.keys(aliases), 'walkthrough'];
 	const name = String(raw ?? '').trim().toLowerCase();
 	if (!name) throw new Error(`Missing template. Use ${all.join(', ')}.`);
 	if (!all.includes(name)) throw unknownName('template', name, all);
@@ -100,9 +101,15 @@ type ClipJob = { clip: Clip; size: string; width: number; height: number };
 export function clipsFrom(opts: VideoRenderOpts): { clips: ClipJob[]; template: string } {
 	const { seconds: fileSeconds, ...fileFields } = readInput(opts.input);
 	const name = String(opts.template ?? fileFields.template ?? '').trim().toLowerCase();
-	const template = videoTemplate(name);
+	const walk = name === 'walkthrough';
+	const template = walk ? 'screenshot' : videoTemplate(name);
 	for (const key of ['width', 'height']) if (opts[key] !== undefined || key in fileFields) throw new Error(`Clips come in ${Object.keys(videoConfig().sizes).join(', ')}: leave ${key} off.`);
-	const merged = mergeInput({ ...opts, template }, assertImageInput({ ...fileFields, template }, 'video file'));
+	const imagesRaw = opts.images ?? fileFields.images;
+	const images = walk ? (Array.isArray(imagesRaw) ? imagesRaw.map(String) : String(imagesRaw ?? '').split(',')).map((p) => p.trim()).filter(Boolean).map((p) => resolve(p)) : [];
+	if (!walk && imagesRaw !== undefined) throw new Error('--images is for the walkthrough.');
+	const { images: _i, ...rest } = fileFields;
+	void _i;
+	const merged = mergeInput({ ...opts, template, ...(walk ? { image: images[0] } : {}) }, assertImageInput({ ...rest, template }, 'video file'));
 	const ids = videoSizes(merged.size ?? 'square');
 	const seconds = secondsOf(opts.seconds ?? fileSeconds);
 	const fields = resolveFields(merged, { footer: siteHost() });
@@ -111,7 +118,7 @@ export function clipsFrom(opts: VideoRenderOpts): { clips: ClipJob[]; template: 
 		template: name,
 		clips: ids.map((size) => {
 			const { width, height, as } = videoConfig().sizes[size]!;
-			return { size, width, height, clip: sceneClip({ ...fields, size: as, width, height } as SceneFields, seconds) };
+			return { size, width, height, clip: walk ? walkthroughClip({ ...fields, size: as, width, height } as SceneFields, images, seconds) : sceneClip({ ...fields, size: as, width, height } as SceneFields, seconds) };
 		}),
 	};
 }
@@ -140,7 +147,7 @@ export async function videoRender(opts: VideoRenderOpts) {
 	const { clips, template } = clipsFrom(opts);
 	const notes = clips.flatMap((c) => c.clip.scene.notes);
 	const ext = extname(opts.out ?? '').slice(1).toLowerCase();
-	const isFile = ext === 'mp4' || ext === 'webm';
+	const isFile = ext === 'mp4' || ext === 'webm' || ext === 'gif';
 	if (isFile && (clips.length > 1 || opts.still !== undefined)) throw new Error('--out names one clip, and this makes something else. Pass a folder.');
 	const name = safeName(opts.name ?? template);
 	const out = resolve(isFile ? join(opts.out!, '..') : (opts.out ?? 'videos'));
@@ -165,7 +172,7 @@ export async function videoRender(opts: VideoRenderOpts) {
 	const asked = opts.format ?? opts.export;
 	if (isFile && asked && asked !== ext) throw new Error(`--out ends in .${ext} and --format says ${asked}. Make them agree.`);
 	const exports = (asked ?? (isFile ? ext : 'mp4')).split(',').map((e) => e.trim().toLowerCase()).filter(Boolean);
-	for (const e of exports) if (e !== 'mp4' && e !== 'webm') throw unknownName('format', e, ['mp4', 'webm']);
+	for (const e of exports) if (e !== 'mp4' && e !== 'webm' && e !== 'gif') throw unknownName('format', e, ['mp4', 'webm', 'gif']);
 	const fps = videoConfig().fps;
 	const planned = clips.flatMap((c) => exports.map((e) => ({ path: show(join(out, `${stem(c.size)}.${e}`)), format: e, size: c.size, width: c.width, height: c.height, template, frames: Math.round(c.clip.seconds * fps), fps, seconds: c.clip.seconds })));
 	if (opts.dryRun) {
@@ -203,6 +210,7 @@ function videoOptions(cmd: Command): Command {
 		.option('--by <text>', 'quote: who said it')
 		.option('--cards <text>', 'cards: blank-line-separated cards, heading first')
 		.option('--image <file>', 'PNG or JPEG: the window picture, the screenshot or the hero object')
+		.option('--images <files>', 'walkthrough: two to eight screenshots, comma-separated, shown in turn')
 		.option('--toon', 'make --image a toon object')
 		.option('--picture <subject>', 'window and screenshot: the toon object in the window, or none')
 		.option('--window <name>', 'window bar label')
@@ -220,9 +228,19 @@ function videoOptions(cmd: Command): Command {
 		.option('--footer <text>', 'small line; default is the brand site host')
 		.option('--no-footer', 'leave the footer line off')
 		.option('--sample', 'fill the copy you leave out with sample copy')
-		.option('-o, --out <path>', 'directory to write (default videos), or one .mp4 or .webm file')
+		.option('--stat <text>', 'stat: the number')
+		.option('--data <points>', 'chart: "Jan: 120, Feb: 180"')
+		.option('--chart <kind>', 'chart: bar, line or donut')
+		.option('--plans <text>', 'pricing: plans, blank line between')
+		.option('--columns <text>', 'compare: two columns, blank line between')
+		.option('--steps <text>', 'flow: steps, blank line between')
+		.option('--image2 <file>', 'before-after: the second picture')
+		.option('--picture2 <subject>', 'before-after: a toon object as the second picture')
+		.option('--left <text>', 'before-after: the first label')
+		.option('--right <text>', 'before-after: the second label')
+		.option('-o, --out <path>', 'directory to write (default videos), or one .mp4, .webm or .gif file')
 		.option('-n, --name <name>', 'file name prefix; default is the template')
-		.option('--format <formats>', 'mp4, webm, or mp4,webm (default mp4)')
+		.option('--format <formats>', 'mp4, webm, gif, comma-separated (default mp4)')
 		.option('--export <formats>', 'the same as --format')
 		.option('-i, --input <file>', 'JSON object of the same fields; flags override it; - reads stdin')
 		.option('--dry-run', 'list the files and write nothing')

@@ -13,7 +13,8 @@ import { muxMjpeg } from './mp4.js';
 
 export const JPEG_QUALITY = 85;
 
-export type Clip = { scene: Scene; seconds: number };
+/** One scene, or a sequence of scenes each starting fresh (a walkthrough of screenshots). */
+export type Clip = { scene: Scene; seconds: number; segments?: { scene: Scene; start: number }[] };
 
 /** Art at the size it is drawn, so each frame decodes small pictures instead of the full renders. */
 function fitArt(art: Art, width: number): Art {
@@ -34,7 +35,20 @@ export function sceneClip(fields: SceneFields, seconds: number): Clip {
 }
 
 /** The SVG of a clip at time t. */
-export const clipFrameSvg = (clip: Clip, t: number): string => sceneSvg(clip.scene, sceneMotion(clip.scene, t));
+export function clipFrameSvg(clip: Clip, t: number): string {
+	if (!clip.segments) return sceneSvg(clip.scene, sceneMotion(clip.scene, t));
+	const seg = [...clip.segments].reverse().find((sg) => t >= sg.start) ?? clip.segments[0]!;
+	return sceneSvg(seg.scene, sceneMotion(seg.scene, t - seg.start));
+}
+
+/** Screenshots one after another, each rising in as the screenshot layout does. */
+export function walkthroughClip(fields: SceneFields, images: string[], seconds: number): Clip {
+	if (images.length < 2 || images.length > 8) throw new Error('A walkthrough takes two to eight screenshots (--images a.png,b.png).');
+	const each = seconds / images.length;
+	if (each < 1.2) throw new Error(`${images.length} screenshots need at least ${Math.ceil(images.length * 1.2)} seconds (--seconds).`);
+	const segments = images.map((image, i) => ({ scene: sceneClip({ ...fields, template: 'screenshot', image, picture: undefined }, each).scene, start: i * each }));
+	return { scene: segments[0]!.scene, seconds, segments };
+}
 
 async function* rgbaFrames(clip: Clip): AsyncGenerator<Uint8Array> {
 	const { width, height } = clip.scene;
@@ -54,9 +68,9 @@ export async function encodeClip(clip: Clip, containers: Container[]): Promise<E
 	const frames = frameTimes(clip.seconds).length;
 	if (ffmpegPath()) {
 		const data = await encode(rgbaFrames(clip), width, height, fps, containers);
-		return containers.map((container, i) => ({ data: data[i]!, codec: container === 'mp4' ? 'h264' : 'vp9', container, frames, fps }));
+		return containers.map((container, i) => ({ data: data[i]!, codec: container === 'mp4' ? 'h264' : container === 'gif' ? 'gif' : 'vp9', container, frames, fps }));
 	}
-	if (containers.includes('webm')) throw new Error('WebM needs ffmpeg. Install it (https://ffmpeg.org), set DS_FFMPEG, or export mp4.');
+	if (containers.includes('webm') || containers.includes('gif')) throw new Error('WebM and GIF need ffmpeg. Install it (https://ffmpeg.org), set DS_FFMPEG, or export mp4.');
 	const jpegs: Buffer[] = [];
 	for await (const px of rgbaFrames(clip)) jpegs.push(encodeJpg({ data: px, width, height }, JPEG_QUALITY));
 	return [{ data: muxMjpeg(jpegs, width, height, fps), codec: 'mjpeg', container: 'mp4', frames, fps }];

@@ -295,6 +295,219 @@
 				"mark": 0.5,
 				"height": 0.5
 			}
+		},
+		"stat": {
+			"scan": true,
+			"band": "none",
+			"textSize": {
+				"wide": 44,
+				"tall": 54
+			},
+			"textWidth": {
+				"wide": 0.9,
+				"tall": 0.9
+			},
+			"textX": 0.5,
+			"textY": 0.5,
+			"stickers": "none",
+			"notSizes": [
+				"avatar",
+				"linkedin-page",
+				"leaderboard",
+				"mobile-banner",
+				"wide-skyscraper",
+				"billboard",
+				"video-background",
+				"phone-wallpaper",
+				"desktop-wallpaper"
+			],
+			"label": "Stat",
+			"ground": "blue"
+		},
+		"chart": {
+			"scan": false,
+			"band": "none",
+			"textSize": {
+				"wide": 54,
+				"tall": 64
+			},
+			"textWidth": {
+				"wide": 0.9,
+				"tall": 0.9
+			},
+			"textX": 0.5,
+			"textY": 0.5,
+			"stickers": "none",
+			"notSizes": [
+				"avatar",
+				"linkedin-page",
+				"leaderboard",
+				"mobile-banner",
+				"wide-skyscraper",
+				"billboard",
+				"x-banner",
+				"linkedin-banner",
+				"email",
+				"youtube",
+				"facebook-cover",
+				"medium-rectangle",
+				"large-rectangle",
+				"half-page",
+				"video-background",
+				"phone-wallpaper",
+				"desktop-wallpaper",
+				"pinterest"
+			],
+			"label": "Chart",
+			"ground": "paper"
+		},
+		"pricing": {
+			"scan": false,
+			"band": "none",
+			"textSize": {
+				"wide": 54,
+				"tall": 64
+			},
+			"textWidth": {
+				"wide": 0.9,
+				"tall": 0.9
+			},
+			"textX": 0.5,
+			"textY": 0.5,
+			"stickers": "none",
+			"notSizes": [
+				"avatar",
+				"linkedin-page",
+				"leaderboard",
+				"mobile-banner",
+				"wide-skyscraper",
+				"billboard",
+				"x-banner",
+				"linkedin-banner",
+				"email",
+				"youtube",
+				"facebook-cover",
+				"medium-rectangle",
+				"large-rectangle",
+				"half-page",
+				"video-background",
+				"phone-wallpaper",
+				"desktop-wallpaper",
+				"pinterest"
+			],
+			"label": "Pricing plans",
+			"ground": "paper"
+		},
+		"compare": {
+			"scan": false,
+			"band": "none",
+			"textSize": {
+				"wide": 54,
+				"tall": 64
+			},
+			"textWidth": {
+				"wide": 0.9,
+				"tall": 0.9
+			},
+			"textX": 0.5,
+			"textY": 0.5,
+			"stickers": "none",
+			"notSizes": [
+				"avatar",
+				"linkedin-page",
+				"leaderboard",
+				"mobile-banner",
+				"wide-skyscraper",
+				"billboard",
+				"x-banner",
+				"linkedin-banner",
+				"email",
+				"youtube",
+				"facebook-cover",
+				"medium-rectangle",
+				"large-rectangle",
+				"half-page",
+				"video-background",
+				"phone-wallpaper",
+				"desktop-wallpaper",
+				"pinterest"
+			],
+			"label": "Comparison",
+			"ground": "paper"
+		},
+		"flow": {
+			"scan": true,
+			"band": "none",
+			"textSize": {
+				"wide": 54,
+				"tall": 64
+			},
+			"textWidth": {
+				"wide": 0.9,
+				"tall": 0.9
+			},
+			"textX": 0.5,
+			"textY": 0.5,
+			"stickers": "none",
+			"notSizes": [
+				"avatar",
+				"linkedin-page",
+				"leaderboard",
+				"mobile-banner",
+				"wide-skyscraper",
+				"billboard",
+				"x-banner",
+				"linkedin-banner",
+				"email",
+				"youtube",
+				"facebook-cover",
+				"medium-rectangle",
+				"large-rectangle",
+				"half-page",
+				"video-background",
+				"phone-wallpaper",
+				"desktop-wallpaper",
+				"pinterest"
+			],
+			"label": "Flow of steps",
+			"ground": "blue"
+		},
+		"before-after": {
+			"scan": false,
+			"band": "none",
+			"textSize": {
+				"wide": 54,
+				"tall": 64
+			},
+			"textWidth": {
+				"wide": 0.9,
+				"tall": 0.9
+			},
+			"textX": 0.5,
+			"textY": 0.5,
+			"stickers": "none",
+			"notSizes": [
+				"avatar",
+				"linkedin-page",
+				"leaderboard",
+				"mobile-banner",
+				"wide-skyscraper",
+				"billboard",
+				"x-banner",
+				"linkedin-banner",
+				"email",
+				"youtube",
+				"facebook-cover",
+				"medium-rectangle",
+				"large-rectangle",
+				"half-page",
+				"video-background",
+				"phone-wallpaper",
+				"desktop-wallpaper",
+				"pinterest"
+			],
+			"label": "Before and after",
+			"ground": "paper"
 		}
 	},
 	"stickers": {
@@ -382,7 +595,8 @@
 		"Stickers are the editor's own art (public/agentcard-og/*.webp), converted to PNG in brand/illustration/objects because the renderer reads PNG and JPEG only.",
 		"Window bar labels are the user's to pass: the site's own labels (issuing.product) are not drawn by default.",
 		"Characters the shipped Inter cannot draw (emoji, Chinese, Arabic and so on) are refused, never drawn as empty boxes.",
-		"Safe areas, shown widths and upload limits are in the shared platform table (src/design/platforms.ts): each number is marked official (read on the platform's page) or approximate."
+		"Safe areas, shown widths and upload limits are in the shared platform table (src/design/platforms.ts): each number is marked official (read on the platform's page) or approximate.",
+		"Charts, pricing, comparison and flow layouts: the brand never published them, so they are built only from its parts (the white card with its corner, shadow and edge, the numbered badge, the window) and its colors: bars and lines in the brand blue (white on dark grounds), donut slices stepping from the blue through blue-mid and sky to ink."
 	],
 	"custom": {
 		"min": 200,
@@ -443,7 +657,32 @@
 			"headline": "Checkout on more stores",
 			"body": "Paste a product page and the agent shops it like any catalog item."
 		},
-		"logo": {}
+		"logo": {},
+		"stat": {
+			"stat": "40%",
+			"headline": "fewer abandoned carts at Acme"
+		},
+		"chart": {
+			"headline": "Purchases approved",
+			"data": "Jan: 120, Feb: 180, Mar: 260, Apr: 310"
+		},
+		"pricing": {
+			"headline": "Pricing",
+			"plans": "Starter\n$0\nOne agent\nPay per purchase\n\nPro\n$49 / month\nTen agents\nVoice approvals"
+		},
+		"compare": {
+			"headline": "Pasting the card vs Agentcard",
+			"columns": "Pasting the card\nThe number sits in the chat\nNo approval per purchase\n\nAgentcard\nThe agent never sees the number\nEvery purchase approved"
+		},
+		"flow": {
+			"headline": "How it works",
+			"steps": "Save it once\nThe card is stored encrypted.\n\nThe agent asks\nIt never sees the number.\n\nYou approve\nWith a passkey."
+		},
+		"before-after": {
+			"headline": "Checkout, before and after",
+			"picture": "checkout",
+			"picture2": "card"
+		}
 	},
 	"sizeAliases": {
 		"banner": "x-banner",

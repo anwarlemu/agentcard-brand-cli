@@ -30,11 +30,12 @@ const CARDS = [
 	{ title: 'Save it once', body: 'Your user adds their card a single time.' },
 	{ title: 'Every purchase is approved', body: 'With a passkey, tied to that exact cart.' },
 ];
+const PANEL = { stat: '40%', data: 'Jan: 120, Feb: 180, Mar: 260', plans: 'Starter\n$0\nOne agent\n\nPro\n$49\nTen agents', columns: 'Before\nThe number in the chat\n\nAfter\nThe agent never sees it', steps: 'Save it once\nStored encrypted.\n\nYou approve\nWith a passkey.', picture: 'checkout', picture2: 'card' };
 const cases: Record<string, (t: TemplateId) => Partial<SceneFields>> = {
-	short: () => ({ headline: 'Ship faster', quote: 'It works.', cards: CARDS }),
-	long: () => ({ headline: LONG, quote: BODY, by: 'Head of product, Acme', cards: CARDS }),
-	full: () => ({ badge: 'New this week', headline: LONG, body: BODY, button: 'Start free', quote: BODY, by: 'Head of product, Acme', cards: CARDS, footer: 'example.test', number: '2/5' }),
-	marks: () => ({ headline: 'Q&A: “Tom’s” <carts> & 100% of Ünïcødé, Ελληνικά, Кириллица', quote: '“Why?” & ‘how’', cards: [{ title: 'A & B <c>', body: '“Quoted”' }] }),
+	short: () => ({ ...PANEL, headline: 'Ship faster', quote: 'It works.', cards: CARDS }),
+	long: () => ({ ...PANEL, headline: LONG, quote: BODY, by: 'Head of product, Acme', cards: CARDS }),
+	full: () => ({ ...PANEL, badge: 'New this week', headline: LONG, body: BODY, button: 'Start free', quote: BODY, by: 'Head of product, Acme', cards: CARDS, footer: 'example.test', number: '2/5' }),
+	marks: () => ({ ...PANEL, headline: 'Q&A: “Tom’s” <carts> & 100% of Ünïcødé, Ελληνικά, Кириллица', quote: '“Why?” & ‘how’', cards: [{ title: 'A & B <c>', body: '“Quoted”' }] }),
 };
 
 const overlaps = (a: Rect, b: Rect, gap = 0) => a.x < b.x + b.w + gap - 0.6 && a.x + a.w + gap - 0.6 > b.x && a.y < b.y + b.h + gap - 0.6 && a.y + a.h + gap - 0.6 > b.y;
@@ -152,6 +153,7 @@ describe('only the headline you pass', () => {
 		const { resolveFields, assertImageInput } = await import('../src/image/catalog.js');
 		const { siteHost } = await import('../src/commands/image.js');
 		const { renderJob } = await import('../src/image/layout.js');
+		const { plainWords } = await import('../src/image/check.js');
 		const words = (t: string) => t.toLowerCase().split(/\s+/).filter(Boolean).sort().join(' ');
 		const failures: string[] = [];
 		const headline = 'Everything your agents need';
@@ -159,7 +161,7 @@ describe('only the headline you pass', () => {
 			if (template === 'logo') continue;
 			const spec = TEMPLATES[template];
 			const need = spec.needs as readonly string[];
-			const raw = { template, headline, ...(need.includes('body') ? { body: 'Body' } : {}), ...(need.includes('cards') ? { cards: 'One\n\nTwo' } : {}), ...(need.includes('quote') ? { quote: 'Quote' } : {}), ...(template === 'screenshot' ? { image: wide } : {}) };
+			const raw = { template, headline, ...(need.includes('body') ? { body: 'Body' } : {}), ...(need.includes('cards') ? { cards: 'One\n\nTwo' } : {}), ...(need.includes('quote') ? { quote: 'Quote' } : {}), ...(template === 'screenshot' ? { image: wide } : {}), ...Object.fromEntries(['stat', 'data', 'plans', 'columns', 'steps'].filter((k) => need.includes(k)).map((k) => [k, PANEL[k as keyof typeof PANEL]])), ...(template === 'before-after' ? { picture: 'checkout', picture2: 'card' } : {}) };
 			if (need.includes('quote')) delete (raw as Record<string, unknown>).headline;
 			const fields = resolveFields(assertImageInput(raw), { footer: siteHost() });
 			for (const size of templateSizes(template)) {
@@ -167,7 +169,7 @@ describe('only the headline you pass', () => {
 				try {
 					const layers = renderJob({ ...fields, size, width, height }).layers;
 					const drawn = words(layers.filter((l) => l.text).map((l) => l.text!.drawn).join(' '));
-					const passed = [fields.headline, fields.body, fields.quote, ...(fields.cards ?? []).flatMap((c) => [c.title, c.body])].filter(Boolean).join(' ');
+					const passed = plainWords([fields.headline, fields.body, fields.quote, fields.stat, fields.data, fields.plans, fields.columns, fields.steps, ...(fields.cards ?? []).flatMap((c) => [c.title, c.body])].filter(Boolean).join(' '));
 					const own = layers.filter((l) => l.text?.own).map((l) => l.text!.drawn).join(' ');
 					if (drawn !== words(`${passed} ${own}`)) failures.push(`${template} ${size}: drew "${drawn}"`);
 					if (own && own !== siteHost()) failures.push(`${template} ${size}: own words "${own}" are not the brand address`);

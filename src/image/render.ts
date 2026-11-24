@@ -115,7 +115,7 @@ export async function writeImages(jobs: ImageJob[], opts: { out: string; name: s
 	const prepared: { job: ImageJob; data: Partial<Record<ImageFormat, Buffer>>; rendered: Rendered }[] = [];
 	for (const job of jobs) {
 		const rendered = renderJob(job);
-		assertClean({ template: job.template, kind: 'image', size: { id: job.size, width: job.width, height: job.height }, copy: { headline: job.headline, body: job.body, badge: job.badge, button: job.button, quote: job.quote, by: job.by, 'window-bar': job.window, footer: job.footerOptional ? undefined : job.footer, number: job.number, cards: job.cards?.map((c) => `${c.title}\n${c.body}`).join('\n\n') }, layers: rendered.layers }, `The ${job.template} at ${job.size}`);
+		assertClean({ template: job.template, kind: 'image', size: { id: job.size, width: job.width, height: job.height }, copy: { headline: job.headline, body: job.body, badge: job.badge, button: job.button, quote: job.quote, by: job.by, 'window-bar': job.window, footer: job.footerOptional ? undefined : job.footer, number: job.number, cards: job.cards?.map((c) => `${c.title}\n${c.body}`).join('\n\n'), stat: job.stat, data: job.data, plans: job.plans, columns: job.columns, steps: job.steps, left: job.left, right: job.right }, layers: rendered.layers }, `The ${job.template} at ${job.size}`);
 		const width = Math.round(job.width * scale);
 		const data = await encodeAll(rendered.svg, width, opts.formats);
 		if (data.png) {

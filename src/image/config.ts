@@ -9,7 +9,7 @@ import { pkgPath } from '../lib/paths.js';
 import type { GrainSpec, ScanSpec } from './effects.js';
 
 export type SceneGround = 'blue' | 'paper' | 'white' | 'ink';
-export type SceneTemplate = 'hero' | 'window' | 'cards' | 'headline' | 'subtext' | 'screenshot' | 'quote' | 'announcement' | 'logo';
+export type SceneTemplate = 'hero' | 'window' | 'cards' | 'headline' | 'subtext' | 'screenshot' | 'quote' | 'announcement' | 'logo' | 'stat' | 'chart' | 'pricing' | 'compare' | 'flow' | 'before-after';
 export type WindowBody = 'blue' | 'sky' | 'white';
 export type Card = { title: string; body: string };
 

@@ -6,7 +6,7 @@ import { join } from 'node:path';
 // Encoding through ffmpeg when it is installed: H.264 in MP4 and VP9 in WebM, single-threaded and bit-exact so the same
 // frames give the same bytes on the same ffmpeg. Frames go in as raw RGBA on stdin.
 
-export type Container = 'mp4' | 'webm';
+export type Container = 'mp4' | 'webm' | 'gif';
 
 let found: string | null | undefined;
 /** The ffmpeg to use (FFMPEG or DS_FFMPEG, else ffmpeg on the PATH), or null when there is none. */
@@ -21,6 +21,8 @@ export function ffmpegPath(): string | null {
 
 const CODEC: Record<Container, string[]> = {
 	mp4: ['-c:v', 'libx264', '-preset', 'medium', '-crf', '18', '-pix_fmt', 'yuv420p', '-threads', '1', '-x264-params', 'threads=1:sliced-threads=0', '-movflags', '+faststart'],
+	// A GIF with its own palette (from the clip's frames), dithered by Bayer so the same frames give the same file.
+	gif: ['-vf', 'split[a][b];[a]palettegen=stats_mode=full:max_colors=256[p];[b][p]paletteuse=dither=bayer:bayer_scale=3', '-loop', '0'],
 	webm: ['-c:v', 'libvpx-vp9', '-crf', '30', '-b:v', '0', '-pix_fmt', 'yuv420p', '-threads', '1', '-row-mt', '0', '-deadline', 'good', '-cpu-used', '2'],
 };
 
