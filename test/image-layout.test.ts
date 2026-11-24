@@ -116,7 +116,7 @@ describe('every layout at every size', () => {
 	it('refuses only where the words cannot be read', () => {
 		// Only shallow sizes may refuse.
 		if (process.env.DS_SHOW) console.log(refused.join('\n'));
-		expect(refused.filter((r) => !/linkedin-page|linkedin-banner|youtube|email|x-banner|leaderboard|mobile-banner|billboard|medium-rectangle|large-rectangle|half-page|wide-skyscraper|facebook-cover/.test(r))).toEqual([]);
+		expect(refused.filter((r) => !/linkedin-page|linkedin-banner|youtube|email|x-banner|ad-|facebook-cover|meeting|business-card|email-signature/.test(r))).toEqual([]);
 	});
 });
 

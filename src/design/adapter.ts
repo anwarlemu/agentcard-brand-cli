@@ -13,6 +13,9 @@ import { plainWords, wordColors } from '../image/check.js';
 import { SCENE_GROUNDS, STICKER_MODES, subjectNames, WINDOW_BODIES, type SceneFields } from '../image/compose.js';
 import { illustrateConfig, imageConfig, type SceneGround } from '../image/config.js';
 import { renderScene } from '../image/layout.js';
+import { composeBlocks, drawCompose } from '../image/blocks.js';
+import { recipeFor } from '../image/recipes.js';
+import { SECTIONS, writePage } from '../library/page.js';
 import { buildScene } from '../image/compose.js';
 import { ART_CAN, PICTURE_CAN } from '../image/scene.js';
 import { groundColor, WORD_CAN, type Edits } from '../image/words.js';
@@ -334,6 +337,10 @@ export function adapter(): Adapter {
 			...(Object.keys(TEMPLATES) as TemplateId[]).map((id) => imageInfo(id, 'video')),
 		],
 		defaults(template, size): Pick<DesignDoc, 'size' | 'theme' | 'seed' | 'options'> {
+			if (template === 'compose') {
+				const p = SIZES[size];
+				return { size: { id: size, width: p?.width ?? 1200, height: p?.height ?? 630 }, theme: 'blue', seed: undefined, options: {} };
+			}
 			if (template.startsWith(SLIDE)) return { size: { id: 'slide', width: deckConfig().width, height: deckConfig().height }, theme: deckConfig().themes[template.slice(SLIDE.length) as SlideType][0], seed: undefined, options: {} };
 			if (template.startsWith(MERCH)) return { size: { id: 'print', ...merchSize(template.slice(MERCH.length)) }, theme: itemOf(template).variants[0], seed: undefined, options: {} };
 			if (template.startsWith(ILL)) {
@@ -391,6 +398,10 @@ export function adapter(): Adapter {
 				}
 				return { files, layers };
 			}
+			if (doc.template === 'compose') {
+				const drawn = drawCompose(doc, dir);
+				return { files: await encoded(drawn.svg, doc.size.width, out.formats, out.scale), layers: drawn.layers };
+			}
 			if (!isTemplate(doc.template)) throw new Error(`Unknown template ${doc.template}.`);
 			const drawn = renderScene(buildScene(sceneFields(doc, doc.template, dir, doc.size.id)));
 			return { files: await encoded(drawn.svg, doc.size.width, out.formats, out.scale), layers: drawn.layers };
@@ -408,6 +419,14 @@ export function adapter(): Adapter {
 		},
 		colors: wordColors,
 		words: plainWords,
+		page: { sections: () => SECTIONS, flavors: ['react', 'html'], write: writePage },
+		compose: {
+			blocks: composeBlocks,
+			themes: [...SCENE_GROUNDS],
+			grounds: grounds(SCENE_GROUNDS),
+			formats: ['png', 'svg', 'jpg', 'webp'],
+			recipe: recipeFor,
+		},
 		aliases: {
 			sizes: { ...imageConfig().sizeAliases, story: 'vertical', reel: 'vertical', '9:16': 'vertical', landscape: 'wide' },
 			themes: { dark: 'ink', black: 'ink', light: 'paper', cream: 'paper' },

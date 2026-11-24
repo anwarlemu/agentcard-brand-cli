@@ -2,7 +2,7 @@ import { mkdtempSync, readFileSync, readdirSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
-import { checkDesign, create, errorsOf, parseDoc, runDesign, stateOf, type Adapter, type DesignDoc, type DesignIO, type Edit, type Finding, type TemplateInfo } from '../../src/design/index.js';
+import { applyEdits, checkDesign, composeInfo, create, wordsOf, errorsOf, parseDoc, parsePhrases, runDesign, stateOf, type Adapter, type DesignDoc, type DesignIO, type Edit, type Finding, type TemplateInfo } from '../../src/design/index.js';
 
 // What every brand's adapter has to do, run by each repo against its own: `designConformance(adapter, opts)`.
 
@@ -96,6 +96,16 @@ export function designConformance(adapter: Adapter, opts: ConformanceOptions) {
 				expect(drawn, `${t.id} refuses everything`).toBeGreaterThan(0);
 			});
 
+			it(`${t.id}: the logo keeps its clear space at every place it can go`, { timeout }, async () => {
+				const logo = t.layers.find((l) => l.id === 'logo');
+				const problems: string[] = [];
+				for (const s of sizesOf(t)) for (const anchor of logo?.can.anchors ?? []) {
+					const r = await tryDraw(make(t, s, (opts.short ?? shortCopy)(t), [{ op: 'layer', layer: 'logo', set: { anchor } }]));
+					if (r) problems.push(...r.findings.filter((f) => f.rule.startsWith('logo') && f.severity === 'error').map((f) => `${t.id} ${s} ${anchor}: ${f.message}`));
+				}
+				expect(problems.join('\n')).toBe('');
+			});
+
 			it(`${t.id}: every theme passes`, { timeout }, async () => {
 				const problems: string[] = [];
 				for (const theme of t.themes) {
@@ -110,6 +120,51 @@ export function designConformance(adapter: Adapter, opts: ConformanceOptions) {
 				const r = await draw(make(t, t.sizes[0]!, need));
 				expect(list(r.findings.filter((f) => f.rule === 'invented'))).toBe('');
 				expect(r.layers.filter((l) => l.text?.sample).map((l) => l.id)).toEqual([]);
+			});
+
+			it(`${t.id}: common phrases move only what they name`, { timeout }, async () => {
+				const size = t.sizes[0]!;
+				const copy = (opts.short ?? shortCopy)(t);
+				const base = make(t, size, copy);
+				const before = await tryDraw(base);
+				if (!before) return;
+				const { width: W, height: H } = base.size;
+				const head = t.layers.find((l) => l.id === 'headline' || l.id === 'title');
+				const logo = t.layers.find((l) => l.id === 'logo');
+				const hide = t.layers.find((l) => l.can.hide && l.id !== 'logo' && before.layers.some((x) => x.id === l.id));
+				const theme = t.themes.find((x) => x !== base.theme);
+				const anchor = logo?.can.anchors?.find((a) => a !== logo.can.anchors![0]);
+				const slot = t.copy.find((c) => c.id === 'headline' || c.id === 'title');
+				const phrases: [string, string[]][] = [
+					...(head?.can.scale ? [[`bigger ${head.id}`, [head.id]], [`smaller ${head.id}`, [head.id]]] as [string, string[]][] : []),
+					...(theme ? [[`${theme} theme`, []]] as [string, string[]][] : []),
+					...(anchor ? [[`logo ${anchor.replace('-', ' ')}`, ['logo']]] as [string, string[]][] : []),
+					...(hide ? [[`hide the ${hide.id}`, [hide.id]]] as [string, string[]][] : []),
+					...(slot && copy[slot.id] ? [[`${slot.id} "${copy[slot.id]!.split('').reverse().join('').replace(/^./, (c) => c.toUpperCase())}"`, [slot.id]]] as [string, string[]][] : []),
+				];
+				const problems: string[] = [];
+				for (const [phrase, named] of phrases) {
+					const edits = parsePhrases(phrase, { adapter, doc: base, info: t, drawn: before.layers }).edits;
+					const after = await tryDraw(applyEdits(base, edits, adapter).doc);
+					if (!after) continue;
+					const may = new Set([...named, ...named.flatMap((n) => t.reflows?.[n] ?? [])]);
+					for (const a of after.layers) {
+						const b = before.layers.find((x) => x.id === a.id);
+						if (!b || may.has(a.id) || a.bleeds || b.bleeds) continue;
+						const dx = Math.max(Math.abs(a.box.x - b.box.x), Math.abs(a.box.x + a.box.w - b.box.x - b.box.w)) / W;
+						const dy = Math.max(Math.abs(a.box.y - b.box.y), Math.abs(a.box.y + a.box.h - b.box.y - b.box.h)) / H;
+						if (dx > 0.02 || dy > 0.02) problems.push(`"${phrase}" moved the ${a.id} by ${(dx * 100).toFixed(1)}% across, ${(dy * 100).toFixed(1)}% down (declare it in reflows if it gives way on purpose)`);
+					}
+					// Bigger type that re-wraps in its column: larger, never a longer line than the column holds.
+					if (phrase.startsWith('bigger') && head) {
+						const [a, b] = [after.layers.find((x) => x.id === head.id), before.layers.find((x) => x.id === head.id)];
+						if (a?.text && b?.text) {
+							expect(a.text.size / b.text.size, `${t.id}: "${phrase}" makes the type larger`).toBeGreaterThan(1.05);
+							expect(a.text.drawn.split('\n').length, `${t.id}: "${phrase}" re-wraps rather than losing lines`).toBeGreaterThanOrEqual(b.text.drawn.split('\n').length);
+						}
+					}
+				}
+				expect(problems.join('\n')).toBe('');
 			});
 
 			it(`${t.id}: a layer edit changes what is drawn, or is refused`, { timeout }, async () => {
@@ -159,6 +214,48 @@ export function designConformance(adapter: Adapter, opts: ConformanceOptions) {
 						if (/bottom/.test(anchor)) expect(cy, `${t.id} ${l.id} ${anchor}`).toBeGreaterThan(0.5);
 					}
 				}
+			});
+		}
+
+		if (adapter.compose) {
+			it('compose: every block draws on its own at every compose size, and the phrases that add and move it work', { timeout }, async () => {
+				const problems: string[] = [];
+				const sizes = (adapter.compose!.sizes ?? ['og', 'square', 'story']).filter((s) => s !== 'custom').slice(0, 4);
+				for (const b of adapter.compose!.blocks()) for (const size of sizes) {
+					const copy = b.sample ?? Object.fromEntries(b.copy.map((c) => [c.id, c.id === 'number' || c.id === 'value' ? '42%' : 'Ship faster']));
+					const base = create(adapter, 'compose', size, []).doc;
+					const d = applyEdits(base, [{ op: 'block-add', type: b.type, copy }, ...(b.image?.required ? [{ op: 'image', slot: b.type, value: b.image.values?.[0] ?? opts.picture! } as Edit] : [])], adapter).doc;
+					const r = await tryDraw(d);
+					if (!r) continue;
+					if (!r.layers.some((l) => l.id === b.type)) problems.push(`${b.type} ${size}: no layer called ${b.type} was reported`);
+					problems.push(...errorsOf(r.findings).map((f) => `${b.type} ${size}: ${f.rule}: ${f.message}`));
+				}
+				expect(problems.join('\n')).toBe('');
+				const info = composeInfo(adapter);
+				const first = adapter.compose!.blocks()[0]!;
+				const d = applyEdits(create(adapter, 'compose', info.sizes[0], []).doc, parsePhrases(`add a ${first.type}${first.copy.length ? ` "${first.sample?.[first.copy[0]!.id] ?? 'Ship faster'}"` : ''} top left`, { adapter, doc: create(adapter, 'compose', info.sizes[0], []).doc, info }).edits, adapter).doc;
+				expect(d.blocks!.map((x) => x.type)).toEqual([first.type]);
+			});
+			it('compose: every template can be recreated as blocks, whole and clean', { timeout }, async () => {
+				const problems: string[] = [];
+				let made = 0;
+				for (const t of laidOut.filter((x) => x.kind === 'image')) {
+					const copy = (opts.short ?? shortCopy)(t);
+					const r0 = adapter.compose!.recipe?.(t.id, t.sizes[0]!, copy);
+					if (!r0) {
+						problems.push(`${t.id}: no recipe`);
+						continue;
+					}
+					const base = create(adapter, 'compose', t.sizes.includes(composeInfo(adapter).sizes[0]!) ? t.sizes[0] : composeInfo(adapter).sizes[0], []).doc;
+					const d = { ...base, ...r0, theme: r0.theme ?? base.theme } as DesignDoc;
+					const r = await draw(d);
+					made++;
+					problems.push(...errorsOf(r.findings).map((f) => `${t.id}: ${f.rule}: ${f.message}`));
+					const kept = Object.values(d.copy).flatMap(wordsOf);
+					for (const [k, v] of Object.entries(copy)) if (wordsOf(v).some((w) => !kept.includes(w))) problems.push(`${t.id}: the recipe leaves out words of ${k}`);
+				}
+				expect(problems.join('\n')).toBe('');
+				expect(made).toBeGreaterThan(0);
 			});
 		}
 
@@ -214,7 +311,7 @@ export function designConformance(adapter: Adapter, opts: ConformanceOptions) {
 			};
 			expect(await refuse('revise', 'one.design.json', 'flibber the wotsit')).toMatch(/Nothing was changed/);
 			await refuse('revise', 'one.design.json', `${t.themes[0]} theme, flibber the wotsit`);
-			expect(await refuse('revise', 'one.design.json', 'make the logo neon green')).toMatch(/theme|brand|Effects/);
+			expect(await refuse('revise', 'one.design.json', 'make the logo neon green')).toMatch(/Colors outside the brand palette are refused. The palette: #/);
 			await refuse('revise', 'one.design.json', 'use comic sans');
 			await refuse('revise', 'one.design.json', 'rotate the logo');
 			await refuse('edit', 'one.design.json', '--set', 'nonsense-slot=hello');

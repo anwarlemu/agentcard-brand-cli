@@ -50,7 +50,7 @@ export function parseBlocks(value: unknown, what: string, min: number, max: numb
 	return blocks;
 }
 
-type Ctx = { stage: Stage; ground: SceneGround; layers: Layers; ids: Ids; k: number };
+export type Ctx = { stage: Stage; ground: SceneGround; layers: Layers; ids: Ids; k: number };
 
 const card = (ctx: Ctx, r: Rect, id: string) => {
 	const spec = imageConfig().templates.cards.cards!;
@@ -91,7 +91,8 @@ function palette(g: SceneGround): string[] {
 	return [blue, tokenColor('blue-mid'), tokenColor('sky'), tokenColor('ink'), mix(blue, tokenColor('white'), 0.6)];
 }
 
-export function drawChart(ctx: Ctx, input: PanelInput, r: Rect): string {
+export function drawChart(ctx: Ctx, input: PanelInput, r: Rect, id = 'chart'): string {
+	const part = (name: string) => (id === 'chart' ? name : `${id}-${name}`);
 	const data = input.data!;
 	const kind = input.chart ?? 'bar';
 	const c = onGround(ctx.ground);
@@ -125,7 +126,7 @@ export function drawChart(ctx: Ctx, input: PanelInput, r: Rect): string {
 		data.forEach((d, i) => {
 			const y = top + i * rowH;
 			out.push(rect(lx, y + rowH / 2 - lab * 0.4, lab * 0.8, lab * 0.8, cols[i]!, lab * 0.15));
-			out.push(words(ctx, `label-${i + 1}`, `${d.label}  ${d.shown}`, { x: lx + lab * 1.3, y: y + rowH / 2 - lab * 0.62, w: right(r) - lx - lab * 1.3, h: lab * 1.3 }, { size: lab, color: c.strong, ground: g, maxLines: 1 }).svg);
+			out.push(words(ctx, part(`label-${i + 1}`), `${d.label}  ${d.shown}`, { x: lx + lab * 1.3, y: y + rowH / 2 - lab * 0.62, w: right(r) - lx - lab * 1.3, h: lab * 1.3 }, { size: lab, color: c.strong, ground: g, maxLines: 1 }).svg);
 		});
 	} else {
 		const max = Math.max(...data.map((d) => d.value)) || 1;
@@ -151,11 +152,11 @@ export function drawChart(ctx: Ctx, input: PanelInput, r: Rect): string {
 		}
 		data.forEach((d, i) => {
 			const cell = { x: plot.x + step * i + 2 * ctx.k, w: step - 4 * ctx.k };
-			out.push(words(ctx, `value-${i + 1}`, d.shown, { ...cell, y: points[i]!.y - valueH - (kind === 'line' ? 14 * ctx.k : 2 * ctx.k), h: valueH }, { size: lab, color: c.strong, ground: g, align: 'center', maxLines: 1 }).svg);
-			out.push(words(ctx, `label-${i + 1}`, d.label, { ...cell, y: base + lab * 0.35, h: labelH }, { size: lab, weight: 'regular', color: c.muted, ground: g, align: 'center', maxLines: 1 }).svg);
+			out.push(words(ctx, part(`value-${i + 1}`), d.shown, { ...cell, y: points[i]!.y - valueH - (kind === 'line' ? 14 * ctx.k : 2 * ctx.k), h: valueH }, { size: lab, color: c.strong, ground: g, align: 'center', maxLines: 1 }).svg);
+			out.push(words(ctx, part(`label-${i + 1}`), d.label, { ...cell, y: base + lab * 0.35, h: labelH }, { size: lab, weight: 'regular', color: c.muted, ground: g, align: 'center', maxLines: 1 }).svg);
 		});
 	}
-	ctx.layers.add({ id: 'chart', kind: 'art', box: r, ink: marks, can: {} });
+	ctx.layers.add({ id, kind: 'art', box: r, ink: marks, can: {} });
 	return out.join('');
 }
 
