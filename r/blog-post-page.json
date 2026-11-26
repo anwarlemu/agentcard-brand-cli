@@ -1,0 +1,61 @@
+{
+  "schemaVersion": 1,
+  "name": "blog-post-page",
+  "useFor": "Use as a starting point for an Agentcard article or guide. Pass the title, the dates and the rendered Markdown as children.",
+  "constraints": [
+    "A cover image over the title",
+    "A table of contents for a short post",
+    "Related posts in place of the next steps",
+    "Bold body text"
+  ],
+  "documentation": "",
+  "source": "Not in the agentcard-website source yet; agentcard.sh /blog/<post> (rendered structure); body styles from src/app/globals.css (.v7-about-sheet, .v7-guide-prose)",
+  "exports": [
+    "BlogPostPage"
+  ],
+  "client": false,
+  "docsUrl": "https://agentcard-ds.vercel.app/components/blog-post-page",
+  "markdownUrl": "https://agentcard-ds.vercel.app/r/blog-post-page.md",
+  "examples": [
+    {
+      "path": "examples/blog-post-page.tsx",
+      "content": "import { BlogPostPage } from \"@/components/blocks/blog-post-page\";\n\nexport function Block() {\n  return <BlogPostPage />;\n}\n",
+      "exports": [
+        "Block"
+      ],
+      "requires": [
+        "blog-post-page"
+      ],
+      "packages": [],
+      "previews": [
+        {
+          "name": "Block",
+          "url": "https://agentcard-ds.vercel.app/preview/blog-post-page/Block"
+        }
+      ]
+    }
+  ],
+  "type": "block",
+  "title": "Blog post page",
+  "description": "Article template with a back link, a prose column, a Try it window, footer and navigation.",
+  "surface": "site",
+  "kinds": [],
+  "requires": [
+    "theme",
+    "nav-dock",
+    "prose",
+    "site-footer",
+    "site-header",
+    "button",
+    "window"
+  ],
+  "packages": [
+    "lucide-react"
+  ],
+  "files": [
+    {
+      "path": "components/blocks/blog-post-page.tsx",
+      "content": "import type { ReactNode } from \"react\";\nimport { ArrowLeft } from \"lucide-react\";\n\nimport { NavDock } from \"@/components/site/nav-dock\";\nimport { Prose } from \"@/components/site/prose\";\nimport { SiteFooter } from \"@/components/site/site-footer\";\nimport { SiteHeader } from \"@/components/site/site-header\";\nimport { Button } from \"@/components/ui/button\";\nimport { Window } from \"@/components/ui/window\";\n\n// The footer as agentcard.sh carries it on every page: five columns, the line, the running line. Sample categories\n// stand in for the merchant names; replace them with your own.\nconst FOOTER = {\n  description: (\n    <>\n      We want agents to buy anything online\n      <br />\n      that you can buy as a human.\n    </>\n  ),\n  groups: [\n    { title: \"Product\", links: [{ label: \"Vault\", href: \"https://www.agentcard.sh/vault\" }, { label: \"Issuing\", href: \"https://www.agentcard.sh/issuing\" }, { label: \"Voice\", href: \"https://cal.com/team/agentcard/agentcard-call\" }, { label: \"Purchase Agent\", href: \"https://www.agentcard.sh/purchase-agent\" }, { label: \"Pricing\", href: \"https://www.agentcard.sh/pricing\" }, { label: \"FAQ\", href: \"https://www.agentcard.sh/#faq\" }] },\n    { title: \"Developers\", links: [{ label: \"Documentation\", href: \"https://docs.agentcard.sh\" }, { label: \"API reference\", href: \"https://docs.agentcard.sh/companies/api/reference\" }] },\n    { title: \"Company\", links: [{ label: \"About\", href: \"https://www.agentcard.sh/about\" }, { label: \"Changelog\", href: \"https://www.agentcard.sh/updates\" }, { label: \"Trust Center\", href: \"https://app.vanta.com/agentcard.sh/trust/8t52k9fqhneqwt4y2jpvmn\" }] },\n    { title: \"Legal\", links: [{ label: \"Privacy Policy\", href: \"https://legal.raincards.xyz/legal/privacy-policy\" }, { label: \"Terms of Service\", href: \"https://www.agentcard.sh/terms\" }, { label: \"Card Terms\", href: \"https://www.agentcard.sh/card-terms\" }, { label: \"Card Terms (International)\", href: \"https://www.agentcard.sh/card-terms-international\" }] },\n    { title: \"Social\", links: [{ label: \"X / Twitter\", href: \"https://x.com/agentcardhq\" }, { label: \"Instagram\", href: \"https://www.instagram.com/agentcardhq/\" }] },\n  ],\n  merchants: [\"Groceries\", \"Electronics\", \"Home goods\", \"Office supplies\", \"Apparel\", \"Food delivery\", \"Software\", \"Travel\", \"Books\", \"Pet supplies\", \"Hardware\", \"Flights\"],\n};\n\n// The dock as agentcard.sh carries it: Home, the Products menu, About, Pricing, and Get started.\nconst PRODUCTS = {\n  label: \"Products\",\n  items: [\n    { title: \"Vault\", description: \"Store customers’ cards and buy with an agent.\", href: \"https://www.agentcard.sh/vault\" },\n    { title: \"Issuing\", description: \"One-time and multi-use cards for your agent.\", href: \"https://www.agentcard.sh/issuing\" },\n    { title: \"Voice\", description: \"Approve an agent’s purchase by speaking.\", href: \"https://cal.com/team/agentcard/agentcard-call\" },\n    { title: \"Purchase Agent\", description: \"Buy from the stores people already use.\", href: \"https://www.agentcard.sh/purchase-agent\" },\n  ],\n};\n\nconst LINKS = [\n  { label: \"Home\", href: \"https://www.agentcard.sh/\" },\n  { label: \"About\", href: \"https://www.agentcard.sh/about\" },\n  { label: \"Pricing\", href: \"https://www.agentcard.sh/pricing\" },\n];\n\nconst START = { label: \"Get started\", href: \"https://app.agentcard.sh/\" };\n\n// A blog post as agentcard.sh draws it (/blog/<post>): the bare header, a link back to the blog, then the article on the\n// reading column (the title, the published and updated dates, a rule, the body in h2 sections with numbered and bulleted\n// lists), a short Try it window with the two next steps, the blue footer and the glass dock. Sample article; pass your\n// rendered Markdown as children.\n\nfunction Article() {\n  return (\n    <>\n      <p>An agent that can buy things needs a card it is allowed to use, limits it cannot cross, and an owner who approves what matters. This guide sets up all three in a few minutes.</p>\n      <h2>What you need</h2>\n      <ul>\n        <li>An Agentcard account and an API key.</li>\n        <li>An agent that can call a tool or an HTTP endpoint.</li>\n        <li>A customer with a card to store, or a balance to issue cards from.</li>\n      </ul>\n      <h2>Steps</h2>\n      <ol>\n        <li>Store the customer’s card in the Vault. It is encrypted on their device before it is saved.</li>\n        <li>Set the limits the agent spends under: per purchase, per day and per merchant.</li>\n        <li>\n          Give your agent the buy tool, or run <code>npx agent-cards setup</code> from your editor.\n        </li>\n        <li>Ask the agent for something. The owner approves with a passkey and the agent pays at checkout.</li>\n      </ol>\n      <h2>Before you go live</h2>\n      <ul>\n        <li>Turn on auto-approve only for small, routine purchases.</li>\n        <li>Check that disputes reach your support inbox.</li>\n        <li>Read the card terms for the countries you serve.</li>\n      </ul>\n    </>\n  );\n}\n\nexport function BlogPostPage({\n  title = \"How to give an AI agent a card\",\n  meta = \"Published Oct 20, 2026 · Updated Oct 27, 2026\",\n  children = <Article />,\n}: {\n  title?: string;\n  meta?: ReactNode;\n  children?: ReactNode;\n}) {\n  return (\n    <main className=\"relative\">\n      <SiteHeader href=\"https://www.agentcard.sh/\" ground=\"white\" action={START} />\n      <div className=\"mx-auto w-(--ds-frame-column) max-w-(--ds-layout-text) pt-35 pb-28 md:pt-37.5\">\n        <a href=\"https://www.agentcard.sh/blog\" className=\"mb-6 inline-flex items-center gap-1.5 rounded-chip font-display text-caption text-fg-muted outline-none transition-colors duration-150 ease-out hover:text-fg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus-ring\">\n          <ArrowLeft aria-hidden className=\"size-3.5\" />\n          Blog\n        </a>\n        <Prose eyebrow=\"Guide\" title={title} meta={meta}>\n          {children}\n        </Prose>\n        <Window name=\"try-it.md\" className=\"mt-14\" bodyClassName=\"grid gap-4 p-6\">\n          <div>\n            <p className=\"font-display text-h4 leading-snug font-medium tracking-tight\">Try it</p>\n            <p className=\"mt-1.5 text-body-sm leading-relaxed text-fg-muted\">Follow the quickstart, or get started and give your agent its first card.</p>\n          </div>\n          <div className=\"flex flex-wrap gap-3\">\n            <Button asChild>\n              <a href={START.href}>Get started</a>\n            </Button>\n            <Button asChild variant=\"secondary\">\n              <a href=\"https://docs.agentcard.sh\">Read the quickstart</a>\n            </Button>\n          </div>\n        </Window>\n      </div>\n      <SiteFooter backing=\"Backed by Y Combinator\" description={FOOTER.description} groups={FOOTER.groups} merchants={FOOTER.merchants} />\n      <NavDock menu={PRODUCTS} links={LINKS} action={START} />\n    </main>\n  );\n}\n"
+    }
+  ]
+}

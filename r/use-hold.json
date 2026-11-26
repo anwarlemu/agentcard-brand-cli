@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "name": "use-hold",
+  "useFor": "Use for hold-to-confirm controls. Spread handlers on the control and use isHolding for its visual state. Pass disabled to prevent confirmation.",
+  "constraints": [
+    "Hold for actions that can be undone"
+  ],
+  "documentation": "",
+  "exports": [
+    "useHold"
+  ],
+  "client": true,
+  "docsUrl": "https://agentcard-ds.vercel.app/r/use-hold.md",
+  "markdownUrl": "https://agentcard-ds.vercel.app/r/use-hold.md",
+  "examples": [],
+  "type": "hook",
+  "title": "useHold",
+  "description": "Confirms after a continuous pointer or keyboard hold and cancels when interrupted.",
+  "surface": "site",
+  "kinds": [],
+  "requires": [
+    "theme"
+  ],
+  "packages": [],
+  "files": [
+    {
+      "path": "hooks/use-hold.ts",
+      "content": "\"use client\";\n\nimport { type KeyboardEvent, type PointerEvent, useEffect, useRef, useState } from \"react\";\n\n/** Confirm once per uninterrupted hold. Releasing, losing focus or hiding the page cancels it. */\nexport function useHold(durationMs: number, onConfirm: () => void, disabled = false) {\n  const [isHolding, setHolding] = useState(false);\n  const timeout = useRef<ReturnType<typeof setTimeout>>(undefined);\n  const active = useRef(false);\n  const callback = useRef(onConfirm);\n  useEffect(() => { callback.current = onConfirm; }, [onConfirm]);\n\n  function cancel() {\n    clearTimeout(timeout.current);\n    active.current = false;\n    setHolding(false);\n  }\n\n  useEffect(() => {\n    const reset = () => cancel();\n    const visibility = () => { if (document.hidden) reset(); };\n    window.addEventListener(\"blur\", reset);\n    document.addEventListener(\"visibilitychange\", visibility);\n    return () => {\n      clearTimeout(timeout.current);\n      window.removeEventListener(\"blur\", reset);\n      document.removeEventListener(\"visibilitychange\", visibility);\n    };\n  }, []);\n  useEffect(() => { if (disabled) cancel(); }, [disabled]);\n\n  function start(event: PointerEvent | KeyboardEvent) {\n    if (disabled || active.current || event.defaultPrevented) return;\n    active.current = true;\n    setHolding(true);\n    timeout.current = setTimeout(() => {\n      timeout.current = undefined;\n      setHolding(false);\n      // Keep active until release, preventing repeated keydown from confirming twice.\n      callback.current();\n    }, Math.max(0, durationMs));\n  }\n\n  const handlers = {\n    onPointerDown: (event: PointerEvent) => { if (event.button === 0) start(event); },\n    onPointerUp: cancel,\n    onPointerLeave: cancel,\n    onPointerCancel: cancel,\n    onKeyDown: (event: KeyboardEvent) => {\n      if ((event.key === \"Enter\" || event.key === \" \") && !event.repeat) {\n        start(event);\n        event.preventDefault();\n      }\n    },\n    onKeyUp: (event: KeyboardEvent) => { if (event.key === \"Enter\" || event.key === \" \") cancel(); },\n    onBlur: cancel,\n  };\n  return { isHolding, handlers };\n}\n"
+    }
+  ]
+}

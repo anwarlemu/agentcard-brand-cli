@@ -1,0 +1,56 @@
+{
+  "schemaVersion": 1,
+  "name": "progress",
+  "useFor": "Use for spending limits, uploads or setup progress. Update value as progress changes and set max when the scale is not 100. Give the bar an accessible label.",
+  "constraints": [
+    "Gradients in the fill",
+    "Pill-shaped tracks",
+    "Progress without a label saying what it measures"
+  ],
+  "documentation": "",
+  "source": "Extension from agentcard-website src/app/globals.css (.plan-tabs, --bevel-blue)",
+  "exports": [
+    "Progress"
+  ],
+  "client": true,
+  "docsUrl": "https://agentcard-ds.vercel.app/components/progress",
+  "markdownUrl": "https://agentcard-ds.vercel.app/r/progress.md",
+  "examples": [
+    {
+      "path": "examples/progress.tsx",
+      "content": "\"use client\";\n\nimport { useState } from \"react\";\nimport { Button } from \"@/components/ui/button\";\nimport { Progress } from \"@/components/ui/progress\";\n\nexport function Site() {\n  const [spent, setSpent] = useState(1240);\n  return <div className=\"grid max-w-md gap-3\">\n    <div className=\"flex items-baseline justify-between gap-3 font-display text-body-sm\"><span>Spent this month</span><span className=\"text-fg-muted tabular-nums\">${spent.toLocaleString(\"en-US\")} of $2,000</span></div>\n    <Progress value={spent} max={2000} aria-label=\"Spent this month\" />\n    <div className=\"flex gap-2\"><Button size=\"sm\" disabled={spent >= 2000} onClick={() => setSpent(Math.min(2000, spent + 100))}>Spend $100</Button><Button variant=\"secondary\" size=\"sm\" onClick={() => setSpent(1240)}>Reset</Button></div>\n  </div>;\n}\n",
+      "exports": [
+        "Site"
+      ],
+      "requires": [
+        "progress",
+        "button"
+      ],
+      "packages": [],
+      "previews": [
+        {
+          "name": "Site",
+          "url": "https://agentcard-ds.vercel.app/preview/progress/Site"
+        }
+      ]
+    }
+  ],
+  "type": "ui",
+  "title": "Progress",
+  "description": "Progress bar with a value, maximum and accessible progress state.",
+  "surface": "site",
+  "kinds": [],
+  "requires": [
+    "theme",
+    "utils"
+  ],
+  "packages": [
+    "@radix-ui/react-progress"
+  ],
+  "files": [
+    {
+      "path": "components/ui/progress.tsx",
+      "content": "\"use client\";\n\nimport * as React from \"react\";\nimport * as ProgressPrimitive from \"@radix-ui/react-progress\";\n\nimport { cn } from \"@/lib/utils\";\n\n// A sunken track (pale, a hairline, the inner shadow, the tab track in small) with a blue fill (a card's balance spent, a\n// setup's steps). The fill moves on transform in 300ms ease-out; reduced motion sets it at once.\nfunction Progress({ className, value, max = 100, ...props }: React.ComponentProps<typeof ProgressPrimitive.Root>) {\n  const limit = Number.isFinite(max) && max > 0 ? max : 100;\n  const current = typeof value === \"number\" && Number.isFinite(value) ? Math.min(limit, Math.max(0, value)) : null;\n  return (\n    <ProgressPrimitive.Root value={current} max={limit} data-slot=\"progress\" className={cn(\"relative h-2 w-full overflow-hidden rounded-chip border border-hairline bg-subtle shadow-well\", className)} {...props}>\n      <ProgressPrimitive.Indicator\n        data-slot=\"progress-indicator\"\n        className=\"h-full w-full flex-1 bg-primary transition-transform duration-300 ease-out motion-reduce:transition-none\"\n        style={{ transform: `translateX(-${100 - ((current ?? 0) / limit) * 100}%)` }}\n      />\n    </ProgressPrimitive.Root>\n  );\n}\n\nexport { Progress };\n"
+    }
+  ]
+}

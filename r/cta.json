@@ -1,0 +1,66 @@
+{
+  "schemaVersion": 1,
+  "name": "cta",
+  "useFor": "Use near the end of a page when another action is needed. Provide a working link or handler for the action.",
+  "constraints": [
+    "More than one per page",
+    "Two keys of equal weight",
+    "A blue key on the blue",
+    "A gradient or glow behind the headline",
+    "Long copy"
+  ],
+  "documentation": "`Cta` props: `title`, `description`, `actions` (the on-brand Button), `media`, `bandFrom` and `bandTo` (default white;\nnull for none), `scan` (default true), plus section props.",
+  "source": "Extension from agentcard-website src/app/globals.css:1288 (.cta, an earlier closing stage); built from the hero's ground and the band divider (agentcard.sh has no closing CTA)",
+  "exports": [
+    "Cta",
+    "CtaProps"
+  ],
+  "client": false,
+  "docsUrl": "https://agentcard-ds.vercel.app/components/cta",
+  "markdownUrl": "https://agentcard-ds.vercel.app/r/cta.md",
+  "examples": [
+    {
+      "path": "examples/cta.tsx",
+      "content": "import { Cta } from \"@/components/site/cta\";\nimport { Button } from \"@/components/ui/button\";\nimport { Window } from \"@/components/ui/window\";\n\nexport function Site() {\n  return (\n    <div className=\"bg-surface py-16\">\n      <Cta\n        title=\"Let your agent buy\"\n        description=\"Issue a card in minutes and set the limits it spends under.\"\n        actions={\n          <Button asChild variant=\"on-brand\">\n            <a href=\"https://app.agentcard.sh/\">Get started</a>\n          </Button>\n        }\n      />\n    </div>\n  );\n}\n\nexport function WithMedia() {\n  return (\n    <Cta\n      bandFrom=\"paper\"\n      bandTo=\"paper\"\n      title=\"Let your agent buy\"\n      actions={\n        <Button asChild variant=\"on-brand\">\n          <a href=\"https://app.agentcard.sh/\">Get started</a>\n        </Button>\n      }\n      media={\n        <Window name=\"agent.request\" className=\"mx-auto h-56 max-w-160 text-left shadow-code\" bodyClassName=\"flex items-center justify-center bg-sky-wash font-display text-caption text-fg-label\">\n          Imagery\n        </Window>\n      }\n    />\n  );\n}\n",
+      "exports": [
+        "Site",
+        "WithMedia"
+      ],
+      "requires": [
+        "cta",
+        "button",
+        "window"
+      ],
+      "packages": [],
+      "previews": [
+        {
+          "name": "Site",
+          "url": "https://agentcard-ds.vercel.app/preview/cta/Site"
+        },
+        {
+          "name": "WithMedia",
+          "url": "https://agentcard-ds.vercel.app/preview/cta/WithMedia"
+        }
+      ]
+    }
+  ],
+  "type": "site",
+  "title": "CTA",
+  "description": "Blue section with a heading, action and optional media.",
+  "surface": "site",
+  "kinds": [
+    "button-on-brand"
+  ],
+  "requires": [
+    "theme",
+    "band-divider",
+    "utils"
+  ],
+  "packages": [],
+  "files": [
+    {
+      "path": "components/site/cta.tsx",
+      "content": "import * as React from \"react\";\n\nimport { BandDivider, Scan, type BandGround } from \"@/components/visuals/band-divider\";\nimport { cn } from \"@/lib/utils\";\n\n// A closing band on the blue. The live agentcard.sh has no closing call to action (its FAQ runs straight into the\n// footer), so this is the simplest band true to the system: the stepped bands in and out, the blue ground under the\n// scanlines the hero and the footer wear, a centered 52px display headline (34px on phones), one 19px line in white at\n// 72 percent, the white key, and room for imagery under it.\ntype CtaProps = Omit<React.ComponentProps<\"section\">, \"title\"> & {\n  title: React.ReactNode;\n  /** One line under the headline. */\n  description?: React.ReactNode;\n  /** The key: the on-brand Button (one main action, a quiet second at most). */\n  actions?: React.ReactNode;\n  /** Imagery under the actions (a window, a product shot). */\n  media?: React.ReactNode;\n  /** The grounds above and below, for the stepped bands. null for no band. */\n  bandFrom?: BandGround | null;\n  bandTo?: BandGround | null;\n  scan?: boolean;\n};\n\nfunction Cta({ title, description, actions, media, bandFrom = \"white\", bandTo = \"white\", scan = true, className, ...props }: CtaProps) {\n  return (\n    <div data-slot=\"cta\">\n      {bandFrom && <BandDivider from={bandFrom} to=\"blue\" />}\n      <section data-ground=\"blue\" className={cn(\"relative isolate overflow-hidden bg-brand px-(--ds-layout-gutter) pt-16 pb-20 text-center text-on-brand md:pt-28 md:pb-32\", className)} {...props}>\n        {scan && <Scan className=\"-z-10\" />}\n        <div className=\"mx-auto flex max-w-(--ds-layout-column) flex-col items-center\">\n          <h2 className=\"max-w-[18ch] font-display text-h1 leading-heading font-medium tracking-tighter text-balance text-white\">{title}</h2>\n          {description && <p className=\"mt-5 max-w-(--ds-layout-heading) text-body-lg leading-snug text-pretty text-fg-on-brand-muted\">{description}</p>}\n          {actions && <div className=\"mt-8 flex flex-wrap items-center justify-center gap-3\">{actions}</div>}\n          {media && <div className=\"mt-14 w-full\">{media}</div>}\n        </div>\n      </section>\n      {bandTo && <BandDivider from=\"blue\" to={bandTo} />}\n    </div>\n  );\n}\n\nexport { Cta };\nexport type { CtaProps };\n"
+    }
+  ]
+}

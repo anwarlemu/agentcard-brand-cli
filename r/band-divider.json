@@ -1,0 +1,56 @@
+{
+  "schemaVersion": 1,
+  "name": "band-divider",
+  "useFor": "Use where blue sections meet white or paper. Hero, SiteFooter and Cta already include their dividers.",
+  "constraints": [
+    "A smooth gradient between grounds",
+    "A divider between two sections on the same ground",
+    "Steps of other heights",
+    "Grain anywhere else on the page"
+  ],
+  "documentation": "`BandDivider` props: `from` and `to` (\"blue\" | \"white\" | \"paper\" | \"ink\", defaults blue to white), `grain` (default\ntrue). The file also exports `Scan`, the scanlines and vignette the blue grounds wear (`sides` adds the hero's darker\nside shades); place it inside a positioned, isolated blue box.",
+  "source": "agentcard-website src/components/band-divider.tsx; src/app/globals.css:527 (.band-divider, .band-step); agentcard.sh / (computed)",
+  "exports": [
+    "BandDivider",
+    "Scan",
+    "BandGround"
+  ],
+  "client": true,
+  "docsUrl": "https://agentcard-ds.vercel.app/components/band-divider",
+  "markdownUrl": "https://agentcard-ds.vercel.app/r/band-divider.md",
+  "examples": [
+    {
+      "path": "examples/band-divider.tsx",
+      "content": "import { BandDivider } from \"@/components/visuals/band-divider\";\n\nexport function Site() {\n  return (\n    <div className=\"overflow-hidden rounded-panel border border-hairline\">\n      <div className=\"flex h-24 items-end bg-brand p-4 font-display text-caption text-fg-on-brand-label\">Blue</div>\n      <BandDivider from=\"blue\" to=\"paper\" />\n      <div className=\"flex h-24 items-end bg-paper p-4 font-display text-caption text-fg-label\">Paper</div>\n      <BandDivider from=\"paper\" to=\"blue\" />\n      <div className=\"flex h-24 items-end bg-brand p-4 font-display text-caption text-fg-on-brand-label\">Blue</div>\n      <BandDivider from=\"blue\" to=\"white\" grain={false} />\n      <div className=\"flex h-24 items-end bg-surface p-4 font-display text-caption text-fg-label\">White, no grain</div>\n    </div>\n  );\n}\n",
+      "exports": [
+        "Site"
+      ],
+      "requires": [
+        "band-divider"
+      ],
+      "packages": [],
+      "previews": [
+        {
+          "name": "Site",
+          "url": "https://agentcard-ds.vercel.app/preview/band-divider/Site"
+        }
+      ]
+    }
+  ],
+  "type": "visual",
+  "title": "Band divider",
+  "description": "Stepped divider between page backgrounds.",
+  "surface": "site",
+  "kinds": [],
+  "requires": [
+    "theme",
+    "utils"
+  ],
+  "packages": [],
+  "files": [
+    {
+      "path": "components/visuals/band-divider.tsx",
+      "content": "\"use client\";\n\nimport * as React from \"react\";\n\nimport { cn } from \"@/lib/utils\";\n\n// The seam between two grounds (agentcard.sh, .band-divider): four 9px steps, each a further mix from the ground above\n// toward the ground below, a staircase rather than a gradient. A film grain lies over the steps: fractal noise with its\n// color stripped, blended soft-light so it never tints them, oversized past the divider and jumped between offsets on\n// a stepped loop, so each frame is a composite and not a repaint. The grain is the one thing on the page that moves on\n// its own; it stills with reduced motion.\ntype Ground = \"blue\" | \"white\" | \"paper\" | \"ink\";\n\nconst GROUND: Record<Ground, string> = {\n  blue: \"var(--ds-color-brand)\",\n  white: \"var(--ds-color-bg-default)\",\n  paper: \"var(--ds-color-paper)\",\n  ink: \"var(--ds-color-ink)\",\n};\n\nconst STEPS = [\"--ds-band-mix-1\", \"--ds-band-mix-2\", \"--ds-band-mix-3\", \"--ds-band-mix-4\"];\n\n// The grain tile: per-pixel noise, desaturated to pure value (no color in it).\nconst GRAIN = `url(\"data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='g'><feTurbulence type='fractalNoise' baseFrequency='0.95' numOctaves='2' stitchTiles='stitch'/><feColorMatrix type='saturate' values='0'/></filter><rect width='100%25' height='100%25' filter='url(%23g)'/></svg>\")`;\n\n// The jumps, as on the brand's page: eight offsets held for one frame each over 640ms.\nconst JUMPS = [\n  [0, 0],\n  [-37, 21],\n  [53, -45],\n  [-61, -13],\n  [29, 59],\n  [-19, -67],\n  [71, 7],\n  [-47, 43],\n  [0, 0],\n];\n\n/** The scanlines and vignette the blue grounds wear (the hero, the footer): ink lines every 3px, darker at the edges. */\nfunction Scan({ sides = true, className }: { sides?: boolean; className?: string }) {\n  return (\n    <span\n      aria-hidden\n      data-slot=\"scan\"\n      className={cn(\n        \"pointer-events-none absolute inset-0\",\n        sides\n          ? \"bg-[repeating-linear-gradient(0deg,color-mix(in_srgb,var(--ds-color-ink)_16%,transparent)_0_1px,transparent_1px_3px),radial-gradient(ellipse_at_center,transparent_55%,color-mix(in_srgb,var(--ds-color-ink)_38%,transparent)),linear-gradient(90deg,color-mix(in_srgb,var(--ds-color-ink)_34%,transparent),transparent_16%,transparent_84%,color-mix(in_srgb,var(--ds-color-ink)_34%,transparent))]\"\n          : \"bg-[repeating-linear-gradient(0deg,color-mix(in_srgb,var(--ds-color-ink)_16%,transparent)_0_1px,transparent_1px_3px),radial-gradient(ellipse_at_center,transparent_55%,color-mix(in_srgb,var(--ds-color-ink)_38%,transparent))]\",\n        className,\n      )}\n    />\n  );\n}\n\nfunction useReducedMotion() {\n  const [reduce, setReduce] = React.useState(false);\n  React.useEffect(() => {\n    const query = window.matchMedia(\"(prefers-reduced-motion: reduce)\");\n    const update = () => setReduce(query.matches);\n    update();\n    query.addEventListener(\"change\", update);\n    return () => query.removeEventListener(\"change\", update);\n  }, []);\n  return reduce;\n}\n\nfunction BandDivider({ from = \"blue\", to = \"white\", grain = true, className, style, ...props }: Omit<React.ComponentProps<\"div\">, \"children\"> & { from?: Ground; to?: Ground; grain?: boolean }) {\n  const grainRef = React.useRef<HTMLSpanElement>(null);\n  const reduce = useReducedMotion();\n\n  React.useEffect(() => {\n    const el = grainRef.current;\n    if (!el || reduce || typeof el.animate !== \"function\") return;\n    const animation = el.animate(\n      JUMPS.map(([x, y], i) => ({ transform: `translate(${x}px, ${y}px)`, offset: i / (JUMPS.length - 1), easing: \"steps(1, end)\" })),\n      { duration: 640, iterations: Infinity },\n    );\n    return () => animation.cancel();\n  }, [reduce, grain]);\n\n  return (\n    <div\n      aria-hidden\n      data-slot=\"band-divider\"\n      className={cn(\"pointer-events-none relative flex h-[calc(var(--ds-band-step)*4)] w-full flex-col overflow-hidden select-none\", className)}\n      style={{ backgroundColor: GROUND[to], ...style }}\n      {...props}\n    >\n      {STEPS.map((step) => (\n        <span key={step} className=\"min-h-0 flex-1\" style={{ backgroundColor: `color-mix(in srgb, ${GROUND[to]} var(${step}), ${GROUND[from]})` }} />\n      ))}\n      {grain && (\n        <span\n          ref={grainRef}\n          className=\"absolute -inset-22.5 opacity-85 mix-blend-soft-light will-change-transform [image-rendering:pixelated]\"\n          style={{ backgroundImage: GRAIN, backgroundSize: \"180px 180px\" }}\n        />\n      )}\n    </div>\n  );\n}\n\nexport { BandDivider, Scan };\nexport type { Ground as BandGround };\n"
+    }
+  ]
+}

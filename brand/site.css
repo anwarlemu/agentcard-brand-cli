@@ -1,0 +1,138 @@
+/* The site layer: what every Agentcard page has before any component is styled, measured from agentcard.sh. Defaults
+   use :where() so the site's own rules still win; only the touches are added. */
+
+/* The display steps shrink on phones so a headline holds to three lines; the gutter narrows to 20px. */
+@media (max-width: 47.9375rem) {
+	:root {
+		--ds-text-display: 3rem;
+		--ds-text-hero: 2.5rem;
+		--ds-text-h1: 2.125rem;
+		--ds-text-h2: 1.75rem;
+		--ds-text-h3: 1.25rem;
+		--ds-layout-gutter: 1.25rem;
+	}
+}
+
+/* Element defaults sit in the base layer, so a utility class on an element (a library component's text-white) wins
+   over them; their :where() selectors already let an app's own rules win. */
+@layer base {
+	html {
+		background-color: var(--ds-color-bg-page);
+	}
+
+	html,
+	body {
+		color: var(--ds-color-text-default);
+	}
+
+	body {
+		background-color: var(--ds-color-bg-default);
+		font-family: var(--ds-font-sans);
+		font-size: var(--ds-text-body);
+		line-height: var(--ds-leading-body);
+		-webkit-font-smoothing: antialiased;
+		-moz-osx-font-smoothing: grayscale;
+	}
+
+	:where(h1, h2, h3, h4, h5, h6) {
+		font-family: var(--ds-font-display);
+		font-weight: var(--ds-font-weight-medium);
+		color: inherit;
+		letter-spacing: var(--ds-tracking-tight);
+		line-height: var(--ds-leading-display);
+		text-wrap: balance;
+	}
+
+	:where(h1) {
+		line-height: var(--ds-leading-heading);
+	}
+
+	:where(h2) {
+		letter-spacing: var(--ds-tracking-tighter);
+	}
+
+	:where(p, li, blockquote, figcaption, dd, td) {
+		text-wrap: pretty;
+	}
+
+	:where(code, kbd, pre, samp) {
+		font-family: var(--ds-font-mono);
+	}
+
+	::selection {
+		background-color: var(--ds-color-ring-tint);
+	}
+
+	:where(a, button, input, select, textarea, summary, [tabindex]):focus-visible {
+		outline: 2px solid var(--ds-color-focus-ring);
+		outline-offset: 2px;
+	}
+}
+
+/* Touches. */
+
+/* The blue ground: the hero (marked by the CLI with data-ds-hero), and any band that sets ds-on-blue. The ground
+   re-points the text, line and action tokens, as the brand's .on-blue does: the site's own rules already read them
+   (the converter wrote them), so inside the hero its text turns white, its labels sky, its lines translucent white,
+   and its main action becomes the white key with blue text, without a rule per element. Surfaces keep their values:
+   a white card stays a white card on the blue. A header that sits over the hero takes
+   data-ds-ground="blue": the same colors, on its own background. */
+:where([data-ds-hero], [data-ds-ground="blue"], .ds-on-blue) {
+	--ds-color-text-default: var(--ds-color-white);
+	--ds-color-text-secondary: var(--ds-color-text-on-brand-muted);
+	--ds-color-text-muted: var(--ds-color-text-on-brand-muted);
+	--ds-color-text-subtle: var(--ds-color-text-on-brand-muted);
+	--ds-color-text-faint: var(--ds-color-text-on-brand-muted);
+	--ds-color-text-nav: var(--ds-color-white);
+	--ds-color-text-brand: var(--ds-color-sky);
+	--ds-color-text-label: var(--ds-color-sky);
+	--ds-color-border-default: var(--ds-color-border-on-brand);
+	--ds-color-border-subtle: var(--ds-color-border-on-brand);
+	--ds-color-border-strong: var(--ds-color-border-on-brand-strong);
+	--ds-color-border-hairline: var(--ds-color-border-on-brand);
+	--ds-color-wash-hover: var(--ds-color-wash-on-brand);
+	--ds-color-action-primary: var(--ds-color-white);
+	--ds-color-action-primary-hover: var(--ds-color-sky-wash);
+	--ds-color-action-primary-fg: var(--ds-color-brand);
+	--ds-color-border-brand-edge: var(--ds-color-border-key);
+	--ds-shadow-key-brand: var(--ds-shadow-key);
+	color: var(--ds-color-white);
+}
+
+/* The ground itself, at a doubled selector so it wins over the site's own background on its hero class. */
+[data-ds-hero][data-ds-hero],
+.ds-on-blue.ds-on-blue {
+	position: relative;
+	background-color: var(--ds-color-bg-brand);
+}
+
+/* The band divider: where the blue hero meets the white page below, four 9px steps walk from one ground to the
+   other, a staircase rather than a gradient, as at every seam on the brand's pages. Drawn as the hero's own stacked
+   shadows (an element's shadow is not clipped by its own overflow), in the margin it keeps below itself. */
+[data-ds-hero] {
+	margin-bottom: calc(var(--ds-band-step) * 4);
+	box-shadow:
+		0 var(--ds-band-step) 0 color-mix(in srgb, var(--ds-color-white) var(--ds-band-mix-1), var(--ds-color-bg-brand)),
+		0 calc(var(--ds-band-step) * 2) 0 color-mix(in srgb, var(--ds-color-white) var(--ds-band-mix-2), var(--ds-color-bg-brand)),
+		0 calc(var(--ds-band-step) * 3) 0 color-mix(in srgb, var(--ds-color-white) var(--ds-band-mix-3), var(--ds-color-bg-brand)),
+		0 calc(var(--ds-band-step) * 4) 0 color-mix(in srgb, var(--ds-color-white) var(--ds-band-mix-4), var(--ds-color-bg-brand));
+}
+
+/* The same seam drawn on its own, between any two grounds: <div class="ds-band"> or the library's band divider. */
+.ds-band {
+	height: calc(var(--ds-band-step) * 4);
+	background: linear-gradient(
+		color-mix(in srgb, var(--ds-band-to, var(--ds-color-bg-brand)) var(--ds-band-mix-1), var(--ds-band-from, var(--ds-color-bg-default))) 0 25%,
+		color-mix(in srgb, var(--ds-band-to, var(--ds-color-bg-brand)) var(--ds-band-mix-2), var(--ds-band-from, var(--ds-color-bg-default))) 25% 50%,
+		color-mix(in srgb, var(--ds-band-to, var(--ds-color-bg-brand)) var(--ds-band-mix-3), var(--ds-band-from, var(--ds-color-bg-default))) 50% 75%,
+		color-mix(in srgb, var(--ds-band-to, var(--ds-color-bg-brand)) var(--ds-band-mix-4), var(--ds-band-from, var(--ds-color-bg-default))) 75% 100%
+	);
+}
+
+/* A label set in the display face: eyebrows, window bars, footer headings. Sentence case, never caps. */
+.ds-label {
+	font-family: var(--ds-font-display);
+	font-size: var(--ds-text-caption);
+	letter-spacing: var(--ds-tracking-label);
+	color: var(--ds-color-text-label);
+}

@@ -1,0 +1,59 @@
+{
+  "schemaVersion": 1,
+  "name": "changelog-page",
+  "useFor": "Use as a starting point for an Agentcard changelog. Pass days, newest first, with Added, Improved and Fixed groups.",
+  "constraints": [
+    "Tags other than Added",
+    "Improved and Fixed",
+    "Oldest entries first",
+    "Long paragraphs in place of bullets",
+    "Dates in sentence case"
+  ],
+  "documentation": "",
+  "source": "Not in the agentcard-website source yet; agentcard.sh /updates (computed: .v7-upd-feed, .v7-about-head)",
+  "exports": [
+    "ChangelogPage"
+  ],
+  "client": false,
+  "docsUrl": "https://agentcard-ds.vercel.app/components/changelog-page",
+  "markdownUrl": "https://agentcard-ds.vercel.app/r/changelog-page.md",
+  "examples": [
+    {
+      "path": "examples/changelog-page.tsx",
+      "content": "import { ChangelogPage } from \"@/components/blocks/changelog-page\";\n\nexport function Block() {\n  return <ChangelogPage />;\n}\n",
+      "exports": [
+        "Block"
+      ],
+      "requires": [
+        "changelog-page"
+      ],
+      "packages": [],
+      "previews": [
+        {
+          "name": "Block",
+          "url": "https://agentcard-ds.vercel.app/preview/changelog-page/Block"
+        }
+      ]
+    }
+  ],
+  "type": "block",
+  "title": "Changelog page",
+  "description": "Changelog template with the Updates head, a feed of dated changes, footer and navigation.",
+  "surface": "site",
+  "kinds": [],
+  "requires": [
+    "theme",
+    "nav-dock",
+    "prose",
+    "site-footer",
+    "site-header",
+    "updates-feed"
+  ],
+  "packages": [],
+  "files": [
+    {
+      "path": "components/blocks/changelog-page.tsx",
+      "content": "import { NavDock } from \"@/components/site/nav-dock\";\nimport { Prose } from \"@/components/site/prose\";\nimport { SiteFooter } from \"@/components/site/site-footer\";\nimport { SiteHeader } from \"@/components/site/site-header\";\nimport { UpdatesFeed, type UpdateDay } from \"@/components/site/updates-feed\";\n\n// The footer as agentcard.sh carries it on every page: five columns, the line, the running line. Sample categories\n// stand in for the merchant names; replace them with your own.\nconst FOOTER = {\n  description: (\n    <>\n      We want agents to buy anything online\n      <br />\n      that you can buy as a human.\n    </>\n  ),\n  groups: [\n    { title: \"Product\", links: [{ label: \"Vault\", href: \"https://www.agentcard.sh/vault\" }, { label: \"Issuing\", href: \"https://www.agentcard.sh/issuing\" }, { label: \"Voice\", href: \"https://cal.com/team/agentcard/agentcard-call\" }, { label: \"Purchase Agent\", href: \"https://www.agentcard.sh/purchase-agent\" }, { label: \"Pricing\", href: \"https://www.agentcard.sh/pricing\" }, { label: \"FAQ\", href: \"https://www.agentcard.sh/#faq\" }] },\n    { title: \"Developers\", links: [{ label: \"Documentation\", href: \"https://docs.agentcard.sh\" }, { label: \"API reference\", href: \"https://docs.agentcard.sh/companies/api/reference\" }] },\n    { title: \"Company\", links: [{ label: \"About\", href: \"https://www.agentcard.sh/about\" }, { label: \"Changelog\", href: \"https://www.agentcard.sh/updates\" }, { label: \"Trust Center\", href: \"https://app.vanta.com/agentcard.sh/trust/8t52k9fqhneqwt4y2jpvmn\" }] },\n    { title: \"Legal\", links: [{ label: \"Privacy Policy\", href: \"https://legal.raincards.xyz/legal/privacy-policy\" }, { label: \"Terms of Service\", href: \"https://www.agentcard.sh/terms\" }, { label: \"Card Terms\", href: \"https://www.agentcard.sh/card-terms\" }, { label: \"Card Terms (International)\", href: \"https://www.agentcard.sh/card-terms-international\" }] },\n    { title: \"Social\", links: [{ label: \"X / Twitter\", href: \"https://x.com/agentcardhq\" }, { label: \"Instagram\", href: \"https://www.instagram.com/agentcardhq/\" }] },\n  ],\n  merchants: [\"Groceries\", \"Electronics\", \"Home goods\", \"Office supplies\", \"Apparel\", \"Food delivery\", \"Software\", \"Travel\", \"Books\", \"Pet supplies\", \"Hardware\", \"Flights\"],\n};\n\n// The dock as agentcard.sh carries it: Home, the Products menu, About, Pricing, and Get started.\nconst PRODUCTS = {\n  label: \"Products\",\n  items: [\n    { title: \"Vault\", description: \"Store customers’ cards and buy with an agent.\", href: \"https://www.agentcard.sh/vault\" },\n    { title: \"Issuing\", description: \"One-time and multi-use cards for your agent.\", href: \"https://www.agentcard.sh/issuing\" },\n    { title: \"Voice\", description: \"Approve an agent’s purchase by speaking.\", href: \"https://cal.com/team/agentcard/agentcard-call\" },\n    { title: \"Purchase Agent\", description: \"Buy from the stores people already use.\", href: \"https://www.agentcard.sh/purchase-agent\" },\n  ],\n};\n\nconst LINKS = [\n  { label: \"Home\", href: \"https://www.agentcard.sh/\" },\n  { label: \"About\", href: \"https://www.agentcard.sh/about\" },\n  { label: \"Pricing\", href: \"https://www.agentcard.sh/pricing\" },\n];\n\nconst START = { label: \"Get started\", href: \"https://app.agentcard.sh/\" };\n\n// The changelog as agentcard.sh draws it (/updates): the bare header, the page's head on the wider column (Changelog,\n// Updates, and a small caps line), then one ruled row per day, newest first, its changes under Added, Improved and\n// Fixed. The blue footer and the glass dock close it. Sample entries; pass your own days.\n\nconst DAYS: UpdateDay[] = [\n  {\n    date: \"Tue Oct 27\",\n    dateTime: \"2026-10-27\",\n    entries: [\n      { tag: \"Added\", items: [\"A company can name its shopper agent, and the name shows on every message the agent sends.\", \"Purchase API answers now carry the merchant’s order number once the order is placed.\"] },\n      { tag: \"Improved\", items: [\"A company now opens up to 10,000 cards at once.\", \"Card limits save as you type, with no separate save step.\"] },\n      { tag: \"Fixed\", items: [\"A card payment no longer fails when the merchant retries it.\"] },\n    ],\n  },\n  {\n    date: \"Mon Oct 26\",\n    dateTime: \"2026-10-26\",\n    entries: [\n      {\n        tag: \"Added\",\n        title: \"Set up from your editor\",\n        body: \"One command adds the card tools to your coding agent and walks you through the first purchase.\",\n        media: (\n          <div role=\"img\" aria-label=\"A screen recording of the setup\" className=\"flex aspect-video items-center justify-center bg-brand\">\n            <span aria-hidden className=\"flex size-14 items-center justify-center rounded-pill bg-white text-fg-brand shadow-key\">▶</span>\n          </div>\n        ),\n      },\n    ],\n  },\n  {\n    date: \"Fri Oct 23\",\n    dateTime: \"2026-10-23\",\n    entries: [\n      { tag: \"Improved\", items: [\"A shopper with no login merges into their account the first time they sign in.\"] },\n      { tag: \"Fixed\", items: [\"An iPhone with its passkey in a second keychain approves on the first try.\", \"On a vague shopping request the agent asks one question before it searches.\"] },\n    ],\n  },\n  {\n    date: \"Wed Oct 21\",\n    dateTime: \"2026-10-21\",\n    entries: [{ tag: \"Added\", items: [\"Issuing cards can now be funded by the company or by each user’s own wallet.\", \"Webhooks for approved, declined and refunded purchases.\"] }],\n  },\n];\n\nexport function ChangelogPage({ days = DAYS }: { days?: UpdateDay[] }) {\n  return (\n    <main className=\"relative\">\n      <SiteHeader href=\"https://www.agentcard.sh/\" ground=\"white\" action={START} />\n      <div className=\"mx-auto w-(--ds-frame-column) pt-35 pb-28 md:pt-37.5\">\n        <Prose wide eyebrow=\"Changelog\" title=\"Updates\" meta={<>Shipping daily · Last entry {days[0]?.date}</>} bodyClassName=\"hidden\" />\n        <UpdatesFeed days={days} className=\"mx-auto mt-2 max-w-205\" />\n      </div>\n      <SiteFooter backing=\"Backed by Y Combinator\" description={FOOTER.description} groups={FOOTER.groups} merchants={FOOTER.merchants} />\n      <NavDock menu={PRODUCTS} links={LINKS} action={START} />\n    </main>\n  );\n}\n"
+    }
+  ]
+}

@@ -1,0 +1,69 @@
+{
+  "schemaVersion": 1,
+  "name": "accordion",
+  "useFor": "Use for FAQs or details that can stay collapsed. The InWindow example adds topic tabs and a containing window.",
+  "constraints": [
+    "Chevrons or typed plus signs",
+    "Bold questions",
+    "Cards around each question",
+    "More than one list open by default"
+  ],
+  "documentation": "",
+  "source": "agentcard-website src/app/globals.css (.faq-list, .v7-page summary, .v7-page details > p); live https://www.agentcard.sh/ (#faq .faq-list, computed)",
+  "exports": [
+    "Accordion",
+    "AccordionContent",
+    "AccordionItem",
+    "AccordionMark",
+    "AccordionTrigger"
+  ],
+  "client": true,
+  "docsUrl": "https://agentcard-ds.vercel.app/components/accordion",
+  "markdownUrl": "https://agentcard-ds.vercel.app/r/accordion.md",
+  "examples": [
+    {
+      "path": "examples/accordion.tsx",
+      "content": "import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from \"@/components/ui/accordion\";\nimport { Tabs, TabsContent, TabsList, TabsTrigger } from \"@/components/ui/tabs\";\nimport { Window } from \"@/components/ui/window\";\n\nconst GENERAL = [\n  { q: \"What does Agentcard do?\", a: \"It lets AI agents pay at real checkouts. You fund a card, set what it can buy, and your agent uses it like a person would.\" },\n  { q: \"Do I need to write code?\", a: \"No. Connect your agent with the command line tool or the API, or share a card with an agent you already use.\" },\n  { q: \"Is my card number shared with the agent?\", a: \"Never. The agent gets a token that only works within the limits you set, and you can pause it at any time.\" },\n  { q: \"What does it cost?\", a: \"Starting is free. You pay per card and per purchase as your agents buy more; see the pricing page for details.\" },\n];\n\nfunction Faq({ items }: { items: { q: string; a: string }[] }) {\n  return (\n    <Accordion type=\"single\" collapsible defaultValue=\"item-0\" className=\"w-full max-w-170\">\n      {items.map((item, i) => (\n        <AccordionItem key={item.q} value={`item-${i}`}>\n          <AccordionTrigger>{item.q}</AccordionTrigger>\n          <AccordionContent>{item.a}</AccordionContent>\n        </AccordionItem>\n      ))}\n    </Accordion>\n  );\n}\n\nexport function Site() {\n  return <Faq items={GENERAL} />;\n}\n\nexport function InWindow() {\n  return (\n    <Window name=\"faq.help / Agentcard\" className=\"mx-auto max-w-198\" bodyClassName=\"flex flex-col items-center px-4 pt-10 pb-12 md:px-14\">\n      <h2 className=\"text-h2 leading-heading tracking-tighter\">Questions, answered</h2>\n      <Tabs defaultValue=\"general\" className=\"mt-9 w-full max-w-170 items-center gap-9\">\n        <TabsList className=\"w-full\">\n          <TabsTrigger value=\"general\">General</TabsTrigger>\n          <TabsTrigger value=\"vault\">Vault</TabsTrigger>\n          <TabsTrigger value=\"issuing\">Issuing</TabsTrigger>\n        </TabsList>\n        <TabsContent value=\"general\" className=\"w-full\">\n          <Faq items={GENERAL} />\n        </TabsContent>\n        <TabsContent value=\"vault\" className=\"w-full\">\n          <Faq items={GENERAL.slice(2)} />\n        </TabsContent>\n        <TabsContent value=\"issuing\" className=\"w-full\">\n          <Faq items={GENERAL.slice(1, 3)} />\n        </TabsContent>\n      </Tabs>\n    </Window>\n  );\n}\n",
+      "exports": [
+        "Site",
+        "InWindow"
+      ],
+      "requires": [
+        "accordion",
+        "tabs",
+        "window"
+      ],
+      "packages": [],
+      "previews": [
+        {
+          "name": "Site",
+          "url": "https://agentcard-ds.vercel.app/preview/accordion/Site"
+        },
+        {
+          "name": "InWindow",
+          "url": "https://agentcard-ds.vercel.app/preview/accordion/InWindow"
+        }
+      ]
+    }
+  ],
+  "type": "ui",
+  "title": "Accordion",
+  "description": "Expandable questions or sections with keyboard navigation.",
+  "surface": "site",
+  "kinds": [
+    "faq"
+  ],
+  "requires": [
+    "theme",
+    "utils"
+  ],
+  "packages": [
+    "@radix-ui/react-accordion"
+  ],
+  "files": [
+    {
+      "path": "components/ui/accordion.tsx",
+      "content": "\"use client\";\n\nimport * as React from \"react\";\nimport * as AccordionPrimitive from \"@radix-ui/react-accordion\";\n\nimport { cn } from \"@/lib/utils\";\n\n// The brand's FAQ list (agentcard.sh /, .faq-list under .v7-page, measured as rendered): a 14 percent ink rule above\n// the first question and a 20 percent one under each; the question in the 14px display face at 500 (tracked -0.01em,\n// 1.2 leading, 20px by 14px of padding, 6px corners), blue and on a faint wash under the pointer (the wash eases in\n// 160ms, the color does not); a drawn + (a bar across and a bar down in a 30px box, not a glyph) that turns an eighth\n// into an x when open (220ms ease-out). Open, the question and its mark stay blue. The answer is 14px Inter at 1.8\n// leading, 68 percent ink at 80 percent opacity, 540px wide; it slides open in 200ms ease-out (and shut in 200ms) and\n// fades down 4px into place (240ms, 40ms late). Reduced motion opens it at once.\nfunction Accordion(props: React.ComponentProps<typeof AccordionPrimitive.Root>) {\n  return <AccordionPrimitive.Root data-slot=\"accordion\" {...props} />;\n}\n\nfunction AccordionItem({ className, ...props }: React.ComponentProps<typeof AccordionPrimitive.Item>) {\n  return <AccordionPrimitive.Item data-slot=\"accordion-item\" className={cn(\"border-b border-b-ink/20 first:border-t first:border-t-line\", className)} {...props} />;\n}\n\n/** The FAQ's mark: a 12px plus drawn in two 1.5px bars, in a 30px box so a column of them lines up. */\nfunction AccordionMark({ className }: { className?: string }) {\n  return (\n    <span aria-hidden data-slot=\"accordion-mark\" className={cn(\"grid h-3.5 w-7.5 shrink-0 place-items-center self-center text-fg-faint transition-[rotate,color] duration-220 ease-out motion-reduce:transition-none\", className)}>\n      <svg viewBox=\"0 0 12 12\" className=\"size-3 fill-none stroke-current [stroke-width:1.5]\">\n        <path d=\"M0 6h12M6 0v12\" />\n      </svg>\n    </span>\n  );\n}\n\nfunction AccordionTrigger({ className, children, icon, ...props }: React.ComponentProps<typeof AccordionPrimitive.Trigger> & { icon?: React.ReactNode | null }) {\n  return (\n    <AccordionPrimitive.Header className=\"flex\">\n      <AccordionPrimitive.Trigger\n        data-slot=\"accordion-trigger\"\n        className={cn(\n          \"group flex flex-1 cursor-pointer items-center justify-between gap-3.75 rounded-sm px-3.5 py-5 text-left font-display text-body-sm font-medium [letter-spacing:-0.01em] [line-height:1.2] text-fg transition-[background-color] duration-160 ease-out outline-none hover:bg-ink/5 hover:text-fg-brand focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-solid focus-visible:outline-focus-ring disabled:pointer-events-none disabled:opacity-50 data-[state=open]:text-fg-brand motion-reduce:transition-none\",\n          className,\n        )}\n        {...props}\n      >\n        {children}\n        {icon === undefined ? <AccordionMark className=\"group-hover:text-fg-brand group-data-[state=open]:rotate-45 group-data-[state=open]:text-fg-brand\" /> : icon}\n      </AccordionPrimitive.Trigger>\n    </AccordionPrimitive.Header>\n  );\n}\n\nfunction AccordionContent({ className, children, ...props }: React.ComponentProps<typeof AccordionPrimitive.Content>) {\n  return (\n    <AccordionPrimitive.Content\n      data-slot=\"accordion-content\"\n      className=\"overflow-hidden text-body-sm [line-height:1.8] text-fg-muted motion-safe:data-[state=closed]:animate-accordion-up data-[state=closed]:[animation-duration:var(--ds-duration-base)] motion-safe:data-[state=open]:animate-accordion-down motion-reduce:animate-none\"\n      {...props}\n    >\n      <div className={cn(\"max-w-135 px-3.5 pb-5.5 opacity-80 transition-[opacity,translate] delay-40 duration-240 ease-out starting:-translate-y-1 starting:opacity-0 motion-reduce:transition-none\", className)}>{children}</div>\n    </AccordionPrimitive.Content>\n  );\n}\n\nexport { Accordion, AccordionContent, AccordionItem, AccordionMark, AccordionTrigger };\n"
+    }
+  ]
+}

@@ -1,0 +1,61 @@
+{
+  "schemaVersion": 1,
+  "name": "kbd",
+  "useFor": "Use in control hints, menu items and command palette instructions. The bare variant is for compact search hints.",
+  "constraints": [
+    "Keys for things that are not keys",
+    "Dark keys",
+    "Keys in body copy larger than the text around them"
+  ],
+  "documentation": "",
+  "source": "Repository reference; public guide pages currently unavailable. agentcard-website src/app/globals.css (.v7-guide-search-keys kbd, .v7-guide-search kbd)",
+  "exports": [
+    "Kbd",
+    "kbdVariants"
+  ],
+  "client": false,
+  "docsUrl": "https://agentcard-ds.vercel.app/components/kbd",
+  "markdownUrl": "https://agentcard-ds.vercel.app/r/kbd.md",
+  "examples": [
+    {
+      "path": "examples/kbd.tsx",
+      "content": "import { Kbd } from \"@/components/ui/kbd\";\n\n// The guides' search footer: keys on the sky strip, each followed by what it does.\nexport function Site() {\n  return (\n    <div className=\"grid max-w-160 gap-6\">\n      <div className=\"flex flex-wrap items-center gap-x-4.5 gap-y-2 rounded-control border border-line-window bg-sky px-3.5 py-2 font-display text-micro text-fg-brand\">\n        <span className=\"inline-flex items-center gap-1\">\n          <Kbd>↑</Kbd>\n          <Kbd>↓</Kbd> to move\n        </span>\n        <span className=\"inline-flex items-center gap-1\">\n          <Kbd>↵</Kbd> to open\n        </span>\n        <span className=\"inline-flex items-center gap-1\">\n          <Kbd>Esc</Kbd> to close\n        </span>\n      </div>\n      <p className=\"flex flex-wrap items-center gap-1 text-body-sm text-fg-muted\">\n        Press <Kbd>⌘</Kbd>\n        <Kbd>K</Kbd> to search the guides.\n      </p>\n    </div>\n  );\n}\n\n// The hint at the end of the guides' search box.\nexport function Bare() {\n  return (\n    <div className=\"flex h-9 max-w-95 items-center gap-2.5 rounded-control border border-line-field bg-surface px-3 text-body-sm text-fg-muted shadow-inset\">\n      <span className=\"flex-1\">Search...</span>\n      <Kbd variant=\"bare\">⌘K</Kbd>\n    </div>\n  );\n}\n",
+      "exports": [
+        "Site",
+        "Bare"
+      ],
+      "requires": [
+        "kbd"
+      ],
+      "packages": [],
+      "previews": [
+        {
+          "name": "Site",
+          "url": "https://agentcard-ds.vercel.app/preview/kbd/Site"
+        },
+        {
+          "name": "Bare",
+          "url": "https://agentcard-ds.vercel.app/preview/kbd/Bare"
+        }
+      ]
+    }
+  ],
+  "type": "ui",
+  "title": "Kbd",
+  "description": "Keyboard key or shortcut label.",
+  "surface": "site",
+  "kinds": [],
+  "requires": [
+    "theme",
+    "utils"
+  ],
+  "packages": [
+    "class-variance-authority"
+  ],
+  "files": [
+    {
+      "path": "components/ui/kbd.tsx",
+      "content": "import * as React from \"react\";\nimport { cva, type VariantProps } from \"class-variance-authority\";\n\nimport { cn } from \"@/lib/utils\";\n\n// A keyboard key, as the brand draws them (agentcard-website globals.css). `key` (the default) is .v7-guide-search-keys\n// kbd, the keys in the guides' search footer: a white face on a pale blue edge, 4px corners, the label in the 10px\n// display face in blue, at least 18px wide. `bare` is .v7-guide-search kbd, the hint at the end of the search box: the\n// 12px display face at 45 percent ink, no face at all.\nconst kbdVariants = cva(\"inline-grid shrink-0 place-items-center font-display leading-none whitespace-nowrap\", {\n  variants: {\n    variant: {\n      key: \"h-5 min-w-4.5 rounded-[calc(var(--ds-radius-control)/2)] border border-line-window bg-surface px-1 text-micro text-fg-brand\",\n      bare: \"text-caption text-fg-faint\",\n    },\n  },\n  defaultVariants: { variant: \"key\" },\n});\n\nfunction Kbd({ className, variant, ...props }: React.ComponentProps<\"kbd\"> & VariantProps<typeof kbdVariants>) {\n  return <kbd data-slot=\"kbd\" className={cn(kbdVariants({ variant }), className)} {...props} />;\n}\n\nexport { Kbd, kbdVariants };\n"
+    }
+  ]
+}

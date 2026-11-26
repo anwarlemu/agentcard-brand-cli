@@ -1,0 +1,63 @@
+{
+  "schemaVersion": 1,
+  "name": "textarea",
+  "useFor": "Use inside Field for messages, notes and other longer input. Connect value and onChange when the form owns the state.",
+  "constraints": [
+    "Rounded corners",
+    "Gray fills",
+    "Resizing sideways"
+  ],
+  "documentation": "",
+  "source": "Published CSS on https://agentcard.com/get-started (.v7-gate-field textarea); the current visible form has no textarea",
+  "exports": [
+    "Textarea"
+  ],
+  "client": true,
+  "docsUrl": "https://agentcard-ds.vercel.app/components/textarea",
+  "markdownUrl": "https://agentcard-ds.vercel.app/r/textarea.md",
+  "examples": [
+    {
+      "path": "examples/textarea.tsx",
+      "content": "\"use client\";\n\nimport * as React from \"react\";\nimport { Button } from \"@/components/ui/button\";\nimport { Field } from \"@/components/ui/field\";\nimport { Textarea } from \"@/components/ui/textarea\";\n\nexport function Site() {\n  const [brief, setBrief] = React.useState(\"\");\n  const [submitted, setSubmitted] = React.useState(false);\n  const [saved, setSaved] = React.useState(\"\");\n  const error = submitted && !brief.trim() ? \"Enter what your agent should buy.\" : undefined;\n  return <form noValidate className=\"grid max-w-170 gap-4\" onSubmit={(event) => {\n    event.preventDefault();\n    setSubmitted(true);\n    setSaved(brief.trim() ? brief.trim() : \"\");\n  }} onReset={() => { setBrief(\"\"); setSubmitted(false); setSaved(\"\"); }}>\n    <Field label=\"What should your agent buy?\" htmlFor=\"textarea-brief\" required error={error} help={`${brief.length}/500 characters`}>\n      <Textarea id=\"textarea-brief\" name=\"brief\" value={brief} maxLength={500}\n        onChange={(event) => { setBrief(event.target.value); setSaved(\"\"); }}\n        placeholder=\"Book flights and hotels for the sales team\" />\n    </Field>\n    <div className=\"flex gap-3\">\n      <Button type=\"submit\">Save brief</Button>\n      <Button type=\"reset\" variant=\"secondary\">Reset</Button>\n    </div>\n    <p role=\"status\" className=\"text-body-sm text-fg-muted\">{saved ? `Saved: ${saved}` : \"\"}</p>\n  </form>;\n}\n\nexport function States() {\n  return <div className=\"grid max-w-170 gap-4\">\n    <Field label=\"Purchase notes\" htmlFor=\"textarea-notes\" help=\"Four rows; resize vertically for longer notes.\">\n      <Textarea id=\"textarea-notes\" rows={4} defaultValue={\"Buy two train tickets.\\nKeep the total under $200.\"} />\n    </Field>\n    <Field label=\"Read-only brief\" htmlFor=\"textarea-readonly\">\n      <Textarea id=\"textarea-readonly\" readOnly value=\"Book a meeting room for six people.\" />\n    </Field>\n    <Field label=\"Unavailable brief\" htmlFor=\"textarea-disabled\">\n      <Textarea id=\"textarea-disabled\" disabled placeholder=\"Select an agent first\" />\n    </Field>\n  </div>;\n}\n",
+      "exports": [
+        "Site",
+        "States"
+      ],
+      "requires": [
+        "textarea",
+        "button",
+        "field"
+      ],
+      "packages": [],
+      "previews": [
+        {
+          "name": "Site",
+          "url": "https://agentcard-ds.vercel.app/preview/textarea/Site"
+        },
+        {
+          "name": "States",
+          "url": "https://agentcard-ds.vercel.app/preview/textarea/States"
+        }
+      ]
+    }
+  ],
+  "type": "ui",
+  "title": "Textarea",
+  "description": "Resizable multi-line text field.",
+  "surface": "site",
+  "kinds": [
+    "input"
+  ],
+  "requires": [
+    "theme",
+    "field",
+    "utils"
+  ],
+  "packages": [],
+  "files": [
+    {
+      "path": "components/ui/textarea.tsx",
+      "content": "\"use client\";\n\nimport * as React from \"react\";\n\nimport { useFieldControl } from \"@/components/ui/field\";\nimport { cn } from \"@/lib/utils\";\n\n// The brand's multi-line field (the get-started form, .v7-gate-field textarea): the input's square box, 35 percent ink\n// border, 18px Inter and 10px by 12px of padding, at least 84px tall and growing only downward; focus is the form's 2px\n// blue outline laid over the border.\nfunction Textarea({ className, ...props }: React.ComponentProps<\"textarea\">) {\n  return (\n    <textarea\n      data-slot=\"textarea\"\n      className={cn(\n        \"block min-h-21 min-w-0 w-full resize-y rounded-none border border-line-strong bg-surface px-3 py-2.5 font-sans text-h5 leading-snug text-fg outline-none placeholder:text-fg/50 focus-visible:outline-2 focus-visible:-outline-offset-1 focus-visible:outline-solid focus-visible:outline-focus-ring disabled:pointer-events-none disabled:opacity-50 aria-invalid:border-danger\",\n        className,\n      )}\n      {...useFieldControl(props)}\n    />\n  );\n}\n\nexport { Textarea };\n"
+    }
+  ]
+}

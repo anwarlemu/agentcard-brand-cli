@@ -1,0 +1,61 @@
+{
+  "schemaVersion": 1,
+  "name": "testimonials",
+  "useFor": "Pass cases with name, logo, quote, context and tag. Use approved customer quotes and attribution.",
+  "constraints": [
+    "More than one quote per window",
+    "Bold or italic quotes",
+    "A trail of a single case",
+    "Photos in place of the company's mark"
+  ],
+  "documentation": "",
+  "source": "agentcard-website src/components/v7/products-showcase.tsx (CaseCard), product-trail.tsx; agentcard.sh / (.v7-cases, .v7-trail, .v7-case, computed)",
+  "exports": [
+    "Testimonials",
+    "Case"
+  ],
+  "client": true,
+  "docsUrl": "https://agentcard-ds.vercel.app/components/testimonials",
+  "markdownUrl": "https://agentcard-ds.vercel.app/r/testimonials.md",
+  "examples": [
+    {
+      "path": "examples/testimonials.tsx",
+      "content": "import { Testimonials } from \"@/components/site/testimonials\";\n\nconst Mark = ({ d }: { d: string }) => (\n  <svg viewBox=\"0 0 20 20\" className=\"fill-current\">\n    <path d={d} />\n  </svg>\n);\n\nexport function Site() {\n  return (\n    <section className=\"mx-auto w-full max-w-(--ds-frame-column) py-20\">\n      <div className=\"mx-auto max-w-(--ds-layout-heading) text-center\">\n        <h2 className=\"font-display text-h2 leading-heading font-medium tracking-tighter\">Powering payments for agentic startups</h2>\n        <p className=\"mt-3.5 text-body-lg leading-6.5 tracking-tight opacity-70\">\n          Consumer apps, B2B companies and crypto teams run their agents’ purchases on Agentcard.\n        </p>\n      </div>\n      <Testimonials\n        cases={[\n          {\n            name: \"Orchid\",\n            logo: <Mark d=\"M10 2a3 3 0 0 1 3 3 3 3 0 1 1 2 5 3 3 0 1 1-3 5 3 3 0 1 1-4 0 3 3 0 1 1-3-5 3 3 0 1 1 2-5 3 3 0 0 1 3-3Z\" />,\n            context: \"Consumer apps like Orchid buy on Amazon for customers using Agentcard:\",\n            quote: \"Orchid uses Agentcard to store customers’ cards safely and buy things on their behalf.”\",\n            tag: \"Consumer\",\n          },\n          {\n            name: \"Almanac\",\n            logo: <Mark d=\"M10 1a9 9 0 1 1 0 18 9 9 0 0 1 0-18Zm0 3a6 6 0 1 0 0 12 6 6 0 0 0 0-12Z\" />,\n            context: \"B2B companies like Almanac use Agentcard to give cards to company agents:\",\n            quote: \"Almanac stores corporate cards using Agentcard and automates company purchases with their Slack agent.”\",\n            tag: \"B2B\",\n          },\n          {\n            name: \"Laso Finance\",\n            file: \"laso.case\",\n            logo: <Mark d=\"M3 5l7-3 7 3v10l-7 3-7-3Z\" />,\n            context: \"Crypto companies like Laso use Agentcard as their payment infrastructure:\",\n            quote: \"When users have funds in crypto and their agent wants to make purchases using them, they can use Laso (powered by Agentcard) and create cards their agent can use.”\",\n            tag: \"Crypto\",\n          },\n        ]}\n      />\n    </section>\n  );\n}\n",
+      "exports": [
+        "Site"
+      ],
+      "requires": [
+        "testimonials"
+      ],
+      "packages": [],
+      "previews": [
+        {
+          "name": "Site",
+          "url": "https://agentcard-ds.vercel.app/preview/testimonials/Site"
+        }
+      ]
+    }
+  ],
+  "type": "site",
+  "title": "Testimonials",
+  "description": "Customer quotes with names, logos and optional context.",
+  "surface": "site",
+  "kinds": [
+    "window",
+    "window-bar",
+    "card"
+  ],
+  "requires": [
+    "theme",
+    "window",
+    "use-trail",
+    "utils"
+  ],
+  "packages": [],
+  "files": [
+    {
+      "path": "components/site/testimonials.tsx",
+      "content": "\"use client\";\n\nimport * as React from \"react\";\n\nimport { WindowBar } from \"@/components/ui/window\";\nimport { TRAIL_REST, useTrail } from \"@/hooks/use-trail\";\nimport { cn } from \"@/lib/utils\";\n\n// The customer cases (agentcard.sh home, \"Powering payments for agentic startups\"; .v7-cases, .v7-case): each case is a\n// window hung on the trail, at its own height and tilt, one thin ink line threaded through their centres. A window is\n// the sky bar (orchid.case) over a blue frame, a white card inset 10px in it: a large blue opening quote, the context in\n// small muted text, the quote at 24px, a dotted rule, then the company's logo and name and a blue tag at the right.\n// On a phone the windows stack, still tilted and on their line, their drops scaled down.\n\ntype Case = {\n  name: string;\n  /** The company's mark, about 20px (an svg or img, decorative: the name is beside it). */\n  logo?: React.ReactNode;\n  /** The quote itself, set large. The closing mark is part of your text. */\n  quote: React.ReactNode;\n  /** The sentence before the quote, in small muted text (\"Consumer apps like Orchid buy on Amazon:\"). */\n  context?: React.ReactNode;\n  /** The kind of company, in blue at the right (Consumer, B2B, Crypto). */\n  tag?: React.ReactNode;\n  /** The bar's name; defaults to the company's slug with .case. */\n  file?: string;\n};\n\nconst slug = (s: string) => s.toLowerCase().replace(/[^a-z0-9]+/g, \"-\").replace(/^-|-$/g, \"\");\n\nfunction CaseWindow({ item, index }: { item: Case; index: number }) {\n  const rest = TRAIL_REST[index % TRAIL_REST.length];\n  return (\n    <li\n      data-trail-card=\"\"\n      style={{ \"--trail-y\": `${rest.y}px`, \"--trail-rot\": `${rest.rot}deg` } as React.CSSProperties}\n      className=\"relative z-10 flex flex-col overflow-hidden rounded-card border border-hairline bg-brand shadow-card [transform:translateY(calc(var(--trail-y)*0.45))_rotate(var(--trail-rot))] lg:[transform:translateY(var(--trail-y))_rotate(var(--trail-rot))]\"\n    >\n      {/* The frame: the blue ground with a band of sky washing through its lower half, as the brand's moving grain does. */}\n      <span\n        aria-hidden\n        className=\"pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,var(--ds-color-brand)_36%,color-mix(in_srgb,var(--ds-color-sky)_78%,var(--ds-color-brand))_63%,var(--ds-color-brand)_90%)]\"\n      />\n      <WindowBar name={item.file ?? `${slug(item.name)}.case`} className=\"relative shadow-[inset_0_1px_0_color-mix(in_srgb,var(--ds-color-white)_35%,transparent)]\" />\n      <figure className=\"relative m-2.5 flex flex-1 flex-col rounded-[calc(var(--ds-radius-card)-0.125rem)] border border-[color-mix(in_srgb,var(--ds-color-ink)_18%,transparent)] bg-surface px-6 pt-6.5 pb-7.5 text-fg shadow-[0_2px_8px_-2px_color-mix(in_srgb,var(--ds-color-ink)_30%,transparent)] max-md:px-5 max-md:pt-5.5 max-md:pb-6\">\n        <span aria-hidden className=\"relative -top-[0.06em] -left-[0.05em] block h-[0.36em] font-display text-display leading-none font-normal text-fg-brand\">\n          “\n        </span>\n        <blockquote className=\"mt-3.5 flex-1\">\n          {item.context && <p className=\"text-body-sm leading-5.5 opacity-72 text-pretty\">{item.context}</p>}\n          <p className={cn(\"text-h3 [line-height:1.2] font-medium [letter-spacing:-0.03em] text-balance\", item.context && \"mt-2\")}>{item.quote}</p>\n        </blockquote>\n        <figcaption className=\"mt-5.5 flex items-center gap-2 border-t-2 border-dotted border-line-mid pt-4 text-body-sm\">\n          {item.logo && (\n            <span aria-hidden className=\"flex size-5 flex-none items-center justify-center [&>img]:size-full [&>svg]:size-full\">\n              {item.logo}\n            </span>\n          )}\n          <span className=\"font-medium tracking-tight\">{item.name}</span>\n          {item.tag && <span className=\"ml-auto text-caption text-fg-brand\">{item.tag}</span>}\n        </figcaption>\n      </figure>\n    </li>\n  );\n}\n\n/** The customer cases hung on the trail: three to a row on wide screens, stacked on a phone. */\nfunction Testimonials({ cases, className, ...props }: React.ComponentProps<\"div\"> & { cases: Case[] }) {\n  const root = React.useRef<HTMLDivElement>(null);\n  const path = React.useRef<SVGPathElement>(null);\n  useTrail(root, path, cases.length);\n  return (\n    <div ref={root} data-slot=\"testimonials\" className={cn(\"relative pb-9 lg:pt-10\", className)} {...props}>\n      <svg aria-hidden preserveAspectRatio=\"none\" className=\"pointer-events-none absolute inset-0 size-full overflow-visible\">\n        <path ref={path} className=\"fill-none stroke-fg [stroke-linecap:round] [stroke-width:1.5] [vector-effect:non-scaling-stroke]\" />\n      </svg>\n      <ul className=\"mx-auto mt-2 grid max-w-[min(35rem,80vw)] grid-cols-1 gap-y-18 lg:mt-14 lg:max-w-none lg:grid-cols-3 lg:items-start lg:gap-6\">\n        {cases.map((item, i) => (\n          <CaseWindow key={item.name} item={item} index={i} />\n        ))}\n      </ul>\n    </div>\n  );\n}\n\nexport { Testimonials, type Case };\n"
+    }
+  ]
+}

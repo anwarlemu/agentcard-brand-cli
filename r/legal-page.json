@@ -1,0 +1,57 @@
+{
+  "schemaVersion": 1,
+  "name": "legal-page",
+  "useFor": "Use as a starting point for Agentcard terms, privacy or card terms. Pass the title, the date and your own sections; the sample is not legal text.",
+  "constraints": [
+    "A table of contents",
+    "Caps headings",
+    "Bold paragraphs",
+    "A second column beside the text"
+  ],
+  "documentation": "",
+  "source": "Not in the agentcard-website source yet; agentcard.sh /terms and /card-terms (computed: .v7-about-head, .v7-prose)",
+  "exports": [
+    "LegalPage"
+  ],
+  "client": false,
+  "docsUrl": "https://agentcard-ds.vercel.app/components/legal-page",
+  "markdownUrl": "https://agentcard-ds.vercel.app/r/legal-page.md",
+  "examples": [
+    {
+      "path": "examples/legal-page.tsx",
+      "content": "import { LegalPage } from \"@/components/blocks/legal-page\";\n\nexport function Block() {\n  return <LegalPage />;\n}\n",
+      "exports": [
+        "Block"
+      ],
+      "requires": [
+        "legal-page"
+      ],
+      "packages": [],
+      "previews": [
+        {
+          "name": "Block",
+          "url": "https://agentcard-ds.vercel.app/preview/legal-page/Block"
+        }
+      ]
+    }
+  ],
+  "type": "block",
+  "title": "Legal page",
+  "description": "Legal document template with the Compliance head, prose sections, footer and navigation.",
+  "surface": "site",
+  "kinds": [],
+  "requires": [
+    "theme",
+    "nav-dock",
+    "prose",
+    "site-footer",
+    "site-header"
+  ],
+  "packages": [],
+  "files": [
+    {
+      "path": "components/blocks/legal-page.tsx",
+      "content": "import type { ReactNode } from \"react\";\n\nimport { NavDock } from \"@/components/site/nav-dock\";\nimport { Prose } from \"@/components/site/prose\";\nimport { SiteFooter } from \"@/components/site/site-footer\";\nimport { SiteHeader } from \"@/components/site/site-header\";\n\n// The footer as agentcard.sh carries it on every page: five columns, the line, the running line. Sample categories\n// stand in for the merchant names; replace them with your own.\nconst FOOTER = {\n  description: (\n    <>\n      We want agents to buy anything online\n      <br />\n      that you can buy as a human.\n    </>\n  ),\n  groups: [\n    { title: \"Product\", links: [{ label: \"Vault\", href: \"https://www.agentcard.sh/vault\" }, { label: \"Issuing\", href: \"https://www.agentcard.sh/issuing\" }, { label: \"Voice\", href: \"https://cal.com/team/agentcard/agentcard-call\" }, { label: \"Purchase Agent\", href: \"https://www.agentcard.sh/purchase-agent\" }, { label: \"Pricing\", href: \"https://www.agentcard.sh/pricing\" }, { label: \"FAQ\", href: \"https://www.agentcard.sh/#faq\" }] },\n    { title: \"Developers\", links: [{ label: \"Documentation\", href: \"https://docs.agentcard.sh\" }, { label: \"API reference\", href: \"https://docs.agentcard.sh/companies/api/reference\" }] },\n    { title: \"Company\", links: [{ label: \"About\", href: \"https://www.agentcard.sh/about\" }, { label: \"Changelog\", href: \"https://www.agentcard.sh/updates\" }, { label: \"Trust Center\", href: \"https://app.vanta.com/agentcard.sh/trust/8t52k9fqhneqwt4y2jpvmn\" }] },\n    { title: \"Legal\", links: [{ label: \"Privacy Policy\", href: \"https://legal.raincards.xyz/legal/privacy-policy\" }, { label: \"Terms of Service\", href: \"https://www.agentcard.sh/terms\" }, { label: \"Card Terms\", href: \"https://www.agentcard.sh/card-terms\" }, { label: \"Card Terms (International)\", href: \"https://www.agentcard.sh/card-terms-international\" }] },\n    { title: \"Social\", links: [{ label: \"X / Twitter\", href: \"https://x.com/agentcardhq\" }, { label: \"Instagram\", href: \"https://www.instagram.com/agentcardhq/\" }] },\n  ],\n  merchants: [\"Groceries\", \"Electronics\", \"Home goods\", \"Office supplies\", \"Apparel\", \"Food delivery\", \"Software\", \"Travel\", \"Books\", \"Pet supplies\", \"Hardware\", \"Flights\"],\n};\n\n// The dock as agentcard.sh carries it: Home, the Products menu, About, Pricing, and Get started.\nconst PRODUCTS = {\n  label: \"Products\",\n  items: [\n    { title: \"Vault\", description: \"Store customers’ cards and buy with an agent.\", href: \"https://www.agentcard.sh/vault\" },\n    { title: \"Issuing\", description: \"One-time and multi-use cards for your agent.\", href: \"https://www.agentcard.sh/issuing\" },\n    { title: \"Voice\", description: \"Approve an agent’s purchase by speaking.\", href: \"https://cal.com/team/agentcard/agentcard-call\" },\n    { title: \"Purchase Agent\", description: \"Buy from the stores people already use.\", href: \"https://www.agentcard.sh/purchase-agent\" },\n  ],\n};\n\nconst LINKS = [\n  { label: \"Home\", href: \"https://www.agentcard.sh/\" },\n  { label: \"About\", href: \"https://www.agentcard.sh/about\" },\n  { label: \"Pricing\", href: \"https://www.agentcard.sh/pricing\" },\n];\n\nconst START = { label: \"Get started\", href: \"https://app.agentcard.sh/\" };\n\n// A legal page as agentcard.sh draws it (/terms, /card-terms): the bare header, then the document on the reading\n// column (Compliance, the title, the date it was last updated, a rule) and its numbered sections in h2s, with no table\n// of contents. The blue footer and the glass dock close it. Sample terms in the page's shape; they are not legal text,\n// so pass your own.\n\ntype LegalSection = { title: string; body: ReactNode };\n\nconst SECTIONS: LegalSection[] = [\n  { title: \"Acceptance of terms\", body: <p>By using the website, the cards or the tools for agents (the “Services”), you agree to these terms. If you do not agree, do not use the Services.</p> },\n  { title: \"Description of services\", body: <p>The Services let you store cards, issue cards and let software agents make purchases within limits you set.</p> },\n  { title: \"Eligibility\", body: <p>You must be at least 18 years old and able to form a binding contract to use the Services.</p> },\n  { title: \"Account registration\", body: <p>You agree to give accurate information when you register and to keep your login and API keys secret.</p> },\n  {\n    title: \"Acceptable use\",\n    body: (\n      <>\n        <p>You agree not to:</p>\n        <ul>\n          <li>Use the Services for any unlawful purpose.</li>\n          <li>Attempt unauthorized access to any account or system.</li>\n          <li>Interfere with or disrupt the Services.</li>\n        </ul>\n      </>\n    ),\n  },\n  { title: \"Payment and fees\", body: <p>Fees are listed on the pricing page. Card fees are set out in the Cardholder Agreement.</p> },\n  { title: \"Disclaimer of warranties\", body: <p>The Services are provided “as is” and “as available”, without warranties of any kind.</p> },\n  { title: \"Limitation of liability\", body: <p>To the extent the law allows, we are not liable for indirect or consequential losses arising from your use of the Services.</p> },\n  { title: \"Termination\", body: <p>We may suspend or end your access if you break these terms. You may stop using the Services at any time.</p> },\n  {\n    title: \"Contact\",\n    body: (\n      <p>\n        Questions about these terms go to <a href=\"mailto:support@agentcard.sh\">support@agentcard.sh</a>.\n      </p>\n    ),\n  },\n];\n\nexport function LegalPage({\n  title = \"Terms of Use\",\n  updated = \"Last updated July 10, 2026\",\n  sections = SECTIONS,\n}: {\n  title?: string;\n  updated?: ReactNode;\n  sections?: LegalSection[];\n}) {\n  return (\n    <main className=\"relative\">\n      <SiteHeader href=\"https://www.agentcard.sh/\" ground=\"white\" action={START} />\n      <div className=\"mx-auto w-(--ds-frame-column) pt-35 pb-28 md:pt-37.5\">\n        <Prose eyebrow=\"Compliance\" title={title} meta={updated}>\n          {sections.flatMap((section, i) => [<h2 key={`h${i}`}>{section.title}</h2>, <div key={`b${i}`} className=\"grid gap-4\">{section.body}</div>])}\n        </Prose>\n      </div>\n      <SiteFooter backing=\"Backed by Y Combinator\" description={FOOTER.description} groups={FOOTER.groups} merchants={FOOTER.merchants} />\n      <NavDock menu={PRODUCTS} links={LINKS} action={START} />\n    </main>\n  );\n}\n"
+    }
+  ]
+}

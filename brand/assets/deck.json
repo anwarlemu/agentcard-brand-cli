@@ -1,0 +1,404 @@
+{
+	"$comment": "Deck slides at 1920 by 1080, built from the image layouts (brand/assets/image.json): the hero for the cover and statement, the numbered cards for bullets and cards, the window for an image, the quote window, and plain slides for a section, a stat and the end card that use the same grounds, scanlines, band, lockup and type. Sample copy is the brand's own site and editor copy; the quote is a sample attributed to Acme.",
+	"width": 1920,
+	"height": 1080,
+	"slides": {
+		"cover": {
+			"name": "Cover",
+			"about": "The hero: title, a line under it and the toon objects round the words, on the blue ground.",
+			"slots": [
+				"headline",
+				"body",
+				"badge",
+				"button",
+				"image",
+				"theme"
+			],
+			"needs": [
+				"headline"
+			],
+			"sample": {
+				"headline": "Let agents buy anything online",
+				"body": "Cards your agent can use, with every purchase approved."
+			}
+		},
+		"section": {
+			"name": "Section",
+			"about": "A section number in blue and its title on paper, with the band into blue below.",
+			"slots": [
+				"number",
+				"headline",
+				"theme"
+			],
+			"needs": [
+				"headline"
+			],
+			"sample": {
+				"number": "01",
+				"headline": "Products"
+			}
+		},
+		"statement": {
+			"name": "Statement",
+			"about": "One sentence, centered, on the blue ground with its scanlines.",
+			"slots": [
+				"headline",
+				"body",
+				"theme"
+			],
+			"needs": [
+				"headline"
+			],
+			"sample": {
+				"headline": "We want agents to buy anything online that you can buy as a human."
+			}
+		},
+		"bullets": {
+			"name": "Bullets",
+			"about": "A title and up to eight points as the numbered cards.",
+			"slots": [
+				"headline",
+				"items",
+				"theme"
+			],
+			"needs": [
+				"headline",
+				"items"
+			],
+			"sample": {
+				"headline": "Four ways to pay with an agent",
+				"items": [
+					"Vault\nStore customers’ cards and buy with an agent.",
+					"Issuing\nOne-time and multi-use cards for your agent.",
+					"Voice\nApprove an agent’s purchase by speaking.",
+					"Purchase Agent\nBuy from the stores people already use."
+				]
+			}
+		},
+		"stat": {
+			"name": "Stat",
+			"about": "A big number with a line under it on the blue ground, the band into paper below.",
+			"slots": [
+				"stat",
+				"headline",
+				"theme"
+			],
+			"needs": [
+				"stat"
+			],
+			"sample": {
+				"stat": "4",
+				"headline": "products, one card for every agent"
+			}
+		},
+		"quote": {
+			"name": "Quote",
+			"about": "A quote in the window on paper, with an attribution.",
+			"slots": [
+				"quote",
+				"by",
+				"theme"
+			],
+			"needs": [
+				"quote"
+			],
+			"sample": {
+				"quote": "Our agents finally buy what people ask for, and every purchase is approved.",
+				"by": "Head of product, Acme"
+			}
+		},
+		"image": {
+			"name": "Image",
+			"about": "The window layout: words on the left, a window on the right holding a toon object or your picture.",
+			"slots": [
+				"badge",
+				"headline",
+				"body",
+				"image",
+				"picture",
+				"window",
+				"theme"
+			],
+			"needs": [
+				"headline"
+			],
+			"sample": {
+				"badge": "Issuing",
+				"headline": "Create one-time and multi-use cards",
+				"picture": "card"
+			}
+		},
+		"cards": {
+			"name": "Cards",
+			"about": "The numbered cards with a footer (lockup and address).",
+			"slots": [
+				"headline",
+				"items",
+				"theme"
+			],
+			"needs": [
+				"headline",
+				"items"
+			],
+			"sample": {
+				"headline": "How to safely share your users’ cards with an agent",
+				"items": [
+					"Save it once, not in the chat\nYour user adds their card a single time. It’s stored encrypted, never pasted into a conversation.",
+					"The agent never sees the number\nIt asks to buy. The card pays at checkout.",
+					"Every purchase is approved\nWith a passkey, Face ID or their voice, tied to that exact cart.",
+					"It’s still their card\nPoints land as usual. Disputes go through their bank."
+				]
+			}
+		},
+		"end": {
+			"name": "End card",
+			"about": "The lockup, a line under it and the address on the blue ground, the band into paper below.",
+			"slots": [
+				"headline",
+				"url",
+				"theme"
+			],
+			"needs": [],
+			"sample": {
+				"headline": "Let agents buy anything online"
+			}
+		},
+		"agenda": {
+			"name": "Agenda",
+			"about": "The parts of the talk as numbered cards.",
+			"slots": [
+				"headline",
+				"items",
+				"theme"
+			],
+			"needs": [
+				"items"
+			],
+			"sample": {
+				"headline": "Agenda",
+				"items": [
+					"Why agents need cards",
+					"How approval works",
+					"What it costs"
+				]
+			}
+		},
+		"team": {
+			"name": "Team",
+			"about": "People as cards: each a name and a role (no photos).",
+			"slots": [
+				"headline",
+				"items",
+				"theme"
+			],
+			"needs": [
+				"items"
+			],
+			"sample": {
+				"headline": "The team",
+				"items": [
+					"Sam Acme\nHead of product",
+					"Alex Acme\nEngineering",
+					"Kim Acme\nDesign"
+				]
+			}
+		},
+		"timeline": {
+			"name": "Timeline",
+			"about": "Two to five steps in order, joined by arrows.",
+			"slots": [
+				"headline",
+				"items",
+				"theme"
+			],
+			"needs": [
+				"items"
+			],
+			"sample": {
+				"headline": "Roadmap",
+				"items": [
+					"Q1\nVault",
+					"Q2\nIssuing",
+					"Q3\nVoice approvals"
+				]
+			}
+		},
+		"chart": {
+			"name": "Chart",
+			"about": "A bar, line or donut chart from data points.",
+			"slots": [
+				"headline",
+				"body",
+				"data",
+				"chart",
+				"theme"
+			],
+			"needs": [
+				"data"
+			],
+			"sample": {
+				"headline": "Purchases approved",
+				"data": "Jan: 120, Feb: 180, Mar: 260, Apr: 310"
+			}
+		},
+		"comparison": {
+			"name": "Comparison",
+			"about": "Two columns side by side, each a title and points.",
+			"slots": [
+				"headline",
+				"items",
+				"theme"
+			],
+			"needs": [
+				"items"
+			],
+			"sample": {
+				"headline": "Before and after",
+				"items": [
+					"Pasting the card\nThe number sits in the chat\nNo approval per purchase",
+					"Agentcard\nThe agent never sees the number\nEvery purchase approved"
+				]
+			}
+		},
+		"image-grid": {
+			"name": "Image grid",
+			"about": "Two to four pictures in windows, each with an optional label.",
+			"slots": [
+				"headline",
+				"images",
+				"labels",
+				"theme"
+			],
+			"needs": [
+				"images"
+			],
+			"sample": {
+				"headline": "In the product",
+				"images": [
+					"object:checkout",
+					"object:card",
+					"object:phone"
+				]
+			}
+		},
+		"qa": {
+			"name": "Questions",
+			"about": "One line for questions, and a contact line under it, on the blue ground.",
+			"slots": [
+				"headline",
+				"body",
+				"theme"
+			],
+			"needs": [
+				"headline"
+			],
+			"sample": {
+				"headline": "Questions?",
+				"body": "sam@acme.example"
+			}
+		}
+	},
+	"themes": {
+		"cover": [
+			"blue",
+			"paper",
+			"white",
+			"ink"
+		],
+		"section": [
+			"paper",
+			"white",
+			"blue",
+			"ink"
+		],
+		"statement": [
+			"blue",
+			"paper",
+			"white",
+			"ink"
+		],
+		"bullets": [
+			"paper",
+			"white",
+			"blue",
+			"ink"
+		],
+		"stat": [
+			"blue",
+			"ink",
+			"paper",
+			"white"
+		],
+		"quote": [
+			"paper",
+			"white",
+			"blue",
+			"ink"
+		],
+		"image": [
+			"paper",
+			"white",
+			"blue",
+			"ink"
+		],
+		"cards": [
+			"blue",
+			"paper",
+			"white",
+			"ink"
+		],
+		"end": [
+			"blue",
+			"ink",
+			"paper",
+			"white"
+		],
+		"agenda": [
+			"paper",
+			"white",
+			"blue",
+			"ink"
+		],
+		"team": [
+			"paper",
+			"white",
+			"blue",
+			"ink"
+		],
+		"timeline": [
+			"blue",
+			"paper",
+			"white",
+			"ink"
+		],
+		"chart": [
+			"paper",
+			"white",
+			"blue",
+			"ink"
+		],
+		"comparison": [
+			"paper",
+			"white",
+			"blue",
+			"ink"
+		],
+		"image-grid": [
+			"paper",
+			"white",
+			"blue",
+			"ink"
+		],
+		"qa": [
+			"blue",
+			"ink",
+			"paper",
+			"white"
+		]
+	},
+	"aliases": {
+		"title": "headline",
+		"eyebrow": "badge",
+		"subtext": "body"
+	}
+}

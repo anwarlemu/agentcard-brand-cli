@@ -1,0 +1,60 @@
+{
+  "schemaVersion": 1,
+  "name": "badge",
+  "useFor": "Use tag, tag-ink and tag-heart for added, improved and fixed updates. Use status variants for state and chip for counts or filters.",
+  "constraints": [
+    "Badges as buttons",
+    "Caps on anything but the tag",
+    "Filled color badges",
+    "More than one tone per row"
+  ],
+  "documentation": "",
+  "source": "agentcard-website src/app/globals.css (.v7-upd-tag, .is-added, .is-improved, .is-fixed; .v7-guide-prose code for the chip); live https://www.agentcard.sh/updates",
+  "exports": [
+    "Badge",
+    "badgeVariants"
+  ],
+  "client": false,
+  "docsUrl": "https://agentcard-ds.vercel.app/components/badge",
+  "markdownUrl": "https://agentcard-ds.vercel.app/r/badge.md",
+  "examples": [
+    {
+      "path": "examples/badge.tsx",
+      "content": "import { Badge } from \"@/components/ui/badge\";\n\nexport function Site() {\n  return (\n    <div className=\"grid gap-6\">\n      <div className=\"flex flex-wrap items-center gap-2\">\n        <Badge variant=\"tag\">Added</Badge>\n        <Badge variant=\"tag-ink\">Improved</Badge>\n        <Badge variant=\"tag-heart\">Fixed</Badge>\n      </div>\n      <div className=\"flex flex-wrap items-center gap-2\">\n        <Badge>Pending</Badge>\n        <Badge variant=\"brand\">In review</Badge>\n        <Badge variant=\"success\">Approved</Badge>\n        <Badge variant=\"warning\">Low balance</Badge>\n        <Badge variant=\"destructive\">Declined</Badge>\n      </div>\n      <div className=\"flex flex-wrap items-center gap-2\">\n        <Badge variant=\"chip\">Prepaid</Badge>\n        <Badge variant=\"chip\">Commercial</Badge>\n        <Badge variant=\"chip\">12 merchants</Badge>\n      </div>\n    </div>\n  );\n}\n",
+      "exports": [
+        "Site"
+      ],
+      "requires": [
+        "badge"
+      ],
+      "packages": [],
+      "previews": [
+        {
+          "name": "Site",
+          "url": "https://agentcard-ds.vercel.app/preview/badge/Site"
+        }
+      ]
+    }
+  ],
+  "type": "ui",
+  "title": "Badge",
+  "description": "Labels for status, categories and counts.",
+  "surface": "site",
+  "kinds": [
+    "chip"
+  ],
+  "requires": [
+    "theme",
+    "utils"
+  ],
+  "packages": [
+    "@radix-ui/react-slot",
+    "class-variance-authority"
+  ],
+  "files": [
+    {
+      "path": "components/ui/badge.tsx",
+      "content": "import * as React from \"react\";\nimport { Slot } from \"@radix-ui/react-slot\";\nimport { cva, type VariantProps } from \"class-variance-authority\";\n\nimport { cn } from \"@/lib/utils\";\n\n// A short label (agentcard.sh). `tag` is the brand's small caps tag on the updates page (/updates, .v7-upd-tag): the 10px\n// display face in caps tracked 0.14em at 1.75 leading, 3px 8px 2px of padding, square corners and a 1px border in the\n// text's own color: blue for something added (`tag`), ink for something improved (`tag-ink`), the heart red for a fix\n// (`tag-heart`). Those are the only caps the brand sets. The status badges have no counterpart on the site; they are\n// drawn from the white key in small: a white box on the hairline, 6px corners, the 12px display face in sentence case,\n// told apart by a dot and the color of their text. `chip` is the guides' sky chip (.v7-guide-prose code): blue on a\n// pale sky wash with a pale blue edge, for counts and filters.\nconst STATUS = \"h-6 gap-1.5 rounded-sm border border-hairline bg-surface px-2 font-display text-caption leading-none before:size-1.5 before:shrink-0 before:rounded-pill before:bg-current\";\n\nconst TAG = \"rounded-none border border-current px-2 pt-0.75 pb-0.5 font-display text-micro [line-height:1.75] tracking-caps uppercase\";\n\nconst badgeVariants = cva(\"inline-flex w-fit shrink-0 items-center justify-center gap-1 whitespace-nowrap [&>svg]:pointer-events-none [&>svg]:size-3\", {\n  variants: {\n    variant: {\n      default: `${STATUS} text-fg-muted`,\n      brand: `${STATUS} border-line-window bg-blue-5 text-fg-brand`,\n      success: `${STATUS} text-success`,\n      warning: `${STATUS} text-warning`,\n      destructive: `${STATUS} text-danger`,\n      tag: `${TAG} text-fg-brand`,\n      \"tag-ink\": `${TAG} text-fg`,\n      \"tag-heart\": `${TAG} text-heart`,\n      chip: \"h-6 rounded-sm border border-line-window bg-sky-wash px-2 font-display text-caption leading-none text-fg-brand\",\n    },\n  },\n  defaultVariants: { variant: \"default\" },\n});\n\nfunction Badge({ className, variant, asChild = false, ...props }: React.ComponentProps<\"span\"> & VariantProps<typeof badgeVariants> & { asChild?: boolean }) {\n  const Comp = asChild ? Slot : \"span\";\n  return <Comp data-slot=\"badge\" className={cn(badgeVariants({ variant }), className)} {...props} />;\n}\n\nexport { Badge, badgeVariants };\n"
+    }
+  ]
+}

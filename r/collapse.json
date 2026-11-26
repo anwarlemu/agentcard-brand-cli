@@ -1,0 +1,56 @@
+{
+  "schemaVersion": 1,
+  "name": "collapse",
+  "useFor": "Use for optional form fields, settings or details. Connect open to state and give the trigger aria-expanded and aria-controls.",
+  "constraints": [
+    "Hiding the main action",
+    "Nesting collapses",
+    "Questions and answers (use the accordion)"
+  ],
+  "documentation": "",
+  "source": "agentcard-website src/app/globals.css (the FAQ's slide, .faq-list details::details-content)",
+  "exports": [
+    "Collapse"
+  ],
+  "client": true,
+  "docsUrl": "https://agentcard-ds.vercel.app/components/collapse",
+  "markdownUrl": "https://agentcard-ds.vercel.app/r/collapse.md",
+  "examples": [
+    {
+      "path": "examples/collapse.tsx",
+      "content": "\"use client\";\n\nimport { useState } from \"react\";\n\nimport { Button } from \"@/components/ui/button\";\nimport { Collapse } from \"@/components/ui/collapse\";\nimport { Field } from \"@/components/ui/field\";\nimport { Input } from \"@/components/ui/input\";\n\nexport function Site() {\n  const [open, setOpen] = useState(true);\n  return (\n    <div className=\"flex w-full max-w-md flex-col gap-4\">\n      <Button variant=\"secondary\" size=\"sm\" className=\"self-start\" aria-expanded={open} aria-controls=\"collapse-limits\" onClick={() => setOpen((o) => !o)}>\n        {open ? \"Hide spending limits\" : \"Set spending limits\"}\n      </Button>\n      <Collapse open={open} id=\"collapse-limits\" className=\"flex flex-col gap-4 pt-1\">\n        <Field label=\"Per purchase\" htmlFor=\"collapse-per\" help=\"The most this card can spend at one checkout.\">\n          <Input id=\"collapse-per\" defaultValue=\"$250\" />\n        </Field>\n        <Field label=\"Per month\" htmlFor=\"collapse-month\">\n          <Input id=\"collapse-month\" defaultValue=\"$2,000\" />\n        </Field>\n      </Collapse>\n      <p className=\"text-body-sm text-fg-muted\">Everything below glides rather than jumps.</p>\n    </div>\n  );\n}\n",
+      "exports": [
+        "Site"
+      ],
+      "requires": [
+        "collapse",
+        "button",
+        "field",
+        "input"
+      ],
+      "packages": [],
+      "previews": [
+        {
+          "name": "Site",
+          "url": "https://agentcard-ds.vercel.app/preview/collapse/Site"
+        }
+      ]
+    }
+  ],
+  "type": "ui",
+  "title": "Collapse",
+  "description": "Expandable content area that animates its height.",
+  "surface": "site",
+  "kinds": [],
+  "requires": [
+    "theme",
+    "utils"
+  ],
+  "packages": [],
+  "files": [
+    {
+      "path": "components/ui/collapse.tsx",
+      "content": "\"use client\";\n\nimport * as React from \"react\";\n\nimport { cn } from \"@/lib/utils\";\n\n/**\n * Grows from nothing to its content's height and back (300ms ease-out on the grid's rows, with a fade), so whatever\n * sits below glides rather than jumps. Stays mounted while closed (inert, so nothing inside takes focus), and clips only\n * until it has fully opened, so menus inside can still spill out of it. Reduced motion opens and closes at once.\n */\nfunction Collapse({ open, id, className, children }: { open: boolean; id?: string; className?: string; children: React.ReactNode }) {\n  const [isFullyOpen, setFullyOpen] = React.useState(open);\n  if (!open && isFullyOpen) setFullyOpen(false);\n\n  const handleTransitionEnd = (event: React.TransitionEvent<HTMLDivElement>) => {\n    if (open && event.target === event.currentTarget && event.propertyName === \"grid-template-rows\") setFullyOpen(true);\n  };\n\n  return (\n    <div\n      id={id}\n      data-slot=\"collapse\"\n      data-state={open ? \"open\" : \"closed\"}\n      inert={!open}\n      onTransitionEnd={handleTransitionEnd}\n      className={cn(\"grid transition-[grid-template-rows,opacity] duration-300 ease-out motion-reduce:transition-none\", open ? \"grid-rows-[1fr] opacity-100\" : \"grid-rows-[0fr] opacity-0\")}\n    >\n      <div className={cn(\"min-h-0\", !isFullyOpen && \"overflow-hidden\", open && \"motion-reduce:overflow-visible\")}>\n        <div className={className}>{children}</div>\n      </div>\n    </div>\n  );\n}\n\nexport { Collapse };\n"
+    }
+  ]
+}

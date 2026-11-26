@@ -1,0 +1,79 @@
+{
+  "schemaVersion": 1,
+  "name": "alert",
+  "useFor": "Use default for a note (a new feature, a fact about a card), brand for an announcement that matters, destructive for a problem the person must act on. Give the bar a file-like name (voice.beta, agent.paused) or pass name={null} for a bare sheet. Lead with a lucide glyph; put one small key in AlertAction. It is shadcn's Alert API in the Banner's look.",
+  "constraints": [
+    "More than one alert at a time",
+    "Marketing copy in an alert",
+    "Bold titles",
+    "A filled red or blue sheet"
+  ],
+  "documentation": "",
+  "source": "Extrapolated from Agentcard: the Banner (agentcard-website src/app/globals.css .v7-guide-note, .v7-guide-cta-title) and the window bar (.v7-windowbar)",
+  "exports": [
+    "Alert",
+    "AlertAction",
+    "AlertDescription",
+    "AlertTitle",
+    "alertVariants"
+  ],
+  "client": false,
+  "docsUrl": "https://agentcard-ds.vercel.app/components/alert",
+  "markdownUrl": "https://agentcard-ds.vercel.app/r/alert.md",
+  "examples": [
+    {
+      "path": "examples/alert.tsx",
+      "content": "\"use client\";\n\nimport * as React from \"react\";\nimport { CircleAlert, Info, Megaphone } from \"lucide-react\";\n\nimport { Alert, AlertAction, AlertDescription, AlertTitle } from \"@/components/ui/alert\";\nimport { Button } from \"@/components/ui/button\";\n\nexport function Site() {\n  return (\n    <Alert name=\"voice.beta\" className=\"max-w-3xl\">\n      <Info />\n      <AlertTitle>Voice is in beta</AlertTitle>\n      <AlertDescription>Your agent can now place orders over the phone. Calls use the same card and limits as online purchases.</AlertDescription>\n      <AlertAction>\n        <Button size=\"sm\" asChild>\n          <a href=\"https://www.agentcard.sh\" target=\"_blank\" rel=\"noreferrer\">\n            Try Voice\n          </a>\n        </Button>\n      </AlertAction>\n    </Alert>\n  );\n}\n\nexport function Brand() {\n  return (\n    <Alert variant=\"brand\" name=\"issuing.news\" className=\"max-w-3xl\">\n      <Megaphone />\n      <AlertTitle>Commercial cards are here</AlertTitle>\n      <AlertDescription>Issue a card per agent, each with its own limit and list of merchants.</AlertDescription>\n    </Alert>\n  );\n}\n\nexport function Destructive() {\n  const [open, setOpen] = React.useState(false);\n  return (\n    <div className=\"grid max-w-3xl gap-3\">\n      <Alert variant=\"destructive\" name=\"agent.paused\">\n        <CircleAlert />\n        <AlertTitle>Travel agent was paused</AlertTitle>\n        <AlertDescription>It reached its $2,000 monthly limit on Oct 14.</AlertDescription>\n        <AlertAction>\n          <Button variant=\"secondary\" size=\"sm\" aria-expanded={open} onClick={() => setOpen((o) => !o)}>\n            {open ? \"Hide details\" : \"Review\"}\n          </Button>\n        </AlertAction>\n      </Alert>\n      {open && <p className=\"text-body-sm text-fg-muted\">Purchases are paused until the limit resets on Nov 1, or until you raise it.</p>}\n    </div>\n  );\n}\n\nexport function WithoutBar() {\n  return (\n    <Alert name={null} className=\"max-w-xl\">\n      <AlertTitle>Cards are single-use by default</AlertTitle>\n      <AlertDescription>Each card closes after its first purchase. Turn on multi-use in the card settings.</AlertDescription>\n    </Alert>\n  );\n}\n",
+      "exports": [
+        "Site",
+        "Brand",
+        "Destructive",
+        "WithoutBar"
+      ],
+      "requires": [
+        "alert",
+        "button"
+      ],
+      "packages": [
+        "lucide-react"
+      ],
+      "previews": [
+        {
+          "name": "Site",
+          "url": "https://agentcard-ds.vercel.app/preview/alert/Site"
+        },
+        {
+          "name": "Brand",
+          "url": "https://agentcard-ds.vercel.app/preview/alert/Brand"
+        },
+        {
+          "name": "Destructive",
+          "url": "https://agentcard-ds.vercel.app/preview/alert/Destructive"
+        },
+        {
+          "name": "WithoutBar",
+          "url": "https://agentcard-ds.vercel.app/preview/alert/WithoutBar"
+        }
+      ]
+    }
+  ],
+  "type": "ui",
+  "title": "Alert",
+  "description": "A note window: the sky, blue or rose bar labeled like a file over a sheet with a glyph, a display title, a muted line and an optional key.",
+  "surface": "site",
+  "kinds": [],
+  "requires": [
+    "theme",
+    "window",
+    "utils"
+  ],
+  "packages": [
+    "class-variance-authority"
+  ],
+  "files": [
+    {
+      "path": "components/ui/alert.tsx",
+      "content": "import * as React from \"react\";\nimport { cva, type VariantProps } from \"class-variance-authority\";\n\nimport { WindowBar } from \"@/components/ui/window\";\nimport { cn } from \"@/lib/utils\";\n\n// shadcn's Alert in the look of the brand's notes (the Banner, from the guides' .v7-guide-note): a small window with\n// a 16 percent ink edge, 12px corners and the guides' light bevel, its 32px bar labeled like a file (`name`, or note,\n// news and alert by variant; pass null to drop it), over a sheet with 14px on top, 18px at the sides and 16px below.\n// `default` is the note (sky bar, sheet washed 22 percent sky), `brand` the notice that matters (blue bar over white),\n// `destructive` trouble (the rose tint over white, its title in red). A lucide glyph first lines up with the title;\n// the title is the 16px display face at 500, the description 14px Inter at 68 percent ink, an action sits at the right.\nconst alertVariants = cva(\"flex flex-col overflow-hidden rounded-card border border-hairline text-fg shadow-guide\", {\n  variants: {\n    variant: {\n      default: \"bg-note\",\n      brand: \"bg-surface\",\n      destructive: \"bg-surface [&_[data-slot=alert-title]]:text-danger [&_[data-slot=alert-body]>svg]:text-danger\",\n    },\n  },\n  defaultVariants: { variant: \"default\" },\n});\n\nconst BARS = { default: { tone: \"sky\", name: \"note\" }, brand: { tone: \"blue\", name: \"news\" }, destructive: { tone: \"rose\", name: \"alert\" } } as const;\n\nfunction Alert({ className, variant, name, children, role, ...props }: React.ComponentProps<\"div\"> & VariantProps<typeof alertVariants> & { name?: React.ReactNode | null }) {\n  const bar = BARS[variant ?? \"default\"];\n  return (\n    <div data-slot=\"alert\" data-variant={variant ?? \"default\"} role={role ?? (variant === \"destructive\" ? \"alert\" : \"status\")} className={cn(alertVariants({ variant }), className)} {...props}>\n      {name !== null && <WindowBar aria-hidden name={name ?? bar.name} tone={bar.tone} className=\"[&>span:nth-child(2)]:mr-auto\" />}\n      <div\n        data-slot=\"alert-body\"\n        className=\"group/alert grid grid-cols-[minmax(0,1fr)_auto] items-start gap-x-3 gap-y-1 px-4.5 pt-3.5 pb-4 has-[>svg]:grid-cols-[auto_minmax(0,1fr)_auto] [&>svg]:mt-0.5 [&>svg]:size-4 [&>svg]:shrink-0 [&>svg]:text-fg-brand\"\n      >\n        {children}\n      </div>\n    </div>\n  );\n}\n\nfunction AlertTitle({ className, ...props }: React.ComponentProps<\"div\">) {\n  return (\n    <div\n      data-slot=\"alert-title\"\n      className={cn(\"col-start-1 min-w-0 font-display text-body leading-snug font-medium [letter-spacing:-0.01em] text-fg group-has-[>svg]/alert:col-start-2\", className)}\n      {...props}\n    />\n  );\n}\n\nfunction AlertDescription({ className, ...props }: React.ComponentProps<\"div\">) {\n  return (\n    <div\n      data-slot=\"alert-description\"\n      className={cn(\"col-start-1 min-w-0 text-body-sm [line-height:1.65] text-fg-muted group-has-[>svg]/alert:col-start-2 [&_p]:[line-height:1.65]\", className)}\n      {...props}\n    />\n  );\n}\n\n/** What sits at the right of an alert: a small key (Review, Try Voice) or a short note. */\nfunction AlertAction({ className, ...props }: React.ComponentProps<\"div\">) {\n  return (\n    <div\n      data-slot=\"alert-action\"\n      className={cn(\"col-start-2 row-span-2 row-start-1 flex flex-wrap items-center gap-2 self-center group-has-[>svg]/alert:col-start-3\", className)}\n      {...props}\n    />\n  );\n}\n\nexport { Alert, AlertAction, AlertDescription, AlertTitle, alertVariants };\n"
+    }
+  ]
+}

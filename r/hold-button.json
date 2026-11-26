@@ -1,0 +1,57 @@
+{
+  "schemaVersion": 1,
+  "name": "hold-button",
+  "useFor": "Use for destructive actions such as closing a card. Connect onConfirm to the action. Releasing early, leaving the control or losing focus cancels the hold.",
+  "constraints": [
+    "Hold for actions that can be undone",
+    "Hiding how long to hold",
+    "A blue fill for a destructive action"
+  ],
+  "documentation": "",
+  "source": "Extension from agentcard-website src/app/globals.css (--bevel-white); principles (keys sink on press)",
+  "exports": [
+    "HoldButton"
+  ],
+  "client": true,
+  "docsUrl": "https://agentcard-ds.vercel.app/components/hold-button",
+  "markdownUrl": "https://agentcard-ds.vercel.app/r/hold-button.md",
+  "examples": [
+    {
+      "path": "examples/hold-button.tsx",
+      "content": "\"use client\";\n\nimport { useState } from \"react\";\nimport { HoldButton } from \"@/components/ui/hold-button\";\nimport { Button } from \"@/components/ui/button\";\n\nexport function Site() {\n  const [closed, setClosed] = useState(false);\n  return <div className=\"grid justify-items-start gap-3\">\n    <HoldButton label=\"Hold to close card\" disabled={closed} onConfirm={() => setClosed(true)} />\n    <p role=\"status\" className=\"text-body-sm text-fg-muted\">{closed ? \"Card closed. It can no longer make purchases.\" : \"Card active. Release early to cancel.\"}</p>\n    {closed && <Button variant=\"secondary\" size=\"sm\" onClick={() => setClosed(false)}>Reset demo</Button>}\n  </div>;\n}\n",
+      "exports": [
+        "Site"
+      ],
+      "requires": [
+        "hold-button",
+        "button"
+      ],
+      "packages": [],
+      "previews": [
+        {
+          "name": "Site",
+          "url": "https://agentcard-ds.vercel.app/preview/hold-button/Site"
+        }
+      ]
+    }
+  ],
+  "type": "ui",
+  "title": "Hold button",
+  "description": "Button that confirms an action after a continuous hold.",
+  "surface": "site",
+  "kinds": [
+    "button-secondary"
+  ],
+  "requires": [
+    "theme",
+    "use-hold",
+    "utils"
+  ],
+  "packages": [],
+  "files": [
+    {
+      "path": "components/ui/hold-button.tsx",
+      "content": "\"use client\";\n\nimport * as React from \"react\";\n\nimport { useHold } from \"@/hooks/use-hold\";\nimport { cn } from \"@/lib/utils\";\n\n// Hold to confirm a destructive action, as one of the brand's keys: a white key with red text and the bevel, which fills\n// red from the left while held. The fill carries a white copy of the label and is revealed by clip-path, so the label\n// reads red on white ahead of the fill and white on red behind it at every moment. The reveal runs at a constant rate\n// while held (2s, linear) and snaps back in 200ms ease-out on release; the key sinks a pixel while pressed.\nfunction HoldButton({ label, onConfirm, holdMs = 2000, className, disabled = false }: { label: string; onConfirm: () => void; holdMs?: number; className?: string; disabled?: boolean }) {\n  const { isHolding, handlers } = useHold(holdMs, onConfirm, disabled);\n  const text = isHolding ? \"Keep holding\" : label;\n  return (\n    <button\n      type=\"button\"\n      disabled={disabled}\n      data-slot=\"hold-button\"\n      data-holding={isHolding || undefined}\n      {...handlers}\n      className={cn(\n        \"disabled:opacity-50 disabled:pointer-events-none relative inline-flex h-10 shrink-0 items-center justify-center overflow-hidden rounded-control border border-hairline bg-surface px-5 font-display text-body-sm leading-none whitespace-nowrap text-danger shadow-key outline-none transition-[box-shadow,translate] duration-150 ease-out select-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-solid focus-visible:outline-focus-ring data-holding:translate-y-px data-holding:shadow-pressed motion-reduce:transition-none motion-reduce:data-holding:translate-y-0\",\n        className,\n      )}\n    >\n      <span>{text}</span>\n      <span\n        aria-hidden\n        className={cn(\n          \"absolute inset-0 flex items-center justify-center bg-danger text-white transition-[clip-path] motion-reduce:transition-none\",\n          isHolding ? \"[clip-path:inset(0_0_0_0)] ease-linear\" : \"[clip-path:inset(0_100%_0_0)] duration-200 ease-out\",\n        )}\n        style={isHolding ? { transitionDuration: `${holdMs}ms` } : undefined}\n      >\n        {text}\n      </span>\n    </button>\n  );\n}\n\nexport { HoldButton };\n"
+    }
+  ]
+}

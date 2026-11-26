@@ -1,0 +1,63 @@
+{
+  "schemaVersion": 1,
+  "name": "contact-page",
+  "useFor": "Use as a starting point for an Agentcard contact or sign-up page. Point action at your form handler and adjust the fields.",
+  "constraints": [
+    "Rounded or pill fields",
+    "More than one blue key",
+    "Placeholder text in place of labels",
+    "Fields three to a row"
+  ],
+  "documentation": "",
+  "source": "Not in the agentcard-website source yet; agentcard.sh /get-started (computed: .v7-gate-field)",
+  "exports": [
+    "ContactPage"
+  ],
+  "client": false,
+  "docsUrl": "https://agentcard-ds.vercel.app/components/contact-page",
+  "markdownUrl": "https://agentcard-ds.vercel.app/r/contact-page.md",
+  "examples": [
+    {
+      "path": "examples/contact-page.tsx",
+      "content": "import { ContactPage } from \"@/components/blocks/contact-page\";\n\nexport function Block() {\n  return <ContactPage />;\n}\n",
+      "exports": [
+        "Block"
+      ],
+      "requires": [
+        "contact-page"
+      ],
+      "packages": [],
+      "previews": [
+        {
+          "name": "Block",
+          "url": "https://agentcard-ds.vercel.app/preview/contact-page/Block"
+        }
+      ]
+    }
+  ],
+  "type": "block",
+  "title": "Contact page",
+  "description": "Contact page template with a page header, a form in a window, other channels, footer and navigation.",
+  "surface": "site",
+  "kinds": [],
+  "requires": [
+    "theme",
+    "nav-dock",
+    "page-header",
+    "site-footer",
+    "site-header",
+    "button",
+    "field",
+    "input",
+    "native-select",
+    "textarea",
+    "window"
+  ],
+  "packages": [],
+  "files": [
+    {
+      "path": "components/blocks/contact-page.tsx",
+      "content": "import { NavDock } from \"@/components/site/nav-dock\";\nimport { PageHeader } from \"@/components/site/page-header\";\nimport { SiteFooter } from \"@/components/site/site-footer\";\nimport { SiteHeader } from \"@/components/site/site-header\";\nimport { Button } from \"@/components/ui/button\";\nimport { Field } from \"@/components/ui/field\";\nimport { Input } from \"@/components/ui/input\";\nimport { NativeSelect, NativeSelectOption } from \"@/components/ui/native-select\";\nimport { Textarea } from \"@/components/ui/textarea\";\nimport { Window } from \"@/components/ui/window\";\n\n// The footer as agentcard.sh carries it on every page: five columns, the line, the running line. Sample categories\n// stand in for the merchant names; replace them with your own.\nconst FOOTER = {\n  description: (\n    <>\n      We want agents to buy anything online\n      <br />\n      that you can buy as a human.\n    </>\n  ),\n  groups: [\n    { title: \"Product\", links: [{ label: \"Vault\", href: \"https://www.agentcard.sh/vault\" }, { label: \"Issuing\", href: \"https://www.agentcard.sh/issuing\" }, { label: \"Voice\", href: \"https://cal.com/team/agentcard/agentcard-call\" }, { label: \"Purchase Agent\", href: \"https://www.agentcard.sh/purchase-agent\" }, { label: \"Pricing\", href: \"https://www.agentcard.sh/pricing\" }, { label: \"FAQ\", href: \"https://www.agentcard.sh/#faq\" }] },\n    { title: \"Developers\", links: [{ label: \"Documentation\", href: \"https://docs.agentcard.sh\" }, { label: \"API reference\", href: \"https://docs.agentcard.sh/companies/api/reference\" }] },\n    { title: \"Company\", links: [{ label: \"About\", href: \"https://www.agentcard.sh/about\" }, { label: \"Changelog\", href: \"https://www.agentcard.sh/updates\" }, { label: \"Trust Center\", href: \"https://app.vanta.com/agentcard.sh/trust/8t52k9fqhneqwt4y2jpvmn\" }] },\n    { title: \"Legal\", links: [{ label: \"Privacy Policy\", href: \"https://legal.raincards.xyz/legal/privacy-policy\" }, { label: \"Terms of Service\", href: \"https://www.agentcard.sh/terms\" }, { label: \"Card Terms\", href: \"https://www.agentcard.sh/card-terms\" }, { label: \"Card Terms (International)\", href: \"https://www.agentcard.sh/card-terms-international\" }] },\n    { title: \"Social\", links: [{ label: \"X / Twitter\", href: \"https://x.com/agentcardhq\" }, { label: \"Instagram\", href: \"https://www.instagram.com/agentcardhq/\" }] },\n  ],\n  merchants: [\"Groceries\", \"Electronics\", \"Home goods\", \"Office supplies\", \"Apparel\", \"Food delivery\", \"Software\", \"Travel\", \"Books\", \"Pet supplies\", \"Hardware\", \"Flights\"],\n};\n\n// The dock as agentcard.sh carries it: Home, the Products menu, About, Pricing, and Get started.\nconst PRODUCTS = {\n  label: \"Products\",\n  items: [\n    { title: \"Vault\", description: \"Store customers’ cards and buy with an agent.\", href: \"https://www.agentcard.sh/vault\" },\n    { title: \"Issuing\", description: \"One-time and multi-use cards for your agent.\", href: \"https://www.agentcard.sh/issuing\" },\n    { title: \"Voice\", description: \"Approve an agent’s purchase by speaking.\", href: \"https://cal.com/team/agentcard/agentcard-call\" },\n    { title: \"Purchase Agent\", description: \"Buy from the stores people already use.\", href: \"https://www.agentcard.sh/purchase-agent\" },\n  ],\n};\n\nconst LINKS = [\n  { label: \"Home\", href: \"https://www.agentcard.sh/\" },\n  { label: \"About\", href: \"https://www.agentcard.sh/about\" },\n  { label: \"Pricing\", href: \"https://www.agentcard.sh/pricing\" },\n];\n\nconst START = { label: \"Get started\", href: \"https://app.agentcard.sh/\" };\n\n// A contact page in the shape of agentcard.sh's form (/get-started): the bare header, the page's opening on the reading\n// column, then the form in a window (its heading, a short note, the square fields two to a row on wide screens, the\n// blue key), and under it the other ways to reach the team. The blue footer and the glass dock close it. The form posts\n// to `action`; validation and sending belong to your app.\n\nconst TOPICS = [\"Choose one\", \"Vault\", \"Issuing\", \"Purchase Agent\", \"Pricing\", \"Something else\"];\n\nconst CHANNELS = [\n  { label: \"Email\", value: \"support@agentcard.sh\", href: \"mailto:support@agentcard.sh\" },\n  { label: \"Documentation\", value: \"docs.agentcard.sh\", href: \"https://docs.agentcard.sh\" },\n  { label: \"A call\", value: \"Book 30 minutes\", href: \"https://cal.com/team/agentcard/agentcard-call\" },\n];\n\nexport function ContactPage({ action, method = \"post\" }: { action?: string; method?: \"get\" | \"post\" }) {\n  return (\n    <main className=\"relative\">\n      <SiteHeader href=\"https://www.agentcard.sh/\" ground=\"white\" action={START} />\n      <PageHeader eyebrow=\"Contact\" title=\"Talk to us\">\n        <p className=\"mt-3 font-display text-caption text-fg-muted\">A few answers, and we reply within a day</p>\n      </PageHeader>\n      <div className=\"mx-auto grid w-(--ds-frame-column) max-w-(--ds-layout-text) gap-10 pt-10 pb-28\">\n        <Window name=\"contact.form\" raised bodyClassName=\"p-5 md:p-7\">\n          <form action={action} method={method} className=\"grid gap-5\">\n            <div>\n              <h2 className=\"font-display text-h4 leading-snug font-medium tracking-tight\">Tell us about your company</h2>\n              <p className=\"mt-1.5 text-body-sm leading-relaxed text-fg-muted\">Tell us what your agent buys and who it buys for, and we’ll point you to the right product.</p>\n            </div>\n            <div className=\"grid gap-5 sm:grid-cols-2\">\n              <Field label=\"Your name\" required>\n                <Input name=\"name\" autoComplete=\"name\" />\n              </Field>\n              <Field label=\"Work email\" required>\n                <Input name=\"email\" type=\"email\" autoComplete=\"email\" />\n              </Field>\n              <Field label=\"Company\">\n                <Input name=\"company\" autoComplete=\"organization\" />\n              </Field>\n              <Field label=\"Website\">\n                <Input name=\"website\" inputMode=\"url\" autoComplete=\"url\" />\n              </Field>\n            </div>\n            <Field label=\"What is it about?\">\n              <NativeSelect name=\"topic\" defaultValue=\"\">\n                {TOPICS.map((topic, i) => (\n                  <NativeSelectOption key={topic} value={i === 0 ? \"\" : topic} disabled={i === 0}>\n                    {topic}\n                  </NativeSelectOption>\n                ))}\n              </NativeSelect>\n            </Field>\n            <Field label=\"Message\" required help=\"A few sentences is plenty.\">\n              <Textarea name=\"message\" rows={5} />\n            </Field>\n            <div className=\"flex flex-wrap items-center justify-between gap-4\">\n              <p className=\"text-body-sm text-fg-muted\">We only use this to reply to you.</p>\n              <Button type=\"submit\">Send message</Button>\n            </div>\n          </form>\n        </Window>\n        <section aria-label=\"Other ways to reach us\">\n          <ul className=\"grid gap-4 sm:grid-cols-3\">\n            {CHANNELS.map((channel) => (\n              <li key={channel.label} className=\"border-t border-hairline pt-3.5\">\n                <p className=\"font-display text-caption text-fg-label\">{channel.label}</p>\n                <a href={channel.href} className=\"mt-1 inline-block rounded-chip text-body-sm text-fg underline decoration-line-brand underline-offset-[0.2em] outline-none transition-colors duration-150 ease-out hover:text-fg-brand focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus-ring\">\n                  {channel.value}\n                </a>\n              </li>\n            ))}\n          </ul>\n        </section>\n      </div>\n      <SiteFooter backing=\"Backed by Y Combinator\" description={FOOTER.description} groups={FOOTER.groups} merchants={FOOTER.merchants} />\n      <NavDock menu={PRODUCTS} links={LINKS} action={START} />\n    </main>\n  );\n}\n"
+    }
+  ]
+}

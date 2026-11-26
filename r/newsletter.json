@@ -1,0 +1,55 @@
+{
+  "schemaVersion": 1,
+  "name": "newsletter",
+  "useFor": "Use for a newsletter or waitlist sign-up. Pass onSubmit; it gets the address and the band shows `done` when it resolves.",
+  "constraints": [
+    "More than one field",
+    "A sign-up without a submit handler",
+    "A pre-checked consent box"
+  ],
+  "documentation": "",
+  "source": "Derived from agentcard.sh/get-started (the field) and the primary key; the site has no newsletter band.",
+  "exports": [
+    "Newsletter"
+  ],
+  "client": true,
+  "docsUrl": "https://agentcard-ds.vercel.app/components/newsletter",
+  "markdownUrl": "https://agentcard-ds.vercel.app/r/newsletter.md",
+  "examples": [
+    {
+      "path": "examples/newsletter.tsx",
+      "content": "\"use client\";\n\nimport { Newsletter } from \"@/components/site/newsletter\";\n\nexport function Site() {\n  return <Newsletter title=\"Product news\" description=\"One email when something ships.\" done=\"Thanks. Check your inbox to confirm.\" onSubmit={async () => {}} />;\n}\n",
+      "exports": [
+        "Site"
+      ],
+      "requires": [
+        "newsletter"
+      ],
+      "packages": [],
+      "previews": [
+        {
+          "name": "Site",
+          "url": "https://agentcard-ds.vercel.app/preview/newsletter/Site"
+        }
+      ]
+    }
+  ],
+  "type": "site",
+  "title": "Newsletter",
+  "description": "An email sign-up band: heading, the get-started field and the blue key.",
+  "surface": "site",
+  "kinds": [],
+  "requires": [
+    "theme",
+    "section",
+    "button",
+    "input"
+  ],
+  "packages": [],
+  "files": [
+    {
+      "path": "components/site/newsletter.tsx",
+      "content": "\"use client\";\n\nimport * as React from \"react\";\n\nimport { SectionHeading, SiteSection, type SectionGround } from \"@/components/site/section\";\nimport { Button } from \"@/components/ui/button\";\nimport { Input } from \"@/components/ui/input\";\n\n// A sign-up band built from the get-started form's field and the blue key (the site's own form parts). The form is\n// yours: pass onSubmit, which gets the address; the component keeps only the field's value and its sent state.\n\nfunction Newsletter({\n  title,\n  description,\n  label = \"Email\",\n  action = \"Subscribe\",\n  done,\n  ground = \"white\",\n  onSubmit,\n}: {\n  title: React.ReactNode;\n  description?: React.ReactNode;\n  label?: string;\n  action?: React.ReactNode;\n  /** Shown in place of the form once onSubmit resolves. */\n  done?: React.ReactNode;\n  ground?: SectionGround;\n  onSubmit: (email: string) => void | Promise<void>;\n}) {\n  const [email, setEmail] = React.useState(\"\");\n  const [state, setState] = React.useState<\"idle\" | \"sending\" | \"sent\" | \"error\">(\"idle\");\n  const id = React.useId();\n  return (\n    <SiteSection ground={ground}>\n      <SectionHeading title={title} description={description} />\n      {state === \"sent\" && done ? (\n        <p role=\"status\" className=\"mx-auto mt-8 max-w-120 text-center text-body-lg\">{done}</p>\n      ) : (\n        <form\n          className=\"mx-auto mt-8 flex max-w-120 flex-col gap-3 sm:flex-row\"\n          onSubmit={async (e) => {\n            e.preventDefault();\n            setState(\"sending\");\n            try {\n              await onSubmit(email);\n              setState(\"sent\");\n            } catch {\n              setState(\"error\");\n            }\n          }}\n        >\n          <label htmlFor={id} className=\"sr-only\">{label}</label>\n          <Input id={id} type=\"email\" required autoComplete=\"email\" placeholder={label} value={email} onChange={(e) => setEmail(e.target.value)} aria-invalid={state === \"error\" || undefined} className=\"flex-1\" />\n          <Button type=\"submit\" variant={ground === \"blue\" ? \"on-brand\" : \"primary\"} disabled={state === \"sending\"}>\n            {action}\n          </Button>\n        </form>\n      )}\n    </SiteSection>\n  );\n}\n\nexport { Newsletter };\n"
+    }
+  ]
+}

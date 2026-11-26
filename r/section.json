@@ -1,0 +1,65 @@
+{
+  "schemaVersion": 1,
+  "name": "section",
+  "useFor": "Use SiteSection for content layout, SectionHeading for the title and description, and Eyebrow for an optional label. Choose white, paper or blue backgrounds as needed.",
+  "constraints": [
+    "Two blue sections in a row",
+    "Left-aligned section titles over centered content",
+    "Bold titles",
+    "Eyebrows in caps",
+    "A ground change without a band divider"
+  ],
+  "documentation": "`SiteSection` props: `ground` (\"white\" | \"paper\" | \"blue\"), `contained` (default true: the 1200px column),\n`innerClassName`, plus section props. `SectionHeading` props: `title`, `description`, `eyebrow`, `as` (\"h1\" | \"h2\" |\n\"h3\", default h2), `align` (\"center\" | \"start\"). `Eyebrow` takes paragraph props.",
+  "source": "agentcard-website src/app/globals.css:1520 (.v7-section), :1585 (.v7-heading-center), :1509 (.v7-eyebrow); agentcard.sh / and /about (computed)",
+  "exports": [
+    "SiteSection",
+    "SectionHeading",
+    "Eyebrow",
+    "SectionGround"
+  ],
+  "client": false,
+  "docsUrl": "https://agentcard-ds.vercel.app/components/section",
+  "markdownUrl": "https://agentcard-ds.vercel.app/r/section.md",
+  "examples": [
+    {
+      "path": "examples/section.tsx",
+      "content": "import { Eyebrow, SectionHeading, SiteSection } from \"@/components/site/section\";\nimport { Window } from \"@/components/ui/window\";\n\nfunction Placeholder({ name }: { name: string }) {\n  return (\n    <Window name={name} className=\"h-48\" bodyClassName=\"flex items-center justify-center bg-sky-wash font-display text-caption text-fg-label\">\n      Content\n    </Window>\n  );\n}\n\nexport function Site() {\n  return (\n    <>\n      <SiteSection>\n        <SectionHeading title=\"Powering payments for agentic startups\" description=\"Consumer apps, B2B companies and crypto platforms use Agentcard to let their agents pay.\" />\n        <div className=\"mt-16 grid gap-6 md:grid-cols-3\">\n          <Placeholder name=\"first.case\" />\n          <Placeholder name=\"second.case\" />\n          <Placeholder name=\"third.case\" />\n        </div>\n      </SiteSection>\n      <SiteSection ground=\"paper\">\n        <SectionHeading eyebrow=\"Products\" title=\"Explore our products\" description=\"Vault, Issuing, Voice and the Purchase Agent.\" />\n      </SiteSection>\n      <SiteSection ground=\"blue\">\n        <Eyebrow>On the blue</Eyebrow>\n        <SectionHeading align=\"start\" className=\"mt-2.5\" title=\"A lit band\" description=\"White text, sky labels.\" />\n      </SiteSection>\n    </>\n  );\n}\n",
+      "exports": [
+        "Site"
+      ],
+      "requires": [
+        "section",
+        "window"
+      ],
+      "packages": [],
+      "previews": [
+        {
+          "name": "Site",
+          "url": "https://agentcard-ds.vercel.app/preview/section/Site"
+        }
+      ]
+    }
+  ],
+  "type": "site",
+  "title": "Section",
+  "description": "Page section, section heading and optional label.",
+  "surface": "site",
+  "kinds": [
+    "section",
+    "column",
+    "section-heading",
+    "section-description",
+    "eyebrow"
+  ],
+  "requires": [
+    "theme",
+    "utils"
+  ],
+  "packages": [],
+  "files": [
+    {
+      "path": "components/site/section.tsx",
+      "content": "import * as React from \"react\";\n\nimport { cn } from \"@/lib/utils\";\n\n// A band of the page (agentcard.sh, .v7-section): 80px above and 110px below on a desktop, 50px and 65px on a phone,\n// content on the 1200px column with 40px gutters (20px on phones). White is the default ground; paper is the warm page;\n// blue is a lit band (white text, sky labels). Seams between grounds are the band divider's job, not the section's.\nconst GROUNDS = {\n  white: \"bg-surface text-fg\",\n  paper: \"bg-paper text-fg\",\n  blue: \"bg-brand text-on-brand\",\n} as const;\n\ntype SectionGround = keyof typeof GROUNDS;\n\nfunction SiteSection({\n  ground = \"white\",\n  contained = true,\n  className,\n  innerClassName,\n  children,\n  ...props\n}: React.ComponentProps<\"section\"> & {\n  ground?: SectionGround;\n  /** Hold the content to the 1200px column. Off for a band whose content runs edge to edge. */\n  contained?: boolean;\n  innerClassName?: string;\n}) {\n  return (\n    <section data-slot=\"site-section\" data-ground={ground} className={cn(\"relative pt-12.5 pb-16.25 md:pt-20 md:pb-27.5\", GROUNDS[ground], className)} {...props}>\n      {contained ? <div className={cn(\"mx-auto w-(--ds-frame-column)\", innerClassName)}>{children}</div> : children}\n    </section>\n  );\n}\n\n/** A small label in the display face: blue on white, sky on the blue. Sentence case, never caps. */\nfunction Eyebrow({ className, ...props }: React.ComponentProps<\"p\">) {\n  return <p data-slot=\"eyebrow\" className={cn(\"font-display text-caption leading-4.5 tracking-label text-fg-label in-data-[ground=blue]:text-fg-on-brand-label\", className)} {...props} />;\n}\n\n/**\n * A section's opening: the centered 36px title (28px on phones), and its 19px description 14px below at 70 percent of\n * the text color. An eyebrow, when given, sits 10px above the title.\n */\nfunction SectionHeading({\n  title,\n  description,\n  eyebrow,\n  as: Heading = \"h2\",\n  align = \"center\",\n  className,\n  ...props\n}: Omit<React.ComponentProps<\"div\">, \"title\"> & {\n  title: React.ReactNode;\n  description?: React.ReactNode;\n  eyebrow?: React.ReactNode;\n  as?: \"h1\" | \"h2\" | \"h3\";\n  align?: \"center\" | \"start\";\n}) {\n  const centered = align === \"center\";\n  return (\n    <div data-slot=\"section-heading\" className={cn(centered ? \"text-center\" : \"text-left\", className)} {...props}>\n      {eyebrow && <Eyebrow className=\"mb-2.5\">{eyebrow}</Eyebrow>}\n      <Heading className=\"font-display text-h2 leading-7.5 font-medium tracking-tighter text-balance md:leading-9.75\">{title}</Heading>\n      {description && (\n        <p className={cn(\"mt-3.5 max-w-(--ds-layout-heading) text-body-lg leading-6.75 tracking-tight text-pretty opacity-70\", centered && \"mx-auto\")}>{description}</p>\n      )}\n    </div>\n  );\n}\n\nexport { SiteSection, SectionHeading, Eyebrow };\nexport type { SectionGround };\n"
+    }
+  ]
+}

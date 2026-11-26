@@ -1,0 +1,55 @@
+{
+  "schemaVersion": 1,
+  "name": "pricing-page",
+  "useFor": "Use as a starting point for Agentcard pricing pages. Set the current plans, features and action URLs.",
+  "constraints": [
+    "More than one featured plan per product",
+    "Prices in bold"
+  ],
+  "documentation": "",
+  "source": "agentcard-website src/app/pricing; agentcard.sh /pricing (computed)",
+  "exports": [
+    "PricingPage"
+  ],
+  "client": false,
+  "docsUrl": "https://agentcard-ds.vercel.app/components/pricing-page",
+  "markdownUrl": "https://agentcard-ds.vercel.app/r/pricing-page.md",
+  "examples": [
+    {
+      "path": "examples/pricing-page.tsx",
+      "content": "import { PricingPage } from \"@/components/blocks/pricing-page\";\n\nexport function Block() {\n  return <PricingPage />;\n}\n",
+      "exports": [
+        "Block"
+      ],
+      "requires": [
+        "pricing-page"
+      ],
+      "packages": [],
+      "previews": [
+        {
+          "name": "Block",
+          "url": "https://agentcard-ds.vercel.app/preview/pricing-page/Block"
+        }
+      ]
+    }
+  ],
+  "type": "block",
+  "title": "Pricing page",
+  "description": "Pricing page template with product tabs, plans, footer and navigation.",
+  "surface": "site",
+  "kinds": [],
+  "requires": [
+    "theme",
+    "nav-dock",
+    "pricing",
+    "site-footer",
+    "site-header"
+  ],
+  "packages": [],
+  "files": [
+    {
+      "path": "components/blocks/pricing-page.tsx",
+      "content": "import { NavDock } from \"@/components/site/nav-dock\";\nimport { Pricing } from \"@/components/site/pricing\";\nimport { SiteFooter } from \"@/components/site/site-footer\";\nimport { SiteHeader } from \"@/components/site/site-header\";\n\n// The footer as agentcard.sh carries it on every page: five columns, the line, the running merchant names.\nconst FOOTER = {\n  description: (\n    <>\n      We want agents to buy anything online\n      <br />\n      that you can buy as a human.\n    </>\n  ),\n  groups: [\n    { title: \"Product\", links: [{ label: \"Vault\", href: \"/vault\" }, { label: \"Issuing\", href: \"/issuing\" }, { label: \"Voice\", href: \"/voice\" }, { label: \"Purchase Agent\", href: \"/purchase-agent\" }, { label: \"Pricing\", href: \"/pricing\" }, { label: \"FAQ\", href: \"/#faq\" }] },\n    { title: \"Developers\", links: [{ label: \"Documentation\", href: \"https://docs.agentcard.sh\" }, { label: \"API reference\", href: \"https://docs.agentcard.sh/api-reference\" }] },\n    { title: \"Company\", links: [{ label: \"About\", href: \"/about\" }, { label: \"Changelog\", href: \"/updates\" }, { label: \"Trust Center\", href: \"/trust\" }] },\n    { title: \"Legal\", links: [{ label: \"Privacy Policy\", href: \"/privacy\" }, { label: \"Terms of Service\", href: \"/terms\" }, { label: \"Card Terms\", href: \"/card-terms\" }, { label: \"Card Terms (International)\", href: \"/card-terms-international\" }] },\n    { title: \"Social\", links: [{ label: \"X / Twitter\", href: \"https://x.com/agentcardhq\" }, { label: \"Instagram\", href: \"https://www.instagram.com/agentcardhq/\" }] },\n  ],\n  merchants: [\"Amazon\", \"Walmart\", \"Target\", \"Best Buy\", \"Home Depot\", \"Lowe’s\", \"Macy’s\", \"Wayfair\", \"Staples\", \"DoorDash\", \"Good Eggs\", \"Flights\"],\n};\n\n// The dock as agentcard.sh carries it: Home, the Products menu, About, Pricing, and Get started.\nconst PRODUCTS = {\n  label: \"Products\",\n  items: [\n    { title: \"Vault\", description: \"Store customers’ cards and buy with an agent.\", href: \"/vault\" },\n    { title: \"Issuing\", description: \"One-time and multi-use cards for your agent.\", href: \"/issuing\" },\n    { title: \"Voice\", description: \"Approve an agent’s purchase by speaking.\", href: \"/voice\" },\n    { title: \"Purchase Agent\", description: \"Buy from Amazon, DoorDash and more.\", href: \"/purchase-agent\" },\n  ],\n};\n\n// The pricing page as agentcard.sh draws it: the bare header on white, the product tabs over the plan windows, the\n// blue footer and the glass dock. Sample plans; replace them with your own.\n\nexport function PricingPage() {\n  return (\n    <main className=\"relative\">\n      <SiteHeader ground=\"white\" action={{ label: \"Get started\", href: \"/get-started\" }} />\n      <div className=\"pt-20 pb-28\">\n        <Pricing\n          title=\"Pricing\"\n          products={[\n            {\n              label: \"Vault\",\n              plans: [\n                {\n                  name: \"Vault Free\",\n                  line: \"Store customers’ cards and buy with an agent\",\n                  price: \"Free\",\n                  unit: \"up to 5,000 users\",\n                  features: [\n                    { title: \"Store any card\", detail: \"Consumer, commercial or prepaid, from any country.\" },\n                    { title: \"Passkey approval\", detail: \"Or a master password, before anything is paid.\" },\n                    { title: \"Encrypted on the device\", detail: \"Cards are encrypted before they’re stored.\" },\n                  ],\n                  action: { label: \"Start free\", href: \"/get-started\" },\n                },\n                {\n                  name: \"Vault Enterprise\",\n                  line: \"Store customers’ cards and buy with an agent\",\n                  price: \"Talk to us\",\n                  includes: \"All features in the Free plan, plus:\",\n                  features: [\n                    { title: \"Unlimited users\", detail: \"No cap on the Free plan’s 5,000.\" },\n                    { title: \"Dedicated support\", detail: \"A named contact and a shared Slack channel.\" },\n                  ],\n                  action: { label: \"Talk to us\", href: \"/get-started\" },\n                  featured: true,\n                },\n              ],\n            },\n            {\n              label: \"Issuing\",\n              plans: [\n                {\n                  name: \"Issuing\",\n                  line: \"Create one-time and multi-use cards for your agent\",\n                  price: \"$5,000\",\n                  unit: \"/ month\",\n                  features: [{ title: \"Unlimited cards\", detail: \"One-time or multi-use, with limits you set.\" }],\n                  action: { label: \"Get started\", href: \"/get-started\" },\n                },\n              ],\n            },\n            {\n              label: \"Purchase Agent\",\n              plans: [\n                {\n                  name: \"Purchase Agent\",\n                  line: \"Integrate our agent into yours and buy from online stores\",\n                  price: \"Talk to us\",\n                  features: [\n                    { title: \"Amazon, DoorDash and more\", detail: \"The stores your users already buy from.\" },\n                    { title: \"Pays with the Vault\", detail: \"The user’s own card, approved on their device.\" },\n                  ],\n                  action: { label: \"Talk to us\", href: \"/get-started\" },\n                },\n              ],\n            },\n          ]}\n        />\n      </div>\n      <SiteFooter backing=\"Backed by Y Combinator\" description={FOOTER.description} groups={FOOTER.groups} merchants={FOOTER.merchants} />\n      <NavDock\n        menu={PRODUCTS}\n        links={[\n          { label: \"Home\", href: \"/\" },\n          { label: \"About\", href: \"/about\" },\n          { label: \"Pricing\", href: \"/pricing\", current: true },\n        ]}\n        action={{ label: \"Get started\", href: \"/get-started\" }}\n      />\n    </main>\n  );\n}\n"
+    }
+  ]
+}

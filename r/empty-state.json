@@ -1,0 +1,66 @@
+{
+  "schemaVersion": 1,
+  "name": "empty-state",
+  "useFor": "Explain what is missing and provide the next action. Set name for the title bar or null to hide it. Connect actions such as creating an item or clearing a search.",
+  "constraints": [
+    "Illustrations that shout",
+    "More than one action",
+    "Empty states that blame the reader"
+  ],
+  "documentation": "",
+  "source": "Extension from agentcard-website src/app/globals.css (.v7-windowbar)",
+  "exports": [
+    "EmptyState"
+  ],
+  "client": false,
+  "docsUrl": "https://agentcard-ds.vercel.app/components/empty-state",
+  "markdownUrl": "https://agentcard-ds.vercel.app/r/empty-state.md",
+  "examples": [
+    {
+      "path": "examples/empty-state.tsx",
+      "content": "\"use client\";\n\nimport { useState } from \"react\";\nimport { CreditCard, Search } from \"lucide-react\";\nimport { Button } from \"@/components/ui/button\";\nimport { EmptyState } from \"@/components/ui/empty-state\";\nimport { Input } from \"@/components/ui/input\";\n\nexport function Site() {\n  const [created, setCreated] = useState(false);\n  return created ? <div className=\"grid gap-3\"><p role=\"status\">Travel agent card created.</p><Button variant=\"secondary\" onClick={() => setCreated(false)}>Reset demo</Button></div> :\n    <EmptyState className=\"max-w-2xl\" name=\"cards.list\" icon={<CreditCard strokeWidth={1.5} />} title=\"No cards yet\"\n      description=\"Give your first agent a card, with a limit and a list of places it can buy.\" action={<Button onClick={() => setCreated(true)}>New card</Button>} />;\n}\nexport function NoResults() {\n  const [query, setQuery] = useState(\"No matching card\");\n  const results = [\"Travel agent\", \"Office supplies\"].filter((name) => name.toLowerCase().includes(query.toLowerCase().trim()));\n  return <div className=\"grid max-w-2xl gap-4\">\n    <Input variant=\"search\" aria-label=\"Search cards\" value={query} onChange={(event) => setQuery(event.target.value)} />\n    {results.length ? <ul aria-live=\"polite\">{results.map((name) => <li key={name} className=\"border-b border-line py-3\">{name}</li>)}</ul> :\n      <EmptyState name=\"search.results\" icon={<Search strokeWidth={1.5} />} title=\"Nothing matches\" description=\"Try a merchant’s name or a card’s nickname.\" action={<Button variant=\"secondary\" onClick={() => setQuery(\"\")}>Clear search</Button>} />}\n  </div>;\n}\n",
+      "exports": [
+        "Site",
+        "NoResults"
+      ],
+      "requires": [
+        "empty-state",
+        "button",
+        "input"
+      ],
+      "packages": [
+        "lucide-react"
+      ],
+      "previews": [
+        {
+          "name": "Site",
+          "url": "https://agentcard-ds.vercel.app/preview/empty-state/Site"
+        },
+        {
+          "name": "NoResults",
+          "url": "https://agentcard-ds.vercel.app/preview/empty-state/NoResults"
+        }
+      ]
+    }
+  ],
+  "type": "ui",
+  "title": "Empty state",
+  "description": "Message and optional action for an empty list or search result.",
+  "surface": "site",
+  "kinds": [
+    "window",
+    "window-bar"
+  ],
+  "requires": [
+    "theme",
+    "window",
+    "utils"
+  ],
+  "packages": [],
+  "files": [
+    {
+      "path": "components/ui/empty-state.tsx",
+      "content": "import * as React from \"react\";\n\nimport { WindowBar } from \"@/components/ui/window\";\nimport { cn } from \"@/lib/utils\";\n\n// An empty list or a search with no results, as a quiet window: a 16 percent ink hairline and 12px corners with no drop,\n// the 32px sky title bar (`name`, file-like: `cards.list`, `search.results`), and a centered body on the pale ground: an\n// optional mark, a title in the 20px display face at 500, one line in Inter at 68 percent ink, and an optional key.\nfunction EmptyState({\n  title,\n  description,\n  action,\n  icon,\n  name = \"empty\",\n  tone,\n  className,\n  children,\n  ...props\n}: Omit<React.ComponentProps<\"div\">, \"title\"> & {\n  title: React.ReactNode;\n  description?: React.ReactNode;\n  /** The one thing to do next, usually a Button. */\n  action?: React.ReactNode;\n  /** A small mark above the title (an icon or an illustration passed in). */\n  icon?: React.ReactNode;\n  /** The title bar's label; pass null to drop the bar. */\n  name?: React.ReactNode;\n  tone?: React.ComponentProps<typeof WindowBar>[\"tone\"];\n}) {\n  return (\n    <div data-slot=\"empty-state\" className={cn(\"flex flex-col overflow-hidden rounded-card border border-hairline bg-surface text-fg\", className)} {...props}>\n      {name !== null && <WindowBar name={name} tone={tone} />}\n      <div className=\"flex flex-1 flex-col items-center justify-center gap-3 bg-subtle px-6 py-12 text-center md:py-16\">\n        {icon && (\n          <div aria-hidden className=\"mb-1 grid size-10 place-items-center rounded-control border border-hairline bg-surface text-fg-brand shadow-key [&_svg]:size-4.5\">\n            {icon}\n          </div>\n        )}\n        <p className=\"font-display text-h4 leading-snug font-medium tracking-tight text-fg\">{title}</p>\n        {description && <p className=\"max-w-sm text-body-sm leading-relaxed text-fg-muted\">{description}</p>}\n        {children}\n        {action && <div className=\"mt-2 flex flex-wrap justify-center gap-3\">{action}</div>}\n      </div>\n    </div>\n  );\n}\n\nexport { EmptyState };\n"
+    }
+  ]
+}

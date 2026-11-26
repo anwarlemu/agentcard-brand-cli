@@ -1,0 +1,55 @@
+{
+  "schemaVersion": 1,
+  "name": "steps",
+  "useFor": "Use for two to six steps in order (how it works, setup).",
+  "constraints": [
+    "More than six steps",
+    "Steps without an order",
+    "Icons in place of the numbers"
+  ],
+  "documentation": "",
+  "source": "Derived from the image editor's numbered cards (agd-playground context-og/cards.ts) and the library's card; the site shows steps in prose.",
+  "exports": [
+    "Steps",
+    "Step"
+  ],
+  "client": false,
+  "docsUrl": "https://agentcard-ds.vercel.app/components/steps",
+  "markdownUrl": "https://agentcard-ds.vercel.app/r/steps.md",
+  "examples": [
+    {
+      "path": "examples/steps.tsx",
+      "content": "import { Steps } from \"@/components/site/steps\";\n\nexport function Site() {\n  return <Steps title=\"How it works\" steps={[{ title: \"Save it once\", description: \"Your user adds their card a single time.\" }, { title: \"The agent asks\", description: \"It never sees the number.\" }, { title: \"You approve\", description: \"With a passkey, tied to that exact cart.\" }]} />;\n}\n",
+      "exports": [
+        "Site"
+      ],
+      "requires": [
+        "steps"
+      ],
+      "packages": [],
+      "previews": [
+        {
+          "name": "Site",
+          "url": "https://agentcard-ds.vercel.app/preview/steps/Site"
+        }
+      ]
+    }
+  ],
+  "type": "site",
+  "title": "Steps",
+  "description": "Numbered steps as white cards with the blue number badge.",
+  "surface": "site",
+  "kinds": [],
+  "requires": [
+    "theme",
+    "section",
+    "utils"
+  ],
+  "packages": [],
+  "files": [
+    {
+      "path": "components/site/steps.tsx",
+      "content": "import * as React from \"react\";\n\nimport { SectionHeading, SiteSection, type SectionGround } from \"@/components/site/section\";\nimport { cn } from \"@/lib/utils\";\n\n// Steps in order, as the image editor's numbered cards draw them: white cards with the card corner and shadow, the\n// blue number badge, a title and a muted line. Built from the library's card and badge; the site shows its steps in\n// prose, so the arrangement is derived, not measured.\n\ntype Step = { title: React.ReactNode; description?: React.ReactNode };\n\nfunction Steps({ title, description, eyebrow, steps, ground = \"paper\", className }: { title?: React.ReactNode; description?: React.ReactNode; eyebrow?: React.ReactNode; steps: Step[]; ground?: SectionGround; className?: string }) {\n  return (\n    <SiteSection ground={ground} className={className}>\n      {title ? <SectionHeading title={title} description={description} eyebrow={eyebrow} className=\"mb-10 md:mb-14\" /> : null}\n      <ol className={cn(\"grid list-none grid-cols-1 gap-4 p-0 md:gap-5\", steps.length >= 3 ? \"md:grid-cols-3\" : \"md:grid-cols-2\")}>\n        {steps.map((s, i) => (\n          <li key={i} className=\"flex flex-col gap-3 rounded-card border border-hairline bg-surface p-6 text-fg shadow-card\">\n            <span aria-hidden className=\"flex size-7 items-center justify-center rounded-full bg-primary font-display text-caption text-on-primary\">\n              {i + 1}\n            </span>\n            <span className=\"sr-only\">Step {i + 1}: </span>\n            <h3 className=\"font-display text-h4 leading-tight font-medium tracking-tight\">{s.title}</h3>\n            {s.description ? <p className=\"text-body leading-6 text-fg-muted\">{s.description}</p> : null}\n          </li>\n        ))}\n      </ol>\n    </SiteSection>\n  );\n}\n\nexport { Steps };\nexport type { Step };\n"
+    }
+  ]
+}

@@ -1,0 +1,63 @@
+{
+  "schemaVersion": 1,
+  "name": "collapsible",
+  "useFor": "Use to hide secondary detail under a row (more card settings, a purchase's line items). Put a CollapsibleTrigger (often asChild on a button) and CollapsibleContent inside Collapsible; control it with open and onOpenChange when needed.",
+  "constraints": [
+    "Hiding required fields",
+    "Nesting collapsibles deeply",
+    "A trigger without a visible state"
+  ],
+  "documentation": "",
+  "source": "collapse.tsx (agentcard-website plan details)",
+  "exports": [
+    "Collapsible",
+    "CollapsibleContent",
+    "CollapsibleTrigger"
+  ],
+  "client": true,
+  "docsUrl": "https://agentcard-ds.vercel.app/components/collapsible",
+  "markdownUrl": "https://agentcard-ds.vercel.app/r/collapsible.md",
+  "examples": [
+    {
+      "path": "examples/collapsible.tsx",
+      "content": "\"use client\";\n\nimport { useState } from \"react\";\nimport { ChevronDown } from \"lucide-react\";\n\nimport { Collapsible, CollapsibleContent, CollapsibleTrigger } from \"@/components/ui/collapsible\";\n\nconst ITEMS = [\n  { name: \"Two adult fares, Boston to New York\", price: \"$72.00\" },\n  { name: \"Seat reservation\", price: \"$8.00\" },\n  { name: \"Booking fee\", price: \"$6.40\" },\n];\n\nexport function Site() {\n  const [open, setOpen] = useState(false);\n  return (\n    <Collapsible open={open} onOpenChange={setOpen} className=\"mx-auto w-full max-w-110 rounded-card border border-hairline bg-surface shadow-guide\">\n      <div className=\"flex items-center justify-between gap-3 px-4 py-3.5\">\n        <div>\n          <p className=\"font-display text-body-sm font-medium text-fg\">Amtrak, $86.40</p>\n          <p className=\"text-caption text-fg-muted\">Travel agent, Oct 21</p>\n        </div>\n        <CollapsibleTrigger className=\"group inline-flex items-center gap-1 rounded-sm px-2 py-1.5 font-display text-caption text-fg-brand outline-none transition-[background-color] duration-150 ease-out hover:bg-wash-selected focus-visible:outline-2 focus-visible:outline-solid focus-visible:outline-focus-ring\">\n          {open ? \"Hide items\" : \"Show items\"}\n          <ChevronDown aria-hidden strokeWidth={1.75} className=\"size-3.5 transition-[rotate] duration-200 ease-in-out group-data-[state=open]:rotate-180 motion-reduce:transition-none\" />\n        </CollapsibleTrigger>\n      </div>\n      <CollapsibleContent>\n        <ul className=\"grid gap-2 border-t border-line px-4 py-3.5\">\n          {ITEMS.map((i) => (\n            <li key={i.name} className=\"flex justify-between gap-4 text-body-sm\">\n              <span className=\"text-fg-secondary\">{i.name}</span>\n              <span className=\"text-fg tabular-nums\">{i.price}</span>\n            </li>\n          ))}\n        </ul>\n      </CollapsibleContent>\n    </Collapsible>\n  );\n}\n\nexport function Open() {\n  return (\n    <Collapsible defaultOpen className=\"mx-auto grid w-full max-w-110 gap-2\">\n      <CollapsibleTrigger className=\"group flex items-center justify-between rounded-control px-3.5 py-3 text-left font-display text-body-sm font-medium text-fg outline-none transition-[background-color] duration-150 ease-out hover:bg-wash-hover focus-visible:outline-2 focus-visible:outline-solid focus-visible:outline-focus-ring\">\n        Advanced card settings\n        <ChevronDown aria-hidden strokeWidth={1.75} className=\"size-3.5 text-fg-muted transition-[rotate] duration-200 ease-in-out group-data-[state=open]:rotate-180 motion-reduce:transition-none\" />\n      </CollapsibleTrigger>\n      <CollapsibleContent>\n        <p className=\"px-3.5 text-body-sm leading-relaxed text-fg-muted\">Merchant categories, currency and the hour of day this card can be used. Every change applies to the next checkout.</p>\n      </CollapsibleContent>\n    </Collapsible>\n  );\n}\n",
+      "exports": [
+        "Site",
+        "Open"
+      ],
+      "requires": [
+        "collapsible"
+      ],
+      "packages": [
+        "lucide-react"
+      ],
+      "previews": [
+        {
+          "name": "Site",
+          "url": "https://agentcard-ds.vercel.app/preview/collapsible/Site"
+        },
+        {
+          "name": "Open",
+          "url": "https://agentcard-ds.vercel.app/preview/collapsible/Open"
+        }
+      ]
+    }
+  ],
+  "type": "ui",
+  "title": "Collapsible",
+  "description": "A disclosure that grows open and shut with the brand's 300ms ease-out.",
+  "surface": "site",
+  "kinds": [],
+  "requires": [
+    "theme",
+    "collapse",
+    "utils"
+  ],
+  "packages": [],
+  "files": [
+    {
+      "path": "components/ui/collapsible.tsx",
+      "content": "\"use client\";\n\nimport * as React from \"react\";\n\nimport { Collapse } from \"@/components/ui/collapse\";\nimport { cn } from \"@/lib/utils\";\n\n// shadcn's Collapsible in the brand's own disclosure (collapse.tsx, as the plan details and the guides' panels open):\n// the content grows from nothing to its height and back over 300ms ease-out with a fade, so what sits below glides\n// rather than jumps, and stays mounted but inert while shut. The trigger carries aria-expanded and aria-controls.\n// Reduced motion opens and closes at once.\ntype CollapsibleContextValue = { open: boolean; setOpen: (open: boolean) => void; contentId: string; disabled?: boolean };\nconst CollapsibleContext = React.createContext<CollapsibleContextValue | null>(null);\nfunction useCollapsible() {\n  const ctx = React.useContext(CollapsibleContext);\n  if (!ctx) throw new Error(\"Collapsible parts must be used within <Collapsible />\");\n  return ctx;\n}\n\nfunction Collapsible({\n  open: openProp,\n  defaultOpen = false,\n  onOpenChange,\n  disabled,\n  className,\n  ...props\n}: Omit<React.ComponentProps<\"div\">, \"onChange\"> & { open?: boolean; defaultOpen?: boolean; onOpenChange?: (open: boolean) => void; disabled?: boolean }) {\n  const [inner, setInner] = React.useState(defaultOpen);\n  const open = openProp ?? inner;\n  const contentId = React.useId();\n  const setOpen = React.useCallback(\n    (next: boolean) => {\n      if (openProp === undefined) setInner(next);\n      onOpenChange?.(next);\n    },\n    [openProp, onOpenChange],\n  );\n  return (\n    <CollapsibleContext.Provider value={{ open, setOpen, contentId, disabled }}>\n      <div data-slot=\"collapsible\" data-state={open ? \"open\" : \"closed\"} data-disabled={disabled ? \"\" : undefined} className={className} {...props} />\n    </CollapsibleContext.Provider>\n  );\n}\n\nfunction CollapsibleTrigger({ onClick, asChild = false, children, ...props }: React.ComponentProps<\"button\"> & { asChild?: boolean }) {\n  const { open, setOpen, contentId, disabled } = useCollapsible();\n  const shared = {\n    \"data-slot\": \"collapsible-trigger\",\n    \"data-state\": open ? \"open\" : \"closed\",\n    \"aria-expanded\": open,\n    \"aria-controls\": contentId,\n    disabled: disabled || props.disabled,\n    onClick: (event: React.MouseEvent<HTMLButtonElement>) => {\n      onClick?.(event);\n      if (!event.defaultPrevented) setOpen(!open);\n    },\n  };\n  if (asChild && React.isValidElement(children)) {\n    const child = children as React.ReactElement<Record<string, unknown>>;\n    return React.cloneElement(child, { ...props, ...shared, onClick: (event: React.MouseEvent<HTMLButtonElement>) => {\n      (child.props.onClick as ((e: React.MouseEvent<HTMLButtonElement>) => void) | undefined)?.(event);\n      shared.onClick(event);\n    } });\n  }\n  return (\n    <button type=\"button\" {...props} {...shared}>\n      {children}\n    </button>\n  );\n}\n\nfunction CollapsibleContent({ className, children }: { className?: string; children?: React.ReactNode }) {\n  const { open, contentId } = useCollapsible();\n  return (\n    <Collapse open={open} id={contentId} className={cn(className)}>\n      <div data-slot=\"collapsible-content\" data-state={open ? \"open\" : \"closed\"}>\n        {children}\n      </div>\n    </Collapse>\n  );\n}\n\nexport { Collapsible, CollapsibleContent, CollapsibleTrigger };\n"
+    }
+  ]
+}

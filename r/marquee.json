@@ -1,0 +1,58 @@
+{
+  "schemaVersion": 1,
+  "name": "marquee",
+  "useFor": "Use for a merchant, customer or partner list. Use at most one per page.",
+  "constraints": [
+    "Logos in color on the line",
+    "A fast loop (under 30s a lap)",
+    "Two running lines on one page",
+    "Text a reader must read to act"
+  ],
+  "documentation": "`Marquee` props: `items` (ReactNode[]), `label` (what a screen reader hears; defaults to the names joined), `separator`\n(default ✳), `duration` (seconds a lap, default 48), `ground` (\"blue\" | \"white\", default blue).",
+  "source": "agentcard-website src/components/v7/site-footer.tsx (.v7-foot-line); src/app/globals.css:5073; agentcard.sh / (computed)",
+  "exports": [
+    "Marquee",
+    "MarqueeProps"
+  ],
+  "client": true,
+  "docsUrl": "https://agentcard-ds.vercel.app/components/marquee",
+  "markdownUrl": "https://agentcard-ds.vercel.app/r/marquee.md",
+  "examples": [
+    {
+      "path": "examples/marquee.tsx",
+      "content": "import { Marquee } from \"@/components/visuals/marquee\";\nimport { Surface } from \"@/lib/surface\";\n\nconst MERCHANTS = [\"Amazon\", \"Walmart\", \"Target\", \"Best Buy\", \"Home Depot\", \"Lowe’s\", \"Macy’s\", \"Wayfair\", \"Staples\", \"Kohl’s\", \"B&H Photo\", \"DoorDash\", \"Good Eggs\", \"Locale\", \"Flights\"];\n\nexport function Site() {\n  return (\n    <div className=\"grid gap-6\">\n      <Surface ground=\"blue\" className=\"overflow-hidden rounded-panel py-10\">\n        <Marquee items={MERCHANTS} label=\"Agents buy at Amazon, Walmart, Target and more.\" />\n      </Surface>\n      <div className=\"overflow-hidden rounded-panel border border-hairline py-10\">\n        <Marquee items={MERCHANTS} ground=\"white\" duration={60} />\n      </div>\n    </div>\n  );\n}\n",
+      "exports": [
+        "Site"
+      ],
+      "requires": [
+        "marquee",
+        "surface"
+      ],
+      "packages": [],
+      "previews": [
+        {
+          "name": "Site",
+          "url": "https://agentcard-ds.vercel.app/preview/marquee/Site"
+        }
+      ]
+    }
+  ],
+  "type": "visual",
+  "title": "Marquee",
+  "description": "Scrolling row of names that pauses on hover and respects reduced motion.",
+  "surface": "site",
+  "kinds": [
+    "logo-strip"
+  ],
+  "requires": [
+    "theme",
+    "utils"
+  ],
+  "packages": [],
+  "files": [
+    {
+      "path": "components/visuals/marquee.tsx",
+      "content": "\"use client\";\n\nimport * as React from \"react\";\n\nimport { cn } from \"@/lib/utils\";\n\n// The running line (agentcard.sh, .v7-foot-line): names in the display face, each followed by a small star, between two\n// rules, sliding sideways forever. Two copies of the line sit end to end and the track moves by one copy's width, so the\n// loop has no seam. It is linear and slow (48s a lap), stops under the pointer so a name can be read, and stands still\n// with reduced motion. The moving line is hidden from screen readers; `label` says it once instead.\nconst GROUNDS = {\n  blue: { line: \"border-line-on-brand-strong\", star: \"text-fg-on-brand-label\" },\n  white: { line: \"border-line-strong\", star: \"text-fg-label\" },\n} as const;\n\nfunction useReducedMotion() {\n  const [reduce, setReduce] = React.useState(false);\n  React.useEffect(() => {\n    const query = window.matchMedia(\"(prefers-reduced-motion: reduce)\");\n    const update = () => setReduce(query.matches);\n    update();\n    query.addEventListener(\"change\", update);\n    return () => query.removeEventListener(\"change\", update);\n  }, []);\n  return reduce;\n}\n\ntype MarqueeProps = Omit<React.ComponentProps<\"div\">, \"children\"> & {\n  /** The names on the line, in order. */\n  items: React.ReactNode[];\n  /** What a screen reader hears instead of the moving line. Defaults to the names joined, when they are text. */\n  label?: string;\n  /** The mark between names. */\n  separator?: React.ReactNode;\n  /** Seconds for one lap (one copy of the line). */\n  duration?: number;\n  /** The ground it sits on: white rules and sky stars on the blue, ink rules and blue stars on white. */\n  ground?: keyof typeof GROUNDS;\n};\n\nfunction Marquee({ items, label, separator = \"✳\", duration = 48, ground = \"blue\", className, ...props }: MarqueeProps) {\n  const trackRef = React.useRef<HTMLDivElement>(null);\n  const animationRef = React.useRef<Animation | null>(null);\n  const reduce = useReducedMotion();\n  const tone = GROUNDS[ground];\n  const spoken = label ?? (items.every((item) => typeof item === \"string\") ? `${items.join(\", \")}.` : undefined);\n\n  React.useEffect(() => {\n    const el = trackRef.current;\n    if (!el || reduce || typeof el.animate !== \"function\") return;\n    const animation = el.animate([{ transform: \"translateX(0)\" }, { transform: \"translateX(-50%)\" }], { duration: duration * 1000, iterations: Infinity, easing: \"linear\" });\n    animationRef.current = animation;\n    return () => {\n      animation.cancel();\n      animationRef.current = null;\n    };\n  }, [reduce, duration]);\n\n  const pause = (e: React.PointerEvent) => {\n    if (e.pointerType === \"mouse\") animationRef.current?.pause();\n  };\n  const play = () => animationRef.current?.play();\n\n  return (\n    <div data-slot=\"marquee\" className={cn(\"flex overflow-hidden border-y font-display text-caption leading-body\", tone.line, className)} onPointerEnter={pause} onPointerLeave={play} {...props}>\n      <div ref={trackRef} aria-hidden className=\"flex flex-none will-change-transform\">\n        {[0, 1].map((copy) => (\n          <span key={copy} className=\"flex-none py-3 whitespace-nowrap\">\n            {items.map((item, i) => (\n              <span key={i}>\n                {item}{\" \"}\n                <i className={cn(\"mx-4.5 inline-block not-italic\", tone.star)}>{separator}</i>\n              </span>\n            ))}\n          </span>\n        ))}\n      </div>\n      {spoken && <span className=\"sr-only\">{spoken}</span>}\n    </div>\n  );\n}\n\nexport { Marquee };\nexport type { MarqueeProps };\n"
+    }
+  ]
+}

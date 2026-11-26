@@ -1,0 +1,61 @@
+{
+  "schemaVersion": 1,
+  "name": "native-select",
+  "useFor": "Use where the platform picker is better than a custom menu: phones, long lists of countries or currencies, and forms that must work without script. Pair it with Field or a Label. Use size=\"sm\" in dense rows.",
+  "constraints": [
+    "Rounded corners",
+    "A custom arrow other than the triangle",
+    "Placeholder options that can be submitted"
+  ],
+  "documentation": "",
+  "source": "agentcard.com/get-started (.v7-gate-field select, computed)",
+  "exports": [
+    "NativeSelect",
+    "NativeSelectOptGroup",
+    "NativeSelectOption"
+  ],
+  "client": false,
+  "docsUrl": "https://agentcard-ds.vercel.app/components/native-select",
+  "markdownUrl": "https://agentcard-ds.vercel.app/r/native-select.md",
+  "examples": [
+    {
+      "path": "examples/native-select.tsx",
+      "content": "import { Field } from \"@/components/ui/field\";\nimport { NativeSelect, NativeSelectOptGroup, NativeSelectOption } from \"@/components/ui/native-select\";\n\nexport function Site() {\n  return (\n    <div className=\"grid w-full max-w-86 gap-4\">\n      <Field label=\"Card currency\" htmlFor=\"native-currency\">\n        <NativeSelect id=\"native-currency\" name=\"currency\" defaultValue=\"usd\">\n          <NativeSelectOptGroup label=\"Most used\">\n            <NativeSelectOption value=\"usd\">US dollar</NativeSelectOption>\n            <NativeSelectOption value=\"eur\">Euro</NativeSelectOption>\n          </NativeSelectOptGroup>\n          <NativeSelectOptGroup label=\"Others\">\n            <NativeSelectOption value=\"gbp\">British pound</NativeSelectOption>\n            <NativeSelectOption value=\"jpy\">Japanese yen</NativeSelectOption>\n          </NativeSelectOptGroup>\n        </NativeSelect>\n      </Field>\n    </div>\n  );\n}\n\nexport function States() {\n  return (\n    <div className=\"grid w-full max-w-86 gap-4\">\n      <NativeSelect aria-label=\"Compact\" size=\"sm\" defaultValue=\"all\">\n        <NativeSelectOption value=\"all\">All agents</NativeSelectOption>\n        <NativeSelectOption value=\"travel\">Travel agent</NativeSelectOption>\n      </NativeSelect>\n      <NativeSelect aria-label=\"Invalid\" aria-invalid defaultValue=\"\">\n        <NativeSelectOption value=\"\" disabled>\n          Choose a merchant category\n        </NativeSelectOption>\n        <NativeSelectOption value=\"air\">Airlines</NativeSelectOption>\n      </NativeSelect>\n      <NativeSelect aria-label=\"Disabled\" disabled defaultValue=\"usd\">\n        <NativeSelectOption value=\"usd\">US dollar</NativeSelectOption>\n      </NativeSelect>\n    </div>\n  );\n}\n",
+      "exports": [
+        "Site",
+        "States"
+      ],
+      "requires": [
+        "native-select",
+        "field"
+      ],
+      "packages": [],
+      "previews": [
+        {
+          "name": "Site",
+          "url": "https://agentcard-ds.vercel.app/preview/native-select/Site"
+        },
+        {
+          "name": "States",
+          "url": "https://agentcard-ds.vercel.app/preview/native-select/States"
+        }
+      ]
+    }
+  ],
+  "type": "ui",
+  "title": "Native Select",
+  "description": "The browser's own select dressed as the brand's square field with the small ink triangle.",
+  "surface": "site",
+  "kinds": [],
+  "requires": [
+    "theme",
+    "utils"
+  ],
+  "packages": [],
+  "files": [
+    {
+      "path": "components/ui/native-select.tsx",
+      "content": "import * as React from \"react\";\n\nimport { cn } from \"@/lib/utils\";\n\n// The browser's own select dressed as the brand's field (agentcard.com/get-started, .v7-gate-field select): the input's\n// square box, 35 percent ink border and 18px Inter, 10px by 12px of padding, with the small ink triangle (10 by 5px)\n// 13px in from the right; focus is the form's 2px blue outline laid over the border. `size=\"sm\"` is the compact 36px\n// field in the 14px face. Use it where the platform picker is better (phones, long lists, forms without script).\ntype NativeSelectProps = Omit<React.ComponentProps<\"select\">, \"size\"> & { size?: \"sm\" | \"default\" };\n\nfunction NativeSelect({ className, size = \"default\", ...props }: NativeSelectProps) {\n  return (\n    <div data-slot=\"native-select-wrapper\" data-size={size} className={cn(\"group/native-select relative w-full has-[select:disabled]:opacity-50\", className)}>\n      <select\n        data-slot=\"native-select\"\n        data-size={size}\n        className=\"min-h-11 w-full min-w-0 cursor-pointer appearance-none rounded-none border border-line-strong bg-surface py-2.5 pr-9 pl-3 font-sans text-h5 leading-snug text-fg outline-none focus-visible:outline-2 focus-visible:-outline-offset-1 focus-visible:outline-solid focus-visible:outline-focus-ring disabled:cursor-not-allowed aria-invalid:border-danger data-[size=sm]:h-9 data-[size=sm]:min-h-0 data-[size=sm]:py-0 data-[size=sm]:pl-2.5 data-[size=sm]:text-body-sm\"\n        {...props}\n      />\n      <svg aria-hidden data-slot=\"native-select-icon\" viewBox=\"0 0 10 5\" className=\"pointer-events-none absolute top-1/2 right-3.25 h-1.25 w-2.5 -translate-y-1/2 fill-current text-fg\">\n        <path d=\"M0 0h10L5 5z\" />\n      </svg>\n    </div>\n  );\n}\n\nfunction NativeSelectOption({ className, ...props }: React.ComponentProps<\"option\">) {\n  return <option data-slot=\"native-select-option\" className={cn(\"bg-surface text-fg\", className)} {...props} />;\n}\n\nfunction NativeSelectOptGroup({ className, ...props }: React.ComponentProps<\"optgroup\">) {\n  return <optgroup data-slot=\"native-select-optgroup\" className={cn(\"bg-surface text-fg\", className)} {...props} />;\n}\n\nexport { NativeSelect, NativeSelectOptGroup, NativeSelectOption };\n"
+    }
+  ]
+}

@@ -1,0 +1,224 @@
+# Item
+A list row: a blue glyph in a small key or a square photo, a display-face title over a muted line, and actions at the right.
+
+Install: npx agentcard-ds add item
+Requires: theme, separator, utils
+Packages: @radix-ui/react-slot, class-variance-authority
+Exports: Item, ItemActions, ItemContent, ItemDescription, ItemFooter, ItemGroup, ItemHeader, ItemMedia, ItemSeparator, ItemTitle
+Client boundary: not required by this entry file
+Reference: Extrapolated from Agentcard: the guides' nav rows (agentcard-website .v7-guide-nav), the updates feed (/updates), the white key (.v7-btn) and the team page's photos (/about)
+
+
+## Usage
+Use for rows in a list a person scans or picks from: cards, agents, merchants, updates. Set aria-current or data-selected on the current row (it turns pale sky with a blue title). Use outline for a row that stands alone as a card, muted for a row on the gray ground, size sm or xs for dense lists, and ItemHeader or ItemFooter for a date or a tag.
+- Avoid: Bold titles
+- Avoid: More than two lines of description
+- Avoid: Rows that move on hover
+- Avoid: Rounded photos
+
+
+## Examples
+Example components: npx agentcard-ds add item badge button
+Example packages: lucide-react
+[Site](https://agentcard-ds.vercel.app/preview/item/Site) | [Variants](https://agentcard-ds.vercel.app/preview/item/Variants) | [Feed](https://agentcard-ds.vercel.app/preview/item/Feed)
+
+examples/item.tsx
+
+```tsx
+"use client";
+
+import * as React from "react";
+import { ArrowUpRight, CreditCard, Plane, ShoppingBag } from "lucide-react";
+
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Item, ItemActions, ItemContent, ItemDescription, ItemFooter, ItemGroup, ItemHeader, ItemMedia, ItemSeparator, ItemTitle } from "@/components/ui/item";
+
+const CARDS = [
+  { name: "Travel agent", detail: "Multi-use, $2,000 a month. Flights and hotels only.", icon: Plane, status: "Active" },
+  { name: "Office supplies", detail: "Single-use, $250. Staples and Amazon.", icon: ShoppingBag, status: "Active" },
+  { name: "Gift cards", detail: "Closed after one purchase on Oct 12.", icon: CreditCard, status: "Closed" },
+];
+
+export function Site() {
+  const [current, setCurrent] = React.useState(CARDS[0].name);
+  return (
+    <ItemGroup className="w-full max-w-md">
+      {CARDS.map((card) => (
+        <Item key={card.name} asChild aria-current={current === card.name ? "true" : undefined}>
+          <button type="button" className="w-full text-left" onClick={() => setCurrent(card.name)}>
+            <ItemMedia variant="icon">
+              <card.icon strokeWidth={1.5} />
+            </ItemMedia>
+            <ItemContent>
+              <ItemTitle>{card.name}</ItemTitle>
+              <ItemDescription>{card.detail}</ItemDescription>
+            </ItemContent>
+            <ItemActions>
+              <Badge variant={card.status === "Active" ? "success" : "default"}>{card.status}</Badge>
+            </ItemActions>
+          </button>
+        </Item>
+      ))}
+    </ItemGroup>
+  );
+}
+
+export function Variants() {
+  return (
+    <div className="grid w-full max-w-md gap-4">
+      <Item variant="outline">
+        <ItemContent>
+          <ItemTitle>Vault</ItemTitle>
+          <ItemDescription>Store customers’ cards and let agents use them safely.</ItemDescription>
+        </ItemContent>
+        <ItemActions>
+          <Button variant="secondary" size="sm">
+            Open
+          </Button>
+        </ItemActions>
+      </Item>
+      <Item variant="muted" size="sm">
+        <ItemContent>
+          <ItemTitle>Purchase Agent</ItemTitle>
+          <ItemDescription>Buys from Amazon, DoorDash and other stores for your agent.</ItemDescription>
+        </ItemContent>
+      </Item>
+      <Item asChild size="xs">
+        <a href="https://www.agentcard.sh/updates" target="_blank" rel="noreferrer">
+          <ItemContent>
+            <ItemTitle>Read the updates</ItemTitle>
+          </ItemContent>
+          <ArrowUpRight aria-hidden className="size-3.5 text-fg-muted" />
+        </a>
+      </Item>
+    </div>
+  );
+}
+
+export function Feed() {
+  const entries = [
+    { when: "Oct 14", tag: "New", title: "Voice orders", body: "Agents can now place orders over the phone with their card." },
+    { when: "Oct 2", tag: "Fix", title: "Card limits reset on time", body: "Monthly limits now reset at midnight in the card’s time zone." },
+  ];
+  return (
+    <ItemGroup className="w-full max-w-lg">
+      {entries.map((entry, i) => (
+        <React.Fragment key={entry.title}>
+          {i > 0 && <ItemSeparator />}
+          <Item size="sm">
+            <ItemHeader>
+              <span>{entry.when}</span>
+              <Badge variant={entry.tag === "New" ? "tag" : "tag-heart"}>{entry.tag}</Badge>
+            </ItemHeader>
+            <ItemContent>
+              <ItemTitle>{entry.title}</ItemTitle>
+              <ItemDescription>{entry.body}</ItemDescription>
+            </ItemContent>
+            <ItemFooter>
+              <span>agentcard.sh/updates</span>
+            </ItemFooter>
+          </Item>
+        </React.Fragment>
+      ))}
+    </ItemGroup>
+  );
+}
+
+```
+
+## Source
+
+components/ui/item.tsx
+
+```tsx
+import * as React from "react";
+import { Slot } from "@radix-ui/react-slot";
+import { cva, type VariantProps } from "class-variance-authority";
+
+import { Separator } from "@/components/ui/separator";
+import { cn } from "@/lib/utils";
+
+// A row of content in the brand's lists (agentcard.sh: the guides' nav rows, the updates feed, the card list in the
+// issuing window): a title in the display face at 500, tracked tight, over a 14px Inter line at 68 percent ink, with a
+// glyph or a picture at the left and actions at the right. `default` is bare and washes 4 percent ink under the pointer;
+// the current item (aria-current or data-selected) is the pale sky row with blue text, as the guides mark the page you
+// are on. `outline` is a white card on the hairline with 12px corners and the guides' light bevel; `muted` sits on the
+// pale gray. Hover and selection change color only, in 150ms ease-out.
+function ItemGroup({ className, ...props }: React.ComponentProps<"div">) {
+  return <div role="list" data-slot="item-group" className={cn("group/item-group flex flex-col gap-1", className)} {...props} />;
+}
+
+function ItemSeparator({ className, ...props }: React.ComponentProps<typeof Separator>) {
+  return <Separator data-slot="item-separator" orientation="horizontal" className={cn("my-1", className)} {...props} />;
+}
+
+const itemVariants = cva(
+  "group/item flex flex-wrap items-center rounded-control border border-transparent text-fg outline-none transition-[background-color,color] duration-150 ease-out focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-solid focus-visible:outline-focus-ring aria-[current=page]:bg-sky-wash aria-[current=true]:bg-sky-wash data-[selected=true]:bg-sky-wash motion-reduce:transition-none [a]:hover:bg-wash-hover [button]:hover:bg-wash-hover [&[aria-current]_[data-slot=item-title]]:text-fg-brand [&[data-selected=true]_[data-slot=item-title]]:text-fg-brand",
+  {
+    variants: {
+      variant: {
+        default: "bg-transparent",
+        outline: "rounded-card border-hairline bg-surface shadow-guide",
+        muted: "border-hairline bg-subtle",
+      },
+      size: {
+        default: "gap-3.5 p-4",
+        sm: "gap-2.5 px-3 py-2.5",
+        xs: "gap-2 px-2.5 py-1.5",
+      },
+    },
+    defaultVariants: { variant: "default", size: "default" },
+  },
+);
+
+function Item({ className, variant = "default", size = "default", asChild = false, ...props }: React.ComponentProps<"div"> & VariantProps<typeof itemVariants> & { asChild?: boolean }) {
+  const Comp = asChild ? Slot : "div";
+  return <Comp data-slot="item" data-variant={variant} data-size={size} className={cn(itemVariants({ variant, size, className }))} {...props} />;
+}
+
+// A glyph is blue, as the brand's marks are; a picture is the team page's square, grayscale photo.
+const itemMediaVariants = cva("flex shrink-0 items-center justify-center gap-2 group-has-data-[slot=item-description]/item:self-start [&_svg]:pointer-events-none", {
+  variants: {
+    variant: {
+      default: "bg-transparent",
+      icon: "size-8 rounded-sm border border-hairline bg-surface text-fg-brand shadow-key-muted [&_svg:not([class*='size-'])]:size-4",
+      image: "size-10 overflow-hidden [&_img]:size-full [&_img]:object-cover [&_img]:grayscale",
+    },
+  },
+  defaultVariants: { variant: "default" },
+});
+
+function ItemMedia({ className, variant = "default", ...props }: React.ComponentProps<"div"> & VariantProps<typeof itemMediaVariants>) {
+  return <div data-slot="item-media" data-variant={variant} className={cn(itemMediaVariants({ variant, className }))} {...props} />;
+}
+
+function ItemContent({ className, ...props }: React.ComponentProps<"div">) {
+  return <div data-slot="item-content" className={cn("flex min-w-0 flex-1 flex-col gap-1 [&+[data-slot=item-content]]:flex-none", className)} {...props} />;
+}
+
+function ItemTitle({ className, ...props }: React.ComponentProps<"div">) {
+  return <div data-slot="item-title" className={cn("flex w-fit min-w-0 items-center gap-2 font-display text-body leading-snug font-medium tracking-tight text-fg transition-colors duration-150 ease-out motion-reduce:transition-none", className)} {...props} />;
+}
+
+/** The line under a title, in 14px Inter at 68 percent ink, clamped to two lines. */
+function ItemDescription({ className, ...props }: React.ComponentProps<"p">) {
+  return <p data-slot="item-description" className={cn("line-clamp-2 text-body-sm leading-relaxed font-normal text-balance text-fg-muted [&>a]:text-fg-brand [&>a]:underline [&>a]:underline-offset-4", className)} {...props} />;
+}
+
+function ItemActions({ className, ...props }: React.ComponentProps<"div">) {
+  return <div data-slot="item-actions" className={cn("flex items-center gap-2", className)} {...props} />;
+}
+
+/** The top line of an item: what it is at the left, when or where at the right, in the 12px display face. */
+function ItemHeader({ className, ...props }: React.ComponentProps<"div">) {
+  return <div data-slot="item-header" className={cn("flex basis-full items-center justify-between gap-2 font-display text-caption leading-snug text-fg-muted", className)} {...props} />;
+}
+
+function ItemFooter({ className, ...props }: React.ComponentProps<"div">) {
+  return <div data-slot="item-footer" className={cn("flex basis-full items-center justify-between gap-2 font-display text-caption leading-snug text-fg-muted", className)} {...props} />;
+}
+
+export { Item, ItemActions, ItemContent, ItemDescription, ItemFooter, ItemGroup, ItemHeader, ItemMedia, ItemSeparator, ItemTitle };
+
+```

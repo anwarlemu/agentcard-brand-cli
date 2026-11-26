@@ -1,0 +1,55 @@
+{
+  "schemaVersion": 1,
+  "name": "separator",
+  "useFor": "Use between related content groups or inline controls.",
+  "constraints": [
+    "Thick or colored rules",
+    "Rules between every row of a card",
+    "A smooth fade between the blue and white grounds (that is the band divider)"
+  ],
+  "documentation": "",
+  "source": "agentcard-website src/app/globals.css (--line); live https://www.agentcard.sh/get-started",
+  "exports": [
+    "Separator"
+  ],
+  "client": true,
+  "docsUrl": "https://agentcard-ds.vercel.app/components/separator",
+  "markdownUrl": "https://agentcard-ds.vercel.app/r/separator.md",
+  "examples": [
+    {
+      "path": "examples/separator.tsx",
+      "content": "import { Separator } from \"@/components/ui/separator\";\n\nexport function Site() {\n  return (\n    <div className=\"grid max-w-2xl gap-8\">\n      <div className=\"grid gap-4\">\n        <p className=\"font-display text-caption text-fg-label\">Get started</p>\n        <h2 className=\"text-h1 leading-heading\">Let your agent buy</h2>\n        <p className=\"text-body-lg text-fg-muted\">A few answers, then a call.</p>\n      </div>\n      <Separator />\n      <div className=\"flex h-5 items-center gap-4 font-display text-body-sm text-fg-muted\">\n        <span>Vault</span>\n        <Separator orientation=\"vertical\" />\n        <span>Issuing</span>\n        <Separator orientation=\"vertical\" />\n        <span>Voice</span>\n      </div>\n    </div>\n  );\n}\n",
+      "exports": [
+        "Site"
+      ],
+      "requires": [
+        "separator"
+      ],
+      "packages": [],
+      "previews": [
+        {
+          "name": "Site",
+          "url": "https://agentcard-ds.vercel.app/preview/separator/Site"
+        }
+      ]
+    }
+  ],
+  "type": "ui",
+  "title": "Separator",
+  "description": "Horizontal or vertical divider.",
+  "surface": "site",
+  "kinds": [],
+  "requires": [
+    "theme",
+    "utils"
+  ],
+  "packages": [
+    "@radix-ui/react-separator"
+  ],
+  "files": [
+    {
+      "path": "components/ui/separator.tsx",
+      "content": "\"use client\";\n\nimport * as React from \"react\";\nimport * as SeparatorPrimitive from \"@radix-ui/react-separator\";\n\nimport { cn } from \"@/lib/utils\";\n\n// The brand's rule: one pixel of ink at 14 percent, as between the FAQ's questions and under a page's title block.\nfunction Separator({ className, orientation = \"horizontal\", decorative = true, ...props }: React.ComponentProps<typeof SeparatorPrimitive.Root>) {\n  return (\n    <SeparatorPrimitive.Root\n      data-slot=\"separator\"\n      decorative={decorative}\n      orientation={orientation}\n      className={cn(\"shrink-0 bg-line data-[orientation=horizontal]:h-px data-[orientation=horizontal]:w-full data-[orientation=vertical]:h-full data-[orientation=vertical]:w-px\", className)}\n      {...props}\n    />\n  );\n}\n\nexport { Separator };\n"
+    }
+  ]
+}

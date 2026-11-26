@@ -1,0 +1,64 @@
+{
+  "schemaVersion": 1,
+  "name": "team-directory",
+  "useFor": "Use for teams, advisors, investors or partners. Use tone=\"blue\" for the primary directory and the default tone for others. Provide current names and links.",
+  "constraints": [
+    "Color photos",
+    "Round avatars",
+    "Bold names",
+    "More than one blue-bar window per page",
+    "Cards with gaps between people instead of the ruled grid"
+  ],
+  "documentation": "`TeamDirectory` props: `name` (the bar label: `team.dir`), `tone` (`blue` | `sky`, default sky), `columns` (1 | 2 | 3,\ndefault 2; one column on phones; two columns use 64px photos and 96px cells, three use 40px photos and 84px cells),\n`people` (`{ name, role?, photo?, photoAlt?, href? }`: `photo` is an image URL or any node, shown in grayscale; `href`\nmakes the cell a link with the arrow), `footer` (`{ logo?, label?, href?, ariaLabel? }[]`, two to a row).\n\nA linked cell lights sky under the pointer and its arrow nudges up and right (160ms, ease-out); nothing else moves.",
+  "source": "agentcard-website src/components/v7/company-page.tsx; src/app/globals.css:1808 (.v7-about); agentcard.sh/about (computed: .v7-about-sec, .v7-about-cell)",
+  "exports": [
+    "TeamDirectory",
+    "TeamPerson",
+    "TeamFooterCell",
+    "TeamDirectoryProps"
+  ],
+  "client": false,
+  "docsUrl": "https://agentcard-ds.vercel.app/components/team-directory",
+  "markdownUrl": "https://agentcard-ds.vercel.app/r/team-directory.md",
+  "examples": [
+    {
+      "path": "examples/team-directory.tsx",
+      "content": "import { TeamDirectory } from \"@/components/site/team-directory\";\n\n// A neutral stand-in for a photo: initials on a pale block (the directory grays it as it does a photo).\nfunction Initials({ name }: { name: string }) {\n  const letters = name\n    .split(\" \")\n    .map((w) => w[0])\n    .slice(0, 2)\n    .join(\"\");\n  return (\n    <span role=\"img\" aria-label={`Photo of ${name}`} className=\"flex items-center justify-center bg-sky font-display text-body-sm text-fg-brand\">\n      {letters}\n    </span>\n  );\n}\n\nconst TEAM = [\n  { name: \"Ada Okafor\", role: \"CEO & Co-Founder\" },\n  { name: \"Luis Romero\", role: \"CTO & Co-Founder\" },\n  { name: \"Mara Lindqvist\", role: \"Member of Technical Staff\" },\n  { name: \"Noor Haddad\", role: \"Member of Marketing Staff\" },\n];\n\nconst INVESTORS = [\n  [\"Priya Raman\", \"Co-founder, a fund\"],\n  [\"Tom Becker\", \"CEO, a commerce platform\"],\n  [\"Elena Ruiz\", \"CTO, a CRM\"],\n  [\"Sam Wu\", \"CEO, an auth company\"],\n  [\"Jonas Berg\", \"CEO, a cloud\"],\n  [\"Ines Duarte\", \"Board, an AI lab\"],\n  [\"Kofi Mensah\", \"CEO, a delivery app\"],\n  [\"Hana Sato\", \"Design, a device maker\"],\n  [\"Ravi Patel\", \"Payments\"],\n];\n\nfunction YMark() {\n  return (\n    <svg viewBox=\"0 0 40 40\" width=\"40\" height=\"40\" aria-hidden className=\"block size-10 flex-none\">\n      <rect width=\"40\" height=\"40\" className=\"fill-brand\" />\n      <path d=\"M13 11l7 11 7-11M20 22v8\" className=\"fill-none stroke-white\" strokeWidth=\"3\" />\n    </svg>\n  );\n}\n\nexport function Site() {\n  return (\n    <div className=\"mx-auto grid max-w-(--ds-layout-text) gap-16 px-5 py-16 sm:px-0\">\n      <section aria-labelledby=\"team\">\n        <h2 id=\"team\" className=\"mb-3.5 font-display text-caption font-normal text-fg-brand\">\n          Team\n        </h2>\n        <TeamDirectory name=\"team.dir\" tone=\"blue\" columns={2} people={TEAM.map((p) => ({ ...p, photo: <Initials name={p.name} /> }))} />\n        <p className=\"mt-4 text-body-sm text-fg-muted\">\n          We are not hiring, but you can always send us an{\" \"}\n          <a href=\"mailto:support@agentcard.sh\" className=\"text-fg-brand underline underline-offset-3\">\n            email\n          </a>\n          .\n        </p>\n      </section>\n      <section aria-labelledby=\"investors\">\n        <h2 id=\"investors\" className=\"mb-3.5 font-display text-caption font-normal text-fg-brand\">\n          Investors\n        </h2>\n        <TeamDirectory\n          name=\"investors.dir\"\n          columns={3}\n          people={INVESTORS.map(([name, role]) => ({ name, role, photo: <Initials name={name} /> }))}\n          footer={[\n            { logo: <YMark />, label: \"Backed by an accelerator\" },\n            { logo: <span className=\"font-display text-h5 tracking-mark text-fg\">NORTHFUND</span>, ariaLabel: \"North Fund\" },\n          ]}\n        />\n      </section>\n    </div>\n  );\n}\n",
+      "exports": [
+        "Site"
+      ],
+      "requires": [
+        "team-directory"
+      ],
+      "packages": [],
+      "previews": [
+        {
+          "name": "Site",
+          "url": "https://agentcard-ds.vercel.app/preview/team-directory/Site"
+        }
+      ]
+    }
+  ],
+  "type": "site",
+  "title": "Team directory",
+  "description": "Responsive directory of people with photos, roles and optional links.",
+  "surface": "site",
+  "kinds": [
+    "window",
+    "window-bar",
+    "card",
+    "link"
+  ],
+  "requires": [
+    "theme",
+    "window",
+    "utils"
+  ],
+  "packages": [],
+  "files": [
+    {
+      "path": "components/site/team-directory.tsx",
+      "content": "import * as React from \"react\";\n\nimport { Window } from \"@/components/ui/window\";\nimport { cn } from \"@/lib/utils\";\n\n// The About page's team and investors (agentcard.sh/about, .v7-about-sec): a window holding a ruled grid of people.\n// Each cell is a gray photo, the name in the display face and the role in small muted display type; a cell that links\n// out carries a blue arrow in its top right corner that nudges up and right as the cell lights sky under the pointer.\n// The team sits two to a row in the blue-bar window, the investors three to a row in the sky one, with the backers\n// (Y Combinator, Pioneer) as the last, two-column row. One column on phones.\n\ntype Person = {\n  name: React.ReactNode;\n  role?: React.ReactNode;\n  /** A photo: an image URL, or any node (an <img>, a Next Image). Shown in grayscale. */\n  photo?: React.ReactNode | string;\n  /** Alt text when `photo` is a URL; defaults to \"Photo of <name>\" when the name is a string. */\n  photoAlt?: string;\n  /** Makes the cell a link (opens in a new tab) with the arrow. */\n  href?: string;\n};\n\ntype FooterCell = {\n  /** A logo or mark (an <img>, an inline SVG), shown as given. */\n  logo?: React.ReactNode;\n  /** Text beside the logo (Backed by Y Combinator), in muted body type. */\n  label?: React.ReactNode;\n  href?: string;\n  /** The link's accessible name when the cell has only a logo. */\n  ariaLabel?: string;\n};\n\nconst COLUMNS = { 1: \"sm:grid-cols-1\", 2: \"sm:grid-cols-2\", 3: \"sm:grid-cols-3\" } as const;\n\n/** White cells that finish a short last row, so the ruled grid never shows its line color as a gray block. */\nfunction Fill({ count, columns }: { count: number; columns: number }) {\n  const left = (columns - (count % columns)) % columns;\n  return Array.from({ length: left }, (_, i) => <li key={`fill-${i}`} aria-hidden className=\"hidden bg-surface sm:block\" />);\n}\n\n/** The outbound arrow in a link cell's corner. */\nfunction Go() {\n  return (\n    <span\n      aria-hidden\n      className=\"absolute top-3 right-3.5 font-sans text-body-sm leading-none text-fg-brand transition-[translate] duration-150 ease-out group-hover/cell:translate-x-0.5 group-hover/cell:-translate-y-0.5 motion-reduce:transition-none motion-reduce:group-hover/cell:translate-0\"\n    >\n      ↗\n    </span>\n  );\n}\n\nfunction Cell({ href, ariaLabel, large, className, children }: { href?: string; ariaLabel?: string; large?: boolean; className?: string; children: React.ReactNode }) {\n  const box = cn(\"relative flex flex-1 items-center gap-3.5 p-4 text-inherit no-underline\", large ? \"min-h-18 sm:min-h-24\" : \"min-h-18 sm:min-h-21\", className);\n  return (\n    <li className=\"flex bg-surface\">\n      {href ? (\n        <a\n          href={href}\n          target=\"_blank\"\n          rel=\"noreferrer\"\n          aria-label={ariaLabel}\n          className={cn(\n            box,\n            \"group/cell pr-9 outline-none transition-[background-color] duration-150 ease-out hover:bg-[color-mix(in_srgb,var(--ds-color-sky)_40%,var(--ds-color-white))] focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-solid focus-visible:outline-focus-ring motion-reduce:transition-none\",\n          )}\n        >\n          {children}\n          <Go />\n        </a>\n      ) : (\n        <div className={box}>{children}</div>\n      )}\n    </li>\n  );\n}\n\nfunction Photo({ photo, alt, large }: { photo: Person[\"photo\"]; alt: string; large?: boolean }) {\n  const size = large ? \"size-16\" : \"size-10\";\n  if (typeof photo === \"string\") return <img src={photo} alt={alt} width={large ? 64 : 40} height={large ? 64 : 40} className={cn(\"block flex-none object-cover grayscale\", size)} />;\n  return <span className={cn(\"block flex-none overflow-hidden grayscale [&>*]:size-full [&_img]:object-cover\", size)}>{photo}</span>;\n}\n\ntype TeamDirectoryProps = Omit<React.ComponentProps<\"div\">, \"children\"> & {\n  /** The window bar's label (team.dir, investors.dir). */\n  name: React.ReactNode;\n  /** blue for the team (the window that matters), sky for the rest. */\n  tone?: \"blue\" | \"sky\";\n  /** People per row from the small breakpoint up; one on phones. Two cells larger photos (64px), three smaller (40px). */\n  columns?: 1 | 2 | 3;\n  people: Person[];\n  /** The last row: backers' logos and names, two to a row. */\n  footer?: FooterCell[];\n};\n\nfunction TeamDirectory({ name, tone = \"sky\", columns = 2, people, footer, className, ...props }: TeamDirectoryProps) {\n  const large = columns <= 2;\n  return (\n    <Window name={name} tone={tone} raised className={className} bodyClassName=\"overflow-hidden rounded-b-[calc(var(--ds-radius-card)-1px)]\" {...props}>\n      <ul className={cn(\"m-0 grid list-none grid-cols-1 gap-px bg-line p-0\", COLUMNS[columns])}>\n        {people.map((p, i) => {\n          const alt = p.photoAlt ?? (typeof p.name === \"string\" ? `Photo of ${p.name}` : \"\");\n          return (\n            <Cell key={i} href={p.href} large={large}>\n              {p.photo ? <Photo photo={p.photo} alt={alt} large={large} /> : null}\n              <span className=\"grid min-w-0 gap-1\">\n                <b className=\"font-display text-body leading-snug font-medium\">{p.name}</b>\n                {p.role ? <span className=\"font-display text-micro leading-4 tracking-label text-fg-muted\">{p.role}</span> : null}\n              </span>\n            </Cell>\n          );\n        })}\n        <Fill count={people.length} columns={columns} />\n      </ul>\n      {footer?.length ? (\n        <ul className=\"m-0 grid list-none grid-cols-1 gap-px border-t border-line bg-line p-0 sm:grid-cols-2\">\n          {footer.map((f, i) => (\n            <Cell key={i} href={f.href} ariaLabel={f.ariaLabel} className=\"[&_img]:block [&_img]:h-auto [&_img]:max-h-10 [&_img]:w-auto\">\n              {f.logo}\n              {f.label ? <span className=\"text-body text-fg-muted\">{f.label}</span> : null}\n            </Cell>\n          ))}\n          <Fill count={footer.length} columns={2} />\n        </ul>\n      ) : null}\n    </Window>\n  );\n}\n\nexport { TeamDirectory };\nexport type { Person as TeamPerson, FooterCell as TeamFooterCell, TeamDirectoryProps };\n"
+    }
+  ]
+}

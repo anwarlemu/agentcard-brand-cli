@@ -1,0 +1,253 @@
+# Input OTP
+Joined square slots in the brand's field for a one-time code, the active slot outlined in blue.
+
+Install: npx agentcard-ds add input-otp
+Requires: theme, utils
+Packages: lucide-react
+Exports: InputOTP, InputOTPGroup, InputOTPSeparator, InputOTPSlot, REGEXP_ONLY_CHARS, REGEXP_ONLY_DIGITS, REGEXP_ONLY_DIGITS_AND_CHARS
+Client boundary: yes
+Reference: Extrapolated from agentcard.com/get-started (.v7-gate-field input)
+
+
+## Usage
+Use for a short code sent by SMS or email (sign-in, a card reveal). Set maxLength and pattern={REGEXP_ONLY_DIGITS}, group the slots with InputOTPGroup and split long codes with InputOTPSeparator. Paste and SMS autofill fill every slot.
+- Avoid: Rounded slots
+- Avoid: Auto-submitting without showing the code
+- Avoid: More than eight slots
+
+
+## Examples
+Example components: npx agentcard-ds add input-otp label
+[Site](https://agentcard-ds.vercel.app/preview/input-otp/Site) | [States](https://agentcard-ds.vercel.app/preview/input-otp/States)
+
+examples/input-otp.tsx
+
+```tsx
+"use client";
+
+import * as React from "react";
+
+import { InputOTP, InputOTPGroup, InputOTPSeparator, InputOTPSlot, REGEXP_ONLY_DIGITS } from "@/components/ui/input-otp";
+import { Label } from "@/components/ui/label";
+
+export function Site() {
+  const [code, setCode] = React.useState("");
+  const [done, setDone] = React.useState(false);
+  return (
+    <div className="grid gap-2">
+      <Label htmlFor="otp">Code sent to your phone</Label>
+      <InputOTP id="otp" maxLength={6} pattern={REGEXP_ONLY_DIGITS} value={code} onChange={(v) => { setCode(v); setDone(false); }} onComplete={() => setDone(true)}>
+        <InputOTPGroup>
+          <InputOTPSlot index={0} />
+          <InputOTPSlot index={1} />
+          <InputOTPSlot index={2} />
+        </InputOTPGroup>
+        <InputOTPSeparator />
+        <InputOTPGroup>
+          <InputOTPSlot index={3} />
+          <InputOTPSlot index={4} />
+          <InputOTPSlot index={5} />
+        </InputOTPGroup>
+      </InputOTP>
+      <p aria-live="polite" className="text-body-sm text-fg-muted">
+        {done ? "Code entered. Revealing the card." : "Enter the six digits to reveal the card number."}
+      </p>
+    </div>
+  );
+}
+
+export function States() {
+  return (
+    <div className="grid gap-4">
+      <InputOTP maxLength={4} defaultValue="1234" aria-label="Invalid code" aria-invalid>
+        <InputOTPGroup>
+          {[0, 1, 2, 3].map((i) => <InputOTPSlot key={i} index={i} />)}
+        </InputOTPGroup>
+      </InputOTP>
+      <InputOTP maxLength={4} aria-label="Disabled code" disabled>
+        <InputOTPGroup>
+          {[0, 1, 2, 3].map((i) => <InputOTPSlot key={i} index={i} />)}
+        </InputOTPGroup>
+      </InputOTP>
+    </div>
+  );
+}
+
+```
+
+## Source
+
+components/ui/input-otp.tsx
+
+```tsx
+"use client";
+
+import * as React from "react";
+import { Minus } from "lucide-react";
+
+import { cn } from "@/lib/utils";
+
+// A one-time code field in the brand's field (extrapolated from agentcard.com/get-started, .v7-gate-field input): joined
+// 44px square slots in the field's 35 percent ink border, 18px Inter, and the active slot drawn with the form's 2px blue
+// outline just inside it and a 1px caret that breathes. One real input lies over the slots, so typing, deleting, pasting
+// a whole code, autofill from SMS and arrow keys all work as in any field. `pattern` limits each character.
+const REGEXP_ONLY_DIGITS = "^\\d+$";
+const REGEXP_ONLY_CHARS = "^[a-zA-Z]+$";
+const REGEXP_ONLY_DIGITS_AND_CHARS = "^[a-zA-Z0-9]+$";
+
+type Slot = { char: string | null; isActive: boolean; hasFakeCaret: boolean };
+const InputOTPContext = React.createContext<{ slots: Slot[]; invalid: boolean; disabled: boolean }>({ slots: [], invalid: false, disabled: false });
+
+type InputOTPProps = Omit<React.ComponentProps<"input">, "value" | "defaultValue" | "onChange" | "maxLength" | "pattern"> & {
+  maxLength: number;
+  value?: string;
+  defaultValue?: string;
+  onChange?: (value: string) => void;
+  onComplete?: (value: string) => void;
+  /** A regular expression (as a string) each character must match, such as REGEXP_ONLY_DIGITS. */
+  pattern?: string;
+  containerClassName?: string;
+};
+
+function InputOTP({ maxLength, value: valueProp, defaultValue = "", onChange, onComplete, pattern, containerClassName, className, children, disabled = false, onFocus, onBlur, onKeyDown, ...props }: InputOTPProps) {
+  const [inner, setInner] = React.useState(defaultValue.slice(0, maxLength));
+  const value = valueProp ?? inner;
+  const input = React.useRef<HTMLInputElement>(null);
+  const [focused, setFocused] = React.useState(false);
+  const [selection, setSelection] = React.useState<[number, number]>([value.length, value.length]);
+  const test = React.useMemo(() => (pattern ? new RegExp(pattern) : null), [pattern]);
+
+  const sync = React.useCallback(() => {
+    const el = input.current;
+    if (el && document.activeElement === el) setSelection([el.selectionStart ?? el.value.length, el.selectionEnd ?? el.value.length]);
+  }, []);
+  React.useEffect(() => {
+    document.addEventListener("selectionchange", sync);
+    return () => document.removeEventListener("selectionchange", sync);
+  }, [sync]);
+
+  const commit = (next: string) => {
+    if (valueProp === undefined) setInner(next);
+    onChange?.(next);
+    if (next.length === maxLength && next !== value) onComplete?.(next);
+  };
+
+  // A caret at the end, or the last character selected when the code is full, so typing replaces it.
+  const placeCaret = (el: HTMLInputElement) => {
+    const at = Math.min(el.value.length, maxLength - 1);
+    if (el.value.length >= maxLength) el.setSelectionRange(at, maxLength);
+    else el.setSelectionRange(el.value.length, el.value.length);
+    sync();
+  };
+
+  const [start, end] = selection;
+  const active = focused ? (start === end ? Math.min(start, maxLength - 1) : start) : -1;
+  const slots: Slot[] = Array.from({ length: maxLength }, (_, i) => ({
+    char: value[i] ?? null,
+    isActive: i === active,
+    hasFakeCaret: focused && start === end && i === start && !value[i],
+  }));
+  const invalid = props["aria-invalid"] === true || props["aria-invalid"] === "true";
+
+  return (
+    <InputOTPContext.Provider value={{ slots, invalid, disabled }}>
+      <div data-slot="input-otp" className={cn("relative flex items-center gap-2 has-disabled:opacity-50", containerClassName)}>
+        {children}
+        <input
+          ref={input}
+          data-slot="input-otp-input"
+          inputMode={pattern === REGEXP_ONLY_DIGITS ? "numeric" : "text"}
+          autoComplete="one-time-code"
+          spellCheck={false}
+          maxLength={maxLength}
+          value={value}
+          disabled={disabled}
+          className={cn("absolute inset-0 size-full cursor-text bg-transparent text-transparent caret-transparent opacity-0 outline-none disabled:cursor-not-allowed", className)}
+          onChange={(e) => {
+            const next = e.target.value.replace(/\s/g, "").slice(0, maxLength);
+            if (next && test && !test.test(next)) return;
+            commit(next);
+          }}
+          onPaste={(e) => {
+            // A pasted code replaces the whole field, cut to length and checked against the pattern.
+            const text = e.clipboardData.getData("text").replace(/\s/g, "").slice(0, maxLength);
+            if (!text) return;
+            e.preventDefault();
+            if (test && !test.test(text)) return;
+            commit(text);
+            requestAnimationFrame(() => input.current && placeCaret(input.current));
+          }}
+          onFocus={(e) => {
+            setFocused(true);
+            placeCaret(e.currentTarget);
+            onFocus?.(e);
+          }}
+          onMouseUp={(e) => placeCaret(e.currentTarget)}
+          onBlur={(e) => {
+            setFocused(false);
+            onBlur?.(e);
+          }}
+          onKeyDown={(e) => {
+            onKeyDown?.(e);
+            if (e.defaultPrevented) return;
+            const el = e.currentTarget;
+            const at = el.selectionStart ?? 0;
+            // Arrows move one slot and select it, so the next key replaces that character.
+            if (e.key === "ArrowLeft" || e.key === "ArrowRight") {
+              e.preventDefault();
+              const to = Math.max(0, Math.min(e.key === "ArrowLeft" ? at - 1 : at + 1, el.value.length));
+              el.setSelectionRange(to, to < el.value.length ? to + 1 : to);
+              sync();
+            } else if (e.key === "Home" || e.key === "End") {
+              e.preventDefault();
+              const to = e.key === "Home" ? 0 : el.value.length;
+              el.setSelectionRange(to, to);
+              sync();
+            }
+          }}
+          {...props}
+        />
+      </div>
+    </InputOTPContext.Provider>
+  );
+}
+
+function InputOTPGroup({ className, ...props }: React.ComponentProps<"div">) {
+  return <div data-slot="input-otp-group" className={cn("flex items-center", className)} {...props} />;
+}
+
+function InputOTPSlot({ index, className, ...props }: React.ComponentProps<"div"> & { index: number }) {
+  const { slots, invalid } = React.useContext(InputOTPContext);
+  const { char, hasFakeCaret, isActive } = slots[index] ?? { char: null, hasFakeCaret: false, isActive: false };
+  return (
+    <div
+      data-slot="input-otp-slot"
+      data-active={isActive || undefined}
+      aria-invalid={invalid || undefined}
+      className={cn(
+        "relative -ml-px flex size-11 items-center justify-center border border-line-strong bg-surface font-sans text-h5 leading-none text-fg tabular-nums first:ml-0 aria-invalid:border-danger data-active:z-10 data-active:outline-2 data-active:-outline-offset-1 data-active:outline-solid data-active:outline-focus-ring",
+        className,
+      )}
+      {...props}
+    >
+      {char}
+      {hasFakeCaret && (
+        <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
+          <div className="h-5 w-px animate-caret-blink bg-fg motion-reduce:animate-none" />
+        </div>
+      )}
+    </div>
+  );
+}
+
+function InputOTPSeparator(props: React.ComponentProps<"div">) {
+  return (
+    <div data-slot="input-otp-separator" role="separator" className="flex items-center px-1 text-fg-faint" {...props}>
+      <Minus className="size-4" strokeWidth={1.5} />
+    </div>
+  );
+}
+
+export { InputOTP, InputOTPGroup, InputOTPSeparator, InputOTPSlot, REGEXP_ONLY_CHARS, REGEXP_ONLY_DIGITS, REGEXP_ONLY_DIGITS_AND_CHARS };
+
+```

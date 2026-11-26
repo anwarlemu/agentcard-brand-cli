@@ -1,0 +1,69 @@
+{
+  "schemaVersion": 1,
+  "name": "hero",
+  "useFor": "Use at the top of an Agentcard home or product page. Put SiteHeader in header and background imagery in background. Use titleClassName to adjust title sizing or wrapping.",
+  "constraints": [
+    "A gradient behind the title",
+    "A blue key on the blue",
+    "More than two keys",
+    "Long paragraphs in the hero",
+    "A smooth fade into the page instead of the bands"
+  ],
+  "documentation": "`Hero` props: `title`, `titleClassName`, `eyebrow`, `subtitle`, `actions` (the on-brand Button), `media` (in the flow under the actions),\n`background` (full bleed behind), `header` (the site header), `tilt` (default false), `scan` (default true), `bandTo`\n(\"white\" | \"paper\" | \"ink\" | \"blue\" | null, default white), `fullScreen` (default true), plus section props. The section\ncarries `data-ds-hero`.\n\nThe live title is drawn in WebGL with real depth among the objects; `tilt` approximates it with a CSS 3D transform and a\nshort extrusion.",
+  "source": "agentcard-website src/components/v7/immersive-hero.tsx; src/app/globals.css:4100 (.v7-immersive, .v7-pricing-scan); agentcard.sh / (computed)",
+  "exports": [
+    "Hero",
+    "HeroProps"
+  ],
+  "client": false,
+  "docsUrl": "https://agentcard-ds.vercel.app/components/hero",
+  "markdownUrl": "https://agentcard-ds.vercel.app/r/hero.md",
+  "examples": [
+    {
+      "path": "examples/hero.tsx",
+      "content": "import { Hero } from \"@/components/site/hero\";\nimport { SiteHeader } from \"@/components/site/site-header\";\nimport { Button } from \"@/components/ui/button\";\n\n// Stand-ins for the site's 3D objects: pale tiles scattered round the title, drawn from brand tokens only.\nconst TILES = [\n  \"left-[6%] top-[14%] size-20 rotate-12 bg-sky\",\n  \"left-[16%] top-[58%] h-16 w-24 -rotate-6 bg-white\",\n  \"left-[30%] top-[8%] size-14 -rotate-12 bg-blue-mid\",\n  \"right-[8%] top-[20%] h-20 w-28 rotate-6 bg-white\",\n  \"right-[18%] top-[64%] size-16 -rotate-12 bg-sky\",\n  \"right-[34%] top-[80%] size-12 rotate-12 bg-blue-mid\",\n  \"left-[44%] top-[84%] h-12 w-20 rotate-3 bg-sky\",\n];\n\nfunction Scene() {\n  return (\n    <div aria-hidden className=\"absolute inset-0\">\n      {TILES.map((tile) => (\n        <span key={tile} className={`absolute rounded-card opacity-80 shadow-card ${tile}`} />\n      ))}\n    </div>\n  );\n}\n\nexport function Site() {\n  return (\n    <Hero\n      header={<SiteHeader href=\"https://www.agentcard.sh/\" ground=\"blue\" action={{ label: \"Get started\", href: \"https://app.agentcard.sh/\" }} />}\n      background={<Scene />}\n      title=\"Let agents buy anything online\"\n      subtitle=\"Cards your agents can use anywhere, under limits you set.\"\n      actions={\n        <Button asChild variant=\"on-brand\">\n          <a href=\"https://app.agentcard.sh/\">Get started</a>\n        </Button>\n      }\n    />\n  );\n}\n\nexport function Tilted() {\n  return <Hero header={<SiteHeader href=\"https://www.agentcard.sh/\" ground=\"blue\" action={{ label: \"Get started\", href: \"https://app.agentcard.sh/\" }} />} background={<Scene />} title=\"Let agents buy anything online\" tilt />;\n}\n",
+      "exports": [
+        "Site",
+        "Tilted"
+      ],
+      "requires": [
+        "hero",
+        "site-header",
+        "button"
+      ],
+      "packages": [],
+      "previews": [
+        {
+          "name": "Site",
+          "url": "https://agentcard-ds.vercel.app/preview/hero/Site"
+        },
+        {
+          "name": "Tilted",
+          "url": "https://agentcard-ds.vercel.app/preview/hero/Tilted"
+        }
+      ]
+    }
+  ],
+  "type": "site",
+  "title": "Hero",
+  "description": "Page opening with a blue background, heading, actions and optional media.",
+  "surface": "site",
+  "kinds": [
+    "hero",
+    "hero-title",
+    "hero-subtitle",
+    "button-on-brand"
+  ],
+  "requires": [
+    "theme",
+    "band-divider",
+    "utils"
+  ],
+  "packages": [],
+  "files": [
+    {
+      "path": "components/site/hero.tsx",
+      "content": "import * as React from \"react\";\n\nimport { BandDivider, Scan, type BandGround } from \"@/components/visuals/band-divider\";\nimport { cn } from \"@/lib/utils\";\n\n// The blue hero (agentcard.sh, section.v7-immersive): full bleed, the first screen tall (at least 660px, 730px on\n// phones), the electric blue under a sheet of scanlines and a vignette, the site's imagery behind (`background`: its 3D\n// objects, a scene), and the 72px display title in white at the middle, tracked -0.055em on leading 1. Under it an\n// optional 19px line in white at 72 percent and the actions (the white key). The stepped band walks it into the page\n// below. On the brand's page the title floats in 3D among the objects; `tilt` sets it in CSS perspective the same way.\n// The section carries data-ds-hero, the CLI's mark for the home hero.\n\ntype HeroProps = Omit<React.ComponentProps<\"section\">, \"title\"> & {\n  title: React.ReactNode;\n  /** Override title sizing and wrapping for shorter headlines. */\n  titleClassName?: string;\n  eyebrow?: React.ReactNode;\n  subtitle?: React.ReactNode;\n  /** The keys under the title: the on-brand Button (one main action). */\n  actions?: React.ReactNode;\n  /** Imagery in the flow under the actions (a product shot, a window). */\n  media?: React.ReactNode;\n  /** Imagery behind everything, full bleed (3D objects, a scene, a video). Decorative: give it alt=\"\" or aria-hidden. */\n  background?: React.ReactNode;\n  /** The site header, laid over the top of the hero. */\n  header?: React.ReactNode;\n  /** Set the title in perspective, tilted like the 3D title on the brand's home page. */\n  tilt?: boolean;\n  /** The scanlines and vignette over the blue. */\n  scan?: boolean;\n  /** The ground below the hero, for the stepped band; null for no band. */\n  bandTo?: BandGround | null;\n  /** Fill the first screen. Off for a shorter blue opening on an inner page. */\n  fullScreen?: boolean;\n};\n\nfunction Hero({\n  title,\n  titleClassName,\n  eyebrow,\n  subtitle,\n  actions,\n  media,\n  background,\n  header,\n  tilt = false,\n  scan = true,\n  bandTo = \"white\",\n  fullScreen = true,\n  className,\n  style,\n  ...props\n}: HeroProps) {\n  return (\n    <div data-slot=\"hero\" className=\"relative\">\n      <section\n        data-ds-hero=\"\"\n        className={cn(\n          \"relative isolate flex flex-col items-center justify-center overflow-x-clip bg-brand px-(--ds-layout-gutter) text-center text-on-brand\",\n          fullScreen ? \"min-h-182.5 py-28 md:min-h-165 md:py-32 h-svh\" : \"pt-37.5 pb-24\",\n          className,\n        )}\n        // The CLI's stylesheet draws its own band under [data-ds-hero]; this hero draws the band itself, so it zeroes\n        // the step there (the band below is a sibling, so it keeps the step).\n        style={{ \"--ds-band-step\": \"0px\", ...style } as React.CSSProperties}\n        {...props}\n      >\n        {background && <div className=\"absolute inset-0 -z-20 overflow-hidden\">{background}</div>}\n        {scan && <Scan className=\"-z-10\" />}\n        {header}\n        <div className=\"relative flex max-w-(--ds-layout-column) flex-col items-center\">\n          {eyebrow && <p className=\"mb-5 font-display text-caption leading-4.5 tracking-label text-fg-on-brand-label\">{eyebrow}</p>}\n          <div className={cn(tilt && \"[perspective:62.5rem] [perspective-origin:50%_40%]\")}>\n            <h1\n              className={cn(\n                \"max-w-[14ch] font-display text-hero leading-tight font-medium tracking-display text-balance text-white\",\n                tilt &&\n                  \"[transform:rotateY(30deg)_rotateX(14deg)_rotateZ(-19deg)_scale(1.25)] [text-shadow:0_1px_0_var(--ds-color-blue-mid),0_2px_0_var(--ds-color-blue-mid),0_3px_0_var(--ds-color-blue-mid),0_4px_0_var(--ds-color-blue-mid),0_5px_0_var(--ds-color-blue-edge)] [transform-style:preserve-3d]\",\n                titleClassName,\n              )}\n            >\n              {title}\n            </h1>\n          </div>\n          {subtitle && <p className=\"mt-6 max-w-(--ds-layout-heading) text-body-lg leading-snug text-pretty text-fg-on-brand-muted\">{subtitle}</p>}\n          {actions && <div className=\"mt-8 flex flex-wrap items-center justify-center gap-3\">{actions}</div>}\n          {media && <div className=\"mt-14 w-full\">{media}</div>}\n        </div>\n      </section>\n      {bandTo && <BandDivider from=\"blue\" to={bandTo} />}\n    </div>\n  );\n}\n\nexport { Hero };\nexport type { HeroProps };\n"
+    }
+  ]
+}

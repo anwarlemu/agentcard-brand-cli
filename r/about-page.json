@@ -1,0 +1,57 @@
+{
+  "schemaVersion": 1,
+  "name": "about-page",
+  "useFor": "Use as a starting point for Agentcard company pages. Replace sample people, links and content.",
+  "constraints": [
+    "Photos in color beside gray ones",
+    "More than one blue-bar directory per page"
+  ],
+  "documentation": "",
+  "source": "agentcard-website src/app/about; agentcard.sh /about (computed)",
+  "exports": [
+    "AboutPage"
+  ],
+  "client": false,
+  "docsUrl": "https://agentcard-ds.vercel.app/components/about-page",
+  "markdownUrl": "https://agentcard-ds.vercel.app/r/about-page.md",
+  "examples": [
+    {
+      "path": "examples/about-page.tsx",
+      "content": "import { AboutPage } from \"@/components/blocks/about-page\";\n\nexport function Block() {\n  return <AboutPage />;\n}\n",
+      "exports": [
+        "Block"
+      ],
+      "requires": [
+        "about-page"
+      ],
+      "packages": [],
+      "previews": [
+        {
+          "name": "Block",
+          "url": "https://agentcard-ds.vercel.app/preview/about-page/Block"
+        }
+      ]
+    }
+  ],
+  "type": "block",
+  "title": "About page",
+  "description": "About page template with a header, team directory, footer and navigation.",
+  "surface": "site",
+  "kinds": [],
+  "requires": [
+    "theme",
+    "nav-dock",
+    "page-header",
+    "section",
+    "site-footer",
+    "site-header",
+    "team-directory"
+  ],
+  "packages": [],
+  "files": [
+    {
+      "path": "components/blocks/about-page.tsx",
+      "content": "import { NavDock } from \"@/components/site/nav-dock\";\nimport { PageHeader } from \"@/components/site/page-header\";\nimport { Eyebrow } from \"@/components/site/section\";\nimport { SiteFooter } from \"@/components/site/site-footer\";\nimport { SiteHeader } from \"@/components/site/site-header\";\nimport { TeamDirectory } from \"@/components/site/team-directory\";\n\n// The footer as agentcard.sh carries it on every page: five columns, the line, the running merchant names.\nconst FOOTER = {\n  description: (\n    <>\n      We want agents to buy anything online\n      <br />\n      that you can buy as a human.\n    </>\n  ),\n  groups: [\n    { title: \"Product\", links: [{ label: \"Vault\", href: \"https://www.agentcard.sh/vault\" }, { label: \"Issuing\", href: \"https://www.agentcard.sh/issuing\" }, { label: \"Voice\", href: \"https://cal.com/team/agentcard/agentcard-call\" }, { label: \"Purchase Agent\", href: \"https://www.agentcard.sh/purchase-agent\" }, { label: \"Pricing\", href: \"https://www.agentcard.sh/pricing\" }, { label: \"FAQ\", href: \"https://www.agentcard.sh/#faq\" }] },\n    { title: \"Developers\", links: [{ label: \"Documentation\", href: \"https://docs.agentcard.sh\" }, { label: \"API reference\", href: \"https://docs.agentcard.sh/companies/api/reference\" }] },\n    { title: \"Company\", links: [{ label: \"About\", href: \"https://www.agentcard.sh/about\" }, { label: \"Changelog\", href: \"https://www.agentcard.sh/updates\" }, { label: \"Trust Center\", href: \"https://app.vanta.com/agentcard.sh/trust/8t52k9fqhneqwt4y2jpvmn\" }] },\n    { title: \"Legal\", links: [{ label: \"Privacy Policy\", href: \"https://legal.raincards.xyz/legal/privacy-policy\" }, { label: \"Terms of Service\", href: \"https://www.agentcard.sh/terms\" }, { label: \"Card Terms\", href: \"https://www.agentcard.sh/card-terms\" }, { label: \"Card Terms (International)\", href: \"https://www.agentcard.sh/card-terms-international\" }] },\n    { title: \"Social\", links: [{ label: \"X / Twitter\", href: \"https://x.com/agentcardhq\" }, { label: \"Instagram\", href: \"https://www.instagram.com/agentcardhq/\" }] },\n  ],\n  merchants: [\"Amazon\", \"Walmart\", \"Target\", \"Best Buy\", \"Home Depot\", \"Lowe’s\", \"Macy’s\", \"Wayfair\", \"Staples\", \"DoorDash\", \"Good Eggs\", \"Flights\"],\n};\n\n// The dock as agentcard.sh carries it: Home, the Products menu, About, Pricing, and Get started.\nconst PRODUCTS = {\n  label: \"Products\",\n  items: [\n    { title: \"Vault\", description: \"Store customers’ cards and buy with an agent.\", href: \"https://www.agentcard.sh/vault\" },\n    { title: \"Issuing\", description: \"One-time and multi-use cards for your agent.\", href: \"https://www.agentcard.sh/issuing\" },\n    { title: \"Voice\", description: \"Approve an agent’s purchase by speaking.\", href: \"https://cal.com/team/agentcard/agentcard-call\" },\n    { title: \"Purchase Agent\", description: \"Buy from Amazon, DoorDash and more.\", href: \"https://www.agentcard.sh/purchase-agent\" },\n  ],\n};\n\n// The about page as agentcard.sh draws it: the bare header, the page's opening on the reading column, the team and the\n// investors in directory windows, the blue footer and the glass dock. Sample people; replace them with your own.\n\nfunction Initials({ name }: { name: string }) {\n  const letters = name\n    .split(\" \")\n    .map((w) => w[0])\n    .join(\"\")\n    .slice(0, 2);\n  return (\n    <span role=\"img\" aria-label={`Photo of ${name}`} className=\"flex items-center justify-center bg-sky font-display text-body-sm text-fg-brand\">\n      {letters}\n    </span>\n  );\n}\n\nconst person = (name: string, role: string) => ({ name, role, photo: <Initials name={name} /> });\n\nexport function AboutPage() {\n  return (\n    <main className=\"relative\">\n      <SiteHeader href=\"https://www.agentcard.sh/\" ground=\"white\" action={{ label: \"Get started\", href: \"https://app.agentcard.sh/\" }} />\n      <PageHeader\n        eyebrow=\"The company\"\n        title=\"About\"\n        lead=\"We are building Agentcard because we believe agents should have full autonomy to pay for things online. That is why we are starting with cards.\"\n      />\n      <div className=\"mx-auto grid w-(--ds-frame-column) max-w-(--ds-layout-text) gap-16 pt-16 pb-28\">\n        <section aria-label=\"Team\">\n          <Eyebrow className=\"mb-3.5\">Team</Eyebrow>\n          <TeamDirectory name=\"team.dir\" tone=\"blue\" columns={2} people={[person(\"Ada Okafor\", \"CEO & Co-Founder\"), person(\"Luis Romero\", \"CTO & Co-Founder\"), person(\"Mara Lindqvist\", \"Member of Technical Staff\"), person(\"Noor Haddad\", \"Member of Marketing Staff\")]} />\n          <p className=\"mt-3.5 text-body-sm text-fg-muted\">\n            We are not hiring, but you can always send us an{\" \"}\n            <a href=\"mailto:support@agentcard.sh\" className=\"text-fg underline decoration-line-brand underline-offset-[0.2em] transition-colors duration-150 ease-out hover:text-fg-brand\">\n              email\n            </a>\n            .\n          </p>\n        </section>\n        <section aria-label=\"Investors\">\n          <Eyebrow className=\"mb-3.5\">Investors</Eyebrow>\n          <TeamDirectory\n            name=\"investors.dir\"\n            columns={3}\n            people={[person(\"Priya Raman\", \"Co-founder, a fund\"), person(\"Tom Becker\", \"CEO, a commerce platform\"), person(\"Elena Ruiz\", \"CTO, a CRM\"), person(\"Sam Wu\", \"CEO, an auth company\"), person(\"Jonas Berg\", \"CEO, a cloud\"), person(\"Ines Duarte\", \"Board, an AI lab\")]}\n            footer={[{ label: \"Backed by Y Combinator\", href: \"https://www.ycombinator.com\" }, { label: \"Pioneer\", href: \"https://pioneerfund.vc\" }]}\n          />\n        </section>\n      </div>\n      <SiteFooter backing=\"Backed by Y Combinator\" description={FOOTER.description} groups={FOOTER.groups} merchants={FOOTER.merchants} />\n      <NavDock\n        menu={PRODUCTS}\n        links={[\n          { label: \"Home\", href: \"https://www.agentcard.sh/\" },\n          { label: \"About\", href: \"https://www.agentcard.sh/about\", current: true },\n          { label: \"Pricing\", href: \"https://www.agentcard.sh/pricing\" },\n        ]}\n        action={{ label: \"Get started\", href: \"https://app.agentcard.sh/\" }}\n      />\n    </main>\n  );\n}\n"
+    }
+  ]
+}

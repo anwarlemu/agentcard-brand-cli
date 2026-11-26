@@ -1,0 +1,607 @@
+# Questionnaire
+Questions asked one at a time: white key choices with the brand's checkbox or radio and a shortcut key, a display-face question, a sunken progress bar, and Previous, Skip and Next keys.
+
+Install: npx agentcard-ds add questionnaire
+Requires: theme, button, input, kbd, progress, utils
+Packages: lucide-react
+Exports: Questionnaire, QuestionnaireActions, QuestionnaireChoice, QuestionnaireChoiceDescription, QuestionnaireChoices, QuestionnaireDescription, QuestionnaireError, QuestionnaireInput, QuestionnaireItem, QuestionnaireNext, QuestionnairePrevious, QuestionnaireProgress, QuestionnaireSkip, QuestionnaireSubmit, QuestionnaireTitle
+Client boundary: yes
+Reference: Extrapolated from Agentcard: the white key (agentcard-website .v7-btn), the checkbox and the progress bar of the library, and the pricing plans' choices
+
+
+## Usage
+Use to set something up in a few steps (a card for a new agent, a merchant list). Pass items (name, required, multiple, choices) to Questionnaire, then one QuestionnaireItem per question with its title, description, choices, an optional QuestionnaireInput for another answer and QuestionnaireError. End with QuestionnaireActions. The answers submit as one native form (FormData); the page saves them. Number keys (or letters) pick choices; Enter moves on.
+- Avoid: More than five questions
+- Avoid: Several questions on one screen
+- Avoid: Animated transitions between questions
+- Avoid: A choice without a visible label
+
+
+## Examples
+Example components: npx agentcard-ds add questionnaire
+[Site](https://agentcard-ds.vercel.app/preview/questionnaire/Site) | [Disabled](https://agentcard-ds.vercel.app/preview/questionnaire/Disabled)
+
+examples/questionnaire.tsx
+
+```tsx
+"use client";
+
+import * as React from "react";
+
+import {
+  Questionnaire,
+  QuestionnaireActions,
+  QuestionnaireChoice,
+  QuestionnaireChoiceDescription,
+  QuestionnaireChoices,
+  QuestionnaireDescription,
+  QuestionnaireError,
+  QuestionnaireInput,
+  QuestionnaireItem,
+  QuestionnaireNext,
+  QuestionnairePrevious,
+  QuestionnaireProgress,
+  QuestionnaireSkip,
+  QuestionnaireSubmit,
+  QuestionnaireTitle,
+} from "@/components/ui/questionnaire";
+
+const ITEMS = [
+  { name: "use", required: true, choices: [{ value: "travel" }, { value: "supplies" }, { value: "software" }] },
+  { name: "merchants", multiple: true, choices: [{ value: "amazon" }, { value: "doordash" }, { value: "airlines" }, { value: "hotels" }] },
+  { name: "limit", required: true, choices: [{ value: "single" }, { value: "monthly" }, { value: "none" }] },
+] as const;
+
+export function Site() {
+  const [saved, setSaved] = React.useState<string>();
+  return (
+    <div className="mx-auto grid w-full max-w-110 gap-4">
+      <Questionnaire
+        items={ITEMS}
+        onSubmit={(event) => {
+          event.preventDefault();
+          const data = new FormData(event.currentTarget);
+          setSaved(`Use: ${data.get("use")}. Merchants: ${data.getAll("merchants").join(", ") || "any"}. Limit: ${data.get("limit")}.`);
+        }}
+      >
+        <QuestionnaireProgress />
+        <QuestionnaireItem name="use" required>
+          <QuestionnaireTitle>What will this agent buy?</QuestionnaireTitle>
+          <QuestionnaireDescription>We set the card up for it. Choose one, or describe it.</QuestionnaireDescription>
+          <QuestionnaireChoices>
+            <QuestionnaireChoice value="travel">
+              <span className="font-display font-medium tracking-tight">Travel</span>
+              <QuestionnaireChoiceDescription>Flights, trains and hotels</QuestionnaireChoiceDescription>
+            </QuestionnaireChoice>
+            <QuestionnaireChoice value="supplies">
+              <span className="font-display font-medium tracking-tight">Office supplies</span>
+              <QuestionnaireChoiceDescription>Staples, Amazon and similar stores</QuestionnaireChoiceDescription>
+            </QuestionnaireChoice>
+            <QuestionnaireChoice value="software">
+              <span className="font-display font-medium tracking-tight">Software</span>
+              <QuestionnaireChoiceDescription>Subscriptions and API credits</QuestionnaireChoiceDescription>
+            </QuestionnaireChoice>
+            <QuestionnaireInput aria-label="Something else" placeholder="Something else" />
+          </QuestionnaireChoices>
+          <QuestionnaireError />
+        </QuestionnaireItem>
+        <QuestionnaireItem name="merchants" multiple>
+          <QuestionnaireTitle>Where can it pay?</QuestionnaireTitle>
+          <QuestionnaireDescription>Choose any, or skip to allow every store.</QuestionnaireDescription>
+          <QuestionnaireChoices>
+            <QuestionnaireChoice value="amazon">Amazon</QuestionnaireChoice>
+            <QuestionnaireChoice value="doordash">DoorDash</QuestionnaireChoice>
+            <QuestionnaireChoice value="airlines">Airlines</QuestionnaireChoice>
+            <QuestionnaireChoice value="hotels">Hotels</QuestionnaireChoice>
+          </QuestionnaireChoices>
+          <QuestionnaireError />
+        </QuestionnaireItem>
+        <QuestionnaireItem name="limit" required>
+          <QuestionnaireTitle>How should the card be limited?</QuestionnaireTitle>
+          <QuestionnaireDescription>You can change this later in the card’s settings.</QuestionnaireDescription>
+          <QuestionnaireChoices>
+            <QuestionnaireChoice value="single">Single use, then it closes</QuestionnaireChoice>
+            <QuestionnaireChoice value="monthly">A monthly limit</QuestionnaireChoice>
+            <QuestionnaireChoice value="none">No limit</QuestionnaireChoice>
+          </QuestionnaireChoices>
+          <QuestionnaireError />
+        </QuestionnaireItem>
+        <QuestionnaireActions>
+          <QuestionnairePrevious />
+          <QuestionnaireSkip />
+          <QuestionnaireNext />
+          <QuestionnaireSubmit>Create card</QuestionnaireSubmit>
+        </QuestionnaireActions>
+      </Questionnaire>
+      {saved && (
+        <p role="status" className="rounded-control border border-hairline bg-note px-3.5 py-2.5 text-body-sm text-fg">
+          Card created. {saved}
+        </p>
+      )}
+    </div>
+  );
+}
+
+const ISSUING = [{ name: "type", required: true, choices: [{ value: "virtual" }, { value: "physical" }, { value: "commercial" }] }] as const;
+
+export function Disabled() {
+  return (
+    <Questionnaire items={ISSUING} shortcuts="letters" className="mx-auto max-w-110" onSubmit={(event) => event.preventDefault()}>
+      <QuestionnaireItem name="type" required>
+        <QuestionnaireTitle>Which kind of card?</QuestionnaireTitle>
+        <QuestionnaireDescription>Physical cards are not available on your plan.</QuestionnaireDescription>
+        <QuestionnaireChoices>
+          <QuestionnaireChoice value="virtual">
+            <span className="font-display font-medium tracking-tight">Virtual</span>
+            <QuestionnaireChoiceDescription>Ready to use at once</QuestionnaireChoiceDescription>
+          </QuestionnaireChoice>
+          <QuestionnaireChoice value="physical" disabled>
+            <span className="font-display font-medium tracking-tight">Physical</span>
+            <QuestionnaireChoiceDescription>Not on your plan</QuestionnaireChoiceDescription>
+          </QuestionnaireChoice>
+          <QuestionnaireChoice value="commercial">
+            <span className="font-display font-medium tracking-tight">Commercial</span>
+            <QuestionnaireChoiceDescription>Billed to your company</QuestionnaireChoiceDescription>
+          </QuestionnaireChoice>
+        </QuestionnaireChoices>
+        <QuestionnaireError />
+      </QuestionnaireItem>
+      <QuestionnaireActions>
+        <QuestionnaireSubmit>Issue card</QuestionnaireSubmit>
+      </QuestionnaireActions>
+    </Questionnaire>
+  );
+}
+
+```
+
+## Source
+
+components/ui/questionnaire.tsx
+
+```tsx
+"use client";
+
+import * as React from "react";
+import { Check } from "lucide-react";
+
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Kbd } from "@/components/ui/kbd";
+import { Progress } from "@/components/ui/progress";
+import { cn } from "@/lib/utils";
+
+// A short set of questions asked one at a time (extrapolated from agentcard.sh: the pricing plans' choices, the white
+// key and the checkbox). A choice is a 44px white key on the 16 percent ink hairline with 8px corners and the pale
+// key's bevel; the brand's checkbox (blue with a white check) or a round radio (blue with a white center) 14px in, a
+// 14px Inter label and its number or letter key at the right. A chosen card takes the blue edge and the palest blue.
+// The question is the 18px display face at 500, tracked tight, with a 14px line at 68 percent ink under it; progress is
+// the 12px display face over the brand's sunken bar. Changing questions is instant: it is driven by the keyboard as
+// often as by the pointer. The answers submit as one native form (FormData), every question's inputs included, so the
+// page owns saving and what happens next.
+
+type Choice = { readonly value: string; readonly disabled?: boolean };
+type ItemConfig = { readonly name: string; readonly required?: boolean; readonly multiple?: boolean; readonly choices?: readonly Choice[] };
+type Shortcuts = "numbers" | "letters" | "none";
+
+type QuestionnaireContextValue = {
+  order: string[];
+  active: string | undefined;
+  goTo: (name: string) => void;
+  shortcuts: Shortcuts;
+  answers: Record<string, string[]>;
+  other: Record<string, string>;
+  errors: Record<string, string | undefined>;
+  configs: React.RefObject<Map<string, ItemConfig>>;
+  register: (config: ItemConfig) => () => void;
+  setAnswer: (name: string, value: string, checked: boolean) => void;
+  setOther: (name: string, text: string) => void;
+  next: () => void;
+  previous: () => void;
+  skip: () => void;
+};
+
+const QuestionnaireContext = React.createContext<QuestionnaireContextValue | null>(null);
+const ItemContext = React.createContext<{ name: string; required: boolean; multiple: boolean; id: string } | null>(null);
+
+function useQuestionnaire() {
+  const context = React.useContext(QuestionnaireContext);
+  if (!context) throw new Error("Questionnaire parts must be inside a Questionnaire.");
+  return context;
+}
+
+function useItem() {
+  const context = React.useContext(ItemContext);
+  if (!context) throw new Error("This part must be inside a QuestionnaireItem.");
+  return context;
+}
+
+const shortcutKey = (index: number, shortcuts: Shortcuts) => (shortcuts === "none" || index > 8 ? undefined : shortcuts === "letters" ? String.fromCharCode(65 + index) : String(index + 1));
+
+/**
+ * The questions and their answers. Pass `items` (name, required, multiple, choices) so the order, progress and shortcuts
+ * are known on the server; without it the order is the QuestionnaireItems' order. `defaultItem` or a controlled
+ * `item` with `onItemChange` picks the question shown. `shortcuts` puts 1 to 9 (or A to I) on the choices.
+ */
+function Questionnaire({
+  items,
+  defaultItem,
+  item,
+  onItemChange,
+  shortcuts = "numbers",
+  className,
+  onSubmit,
+  onKeyDown,
+  children,
+  ...props
+}: Omit<React.ComponentProps<"form">, "onSubmit"> & {
+  items?: readonly ItemConfig[];
+  defaultItem?: string;
+  item?: string;
+  onItemChange?: (name: string) => void;
+  shortcuts?: Shortcuts;
+  onSubmit?: (event: React.FormEvent<HTMLFormElement>) => void;
+}) {
+  const form = React.useRef<HTMLFormElement>(null);
+  const configs = React.useRef(new Map<string, ItemConfig>(items?.map((i) => [i.name, i])));
+  const [registered, setRegistered] = React.useState<string[]>([]);
+  const order = items ? items.map((i) => i.name) : registered;
+  const [internal, setInternal] = React.useState(defaultItem ?? items?.[0]?.name);
+  const active = item ?? internal ?? order[0];
+  const [answers, setAnswers] = React.useState<Record<string, string[]>>({});
+  const [other, setOtherState] = React.useState<Record<string, string>>({});
+  const [errors, setErrors] = React.useState<Record<string, string | undefined>>({});
+
+  const focusItem = React.useCallback((name: string) => {
+    requestAnimationFrame(() => {
+      const fieldset = form.current?.querySelector<HTMLElement>(`[data-slot=questionnaire-item][data-name="${CSS.escape(name)}"]`);
+      fieldset?.querySelector<HTMLElement>("input:not(:disabled)")?.focus({ preventScroll: true });
+    });
+  }, []);
+
+  const goTo = React.useCallback(
+    (name: string) => {
+      if (item === undefined) setInternal(name);
+      onItemChange?.(name);
+      focusItem(name);
+    },
+    [item, onItemChange, focusItem],
+  );
+
+  const register = React.useCallback((config: ItemConfig) => {
+    configs.current.set(config.name, { ...configs.current.get(config.name), ...config });
+    setRegistered((list) => (list.includes(config.name) ? list : [...list, config.name]));
+    return () => setRegistered((list) => list.filter((n) => n !== config.name));
+  }, []);
+
+  const answered = React.useCallback((name: string) => (answers[name]?.length ?? 0) > 0 || (other[name] ?? "").trim() !== "", [answers, other]);
+
+  const validate = React.useCallback(
+    (name: string) => {
+      const config = configs.current.get(name);
+      const message = config?.required && !answered(name) ? (config.multiple ? "Choose at least one answer to continue." : "Choose an answer to continue.") : undefined;
+      setErrors((e) => ({ ...e, [name]: message }));
+      return !message;
+    },
+    [answered],
+  );
+
+  const setAnswer = React.useCallback((name: string, value: string, checked: boolean) => {
+    const multiple = configs.current.get(name)?.multiple;
+    setAnswers((a) => ({ ...a, [name]: multiple ? (checked ? [...(a[name] ?? []).filter((v) => v !== value), value] : (a[name] ?? []).filter((v) => v !== value)) : checked ? [value] : [] }));
+    if (!multiple && checked) setOtherState((o) => ({ ...o, [name]: "" }));
+    setErrors((e) => ({ ...e, [name]: undefined }));
+  }, []);
+
+  const setOther = React.useCallback((name: string, text: string) => {
+    setOtherState((o) => ({ ...o, [name]: text }));
+    if (text && !configs.current.get(name)?.multiple) setAnswers((a) => ({ ...a, [name]: [] }));
+    setErrors((e) => ({ ...e, [name]: undefined }));
+  }, []);
+
+  const index = active ? order.indexOf(active) : -1;
+  const next = React.useCallback(() => {
+    if (!active || !validate(active)) return focusItem(active ?? "");
+    const following = order[index + 1];
+    if (following) goTo(following);
+  }, [active, validate, focusItem, order, index, goTo]);
+  const previous = React.useCallback(() => {
+    const before = order[index - 1];
+    if (before) goTo(before);
+  }, [order, index, goTo]);
+  const skip = React.useCallback(() => {
+    if (!active) return;
+    setAnswers((a) => ({ ...a, [active]: [] }));
+    setOtherState((o) => ({ ...o, [active]: "" }));
+    setErrors((e) => ({ ...e, [active]: undefined }));
+    const following = order[index + 1];
+    if (following) goTo(following);
+  }, [active, order, index, goTo]);
+
+  const value = React.useMemo<QuestionnaireContextValue>(
+    () => ({ order, active, goTo, shortcuts, answers, other, errors, configs, register, setAnswer, setOther, next, previous, skip }),
+    [order, active, goTo, shortcuts, answers, other, errors, register, setAnswer, setOther, next, previous, skip],
+  );
+
+  return (
+    <QuestionnaireContext.Provider value={value}>
+      <form
+        ref={form}
+        data-slot="questionnaire"
+        noValidate
+        className={cn("flex w-full min-w-0 flex-col gap-4", className)}
+        onSubmit={(event) => {
+          // Every required question must be answered; the first one that is not is shown with its message.
+          const missing = order.find((name) => !validate(name));
+          if (missing) {
+            event.preventDefault();
+            goTo(missing);
+            return;
+          }
+          onSubmit?.(event);
+        }}
+        onKeyDown={(event) => {
+          onKeyDown?.(event);
+          if (event.defaultPrevented || !active || event.metaKey || event.ctrlKey || event.altKey) return;
+          const target = event.target as HTMLElement;
+          const typing = target instanceof HTMLInputElement && target.type === "text";
+          if (event.key === "Enter" && !(target instanceof HTMLButtonElement) && !(target instanceof HTMLTextAreaElement)) {
+            event.preventDefault();
+            if (index < order.length - 1) next();
+            else form.current?.requestSubmit();
+            return;
+          }
+          if (typing || shortcuts === "none") return;
+          const key = event.key.toUpperCase();
+          const at = shortcuts === "letters" ? key.charCodeAt(0) - 65 : Number(key) - 1;
+          if (key.length !== 1 || Number.isNaN(at) || at < 0 || at > 8) return;
+          const choice = form.current?.querySelectorAll<HTMLInputElement>(`[data-slot=questionnaire-item][data-name="${CSS.escape(active)}"] [data-slot=questionnaire-choice-input]`)[at];
+          if (!choice || choice.disabled) return;
+          event.preventDefault();
+          choice.focus();
+          setAnswer(active, choice.value, choice.type === "checkbox" ? !choice.checked : true);
+        }}
+        {...props}
+      >
+        {children}
+      </form>
+    </QuestionnaireContext.Provider>
+  );
+}
+
+/** Where the person is: "Question 2 of 3" in the 12px display face over the sunken blue bar. */
+function QuestionnaireProgress({ className, children, ...props }: React.ComponentProps<"div">) {
+  const { order, active } = useQuestionnaire();
+  const at = active ? order.indexOf(active) + 1 : 0;
+  const total = order.length;
+  return (
+    <div data-slot="questionnaire-progress" className={cn("grid w-full gap-1.5", className)} {...props}>
+      <span className="font-display text-caption leading-snug text-fg-muted tabular-nums" aria-live="polite">
+        {children ?? (total ? `Question ${at} of ${total}` : " ")}
+      </span>
+      <Progress value={total ? (at / total) * 100 : 0} aria-label="Progress" className="h-1.5" />
+    </div>
+  );
+}
+
+/** One question. Only the current one shows; the others stay in the form so their answers submit with it. */
+function QuestionnaireItem({ name, required = false, multiple = false, className, children, ...props }: Omit<React.ComponentProps<"fieldset">, "name"> & { name: string; required?: boolean; multiple?: boolean }) {
+  const { active, register, errors } = useQuestionnaire();
+  const id = React.useId();
+  React.useLayoutEffect(() => register({ name, required, multiple }), [register, name, required, multiple]);
+  const context = React.useMemo(() => ({ name, required, multiple, id }), [name, required, multiple, id]);
+  const isActive = active === name;
+  return (
+    <ItemContext.Provider value={context}>
+      <fieldset
+        data-slot="questionnaire-item"
+        data-name={name}
+        data-active={isActive || undefined}
+        hidden={!isActive}
+        aria-labelledby={`${id}-title`}
+        aria-describedby={`${id}-description${errors[name] ? ` ${id}-error` : ""}`}
+        aria-invalid={errors[name] ? true : undefined}
+        className={cn("m-0 flex min-w-0 flex-col gap-4 border-0 p-0 outline-none", className)}
+        {...props}
+      >
+        {children}
+      </fieldset>
+    </ItemContext.Provider>
+  );
+}
+
+function QuestionnaireTitle({ className, ...props }: React.ComponentProps<"div">) {
+  const { id } = useItem();
+  return <div id={`${id}-title`} data-slot="questionnaire-title" className={cn("font-display text-h5 leading-snug font-medium tracking-tight text-pretty text-fg", className)} {...props} />;
+}
+
+function QuestionnaireDescription({ className, ...props }: React.ComponentProps<"p">) {
+  const { id } = useItem();
+  return <p id={`${id}-description`} data-slot="questionnaire-description" className={cn("-mt-3 font-sans text-body-sm leading-relaxed text-pretty text-fg-muted", className)} {...props} />;
+}
+
+/** The choices of a question, 8px apart; each direct QuestionnaireChoice gets its shortcut in order. */
+function QuestionnaireChoices({ className, children, ...props }: React.ComponentProps<"div">) {
+  const { multiple, id } = useItem();
+  let index = 0;
+  return (
+    <div data-slot="questionnaire-choices" role={multiple ? "group" : "radiogroup"} aria-labelledby={`${id}-title`} className={cn("group/questionnaire-choices grid min-w-0 gap-2", className)} {...props}>
+      {React.Children.map(children, (child) => (React.isValidElement<{ index?: number }>(child) && child.type === QuestionnaireChoice ? React.cloneElement(child, { index: index++ }) : child))}
+    </div>
+  );
+}
+
+function QuestionnaireChoice({ value, disabled = false, index = 0, className, children, ...props }: Omit<React.ComponentProps<"label">, "children"> & { value: string; disabled?: boolean; index?: number; children?: React.ReactNode }) {
+  const { answers, setAnswer, shortcuts } = useQuestionnaire();
+  const { name, multiple } = useItem();
+  const checked = answers[name]?.includes(value) ?? false;
+  const key = shortcutKey(index, shortcuts);
+  return (
+    <label
+      data-slot="questionnaire-choice"
+      data-type={multiple ? "checkbox" : "radio"}
+      data-checked={checked || undefined}
+      data-disabled={disabled || undefined}
+      className={cn(
+        "group/questionnaire-choice relative flex min-h-11 cursor-pointer items-start gap-2.5 rounded-control border border-hairline bg-surface px-3.5 py-2.5 text-start font-sans text-body-sm leading-snug text-fg shadow-key-muted select-none transition-[background-color,border-color] duration-150 ease-out hover:bg-wash-hover has-focus-visible:outline-2 has-focus-visible:outline-offset-2 has-focus-visible:outline-solid has-focus-visible:outline-focus-ring data-checked:border-line-brand data-checked:bg-blue-5 data-disabled:pointer-events-none data-disabled:cursor-not-allowed data-disabled:opacity-50 motion-reduce:transition-none",
+        className,
+      )}
+      {...props}
+    >
+      <input
+        data-slot="questionnaire-choice-input"
+        type={multiple ? "checkbox" : "radio"}
+        name={name}
+        value={value}
+        checked={checked}
+        disabled={disabled}
+        onChange={(event) => setAnswer(name, value, event.target.checked)}
+        className="peer sr-only"
+      />
+      <span
+        aria-hidden
+        data-slot="questionnaire-choice-indicator"
+        className={cn(
+          "pointer-events-none flex size-5 shrink-0 items-center justify-center border border-line-strong bg-surface text-on-primary shadow-key-muted transition-[background-color,border-color,box-shadow] duration-150 ease-out group-data-checked/questionnaire-choice:border-line-brand-edge group-data-checked/questionnaire-choice:bg-primary group-data-checked/questionnaire-choice:shadow-key-brand motion-reduce:transition-none",
+          multiple ? "rounded-sm" : "rounded-pill",
+        )}
+      >
+        {multiple ? <Check strokeWidth={2.25} className="hidden size-3.5 group-data-checked/questionnaire-choice:block" /> : <span className="hidden size-2 rounded-pill bg-white group-data-checked/questionnaire-choice:block" />}
+      </span>
+      <span data-slot="questionnaire-choice-label" className="flex min-w-0 flex-1 flex-col gap-0.5">
+        {children}
+      </span>
+      {key && (
+        <Kbd data-slot="questionnaire-choice-shortcut" aria-hidden className="ml-auto hidden shrink-0 sm:inline-flex">
+          {key}
+        </Kbd>
+      )}
+    </label>
+  );
+}
+
+/** A choice's second line, at 68 percent ink. */
+function QuestionnaireChoiceDescription({ className, ...props }: React.ComponentProps<"span">) {
+  return <span data-slot="questionnaire-choice-description" className={cn("text-fg-muted", className)} {...props} />;
+}
+
+/** A free answer typed instead of a choice (another answer); typing clears a single choice, choosing clears the text. */
+function QuestionnaireInput({ className, ...props }: Omit<React.ComponentProps<typeof Input>, "name" | "value" | "onChange">) {
+  const { other, setOther } = useQuestionnaire();
+  const { name } = useItem();
+  return (
+    <div data-slot="questionnaire-input-wrapper" className="group/questionnaire-input relative w-full min-w-0">
+      <Input data-slot="questionnaire-input" type="text" name={name} value={other[name] ?? ""} onChange={(event) => setOther(name, event.target.value)} className={cn("h-11", className)} {...props} />
+    </div>
+  );
+}
+
+/** Why the question cannot be passed yet: 14px red, as a field's error, read out when it appears. */
+function QuestionnaireError({ className, children, ...props }: React.ComponentProps<"p">) {
+  const { errors } = useQuestionnaire();
+  const { name, id } = useItem();
+  const message = children ?? errors[name];
+  if (!message) return null;
+  return (
+    <p id={`${id}-error`} role="alert" data-slot="questionnaire-error" className={cn("-mt-2 font-sans text-body-sm leading-snug text-danger", className)} {...props}>
+      {message}
+    </p>
+  );
+}
+
+/** The buttons under the question: Previous at the left, then Skip and Next (or Submit on the last question). */
+function QuestionnaireActions({ className, ...props }: React.ComponentProps<"div">) {
+  return <div data-slot="questionnaire-actions" className={cn("grid min-h-11 w-full grid-cols-[minmax(0,1fr)_auto_auto] items-center gap-2", className)} {...props} />;
+}
+
+type ActionProps = Omit<React.ComponentProps<typeof Button>, "onClick" | "type"> & { onClick?: React.MouseEventHandler<HTMLButtonElement> };
+
+function QuestionnairePrevious({ children, className, variant = "secondary", onClick, ...props }: ActionProps) {
+  const { order, active, previous } = useQuestionnaire();
+  const first = !active || order.indexOf(active) <= 0;
+  return (
+    <Button
+      data-slot="questionnaire-previous"
+      variant={variant}
+      disabled={first}
+      className={cn("col-start-1 row-start-1 justify-self-start", first && "invisible", className)}
+      onClick={(event) => {
+        onClick?.(event);
+        if (!event.defaultPrevented) previous();
+      }}
+      {...props}
+    >
+      {children ?? "Previous"}
+    </Button>
+  );
+}
+
+function QuestionnaireSkip({ children, className, variant = "ghost", onClick, ...props }: ActionProps) {
+  const { active, configs, order, skip } = useQuestionnaire();
+  const required = active ? configs.current.get(active)?.required : true;
+  const last = !active || order.indexOf(active) === order.length - 1;
+  if (required || last) return null;
+  return (
+    <Button
+      data-slot="questionnaire-skip"
+      variant={variant}
+      className={cn("col-start-2 row-start-1 justify-self-end", className)}
+      onClick={(event) => {
+        onClick?.(event);
+        if (!event.defaultPrevented) skip();
+      }}
+      {...props}
+    >
+      {children ?? "Skip"}
+    </Button>
+  );
+}
+
+function QuestionnaireNext({ children, className, variant = "primary", onClick, ...props }: ActionProps) {
+  const { order, active, next } = useQuestionnaire();
+  if (!active || order.indexOf(active) >= order.length - 1) return null;
+  return (
+    <Button
+      data-slot="questionnaire-next"
+      variant={variant}
+      className={cn("col-start-3 row-start-1 justify-self-end", className)}
+      onClick={(event) => {
+        onClick?.(event);
+        if (!event.defaultPrevented) next();
+      }}
+      {...props}
+    >
+      {children ?? "Next"}
+    </Button>
+  );
+}
+
+function QuestionnaireSubmit({ children, className, variant = "primary", ...props }: Omit<React.ComponentProps<typeof Button>, "type">) {
+  const { order, active } = useQuestionnaire();
+  if (!active || order.indexOf(active) !== order.length - 1) return null;
+  return (
+    <Button data-slot="questionnaire-submit" type="submit" variant={variant} className={cn("col-start-3 row-start-1 justify-self-end", className)} {...props}>
+      {children ?? "Submit"}
+    </Button>
+  );
+}
+
+export {
+  Questionnaire,
+  QuestionnaireActions,
+  QuestionnaireChoice,
+  QuestionnaireChoiceDescription,
+  QuestionnaireChoices,
+  QuestionnaireDescription,
+  QuestionnaireError,
+  QuestionnaireInput,
+  QuestionnaireItem,
+  QuestionnaireNext,
+  QuestionnairePrevious,
+  QuestionnaireProgress,
+  QuestionnaireSkip,
+  QuestionnaireSubmit,
+  QuestionnaireTitle,
+};
+
+```

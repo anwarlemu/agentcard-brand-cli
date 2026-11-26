@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "name": "utils",
+  "useFor": "Use cn to combine component classes and caller overrides.",
+  "constraints": [],
+  "documentation": "",
+  "source": "src/lib/utils.ts",
+  "exports": [
+    "cn"
+  ],
+  "client": false,
+  "docsUrl": "https://agentcard-ds.vercel.app/r/utils.md",
+  "markdownUrl": "https://agentcard-ds.vercel.app/r/utils.md",
+  "examples": [],
+  "type": "lib",
+  "title": "cn",
+  "description": "Class-name utilities that understand the design token scales.",
+  "surface": "both",
+  "kinds": [],
+  "requires": [],
+  "packages": [
+    "clsx",
+    "tailwind-merge"
+  ],
+  "files": [
+    {
+      "path": "lib/utils.ts",
+      "content": "import { type ClassValue, clsx } from \"clsx\";\nimport { extendTailwindMerge } from \"tailwind-merge\";\n\n// The brand's scales have their own names (text-body-sm, rounded-card, shadow-key). Without teaching tailwind-merge,\n// it reads text-body-sm as a text color and drops the real color beside it, and keeps a default rounded-md next to a\n// brand radius meant to replace it. Brand text sizes do not set line height: keep explicit leading in either order.\nconst twMerge = extendTailwindMerge<\"brand-font-size\">({\n  extend: {\n    theme: {\n      leading: [\"tight\", \"heading\", \"display\", \"snug\", \"body\", \"relaxed\", \"code\"],\n      tracking: [\"display\", \"tighter\", \"tight\", \"normal\", \"label\", \"caps\", \"mark\"],\n      radius: [\"chip\", \"sm\", \"menu\", \"control\", \"card\", \"panel\", \"shell\", \"pill\"],\n      shadow: [\"guide\", \"inset\", \"key\", \"key-brand\", \"key-muted\", \"pressed\", \"well\", \"card\", \"raised\", \"code\", \"plan\", \"tile\", \"floating\", \"glass-hover\", \"tooltip\", \"ring-hover\"],\n    },\n    classGroups: {\n      \"brand-font-size\": [{ text: [\"display\", \"hero\", \"h1\", \"h2\", \"h3\", \"h4\", \"h5\", \"body-lg\", \"body\", \"body-sm\", \"caption\", \"micro\"] }],\n    },\n    conflictingClassGroups: {\n      \"brand-font-size\": [\"font-size\"],\n      \"font-size\": [\"brand-font-size\"],\n    },\n    conflictingClassGroupModifiers: { \"brand-font-size\": [\"leading\"] },\n  },\n});\n\nexport function cn(...inputs: ClassValue[]) {\n  return twMerge(clsx(inputs));\n}\n"
+    }
+  ]
+}
